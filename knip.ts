@@ -60,6 +60,15 @@ const config: KnipConfig = {
     "examples/tanstack-start": { entry: ["yak.context.ts"] },
     "examples/vite": { entry: ["yak.context.ts"] },
     "examples/vite-solid": { entry: ["yak.context.ts"] },
+    "examples/vite-qwik": {
+      // a qwik router app: the server entries and the routes are the roots
+      entry: [
+        "yak.context.ts",
+        "src/entry.ssr.tsx",
+        "src/entry.preview.tsx",
+        "src/routes/**/*.tsx",
+      ],
+    },
     "readme-assets": {
       entry: ["scenes/*.tsx"],
       // The fonts are read by file path
