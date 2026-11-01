@@ -31,6 +31,12 @@
       }
     },
     {
+      "files": ["readme-assets/**"],
+      "rules": {
+        "react/jsx-key": "off"
+      }
+    },
+    {
       "files": ["examples/**"],
       "rules": {
         "no-constant-binary-expression": "off",
