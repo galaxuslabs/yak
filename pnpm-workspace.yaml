@@ -5,6 +5,7 @@ packages:
   - docs
   - e2e
   - e2e/bundlers/*
+  - readme-assets
 
 overrides:
   "@yak/swc": workspace:*
@@ -42,6 +43,7 @@ catalogs:
     "@base-ui/react": 1.8.0
     "@babel/standalone": 7.29.9
     "@babel/types": 8.0.6
+    "@fontsource/hanken-grotesk": 5.3.0
     "@rsbuild/core": 2.2.13
     "@rsbuild/plugin-react": 2.1.1
     "@changesets/cli": 3.0.3
@@ -63,6 +65,7 @@ catalogs:
     "@types/benchmark": 2.1.5
     "@types/jest": 30.0.0
     "@types/node": 26.6.5
+    "@types/subset-font": 2.3.0
     "@types/react": 19.3.0
     "@types/react-dom": 19.3.0
     "@types/webpack": 5.28.5
@@ -88,6 +91,7 @@ catalogs:
     next: 16.4.2
     oxfmt: 0.73.0
     oxlint: 1.88.0
+    playwright-core: 1.64.1
     prettier: 3.9.9
     react: 19.3.1
     react-dom: 19.3.1
@@ -95,7 +99,10 @@ catalogs:
     shiki: 4.4.3
     storybook: 11.0.0-alpha.6
     styled-components: 6.6.0
+    subset-font: 2.9.0
+    svjeez: 0.5.0
     tsdown: 0.23.1
+    tsx: 4.23.15
     # TypeScript 7 (the native compiler) ships no stable programmatic API yet.
     # typescript-eslint and the type check in `next build` need it, so stay on 6.x.
     typescript: 6.0.3
