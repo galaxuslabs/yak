@@ -87,7 +87,7 @@ sequenceDiagram
 
 Each evaluator manages two Node.js worker threads — a **primary** that handles evaluations and a **shadow** that sits idle with a clean module cache.
 
-Modules are loaded via native `import()`. A resolve hook (registered via `module.registerHooks()` inside each worker) sees every resolve call to build the dependency tree. Only project source files are tracked. Files in `node_modules` and built-in `node:` modules are excluded.
+Modules are loaded via native `import()`. A resolve hook (registered via `module.registerHooks()` inside each worker) sees every resolve call to build the dependency tree. Every file the module loads is tracked, including files in `node_modules` and files loaded with `require()`. Built-in `node:` modules are excluded.
 
 When a file changes, call `invalidate()`. The primary worker (with its stale ESM cache) is terminated, the shadow is promoted instantly, and a new shadow boots in the background. No restart latency.
 

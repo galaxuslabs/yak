@@ -111,7 +111,22 @@ describe("evaluate", () => {
     await expect(evaluator.evaluate("./relative.ts")).rejects.toThrow("absolute path");
   });
 
-  it("excludes node_modules from dependencies", async () => {
+  it("lists imports that another entry loaded first", async () => {
+    evaluator = await createEvaluator();
+    await evaluator.evaluate(fixture("shared-a.ts"));
+    const result = await evaluator.evaluate(fixture("shared-b.ts"));
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    expect(result.dependencies).toEqual([
+      fixture("shared-b.ts"),
+      fixture("shared-tokens.ts"),
+      fixture("shared-colors.ts"),
+    ]);
+  });
+
+  it("excludes Node built-ins from dependencies", async () => {
     evaluator = await createEvaluator();
     const result = await evaluator.evaluate(fixture("uses-node-modules.ts"));
 

@@ -94,12 +94,9 @@ const MAX_STALENESS_RETRIES = 3;
 export async function createEvaluator(): Promise<Evaluator> {
   const resultCache = new Map<string, EvaluateResult>();
   /**
-   * Tracks in-flight evaluation promises by path. When `evaluate()` is called
-   * for a path that's already queued or being evaluated, the same promise is
-   * returned instead of queuing a duplicate. This prevents a second worker
-   * evaluation from producing incomplete dependencies (the ESM resolve hook
-   * only fires on cache misses — a second import on the same worker would
-   * miss transitive deps that are already in the ESM cache).
+   * Holds the promise of each queued or running evaluation by path. A second
+   * `evaluate()` call for the same path gets the same promise, so the worker
+   * evaluates each file once.
    */
   const inflight = new Map<string, Promise<EvaluateResult>>();
 
@@ -307,10 +304,8 @@ export async function createEvaluator(): Promise<Evaluator> {
 
     const next = queue.shift()!;
 
-    // A prior evaluation for the same path may have completed and cached
-    // while this item was queued (e.g. after invalidation + re-queue).
-    // Resolving from cache avoids dispatching to a worker where the module
-    // is already in the ESM cache (which would produce incomplete deps).
+    // Skip the worker when an evaluation of this path finished while the item
+    // waited, for example after an invalidation put it back in the queue
     const alreadyCached = resultCache.get(next.absolutePath);
     if (alreadyCached) {
       inflight.delete(next.absolutePath);
@@ -391,10 +386,7 @@ export async function createEvaluator(): Promise<Evaluator> {
       return Promise.resolve(cached);
     }
 
-    // Deduplicate: if an evaluation is already queued or in-flight for this
-    // path, return the same promise. This prevents a second worker evaluation
-    // that would produce incomplete dependencies (the ESM resolve hook only
-    // fires on cache misses).
+    // Share the promise of a queued or running evaluation of this path
     const pending = inflight.get(absolutePath);
     if (pending) return pending;
 

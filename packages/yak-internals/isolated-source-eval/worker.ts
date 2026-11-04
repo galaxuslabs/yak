@@ -22,22 +22,29 @@ if (!parentPort) {
 }
 
 /**
- * Holds the absolute paths of the project files that the resolve hook saw
- * since the last `takeDeps()` call
+ * Maps the absolute path of each file this worker loaded to the absolute paths
+ * of the files it imports. The map lives as long as the worker: the evaluator
+ * terminates the worker on every invalidation, so it never outlives one edit.
  */
-const trackedDeps = new Set<string>();
+const imports = new Map<string, Set<string>>();
 
 /**
- * Records every resolved project file to build the dependency list.
+ * Records every resolved file as an edge from its importer.
  *
- * `registerHooks()` runs the hook synchronously in this thread, so it writes
- * to `trackedDeps` directly. Hooks registered here apply to this worker only,
- * which keeps each worker's `trackedDeps` and module cache separate from the
- * others.
+ * The resolve hook only runs when a module links for the first time, so the
+ * edges of a cached module are not seen again.
  *
- * Only `file://` URLs outside of `node_modules` are tracked. Node built-ins
- * (`node:*`) and third-party packages are excluded because consumers only
- * need to invalidate on project source file changes.
+ * Example: `a.yak.ts` and `b.yak.ts` both import `tokens.ts`, which imports
+ * `colors.ts`. When `b` is evaluated second, Node takes `tokens.ts` from its
+ * cache and never resolves `colors.ts` again. Only the edges recorded for `a`
+ * tell that `b` depends on `colors.ts`.
+ *
+ * `registerHooks()` runs the hook synchronously in this thread, and hooks
+ * registered here apply to this worker only. The `parentURL` is also set for
+ * `require()` calls, so CommonJS files are recorded too.
+ *
+ * Only `file://` URLs are recorded, so built-in `node:` modules are left out.
+ * Files in `node_modules` are recorded like any other file.
  *
  * `fileURLToPath` turns a `file://` URL into an absolute path for the current
  * platform. On Windows it gives `C:\src\a.ts`, where `URL.pathname` would
@@ -46,42 +53,56 @@ const trackedDeps = new Set<string>();
 registerHooks({
   resolve(specifier, context, nextResolve) {
     const result = nextResolve(specifier, context);
-    if (result.url.startsWith("file://") && !result.url.includes("/node_modules/")) {
-      trackedDeps.add(fileURLToPath(result.url));
+    if (result.url.startsWith("file://") && context.parentURL?.startsWith("file://")) {
+      const importer = fileURLToPath(context.parentURL);
+      let children = imports.get(importer);
+      if (!children) {
+        children = new Set();
+        imports.set(importer, children);
+      }
+      children.add(fileURLToPath(result.url));
     }
     return result;
   },
 });
 
 /**
- * Returns the dependencies tracked since the last call and clears the set.
+ * Returns the requested path followed by every file reachable from the entry
+ * in the import graph.
  *
- * Called after each `import()` completes, so dependencies are scoped to the
- * most recent evaluation. This is safe because evaluations are
- * serialized: only one runs at a time per worker.
+ * `entryUrl` is the URL that Node uses as the module key. It differs from the
+ * requested path when the path goes through a symlink:
+ * `apps/web/node_modules/@acme/theme/theme.yak.ts` is loaded as
+ * `packages/theme/theme.yak.ts`.
+ *
+ * Walking from the module key gives the full list for both paths. The
+ * requested path stays first, so `invalidate()` finds the entry by either one.
  */
-function takeDeps(): string[] {
-  const list = [...trackedDeps];
-  trackedDeps.clear();
-  return list;
+function dependenciesOf(entryUrl: string | undefined, absolutePath: string): string[] {
+  if (!entryUrl?.startsWith("file://")) return [absolutePath];
+  const queue = [fileURLToPath(entryUrl)];
+  const visited = new Set(queue);
+  for (let i = 0; i < queue.length; i++) {
+    for (const child of imports.get(queue[i]) ?? []) {
+      if (!visited.has(child)) {
+        visited.add(child);
+        queue.push(child);
+      }
+    }
+  }
+  return [...new Set([absolutePath, ...queue])];
 }
 
 parentPort.on("message", async (msg: { type: string; id: number; absolutePath: string }) => {
   if (msg.type !== "evaluate") return;
 
+  // The module key of the entry, see dependenciesOf
+  let entryUrl: string | undefined;
   try {
     const fileUrl = pathToFileURL(msg.absolutePath).href;
+    entryUrl = import.meta.resolve(fileUrl);
     // The path is only known at runtime, so bundlers must not try to resolve it
     const ns = await import(/* turbopackIgnore: true */ fileUrl);
-
-    const deps = takeDeps();
-
-    // The entry point may not appear in the dependency set
-    // if it was already in the ESM cache from a previous evaluation.
-    // The resolve hook only fires on cache misses.
-    if (!deps.includes(msg.absolutePath)) {
-      deps.unshift(msg.absolutePath);
-    }
 
     // Module namespace objects are exotic objects that fail structured clone
     // (postMessage would throw). Copying to a plain object is required.
@@ -95,7 +116,7 @@ parentPort.on("message", async (msg: { type: string; id: number; absolutePath: s
       id: msg.id,
       ok: true,
       value,
-      dependencies: deps,
+      dependencies: dependenciesOf(entryUrl, msg.absolutePath),
     });
   } catch (err: unknown) {
     // Catches both evaluation errors (syntax errors, runtime exceptions)
@@ -107,20 +128,13 @@ parentPort.on("message", async (msg: { type: string; id: number; absolutePath: s
         ? { message: err.message, stack: err.stack ?? "" }
         : { message: String(err), stack: "" };
 
-    // Flush partial dependencies that the resolve hook tracked before the
-    // error. This allows the evaluator to register them in the reverse
-    // dep map so that fixing the broken file triggers re-evaluation.
-    const deps = takeDeps();
-    if (!deps.includes(msg.absolutePath)) {
-      deps.unshift(msg.absolutePath);
-    }
-
+    // Report the files resolved before the error, so fixing a broken import re-evaluates this entry
     parentPort!.postMessage({
       type: "result",
       id: msg.id,
       ok: false,
       error,
-      dependencies: deps,
+      dependencies: dependenciesOf(entryUrl, msg.absolutePath),
     });
   }
 });
