@@ -68,19 +68,40 @@ function resolveWorkerPath(): string {
  * Boots a worker and returns a handle with a ready promise.
  *
  * The worker registers its own module hooks on startup, see worker.ts.
+ *
+ * `ready` rejects when the worker fails before it reports ready. Node 23.0 to
+ * 23.5 has no `registerHooks` export, so the worker fails to link there, and
+ * without the rejection that error would crash the host process.
  */
 function bootWorker(): { worker: Worker; ready: Promise<void> } {
   const workerPath = resolveWorkerPath();
   const worker = new Worker(workerPath);
-  const ready = new Promise<void>((resolve) => {
+  const ready = new Promise<void>((resolve, reject) => {
+    const fail = (reason: string) => {
+      cleanup();
+      reject(
+        new Error(`Could not start the .yak.ts evaluator on Node ${process.version}: ${reason}`),
+      );
+    };
     const onMessage = (msg: { type: string }) => {
       if (msg.type === "ready") {
-        worker.off("message", onMessage);
+        cleanup();
         resolve();
       }
     };
+    const onError = (err: Error) => fail(err.message);
+    const onExit = (code: number) => fail(`the worker exited with code ${code}`);
+    const cleanup = () => {
+      worker.off("message", onMessage);
+      worker.off("error", onError);
+      worker.off("exit", onExit);
+    };
     worker.on("message", onMessage);
+    worker.on("error", onError);
+    worker.on("exit", onExit);
   });
+  // A shadow worker may fail while nobody awaits it, processQueue reports the error when it is promoted
+  ready.catch(() => {});
   return { worker, ready };
 }
 
@@ -154,7 +175,12 @@ export async function createEvaluator(): Promise<Evaluator> {
   let primary = bootWorker();
   let shadow = bootWorker();
 
-  await Promise.all([primary.ready, shadow.ready]);
+  try {
+    await Promise.all([primary.ready, shadow.ready]);
+  } catch (err) {
+    await Promise.all([primary.worker.terminate(), shadow.worker.terminate()]);
+    throw err;
+  }
 
   /**
    * Allow the process to exit naturally when the event loop is otherwise empty.
@@ -316,35 +342,45 @@ export async function createEvaluator(): Promise<Evaluator> {
 
     currentEval = next;
 
-    primary.ready.then(() => {
-      if (disposed || currentEval !== next) return;
-      primary.worker.postMessage({
-        type: "evaluate",
-        id: next.id,
-        absolutePath: next.absolutePath,
-      });
+    primary.ready.then(
+      () => {
+        if (disposed || currentEval !== next) return;
+        primary.worker.postMessage({
+          type: "evaluate",
+          id: next.id,
+          absolutePath: next.absolutePath,
+        });
 
-      currentTimeout = setTimeout(() => {
-        if (currentEval !== next) return;
+        currentTimeout = setTimeout(() => {
+          if (currentEval !== next) return;
+          currentEval = null;
+          currentTimeout = null;
+
+          const result: EvaluateResult = {
+            ok: false,
+            error: {
+              message: `Evaluation of ${next.absolutePath} timed out after ${DEFAULT_EVAL_TIMEOUT_MS}ms`,
+              stack: "",
+            },
+          };
+          updateDeps(next.absolutePath, [next.absolutePath]);
+          resultCache.set(next.absolutePath, result);
+          inflight.delete(next.absolutePath);
+          next.resolve(result);
+
+          swapWorkers();
+          processQueue();
+        }, DEFAULT_EVAL_TIMEOUT_MS);
+      },
+      (err: Error) => {
+        // The promoted shadow failed to start, see bootWorker. The result is not cached, so the next call tries again.
+        if (disposed || currentEval !== next) return;
         currentEval = null;
-        currentTimeout = null;
-
-        const result: EvaluateResult = {
-          ok: false,
-          error: {
-            message: `Evaluation of ${next.absolutePath} timed out after ${DEFAULT_EVAL_TIMEOUT_MS}ms`,
-            stack: "",
-          },
-        };
-        updateDeps(next.absolutePath, [next.absolutePath]);
-        resultCache.set(next.absolutePath, result);
         inflight.delete(next.absolutePath);
-        next.resolve(result);
-
-        swapWorkers();
+        next.resolve({ ok: false, error: { message: err.message, stack: err.stack ?? "" } });
         processQueue();
-      }, DEFAULT_EVAL_TIMEOUT_MS);
-    });
+      },
+    );
   }
 
   /**
