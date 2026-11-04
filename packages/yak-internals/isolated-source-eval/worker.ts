@@ -22,7 +22,8 @@ if (!parentPort) {
 }
 
 /**
- * Absolute paths of the project files resolved since the last `takeDeps()` call
+ * Holds the absolute paths of the project files that the resolve hook saw
+ * since the last `takeDeps()` call
  */
 const trackedDeps = new Set<string>();
 
@@ -38,8 +39,9 @@ const trackedDeps = new Set<string>();
  * (`node:*`) and third-party packages are excluded because consumers only
  * need to invalidate on project source file changes.
  *
- * `fileURLToPath` converts `file://` URLs into platform-correct absolute
- * paths (avoids the leading-slash issue `URL.pathname` has on Windows).
+ * `fileURLToPath` turns a `file://` URL into an absolute path for the current
+ * platform. On Windows it gives `C:\src\a.ts`, where `URL.pathname` would
+ * give `/C:/src/a.ts`.
  */
 registerHooks({
   resolve(specifier, context, nextResolve) {

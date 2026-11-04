@@ -295,10 +295,9 @@ export async function createEvaluator(): Promise<Evaluator> {
   }
 
   /**
-   * Evaluations are serialized — one at a time per worker. This prevents
-   * interleaved dependency tracking: the loader hook accumulates deps in
-   * a single Set and flushes it after each evaluation. Concurrent imports
-   * would mix dependencies from different entry points.
+   * Evaluations run one at a time per worker. The worker collects the
+   * dependencies of one `import()` at a time: concurrent imports would mix
+   * the dependencies of different entry points.
    *
    * Waits for the primary worker to be ready before sending work. This
    * matters after a swap: the promoted shadow may still be booting.
