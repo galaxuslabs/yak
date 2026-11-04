@@ -8,7 +8,12 @@
  * This file is frozen: changing a single byte breaks every `?q=1…` link,
  * and `dict-1.fixtures.json` holds links that the tests decode to catch it.
  * When the playground examples change, copy this file to the next id,
- * update `exampleFiles` and register it in `../compress.ts`.
+ * update `exampleFiles`, register it in `../compress.ts` and point
+ * `CURRENT_ID` there at the new id.
+ *
+ * Image paths in `exampleFiles` have no base path: `asset("/img/x.png")`
+ * in examples.ts is `/img/x.png` on yak.js.org and `/yak/img/x.png` on a
+ * github.io preview, where links come out a few chars longer.
  */
 
 /**
@@ -75,8 +80,8 @@ const snippets = [
 ];
 
 /**
- * The files of the playground example in each framework at the time this
- * dictionary was frozen, keyed by file name without extension.
+ * The files of the playground example in each framework that `?q=1…` links
+ * compress against, keyed by file name without extension.
  * The default framework comes last.
  */
 export const exampleFiles: Record<string, string>[] = [

@@ -232,8 +232,8 @@ function readShareLink(): {
   const q = params.get("q");
   if (!q) return { framework, files: examples[framework], output, notice: null };
   try {
-    const record = decompressWithDictionary(q);
-    const migrated = migrateFiles(record);
+    const { files: record, legacy } = decompressWithDictionary(q);
+    const migrated = legacy ? migrateFiles(record) : null;
     return {
       framework,
       files: filesFromRecord(migrated ?? record),

@@ -85,7 +85,7 @@ const dictionary = [
   "other",
   "index",
   "/img/yak-jumping.png",
-  // The default example as it was when this format was frozen
+  // Files of the next-yak default example that legacy links reference
   `const Center = styled.div\`
   display: grid;
   width: 100%;
