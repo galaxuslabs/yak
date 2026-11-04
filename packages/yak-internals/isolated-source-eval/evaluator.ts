@@ -292,9 +292,9 @@ export async function createEvaluator(): Promise<Evaluator> {
   }
 
   /**
-   * Evaluations run one at a time per worker. The worker collects the
-   * dependencies of one `import()` at a time: concurrent imports would mix
-   * the dependencies of different entry points.
+   * Evaluations run one at a time per worker. A timeout or a stale result
+   * replaces the whole worker, which would also cancel every other evaluation
+   * running on it.
    *
    * Waits for the primary worker to be ready before sending work. This
    * matters after a swap: the promoted shadow may still be booting.

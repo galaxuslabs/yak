@@ -126,9 +126,21 @@ describe("evaluate", () => {
     ]);
   });
 
+  it("lists files loaded with require()", async () => {
+    evaluator = await createEvaluator();
+    const result = await evaluator.evaluate(fixture("uses-require.ts"));
+
+    expect(result.ok && result.value.size).toBe(12);
+    expect(result.ok && result.dependencies).toEqual([
+      fixture("uses-require.ts"),
+      fixture("require-tokens.cjs"),
+      fixture("require-size.cjs"),
+    ]);
+  });
+
   it("excludes Node built-ins from dependencies", async () => {
     evaluator = await createEvaluator();
-    const result = await evaluator.evaluate(fixture("uses-node-modules.ts"));
+    const result = await evaluator.evaluate(fixture("uses-node-builtins.ts"));
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
@@ -136,7 +148,7 @@ describe("evaluate", () => {
     expect(result.value.result).toBe(join("foo", "bar"));
 
     // Should only include the entry point, not node:path
-    expect(result.dependencies).toEqual([fixture("uses-node-modules.ts")]);
+    expect(result.dependencies).toEqual([fixture("uses-node-builtins.ts")]);
   });
 });
 
@@ -491,7 +503,7 @@ describe("concurrent evaluations", () => {
     const [r1, r2, r3] = await Promise.all([
       evaluator.evaluate(fixture("simple-theme.ts")),
       evaluator.evaluate(fixture("computed-values.ts")),
-      evaluator.evaluate(fixture("uses-node-modules.ts")),
+      evaluator.evaluate(fixture("uses-node-builtins.ts")),
     ]);
 
     expect(r1.ok).toBe(true);
