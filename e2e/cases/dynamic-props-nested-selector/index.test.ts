@@ -11,6 +11,9 @@ test(
     // instance's value must be inherited by its own children.
     await expect(page.getByTestId("button-32")).toHaveCSS("left", "32px");
     await expect(page.getByTestId("button-64")).toHaveCSS("left", "64px");
+    // A minus before the interpolation negates the value: top: -${fn}px
+    await expect(page.getByTestId("button-32")).toHaveCSS("top", "-32px");
+    await expect(page.getByTestId("button-64")).toHaveCSS("top", "-64px");
 
     // Same inheritance dependency via a component selector (${Icon} { ... })
     await expect(page.getByTestId("icon")).toHaveCSS("width", "24px");

@@ -1,4 +1,4 @@
-import { css, styled, __yak_unitPostFix, __yak_mergeClassNames } from "@yak/react/internal";
+import { css, styled, __yak_mergeClassNames, __yak_cssValue } from "@yak/react/internal";
 import { ImportedCard } from "./imported-card";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
@@ -182,7 +182,7 @@ const NestedCssVariable = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedCssVariable_m7uBBu", ({ $active, $size })=>$active && /*#__PURE__*/ css("input_NestedCssVariable__$active_m7uBBu", {
         "style": {
-            "--input_NestedCssVariable__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(()=>$size, "px")
+            "--input_NestedCssVariable__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>$size, "px")
         }
     })), {
     "displayName": "NestedCssVariable"

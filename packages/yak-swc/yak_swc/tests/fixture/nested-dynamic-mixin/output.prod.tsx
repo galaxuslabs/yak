@@ -1,4 +1,4 @@
-import { styled, css, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 // example taken from https://github.com/galaxuslabs/yak/issues/208 
@@ -21,6 +21,6 @@ const ContainerFluid = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", ({ $isApp, $pageHeaderHeight })=>$isApp ? /*#__PURE__*/ css("ym7uBBu1") : /*#__PURE__*/ css("ym7uBBu2"), {
     "style": {
-        "--ym7uBBu3": /*#__PURE__*/ __yak_unitPostFix(({ $pageHeaderHeight })=>$pageHeaderHeight, "px")
+        "--ym7uBBu3": /*#__PURE__*/ __yak_cssValue(({ $pageHeaderHeight })=>$pageHeaderHeight, "px")
     }
 });

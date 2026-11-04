@@ -11,6 +11,7 @@ const Positioned = styled.div<{ $x: number }>`
   button {
     position: absolute;
     left: ${({ $x }) => $x}px;
+    top: -${({ $x }) => $x}px;
   }
 `;
 
