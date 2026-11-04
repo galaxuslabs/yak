@@ -11,7 +11,8 @@
     "og": "node scripts/generate-og.ts",
     "build:wasm": "wasm-pack build playground-wasm --out-dir ../src/lib/playground/wasm --out-name index --target web",
     "prepare:assets": "pnpm run og && pnpm run playground-types",
-    "playground-types": "node scripts/generate-playground-types.mjs"
+    "playground-types": "node scripts/generate-playground-types.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@babel/standalone": "catalog:dev",
@@ -44,6 +45,7 @@
     "@types/react-dom": "catalog:dev",
     "sharp": "catalog:dev",
     "typescript": "catalog:dev",
+    "vitest": "catalog:dev",
     "wasm-pack": "catalog:dev"
   },
   "browserslist": [

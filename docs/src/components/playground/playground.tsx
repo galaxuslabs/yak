@@ -81,7 +81,8 @@ export default function Playground() {
     );
     const url = new URL(window.location.href);
     url.search = new URLSearchParams({
-      q: compressWithDictionary(record),
+      // the unchanged example needs no `q`: a link without it opens the framework's example
+      ...(isExample(framework, record) ? {} : { q: compressWithDictionary(record) }),
       output: outputKind,
       // links from before the framework switch have no framework and open in React
       ...(framework === DEFAULT_FRAMEWORK ? {} : { framework }),
@@ -241,7 +242,8 @@ function readShareLink(): {
         ? "This share link is from an older yak version. The playground updated the code to @yak/react."
         : null,
     };
-  } catch {
+  } catch (error) {
+    console.error("Playground share link could not be decoded:", error);
     return {
       framework,
       files: examples[framework],
@@ -249,6 +251,15 @@ function readShareLink(): {
       notice: "This share link could not be read. The playground shows the default example.",
     };
   }
+}
+
+/** True when the share link record holds exactly the files of the framework's example */
+function isExample(framework: FrameworkId, record: Record<string, string>): boolean {
+  const example = examples[framework];
+  return (
+    Object.keys(record).length === example.length &&
+    example.every((file) => record[file.name] === file.content)
+  );
 }
 
 /** empty tabs added to a link with fewer than MIN_EXTRA_FILES extra files */
