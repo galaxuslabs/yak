@@ -269,7 +269,8 @@ async function viteYakImpl(
     },
 
     configureServer(server) {
-      // Only "change" events invalidate: a .yak.ts that failed on a missing import stays cached until a tracked file changes
+      // Only "change" events invalidate: a .yak.ts that failed on a missing
+      // import stays cached until a tracked file changes
       server.watcher.on("change", (file) => {
         evaluator.invalidate(file);
       });

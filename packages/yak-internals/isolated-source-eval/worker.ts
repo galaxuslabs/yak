@@ -23,8 +23,9 @@ if (!parentPort) {
 
 /**
  * Maps the absolute path of each file this worker loaded to the absolute paths
- * of the files it imports. The map lives as long as the worker: the evaluator
- * terminates the worker on every invalidation, so it never outlives one edit.
+ * of the files it imports. The map lives as long as the worker. The evaluator
+ * replaces the worker whenever a file in a reported graph changes, so the
+ * recorded edges always match the module cache.
  */
 const imports = new Map<string, Set<string>>();
 
@@ -128,7 +129,8 @@ parentPort.on("message", async (msg: { type: string; id: number; absolutePath: s
         ? { message: err.message, stack: err.stack ?? "" }
         : { message: String(err), stack: "" };
 
-    // Report the files resolved before the error, so fixing a broken import re-evaluates this entry
+    // Report the files resolved before the error, so fixing a broken import
+    // re-evaluates this entry
     parentPort!.postMessage({
       type: "result",
       id: msg.id,
