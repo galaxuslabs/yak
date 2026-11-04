@@ -91,7 +91,7 @@ Modules are loaded via native `import()`. A resolve hook (registered via `module
 
 When a file changes, call `invalidate()`. The primary worker (with its stale ESM cache) is terminated, the shadow is promoted instantly, and a new shadow boots in the background. No restart latency.
 
-Node 22.18.0+ strips TypeScript types natively, so `.ts` files work without compilation.
+Node strips TypeScript types natively, so `.ts` files work without compilation. See the Node version in the constraints below.
 
 ## API
 
@@ -168,6 +168,7 @@ await evaluator.dispose();
 | Constraint                | Detail                                                                                                                                                                               |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Node 22.18+ or 23.6+      | Required for native type stripping and `module.registerHooks()`.                                                                                                                     |
+| Node resolution           | Imports resolve with Node's default export conditions, not the bundler's. A workspace package whose `exports` points `development` at `src` and `default` at `dist` loads `dist`.    |
 | Serializable exports only | Uses `postMessage` (structured clone). Functions, Symbols, WeakMaps, and class instances will produce an `{ ok: false }` error. Export plain data instead.                           |
 | No sandboxing             | Evaluated code runs with full Node.js privileges. This is designed for trusted project source files.                                                                                 |
 | No file watching          | This package does not watch the filesystem. Consumers are responsible for calling `invalidate()` when files change.                                                                  |

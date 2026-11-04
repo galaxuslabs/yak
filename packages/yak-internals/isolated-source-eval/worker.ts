@@ -2,8 +2,9 @@
  * Worker thread entry point for isolated module evaluation.
  *
  * Each worker is a full Node.js environment with its own ESM module cache.
- * Modules are loaded via dynamic `import()`. Node 22.18.0+ strips TypeScript
- * types natively, so no compilation step or flags are needed.
+ * Modules are loaded via dynamic `import()`. Node strips TypeScript types
+ * natively (22.18 or later on Node 22, or 23.6 or later), so no compilation
+ * step or flags are needed.
  */
 import { parentPort } from "node:worker_threads";
 import { fileURLToPath, pathToFileURL } from "node:url";
