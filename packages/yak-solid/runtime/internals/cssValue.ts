@@ -28,20 +28,13 @@
  * Any value other than a number or a string returns undefined, so the
  * css variable stays unset.
  */
-export const cssValue = (
-  arg: unknown,
-  unit: string,
-  negate?: boolean,
-): unknown => {
+export const cssValue = (arg: unknown, unit: string, negate?: boolean): unknown => {
   switch (typeof arg) {
     case "function":
       return (props: unknown) => cssValue(arg(props), unit, negate);
     case "number":
       return `${negate ? -arg : arg}${unit}`;
     case "string":
-      return (
-        (negate ? (arg.startsWith("-") ? arg.slice(1) : "-" + arg) : arg) +
-        unit
-      );
+      return (negate ? (arg.startsWith("-") ? arg.slice(1) : "-" + arg) : arg) + unit;
   }
 };
