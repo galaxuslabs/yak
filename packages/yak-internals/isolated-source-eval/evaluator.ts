@@ -73,9 +73,9 @@ function resolveWorkerPath(): string {
  * 23.5 has no `registerHooks` export, so the worker fails to link there, and
  * without the rejection that error would crash the host process.
  */
-function bootWorker(): { worker: Worker; ready: Promise<void> } {
+function bootWorker(conditions: string[]): { worker: Worker; ready: Promise<void> } {
   const workerPath = resolveWorkerPath();
-  const worker = new Worker(workerPath);
+  const worker = new Worker(workerPath, { workerData: { conditions } });
   const ready = new Promise<void>((resolve, reject) => {
     const fail = (reason: string) => {
       cleanup();
@@ -111,8 +111,17 @@ const DEFAULT_EVAL_TIMEOUT_MS = 30_000;
 /** Maximum number of staleness retries before giving up with an error. */
 const MAX_STALENESS_RETRIES = 3;
 
-/** Creates an evaluator that runs modules in isolated worker threads with dependency tracking. */
-export async function createEvaluator(): Promise<Evaluator> {
+/**
+ * Creates an evaluator that runs modules in isolated worker threads with dependency tracking.
+ *
+ * `conditions` adds export conditions to every import the workers resolve.
+ * With `["development"]`, a package with
+ * `exports: { development: "./src/index.ts", default: "./dist/index.js" }`
+ * loads `src/index.ts`, the same file the bundler uses in development.
+ */
+export async function createEvaluator({
+  conditions = [],
+}: { conditions?: string[] } = {}): Promise<Evaluator> {
   const resultCache = new Map<string, EvaluateResult>();
   /**
    * Holds the promise of each queued or running evaluation by path. A second
@@ -172,8 +181,8 @@ export async function createEvaluator(): Promise<Evaluator> {
    * its ESM cache — isn't possible because Node doesn't expose an API
    * to clear the module cache.
    */
-  let primary = bootWorker();
-  let shadow = bootWorker();
+  let primary = bootWorker(conditions);
+  let shadow = bootWorker(conditions);
 
   try {
     await Promise.all([primary.ready, shadow.ready]);
@@ -397,7 +406,7 @@ export async function createEvaluator(): Promise<Evaluator> {
     primary = shadow;
     setupMessageHandler(primary);
 
-    shadow = bootWorker();
+    shadow = bootWorker(conditions);
     unrefWorkers(primary.worker, shadow.worker);
 
     // The new primary has a clean ESM cache, so any previously tracked

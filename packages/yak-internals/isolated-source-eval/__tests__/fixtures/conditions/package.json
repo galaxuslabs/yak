@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "imports": {
+    "#source": {
+      "yak-test": "./source.custom.ts",
+      "default": "./source.ts"
+    }
+  }
+}

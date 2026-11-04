@@ -43,7 +43,10 @@ export const getEvaluatorSingleton = async (): Promise<Evaluator> => {
   };
   if (!processGlobal[EVALUATOR_KEY]) {
     processGlobal[EVALUATOR_KEY] = import("../isolated-source-eval/index.js").then(
-      ({ createEvaluator }) => createEvaluator(),
+      ({ createEvaluator }) =>
+        createEvaluator({
+          conditions: process.env.NODE_ENV === "production" ? [] : ["development"],
+        }),
     );
     // Kill the worker threads when the process exits
     process.on("beforeExit", async () => {

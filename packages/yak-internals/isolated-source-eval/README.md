@@ -103,6 +103,12 @@ Creates an evaluator instance. Boots both workers and waits until they're ready.
 const evaluator = await createEvaluator();
 ```
 
+`conditions` adds export conditions to every import the workers resolve. The Vite plugin and the Turbopack loader pass `["development"]` in development, so a workspace package with `exports: { development: "./src/index.ts", default: "./dist/index.js" }` loads `src/index.ts`, the same file the bundler uses.
+
+```ts
+const evaluator = await createEvaluator({ conditions: ["development"] });
+```
+
 Supports `await using` for automatic cleanup:
 
 ```ts

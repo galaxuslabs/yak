@@ -116,7 +116,14 @@ async function viteYakImpl(
   // "/src/a.tsx.yak.css" or "/src/a.tsx.yak.css?direct", see resolveId
   const yakCssRegex = /\.yak\.css(?:\?|$)/;
   const yakSwcPath = await findYakSwcPlugin();
-  const evaluator: Evaluator = await createEvaluator();
+  /**
+   * Holds the evaluator once the first .yak.ts file is evaluated. It starts
+   * lazily because the export conditions depend on the resolved config, and so
+   * projects without .yak.ts files never start the worker threads.
+   */
+  let evaluator: Promise<Evaluator> | undefined;
+  const getEvaluator = (config: ResolvedConfig) =>
+    (evaluator ??= createEvaluator({ conditions: config.isProduction ? [] : ["development"] }));
 
   function checkFileAccess(filePath: string, config: ResolvedConfig): string {
     if (config.command !== "serve") return filePath;
@@ -236,7 +243,7 @@ async function viteYakImpl(
                   evaluateYakModule: async (modulePath: string) => {
                     checkFileAccess(modulePath, config);
                     this.addWatchFile(modulePath);
-                    const result = await evaluator.evaluate(modulePath);
+                    const result = await (await getEvaluator(config)).evaluate(modulePath);
                     if (!result.ok) {
                       throw new Error(result.error.message);
                     }
@@ -271,7 +278,11 @@ async function viteYakImpl(
     configureServer(server) {
       // Only "change" events invalidate: a .yak.ts that failed on a missing import stays cached until a tracked file changes
       server.watcher.on("change", (file) => {
-        evaluator.invalidate(file);
+        // A failed start is already reported by the evaluation that started it
+        void evaluator?.then(
+          (e) => e.invalidate(file),
+          () => {},
+        );
       });
     },
 

@@ -503,3 +503,20 @@ describe("concurrent evaluations", () => {
     if (r3.ok) expect(r3.value.result).toBe(join("foo", "bar"));
   });
 });
+
+describe("conditions", () => {
+  it("resolves with Node's default conditions", async () => {
+    evaluator = await createEvaluator();
+    const result = await evaluator.evaluate(fixture("conditions/entry.ts"));
+
+    expect(result.ok && result.value.from).toBe("default");
+  });
+
+  it("adds the given conditions to every resolve", async () => {
+    evaluator = await createEvaluator({ conditions: ["yak-test"] });
+    const result = await evaluator.evaluate(fixture("conditions/entry.ts"));
+
+    expect(result.ok && result.value.from).toBe("yak-test");
+    expect(result.ok && result.dependencies).toContain(fixture("conditions/source.custom.ts"));
+  });
+});

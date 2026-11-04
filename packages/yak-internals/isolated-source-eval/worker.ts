@@ -5,7 +5,7 @@
  * Modules are loaded via dynamic `import()`. Node 22.18.0+ strips TypeScript
  * types natively, so no compilation step or flags are needed.
  */
-import { parentPort } from "node:worker_threads";
+import { parentPort, workerData } from "node:worker_threads";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /**
@@ -20,6 +20,12 @@ import { registerHooks } from "node:module";
 if (!parentPort) {
   throw new Error("This file must be run as a worker thread");
 }
+
+/**
+ * Holds the export conditions that `createEvaluator({ conditions })` adds to
+ * every resolve, for example `["development"]` in development
+ */
+const extraConditions: string[] = workerData?.conditions ?? [];
 
 /**
  * Maps the absolute path of each file this worker loaded to the absolute paths
@@ -52,7 +58,12 @@ const imports = new Map<string, Set<string>>();
  */
 registerHooks({
   resolve(specifier, context, nextResolve) {
-    const result = nextResolve(specifier, context);
+    const result = nextResolve(
+      specifier,
+      extraConditions.length > 0
+        ? { ...context, conditions: [...context.conditions, ...extraConditions] }
+        : context,
+    );
     if (result.url.startsWith("file://") && context.parentURL?.startsWith("file://")) {
       const importer = fileURLToPath(context.parentURL);
       let children = imports.get(importer);
