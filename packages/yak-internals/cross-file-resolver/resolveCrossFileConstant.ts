@@ -551,7 +551,7 @@ function explainUnsupported(
 ): string {
   const isYakFile = /\.yak\.(?:ts|tsx|js|jsx)$/.test(filePath);
   const docs =
-    "https://yak.js.org/docs/migration-from-styled-components#move-some-code-to-yak-files";
+    "https://yak.style/docs/migration-from-styled-components#move-some-code-to-yak-files";
   const snippet = source ? renderSourceSnippet(filePath, source, hint ?? "") : undefined;
 
   const lines: string[] = [];

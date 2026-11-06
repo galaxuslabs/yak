@@ -78,7 +78,7 @@ Additional directories
 - [benchmarks](./benchmarks) - CI-benchmarking tool
 - [examples/next-js](./examples/next-js) - Demo Next.js application, featuring various use cases
 - [examples/vite](./examples/vite) - Demo Vite application
-- [docs](./docs) - Documentation and playground, hosted at [yak.js.org](https://yak.js.org/)
+- [docs](./docs) - Documentation and playground, hosted at [yak.style](https://yak.style/)
 
 ## Developing `@yak/react` TypeScript/JavaScript
 

@@ -2,13 +2,13 @@
 
 Vanilla CSS syntax in TypeScript, with zero runtime. yak is CSS-in-JS for React and Solid with the styled-components API: a Rust SWC plugin compiles your styles to plain CSS files at build time, so it works with React Server Components and ships no styling runtime to the browser.
 
-[Documentation](https://yak.js.org/docs/getting-started) · [Playground](https://yak.js.org/playground) · [Blog](https://yak.js.org/blog)
+[Documentation](https://yak.style/docs/getting-started) · [Playground](https://yak.style/playground) · [Blog](https://yak.style/blog)
 
 ![A yak Riding on a rusty SWC Rocket](https://github.com/user-attachments/assets/72494b1c-db1a-4ff7-bd6f-2ed3535fb126)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/galaxuslabs/yak/blob/main/LICENSE)
 
-> **Formerly next-yak.** Same library, same team. From version 10 the React package is [`@yak/react`](https://www.npmjs.com/package/@yak/react), and versions before 10 stay on npm as [`next-yak`](https://www.npmjs.com/package/next-yak). The [migration guide](https://yak.js.org/docs/migration-from-next-yak) covers the switch.
+> **Formerly next-yak.** Same library, same team. From version 10 the React package is [`@yak/react`](https://www.npmjs.com/package/@yak/react), and versions before 10 stay on npm as [`next-yak`](https://www.npmjs.com/package/next-yak). The [migration guide](https://yak.style/docs/migration-from-next-yak) covers the switch.
 
 yak runs in production at [Digitec Galaxus](https://www.galaxus.ch), the largest e-commerce platform in Switzerland, across thousands of styled components, and measurably improved its Core Web Vitals there.
 
@@ -91,7 +91,7 @@ export default defineConfig({
 });
 ```
 
-See the [Vite guide](https://yak.js.org/docs/vite).
+See the [Vite guide](https://yak.style/docs/vite).
 
 ### Rsbuild
 
@@ -108,7 +108,7 @@ export default defineConfig({
 });
 ```
 
-See the [Rsbuild guide](https://yak.js.org/docs/rsbuild).
+See the [Rsbuild guide](https://yak.style/docs/rsbuild).
 
 ### Solid
 
@@ -129,7 +129,7 @@ export default defineConfig({
 });
 ```
 
-See the [Solid guide](https://yak.js.org/docs/solid).
+See the [Solid guide](https://yak.style/docs/solid).
 
 ### Storybook
 
@@ -139,7 +139,7 @@ The `@yak/storybook` addon sets up yak in Storybook 10+ with the Vite and the we
 npm install --save-dev @yak/storybook
 ```
 
-See the [Storybook guide](https://yak.js.org/docs/storybook).
+See the [Storybook guide](https://yak.style/docs/storybook).
 
 ### ESLint and Oxlint
 
@@ -149,7 +149,7 @@ See the [Storybook guide](https://yak.js.org/docs/storybook).
 npm install --save-dev @yak/eslint-plugin
 ```
 
-See the [ESLint plugin guide](https://yak.js.org/docs/eslint-plugin).
+See the [ESLint plugin guide](https://yak.style/docs/eslint-plugin).
 
 ## Compatibility
 

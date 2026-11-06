@@ -14,10 +14,9 @@
 // - label: the overline above the title, "Documentation" or the blog post `type`
 // - lines: the title, one array entry per line, two lines at most and no closing period
 // - subtitle: the muted lines under the title of a docs or blog card
-// - url: the address in the card footer. It names the target domain on every build, also on the
-//   github.io preview, because people should remember yak.js.org
+// - url: the address in the card footer, on the host of the site URL
 
-const HOST = "yak.js.org";
+import { SITE_HOST as HOST } from "../lib/site.ts";
 
 /** The frontmatter fields a docs or blog card reads */
 export interface CardPage {
@@ -60,7 +59,7 @@ const FIXED: Record<string, { template: Template; lines: string[]; tagline?: str
 // The technologies yak integrates with: the name as it appears in a title, and the file in
 // og/logos that is also the docs slug of its setup guide. A title gets the logo after the
 // first name: "Set up yak | with Vite" -> "with Vite <logo>". A setup guide shows its own
-// path in the footer: yak.js.org/docs/vite, not yak.js.org/docs
+// path in the footer: yak.style/docs/vite, not yak.style/docs
 const LOGOS: Record<string, string> = {
   React: "react",
   Vite: "vite",
@@ -124,7 +123,7 @@ export function cardFor(key: string, page: CardPage = { title: key }) {
           ? `${HOST}/docs/${slug}`
           : `${HOST}/${section}`;
 
-  // `yak — Set up yak with Vite — yak.js.org/docs/vite`, and the home card says "yak" only once
+  // `yak — Set up yak with Vite — yak.style/docs/vite`, and the home card says "yak" only once
   const heading = lines.join(" ");
   const alt = [
     "yak",

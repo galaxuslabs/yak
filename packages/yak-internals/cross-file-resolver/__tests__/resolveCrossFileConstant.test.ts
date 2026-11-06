@@ -887,7 +887,7 @@ test("Error: unsupported export from a regular .ts file shows a Rust-style snipp
       |                   ^^^^^^^^^^^ TemplateLiteral
   help: rename "/foo/colors.ts" to "/foo/colors.yak.ts" so its exports run at build time
         (or replace \`bg\` with a literal value)
-  see:  https://yak.js.org/docs/migration-from-styled-components#move-some-code-to-yak-files`);
+  see:  https://yak.style/docs/migration-from-styled-components#move-some-code-to-yak-files`);
 });
 
 test("Error: unsupported value from an evaluated .yak.ts file explains supported types", async () => {
@@ -918,7 +918,7 @@ test("Error: unsupported value from an evaluated .yak.ts file explains supported
   Caused by: Unable to resolve "flag" in module "/foo/tokens.yak.ts"
   Caused by: \`flag\` evaluated to a value that cannot be inlined into CSS (got \`true\`).
   help: replace it with a string, number, or plain object/array of those
-  see:  https://yak.js.org/docs/migration-from-styled-components#move-some-code-to-yak-files`);
+  see:  https://yak.style/docs/migration-from-styled-components#move-some-code-to-yak-files`);
 });
 
 test("relative url() paths in a mixin from another directory point from the consuming file", async () => {

@@ -1,6 +1,6 @@
 # @yak/swc
 
-The Rust SWC plugin of [yak](https://yak.js.org/), the zero-runtime CSS-in-JS library. Both [@yak/react](https://www.npmjs.com/package/@yak/react) and [@yak/solid](https://www.npmjs.com/package/@yak/solid) use it to compile styled components to plain CSS at build time.
+The Rust SWC plugin of [yak](https://yak.style/), the zero-runtime CSS-in-JS library. Both [@yak/react](https://www.npmjs.com/package/@yak/react) and [@yak/solid](https://www.npmjs.com/package/@yak/solid) use it to compile styled components to plain CSS at build time.
 
 ![A yak Riding on a rusty SWC Rocket](https://github.com/user-attachments/assets/548ed098-fad3-4991-938d-e67607fb1851)
 
@@ -24,7 +24,7 @@ Make sure to install a version that is compatible with your project's @swc/core 
 
 ## Usage
 
-The yak bundler plugins for Next.js, Vite and Rsbuild set up this plugin for you. For details, see the [yak documentation](https://yak.js.org/).
+The yak bundler plugins for Next.js, Vite and Rsbuild set up this plugin for you. For details, see the [yak documentation](https://yak.style/).
 
 ## Contributing
 

@@ -1,6 +1,6 @@
 # @yak/eslint-plugin
 
-ESLint and Oxlint plugin for [yak](https://yak.js.org/), the build-time CSS-in-JS library for React (`@yak/react`) and Solid (`@yak/solid`).
+ESLint and Oxlint plugin for [yak](https://yak.style/), the build-time CSS-in-JS library for React (`@yak/react`) and Solid (`@yak/solid`).
 
 It helps you migrate from `styled-components` to yak and shows you the patterns that compile to the fastest CSS.
 

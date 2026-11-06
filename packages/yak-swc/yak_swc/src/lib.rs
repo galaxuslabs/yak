@@ -154,7 +154,7 @@ const GLOBAL_STYLE_DYNAMIC_VALUE_ERROR: &str = "\
 Dynamic values are not supported in global styles because there is no element to attach them to.\n\
 Declare a CSS custom property instead and toggle it via an attribute/class on the root element:\n\n\
 globalStyle`:root { --spacing: 4px; } :root[data-compact] { --spacing: 2px; }`\n\n\
-See https://yak.js.org/docs/features#globalstyle";
+See https://yak.style/docs/features#globalstyle";
 
 /// Emitted for a user-written `:global()` selector. yak writes plain CSS, so the
 /// wrapper has no effect and the browser would drop the whole rule.
