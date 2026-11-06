@@ -1,6 +1,6 @@
 {
   "name": "@yak/react",
-  "version": "10.0.0",
+  "version": "10.0.1",
   "description": "yak for React: vanilla CSS syntax in TypeScript with zero runtime. The styled-components API, compiled to plain CSS at build time. Works with Next.js, Vite, TanStack Start and Rsbuild.",
   "keywords": [
     "css",
@@ -119,7 +119,7 @@
   "dependencies": {
     "@babel/parser": "catalog:core",
     "@swc/core": "catalog:core",
-    "@yak/swc": "10.0.0"
+    "@yak/swc": "10.0.1"
   },
   "devDependencies": {
     "@rsbuild/core": "catalog:dev",

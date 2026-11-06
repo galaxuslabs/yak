@@ -1,5 +1,13 @@
 # @yak/solid
 
+## 0.4.1
+
+### Patch Changes
+
+- 57fc2df: The docs moved to [yak.style](https://yak.style). The package homepages, READMEs and error messages link to the new domain.
+- Updated dependencies [57fc2df]
+  - @yak/swc@10.0.1
+
 ## 0.4.0
 
 ### Minor Changes
