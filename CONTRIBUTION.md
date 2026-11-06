@@ -24,7 +24,7 @@ Thank you for your interest in contributing to next-yak! This document provides 
 
 Before you begin
 
-- Install [Node.js](https://nodejs.org/en) v22.18 or later (the `engines` field requires `>=22.18.0`)
+- Install [Node.js](https://nodejs.org/en) v22.18 or later on Node 22, or 23.6 or later (the `engines` field requires `^22.18.0 || >=23.6.0`)
 - Install [pnpm](https://pnpm.io/) v11.9.0 or later, pinned via the `packageManager` field (so `corepack enable` picks the right version)
 - Install [Rust](https://www.rust-lang.org/) toolchain <br />
   **⚠️ Important**<br />
