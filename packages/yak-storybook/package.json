@@ -1,6 +1,6 @@
 {
   "name": "@yak/storybook",
-  "version": "10.0.0",
+  "version": "10.0.1",
   "description": "Storybook addon for yak, the zero-runtime CSS-in-JS library. Supports the Vite and webpack builders.",
   "keywords": [
     "css-in-js",

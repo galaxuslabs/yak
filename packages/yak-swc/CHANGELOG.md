@@ -1,5 +1,11 @@
 # @yak/swc
 
+## 10.0.1
+
+### Patch Changes
+
+- 57fc2df: The docs moved to [yak.style](https://yak.style). The package homepages, READMEs and error messages link to the new domain.
+
 ## 10.0.0
 
 `yak-swc` is now `@yak/swc`. The [migration guide](https://yak.js.org/docs/migration-from-next-yak) covers the switch.
