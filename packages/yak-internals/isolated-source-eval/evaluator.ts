@@ -2,7 +2,6 @@ import { existsSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
-import { createLoaderDataUrl } from "./loader-hooks.ts";
 
 export type EvaluateResult =
   | { ok: true; value: Record<string, unknown>; dependencies: string[] }
@@ -68,20 +67,11 @@ function resolveWorkerPath(): string {
 /**
  * Boots a worker and returns a handle with a ready promise.
  *
- * The loader hook data URL is passed via `workerData` rather than having
- * the worker import it from a sibling module. This avoids a module
- * resolution mismatch: source files use `.ts` extensions (required by
- * Node strip-types) while compiled output uses `.js` (rewritten by tsc
- * via `rewriteRelativeImportExtensions`). Since the worker file would need
- * to import loader-hooks with the right extension for its context, passing
- * the data URL through workerData eliminates the problem entirely.
+ * The worker registers its own module hooks on startup, see worker.ts.
  */
 function bootWorker(): { worker: Worker; ready: Promise<void> } {
   const workerPath = resolveWorkerPath();
-  const loaderDataUrl = createLoaderDataUrl();
-  const worker = new Worker(workerPath, {
-    workerData: { loaderDataUrl },
-  });
+  const worker = new Worker(workerPath);
   const ready = new Promise<void>((resolve) => {
     const onMessage = (msg: { type: string }) => {
       if (msg.type === "ready") {
@@ -305,10 +295,9 @@ export async function createEvaluator(): Promise<Evaluator> {
   }
 
   /**
-   * Evaluations are serialized — one at a time per worker. This prevents
-   * interleaved dependency tracking: the loader hook accumulates deps in
-   * a single Set and flushes it after each evaluation. Concurrent imports
-   * would mix dependencies from different entry points.
+   * Evaluations run one at a time per worker. The worker collects the
+   * dependencies of one `import()` at a time: concurrent imports would mix
+   * the dependencies of different entry points.
    *
    * Waits for the primary worker to be ready before sending work. This
    * matters after a swap: the promoted shadow may still be booting.
