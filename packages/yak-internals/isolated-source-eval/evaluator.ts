@@ -238,12 +238,10 @@ export async function createEvaluator(): Promise<Evaluator> {
     const pending = currentEval;
     currentEval = null;
 
-    // Staleness check: if a file was invalidated while this evaluation was
-    // in-flight and the result depends on it, discard the result and retry
-    // on a clean worker. Only checked for successes — errors don't report
-    // deps, and the file watcher will trigger another invalidation when the
-    // source is fixed.
-    if (msg.ok && invalidatedDuringEval.size > 0) {
+    // A result, success or error, that depends on a file invalidated during
+    // the evaluation is stale: retry it on a clean worker, because the watcher
+    // has already fired for that edit
+    if (invalidatedDuringEval.size > 0) {
       const isStale = msg.dependencies.some((dep) => invalidatedDuringEval.has(dep));
       if (isStale) {
         if (pending.retryCount >= MAX_STALENESS_RETRIES) {
@@ -254,6 +252,8 @@ export async function createEvaluator(): Promise<Evaluator> {
               stack: "",
             },
           });
+          // Not cached, so the next evaluate() call of this path starts over
+          inflight.delete(pending.absolutePath);
           processQueue();
           return;
         }
