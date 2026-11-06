@@ -1,0 +1,95 @@
+name: Deploy docs to Vercel
+
+# Publishes the same static export as the GitHub Pages workflow to the Vercel docs project.
+# Run it by hand. The branch selected in the "Run workflow" dialog is the one that deploys.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+env:
+  DEPLOY_DIR: ${{ github.workspace }}/../vercel-docs
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install node_modules
+        run: pnpm install
+
+      - name: Add Rust wasm targets
+        run: rustup target add wasm32-wasip1 wasm32-unknown-unknown
+
+      - name: Enable caching
+        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
+        with:
+          workspaces: |
+            packages/yak-swc
+            docs/playground-wasm
+
+      - name: Build SWC plugin
+        run: pnpm run build:swc
+
+      - name: Build @yak/react
+        run: pnpm run build
+
+      # No base path, and the default site URL. Canonical links keep pointing to yak.js.org,
+      # so search engines do not index this copy as a second site.
+      - name: Build docs
+        run: pnpm --filter docs build
+
+      # The deploy directory is outside the checkout: Vercel rejects deployments from commit
+      # authors without a seat, and it reads the author from .git.
+      # The empty docs directory satisfies the Root Directory setting of the Vercel project.
+      # GitHub Pages serves /foo from foo.html. On Vercel, cleanUrls gives the same URLs.
+      - name: Prepare deploy directory
+        env:
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_DOCS_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+        run: |
+          mkdir -p "$DEPLOY_DIR/.vercel" "$DEPLOY_DIR/docs"
+          cp -R docs/out "$DEPLOY_DIR/public"
+          printf '{"cleanUrls":true}' > "$DEPLOY_DIR/vercel.json"
+          printf '{"projectId":"%s","orgId":"%s","settings":{"framework":null,"outputDirectory":"public"}}' \
+            "$VERCEL_PROJECT_ID" "$VERCEL_ORG_ID" > "$DEPLOY_DIR/.vercel/project.json"
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@59.11.2
+
+      # Packages the static files only. The project settings on Vercel have no effect.
+      - name: Build Vercel output
+        run: |
+          cd "$DEPLOY_DIR"
+          vercel build --prod --yes
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_DOCS_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          cd "$DEPLOY_DIR"
+          vercel deploy --prebuilt --prod | tee -a "$GITHUB_STEP_SUMMARY"
