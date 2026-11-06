@@ -35,7 +35,7 @@ yak runs in production at [Digitec Galaxus](https://www.galaxus.ch), the largest
 - **Small runtime**: it only swaps class names and CSS variables based on props
 - **Few dependencies**: [![direct dependencies of @yak/react](https://npmx.dev/api/registry/badge/dependencies/@yak/react)](https://npmx.dev/package/@yak/react), all of them build-time tools
 
-[Preview (Video)](https://github.com/galaxuslabs/yak/assets/4113649/f5a220fc-2a0f-46be-a8e7-c855f7faa337)
+<img src="readme-assets/dist/preview.svg" width="100%" alt="A styled Title with a hover color becomes a plain CSS rule at build time. In the browser, hovering the title changes its color with CSS only." />
 
 ## Getting Started
 
@@ -182,20 +182,20 @@ Dynamic Styles will only toggle the css class during runtime:
 import { styled, css } from "@yak/react";
 
 const ToggleButton = styled.button`
+  color: white;
+  padding: 10px 20px;
   ${(props) =>
     props.$active
       ? css`
           background-color: green;
         `
       : css`
-          background-color: lime;
+          background-color: dimgray;
         `};
-  color: white;
-  padding: 10px 20px;
 `;
 ```
 
-[Dynamic Styles (Video)](https://github.com/galaxuslabs/yak/assets/4113649/c5f52846-33e4-4058-9c78-efd98197d75f)
+<img src="readme-assets/dist/dynamic-styles.svg" width="100%" alt="At build time, each css branch of the ToggleButton becomes a class in a CSS file. In the browser, a click only switches the class name." />
 
 ### Dynamic Properties
 
@@ -226,7 +226,7 @@ const ExampleComponent = () => {
 };
 ```
 
-[Dynamic Props (video)](https://github.com/galaxuslabs/yak/assets/4113649/2fa78f82-382c-465f-b294-2504739ea168)
+<img src="readme-assets/dist/dynamic-props.svg" width="100%" alt="At build time, the ProgressBar width becomes a CSS variable. In the browser, a new percent value only changes that variable in the style attribute." />
 
 ### Targeting Components
 
@@ -264,7 +264,7 @@ const ExampleComponent = () => {
 
 yak supports CSS nesting out of the box.
 
-[Nesting Example (video)](https://github.com/galaxuslabs/yak/assets/4113649/33eeeb13-b0cf-499f-a1d3-ba6f51cf4308)
+<img src="readme-assets/dist/nesting.svg" width="100%" alt="A Button with a nested media query and a nested prop rule. yak keeps the nesting in the CSS file, and the browser applies the media query." />
 
 ## Performance
 
@@ -276,13 +276,13 @@ yak was validated across many thousands of real-world users at [Digitec Galaxus]
 
 Read more in the [Digitec Galaxus blog post](https://www.galaxus.ch/page/next-yak-innovation-made-in-zuerich-teil-2-37910).
 
-[![CSS Extract](https://raw.githubusercontent.com/galaxuslabs/yak/main/css-extract.gif)](https://raw.githubusercontent.com/galaxuslabs/yak/main/css-extract.gif)
+<img src="readme-assets/dist/css-loading.svg" width="100%" alt="Two page loads on a timeline. With runtime CSS-in-JS, the server renders CSS, sends it inline, and the browser rebuilds it. With yak, 103 Early Hints sends the stylesheet first, and these CSS steps go away." />
 
 ## How it works
 
 yak uses a Rust-based SWC plugin to extract CSS at build time. The extracted CSS is processed through the bundler's native CSS pipeline (PostCSS for webpack and Vite, Lightning CSS for Turbopack and Rsbuild), ensuring consistency between your CSS files and CSS-in-JS.
 
-[![Compile Flow](https://raw.githubusercontent.com/galaxuslabs/yak/main/compile-flow.webp)](https://raw.githubusercontent.com/galaxuslabs/yak/main/compile-flow.webp)
+<img src="readme-assets/dist/how-it-works.svg" width="100%" alt="The yak SWC plugin splits a styled Button into a component with a class name and a .yak.css file. The bundler then handles that CSS file with its own CSS pipeline." />
 
 ## Atomic CSS
 
@@ -336,7 +336,7 @@ const Container = styled.div`
 | Side effects   | ✅                          | 🚫                                      |
 | Yak Features   | All (`styled`, `css`, ...)  | 🚫                                      |
 
-[Build time constants (video)](https://github.com/galaxuslabs/yak/assets/4113649/2c83246c-a03b-4c57-8814-32a7248983ac)
+<img src="readme-assets/dist/build-time-constants.svg" width="100%" alt="At build time, yak runs constants.yak.ts, calculates the values and writes them into the CSS. The constants do not ship to the browser." />
 
 ## Yak shaving
 
