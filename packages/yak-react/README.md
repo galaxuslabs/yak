@@ -5,11 +5,11 @@
 [![@yak/react version](https://npmx.dev/api/registry/badge/version/@yak/react)](https://npmx.dev/package/@yak/react)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/galaxuslabs/yak/blob/main/LICENSE)
 
-**@yak/react** is [yak](https://yak.js.org/) for React: zero-runtime CSS-in-JS with styled-components syntax. A Rust SWC plugin compiles your styles to plain CSS files at build time, so it works with React Server Components and ships no styling runtime to the browser.
+**@yak/react** is [yak](https://yak.style/) for React: zero-runtime CSS-in-JS with styled-components syntax. A Rust SWC plugin compiles your styles to plain CSS files at build time, so it works with React Server Components and ships no styling runtime to the browser.
 
 Works with **Next.js** (webpack and Turbopack), **Vite** 7+ (including Vite 8 with Rolldown), **Rsbuild** 2+ and **Storybook**. Any Vite-based framework works too, including react-router and TanStack Start.
 
-> **Formerly next-yak.** Versions before 10 stay on npm as [`next-yak`](https://www.npmjs.com/package/next-yak). The [migration guide](https://yak.js.org/docs/migration-from-next-yak) covers the switch.
+> **Formerly next-yak.** Versions before 10 stay on npm as [`next-yak`](https://www.npmjs.com/package/next-yak). The [migration guide](https://yak.style/docs/migration-from-next-yak) covers the switch.
 
 yak runs in production at [Digitec Galaxus](https://www.galaxus.ch), the largest e-commerce platform in Switzerland, across thousands of styled components.
 
@@ -27,17 +27,17 @@ yak runs in production at [Digitec Galaxus](https://www.galaxus.ch), the largest
 
 ## Documentation
 
-Full documentation, guides, and a live playground are available at **[yak.js.org](https://yak.js.org/)**.
+Full documentation, guides, and a live playground are available at **[yak.style](https://yak.style/)**.
 
-- [Getting Started (Next.js)](https://yak.js.org/docs/getting-started)
-- [Vite Setup](https://yak.js.org/docs/vite)
-- [Rsbuild Setup](https://yak.js.org/docs/rsbuild)
-- [Storybook Setup](https://yak.js.org/docs/storybook)
-- [Migration from next-yak](https://yak.js.org/docs/migration-from-next-yak)
-- [Migration from styled-components](https://yak.js.org/docs/migration-from-styled-components)
-- [API reference](https://yak.js.org/docs/api)
-- [Features](https://yak.js.org/docs/features)
-- [Playground](https://yak.js.org/playground)
+- [Getting Started (Next.js)](https://yak.style/docs/getting-started)
+- [Vite Setup](https://yak.style/docs/vite)
+- [Rsbuild Setup](https://yak.style/docs/rsbuild)
+- [Storybook Setup](https://yak.style/docs/storybook)
+- [Migration from next-yak](https://yak.style/docs/migration-from-next-yak)
+- [Migration from styled-components](https://yak.style/docs/migration-from-styled-components)
+- [API reference](https://yak.style/docs/api)
+- [Features](https://yak.style/docs/features)
+- [Playground](https://yak.style/playground)
 
 ## Compatibility
 

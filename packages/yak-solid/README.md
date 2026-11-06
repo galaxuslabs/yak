@@ -1,6 +1,6 @@
 # @yak/solid
 
-Styled-components syntax for SolidJS, compiled away at build time. Your CSS is extracted by the [yak](https://yak.js.org/) SWC compiler and what's left at runtime is a thin layer that fits Solid's model: components run once, and dynamic styles are driven by signals, not re-renders.
+Styled-components syntax for SolidJS, compiled away at build time. Your CSS is extracted by the [yak](https://yak.style/) SWC compiler and what's left at runtime is a thin layer that fits Solid's model: components run once, and dynamic styles are driven by signals, not re-renders.
 
 > **Status: experimental.** `@yak/solid` targets Solid 2 (currently at RC) and tracks it closely. Expect breaking changes while Solid 2 stabilizes. Solid 1 is not supported.
 
@@ -144,4 +144,4 @@ Like `@yak/react`, the yak SWC compiler extracts your CSS at build time. At runt
 - `@solidjs/vite-plugin` >= 3.0.0-next (the Solid 2 line, npm tag `next`)
 - `@yak/swc` with yak-package auto-detection (bundled as a dependency, version released together with this package or newer)
 
-See the [Solid guide](https://yak.js.org/docs/solid) and the [`examples/vite-solid`](https://github.com/galaxuslabs/yak/tree/main/examples/vite-solid) app for a full setup.
+See the [Solid guide](https://yak.style/docs/solid) and the [`examples/vite-solid`](https://github.com/galaxuslabs/yak/tree/main/examples/vite-solid) app for a full setup.

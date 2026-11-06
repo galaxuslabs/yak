@@ -56,7 +56,7 @@ jobs:
       - name: Build @yak/react
         run: pnpm run build
 
-      # No base path, and the default site URL. Canonical links keep pointing to yak.js.org,
+      # No base path, and the default site URL. Canonical links keep pointing to yak.style,
       # so search engines do not index this copy as a second site.
       - name: Build docs
         run: pnpm --filter docs build
