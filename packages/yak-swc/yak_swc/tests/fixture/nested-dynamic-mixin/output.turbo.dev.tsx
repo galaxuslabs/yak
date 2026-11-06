@@ -1,4 +1,4 @@
-import { styled, css, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "data:text/css;base64,LmlucHV0X0NvbnRhaW5lckZsdWlkX203dUJCdSB7CiAgcG9zaXRpb246IHJlbGF0aXZlOwogIG1hcmdpbjogMCBhdXRvOwogIHBhZGRpbmctdG9wOiAyMHB4OwogIG1heC13aWR0aDogMTAwJTsKfQouaW5wdXRfQ29udGFpbmVyRmx1aWRfX1wkaXNBcHBfbTd1QkJ1IHsKICBtYXJnaW4tdG9wOiB1bnNldDsKfQouaW5wdXRfQ29udGFpbmVyRmx1aWRfX25vdF9cJGlzQXBwX203dUJCdSB7CiAgbWFyZ2luLXRvcDogcHg7Cn0KLmlucHV0X0NvbnRhaW5lckZsdWlkX203dUJCdSB7CiAgbWFyZ2luLXRvcDogdmFyKC0taW5wdXRfQ29udGFpbmVyRmx1aWRfX21hcmdpbi10b3BfbTd1QkJ1KTsKfQ==";
 // example taken from https://github.com/galaxuslabs/yak/issues/208 
@@ -21,7 +21,7 @@ const ContainerFluid = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ContainerFluid_m7uBBu", ({ $isApp, $pageHeaderHeight })=>$isApp ? /*#__PURE__*/ css("input_ContainerFluid__$isApp_m7uBBu") : /*#__PURE__*/ css("input_ContainerFluid__not_$isApp_m7uBBu"), {
     "style": {
-        "--input_ContainerFluid__margin-top_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $pageHeaderHeight })=>$pageHeaderHeight, "px")
+        "--input_ContainerFluid__margin-top_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $pageHeaderHeight })=>$pageHeaderHeight, "px")
     }
 }), {
     "displayName": "ContainerFluid"

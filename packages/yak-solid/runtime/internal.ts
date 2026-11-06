@@ -33,7 +33,7 @@ export { globalStyle } from "./globalStyle.js";
 export { useTheme, YakThemeProvider, YakThemeContext } from "@yak/solid/context";
 
 // runtime internals (helpers which get injected by the compiler)
-export { unitPostFix as __yak_unitPostFix } from "./internals/unitPostFix.js";
+export { cssValue as __yak_cssValue } from "./internals/cssValue.js";
 export { mergeCssProp as __yak_mergeCssProp } from "./internals/mergeCssProp.js";
 export { mergeClasses as __yak_mergeClassNames } from "./internals/mergeClasses.js";
 

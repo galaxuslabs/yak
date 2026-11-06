@@ -1,4 +1,4 @@
-import { styled, css, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 // example taken from https://github.com/galaxuslabs/yak/issues/208 
@@ -21,7 +21,7 @@ const ContainerFluid = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ContainerFluid_m7uBBu", ({ $isApp, $pageHeaderHeight })=>$isApp ? /*#__PURE__*/ css("input_ContainerFluid__$isApp_m7uBBu") : /*#__PURE__*/ css("input_ContainerFluid__not_$isApp_m7uBBu"), {
     "style": {
-        "--input_ContainerFluid__margin-top_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $pageHeaderHeight })=>$pageHeaderHeight, "px")
+        "--input_ContainerFluid__margin-top_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $pageHeaderHeight })=>$pageHeaderHeight, "px")
     }
 }), {
     "displayName": "ContainerFluid"

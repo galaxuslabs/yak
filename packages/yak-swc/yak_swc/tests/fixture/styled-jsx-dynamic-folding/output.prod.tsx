@@ -1,4 +1,4 @@
-import { css, styled, __yak_unitPostFix, __yak_mergeClassNames } from "@yak/react/internal";
+import { css, styled, __yak_mergeClassNames, __yak_cssValue } from "@yak/react/internal";
 import { ImportedCard } from "./imported-card";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
@@ -152,7 +152,7 @@ const NestedCssVariable = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuX", ({ $active, $size })=>$active && /*#__PURE__*/ css("ym7uBBuY", {
         "style": {
-            "--ym7uBBuZ": /*#__PURE__*/ __yak_unitPostFix(()=>$size, "px")
+            "--ym7uBBuZ": /*#__PURE__*/ __yak_cssValue(()=>$size, "px")
         }
     }));
 // usages bail: the $prop forwarding semantics depend on the wrapped component
