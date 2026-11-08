@@ -1,15 +1,6 @@
-use css_in_js_parser::{parse_css, CssError, Declaration, ParserState};
+use css_in_js_parser::{parse_css, CssError, ParsedCss, ParserState};
 use swc_core::common::{BytePos, Span};
 use swc_core::ecma::ast::TplElement;
-
-pub struct ParsedQuasi {
-  pub state: ParserState,
-  pub declarations: Vec<Declaration>,
-  /// Each error with its position in the source file
-  pub errors: Vec<(Span, CssError)>,
-  /// The byte position of an open `(` or `{` in the parsed css, see `source_position`
-  pub unclosed_bracket: Option<usize>,
-}
 
 /// Parses the css code of a template quasi
 ///
@@ -19,32 +10,17 @@ pub struct ParsedQuasi {
 ///
 /// The raw quasi escapes a backslash, so each `\\` becomes `\` before parsing
 /// e.g. styled.button`content: "\\2022"` -> `content: "\2022"`
-pub fn parse_quasi(
-  quasi: &TplElement,
-  css_code: &str,
-  start: usize,
-  state: Option<ParserState>,
-) -> ParsedQuasi {
-  let source = &css_code[start..];
-  let parsed = parse_css(&source.replace("\\\\", "\\"), state);
+pub fn parse_quasi(css_code: &str, start: usize, state: Option<ParserState>) -> ParsedCss {
+  parse_css(&css_code[start..].replace("\\\\", "\\"), state)
+}
 
-  let errors = parsed
-    .errors
-    .into_iter()
-    .map(|error| {
-      let range = error.range();
-      let lo = source_position(quasi, start, range.start);
-      let hi = source_position(quasi, start, range.end).max(lo + BytePos(1));
-      (Span::new(lo, hi), error)
-    })
-    .collect();
-
-  ParsedQuasi {
-    state: parsed.state,
-    declarations: parsed.declarations,
-    errors,
-    unclosed_bracket: parsed.unclosed_bracket,
-  }
+/// Maps an error of `parse_quasi` to its span in the source file
+/// `start` is the same as in `parse_quasi`
+pub fn css_error_span(quasi: &TplElement, start: usize, error: &CssError) -> Span {
+  let range = error.range();
+  let lo = source_position(quasi, start, range.start);
+  let hi = source_position(quasi, start, range.end).max(lo + BytePos(1));
+  Span::new(lo, hi)
 }
 
 /// Maps a byte offset in the parsed css of a quasi to its position in the source file
@@ -78,10 +54,12 @@ mod tests {
 
   /// The source text of each error span
   fn error_sources(raw: &str, css_code: &str, start: usize) -> Vec<String> {
-    parse_quasi(&quasi(raw), css_code, start, None)
+    let quasi = quasi(raw);
+    parse_quasi(css_code, start, None)
       .errors
       .iter()
-      .map(|(span, _)| raw[(span.lo.0 - 100) as usize..(span.hi.0 - 100) as usize].to_string())
+      .map(|error| css_error_span(&quasi, start, error))
+      .map(|span| raw[(span.lo.0 - 100) as usize..(span.hi.0 - 100) as usize].to_string())
       .collect()
   }
 

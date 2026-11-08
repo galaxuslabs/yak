@@ -23,7 +23,7 @@ use utils::css_value_call::css_value_call;
 use utils::css_variable_dedup::CssVariableDedup;
 use utils::fold::css_prop::HasCSSProp;
 use utils::fold::StyledFold;
-use utils::parse_quasi::{parse_quasi, source_position, ParsedQuasi};
+use utils::parse_quasi::{css_error_span, parse_quasi, source_position};
 
 mod variable_visitor;
 use variable_visitor::{ScopedVariableReference, VariableVisitor};
@@ -441,14 +441,15 @@ where
       };
       // The offset value is set by a previous expression when a unit is moved into a css variable
       // e.g. styled.button`left: ${({$x}) => $x}px;` -> `left: var(--left);`
-      let ParsedQuasi {
+      let ParsedCss {
         state: new_state,
         declarations: new_declarations,
         errors,
         unclosed_bracket,
-      } = parse_quasi(quasi, &css_code, css_code_offset, css_state);
+      } = parse_quasi(&css_code, css_code_offset, css_state);
       if !self.expanding_constant_mixin {
-        for (span, error) in errors {
+        for error in errors {
+          let span = css_error_span(quasi, css_code_offset, &error);
           let (span, message) = match error {
             CssError::UnexpectedClosingBrace { .. } => (span, UNEXPECTED_CLOSING_BRACE_ERROR),
             // The `{` follows a runtime value with only whitespace between them
