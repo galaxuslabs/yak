@@ -1,5 +1,5 @@
 ---
-"@yak/react": minor
+"@yak/swc": patch
 ---
 
 Report invalid CSS in yak templates as build errors that show the source line.
