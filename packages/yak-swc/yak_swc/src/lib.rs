@@ -521,15 +521,9 @@ where
         // e.g. styled.button`width: ${100 + 20}px;`
         if let Some(evaluated_math_calculation) = try_evaluate(expr, &self.variables) {
           // Format to 4 decimal places
-          let ParsedCss {
-            state: new_state,
-            declarations: new_declarations,
-            errors,
-            ..
-          } = parse_css(&format_number(evaluated_math_calculation), css_state);
-          debug_assert!(errors.is_empty());
-          css_state = Some(new_state);
-          self.current_declaration.extend(new_declarations);
+          let parsed = parse_css(&format_number(evaluated_math_calculation), css_state);
+          css_state = Some(parsed.state);
+          self.current_declaration.extend(parsed.declarations);
         }
         // Handle constants in css expressions
         // e.g. styled.button`color: ${primary};` (Ident)
@@ -537,15 +531,9 @@ where
         else if let Some(scoped_name) = extract_ident_and_parts(expr, true) {
           // Known StyledComponents, Mixin or Animations in the same file
           if let Some(referenced_yak_css) = self.variable_name_selector_mapping.get(&scoped_name) {
-            let ParsedCss {
-              state: new_state,
-              declarations: new_declarations,
-              errors,
-              ..
-            } = parse_css(referenced_yak_css, css_state);
-            debug_assert!(errors.is_empty());
-            css_state = Some(new_state);
-            self.current_declaration.extend(new_declarations);
+            let parsed = parse_css(referenced_yak_css, css_state);
+            css_state = Some(parsed.state);
+            self.current_declaration.extend(parsed.declarations);
           }
           // Cross-file references
           // e.g.:
@@ -580,14 +568,7 @@ where
               import_kind.encode_module_import(import_type, scoped_name.parts);
 
             // TODO Track Dynamic Mixins as runtime dependency to pass props: `runtime_expressions.push(*expr.clone());`
-            let ParsedCss {
-              state: new_state,
-              errors,
-              declarations: _,
-              ..
-            } = parse_css(&cross_file_import_token, css_state);
-            debug_assert!(errors.is_empty());
-            css_state = Some(new_state);
+            css_state = Some(parse_css(&cross_file_import_token, css_state).state);
           }
           // Constants
           else if let Some(value) = self.variables.get_const_value(&scoped_name) {
@@ -654,14 +635,7 @@ where
                 self
                   .variable_name_selector_mapping
                   .insert(scoped_name.clone(), keyframe_name.clone());
-                let ParsedCss {
-                  state: new_state,
-                  errors,
-                  declarations: _,
-                  ..
-                } = parse_css(&keyframe_name, css_state);
-                debug_assert!(errors.is_empty());
-                css_state = Some(new_state);
+                css_state = Some(parse_css(&keyframe_name, css_state).state);
               } else {
                 HANDLER.with(|handler| {
                   handler
@@ -896,14 +870,7 @@ ${{() => {var}}};\n",
               runtime_css_variables.insert(format!("--{}", name), css_variable_runtime_expr);
               name
             });
-            let ParsedCss {
-              state: new_state,
-              errors,
-              declarations: _,
-              ..
-            } = parse_css(&format!("var(--{})", css_variable_name), css_state);
-            debug_assert!(errors.is_empty());
-            css_state = Some(new_state);
+            css_state = Some(parse_css(&format!("var(--{})", css_variable_name), css_state).state);
           }
 
           let was_inside_runtime_expression = self.inside_runtime_expression;

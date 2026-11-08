@@ -124,18 +124,13 @@ fn get_non_nestable_declarations(declaration: &Declaration) -> Option<CssScope> 
 #[cfg(test)]
 mod tests {
   use super::*;
+  use crate::parse_css;
   use crate::ScopeType;
-  use crate::{parse_css, ParsedCss};
   use insta::assert_snapshot;
 
   #[test]
   fn test_parse_css_incomplete_css_1() {
-    let ParsedCss {
-      state: _,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (_, declarations) = parse_css(
       r#"
             .foo {
                     .fancy {
@@ -143,19 +138,14 @@ mod tests {
                             color: blue;
         "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_snapshot!(to_css(&declarations));
   }
 
   #[test]
   fn test_parse_css_combine_two_independent_css_chunks() {
-    let ParsedCss {
-      state: _,
-      declarations: declarations1,
-      errors,
-      ..
-    } = parse_css(
+    let (_, declarations1) = parse_css(
       r#"
             .foo {
                     .fancy {
@@ -163,14 +153,9 @@ mod tests {
                             color: blue;
         "#,
       None,
-    );
-    assert!(errors.is_empty());
-    let ParsedCss {
-      state: _,
-      declarations: declarations2,
-      errors,
-      ..
-    } = parse_css(
+    )
+    .expect_valid();
+    let (_, declarations2) = parse_css(
       r#"
           .foo {
                   .fancy {
@@ -178,20 +163,15 @@ mod tests {
                           background: red;
       "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     let combined_declarations: Vec<_> = declarations1.into_iter().chain(declarations2).collect();
     assert_snapshot!(to_css(&combined_declarations));
   }
 
   #[test]
   fn test_parse_css_merge_two_css_chunks() {
-    let ParsedCss {
-      state: state1,
-      declarations: declarations1,
-      errors,
-      ..
-    } = parse_css(
+    let (state1, declarations1) = parse_css(
       r#"
       .foo {
               .fancy {
@@ -199,22 +179,17 @@ mod tests {
                       color: blue;
     "#,
       None,
-    );
-    assert!(errors.is_empty());
-    let ParsedCss {
-      state: _,
-      declarations: declarations2,
-      errors,
-      ..
-    } = parse_css(
+    )
+    .expect_valid();
+    let (_, declarations2) = parse_css(
       r#"
       }
         &:hover {
           color: orange;
     "#,
       Some(state1),
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     let combined_declarations: Vec<_> = declarations1.into_iter().chain(declarations2).collect();
     assert_eq!(
       to_css(&combined_declarations),
@@ -232,31 +207,21 @@ mod tests {
 
   #[test]
   fn test_parse_css_merge_two_css_chunks2() {
-    let ParsedCss {
-      state: state1,
-      declarations: declarations1,
-      errors,
-      ..
-    } = parse_css(
+    let (state1, declarations1) = parse_css(
       r#"
       .foo
     "#,
       None,
-    );
-    assert!(errors.is_empty());
-    let ParsedCss {
-      state: _,
-      declarations: declarations2,
-      errors,
-      ..
-    } = parse_css(
+    )
+    .expect_valid();
+    let (_, declarations2) = parse_css(
       r#"
         {
           color: orange;
     "#,
       Some(state1),
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     let combined_declarations: Vec<_> = declarations1.into_iter().chain(declarations2).collect();
     assert_eq!(
       to_css(&combined_declarations),
@@ -269,12 +234,7 @@ mod tests {
 
   #[test]
   fn test_parse_css_merge_two_css_chunks_and_inject_a_scope() {
-    let ParsedCss {
-      state: state1,
-      declarations: declarations1,
-      errors,
-      ..
-    } = parse_css(
+    let (state1, declarations1) = parse_css(
       r#"
       .foo {
               .fancy {
@@ -282,22 +242,17 @@ mod tests {
                       color: blue;
     "#,
       None,
-    );
-    assert!(errors.is_empty());
-    let ParsedCss {
-      state: _,
-      declarations: mut declarations2,
-      errors,
-      ..
-    } = parse_css(
+    )
+    .expect_valid();
+    let (_, mut declarations2) = parse_css(
       r#"
       }
         &:hover {
           color: orange;
     "#,
       Some(state1),
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     declarations2[0].scope.insert(
       0,
       CssScope {
@@ -311,51 +266,36 @@ mod tests {
 
   #[test]
   fn test_handles_escapes_correctly() {
-    let ParsedCss {
-      state: _,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (_, declarations) = parse_css(
       r#"
             .foo {
               content: "line1\\\nline2";
             }
         "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_snapshot!(to_css(&declarations));
   }
 
   #[test]
   fn test_parse_css_merge_two_css_with_comments() {
-    let ParsedCss {
-      state: state1,
-      declarations: declarations1,
-      errors,
-      ..
-    } = parse_css(
+    let (state1, declarations1) = parse_css(
       r#"
         .foo {
         /* comment
       "#,
       None,
-    );
-    assert!(errors.is_empty());
-    let ParsedCss {
-      state: _,
-      declarations: declarations2,
-      errors,
-      ..
-    } = parse_css(
+    )
+    .expect_valid();
+    let (_, declarations2) = parse_css(
       r#"
           bar {*/
             color: orange;
       "#,
       Some(state1),
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     let combined_declarations: Vec<_> = declarations1.into_iter().chain(declarations2).collect();
     assert_eq!(
       to_css(&combined_declarations),
@@ -369,12 +309,7 @@ mod tests {
   #[test]
   fn test_property_at_rule_hoisting() {
     // Initial CSS with @property nested inside selectors (invalid CSS)
-    let ParsedCss {
-      state: _,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (_, declarations) = parse_css(
       r#"
         .foo {
             .fancy {
@@ -390,8 +325,8 @@ mod tests {
         }
         "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     // The result should show @property at the top level, not nested inside selectors
     assert_eq!(
       to_css(&declarations),

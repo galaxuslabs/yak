@@ -116,6 +116,15 @@ pub struct ParsedCss {
   pub unclosed_bracket: Option<usize>,
 }
 
+#[cfg(test)]
+impl ParsedCss {
+  /// Fails the test if the css has errors
+  pub(crate) fn expect_valid(self) -> (ParserState, Vec<Declaration>) {
+    assert!(self.errors.is_empty(), "{:?}", self.errors);
+    (self.state, self.declarations)
+  }
+}
+
 /// All offsets are byte positions in the css string of the `parse_css` call
 #[derive(Debug, Clone, PartialEq)]
 pub enum CssError {
@@ -494,12 +503,7 @@ mod tests {
 
   #[test]
   fn test_parse_css_incomplete_css_1() {
-    let ParsedCss {
-      state,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state, declarations) = parse_css(
       r#"
         .foo {
                 .fancy {
@@ -507,95 +511,70 @@ mod tests {
                         color: blue;
     "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
   #[test]
   fn test_parse_css_incomplete_css_1_ending_inside_a_comment() {
-    let ParsedCss {
-      state,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state, declarations) = parse_css(
       r#"
         .foo {
                 .fancy {
                         /* hello .world { color: red; }
     "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
   #[test]
   fn test_parse_css_incomplete_css_1_ending_inside_a_string() {
-    let ParsedCss {
-      state,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state, declarations) = parse_css(
       r#"
         .foo {
                 .fancy {
                         background: url('https://example.com
     "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
   #[test]
   fn test_parse_css_incomplete_css_1_ending_inside_a_double_quote_string() {
-    let ParsedCss {
-      state,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state, declarations) = parse_css(
       r#"
         .foo {
                 .fancy {
                         background: url("https://example.com
     "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
   #[test]
   fn test_parse_css_incomplete_css_1_ending_inside_parens_string() {
-    let ParsedCss {
-      state,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state, declarations) = parse_css(
       r#"
         .foo {
                 .fancy {
                         background: url(https://example.com
     "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
   #[test]
   fn test_parse_css_incomplete_css_1_ending_outside_a_comment() {
-    let ParsedCss {
-      state,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state, declarations) = parse_css(
       r#"
         .foo {
                 .fancy section {
@@ -603,19 +582,14 @@ mod tests {
                         color: blue
     "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
   #[test]
   fn test_parse_css_incomplete_css_1_with_media_rule() {
-    let ParsedCss {
-      state,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state, declarations) = parse_css(
       r#"
                 .foo {
                                 .fancy {
@@ -629,19 +603,14 @@ mod tests {
 
         "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
   #[test]
   fn test_parse_css_complete_css_with_media_rule() {
-    let ParsedCss {
-      state,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state, declarations) = parse_css(
       r#"
     .foo {
       .fancy {
@@ -660,56 +629,41 @@ mod tests {
     }
   "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
   #[test]
   fn test_parse_css_incomplete_css_ending_without_semicolon() {
-    let ParsedCss {
-      state,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state, declarations) = parse_css(
       r#"
         .foo {
           color: orange
     "#,
       None,
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
   #[test]
   fn test_parse_css_resume_incomplete_css_ending_without_semicolon() {
-    let ParsedCss {
-      state: state1,
-      declarations,
-      errors,
-      ..
-    } = parse_css(
+    let (state1, declarations) = parse_css(
       r#"
         .foo {
           color: orange
     "#,
       None,
-    );
-    assert!(errors.is_empty());
-    let ParsedCss {
-      state: state2,
-      declarations: declarations2,
-      errors,
-      ..
-    } = parse_css(
+    )
+    .expect_valid();
+    let (state2, declarations2) = parse_css(
       r#"
         ;
     "#,
       Some(state1.clone()),
-    );
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
     let all_declarations = declarations
       .into_iter()
       .chain(declarations2)
@@ -738,32 +692,16 @@ mod tests {
 
   #[test]
   fn test_parse_css_with_dynamic_values() {
-    let ParsedCss {
-      state: state1,
-      declarations: _,
-      errors,
-      ..
-    } = parse_css(
+    let (state1, _) = parse_css(
       r#"
           .foo {
               transform: translate(-50%, -50%) rotate("#,
       None,
-    );
-    assert!(errors.is_empty());
-    let ParsedCss {
-      state: state2,
-      declarations: _,
-      errors,
-      ..
-    } = parse_css(r#"20deg) translate(0, -88px) rotate("#, Some(state1));
-    assert!(errors.is_empty());
-    let ParsedCss {
-      state: _,
-      declarations: declarations3,
-      errors,
-      ..
-    } = parse_css(r#"90deg);"#, Some(state2));
-    assert!(errors.is_empty());
+    )
+    .expect_valid();
+    let (state2, _) =
+      parse_css(r#"20deg) translate(0, -88px) rotate("#, Some(state1)).expect_valid();
+    let (_, declarations3) = parse_css(r#"90deg);"#, Some(state2)).expect_valid();
     assert_eq!(declarations3.len(), 1);
     assert_eq!(
       declarations3[0].value.trim(),
