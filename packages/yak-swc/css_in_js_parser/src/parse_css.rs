@@ -218,25 +218,24 @@ pub fn parse_css(css_string: &str, initial_state: Option<ParserState>) -> Parsed
     match state.current_comment_state {
       // Parse until the end of the current multi line comment is reached
       CommentStateType::MultiLine => {
-        // The search is bytewise, as no byte of a multi-byte char matches an ASCII char
-        while position < bytes.len() {
-          if bytes[position] == b'*' && bytes.get(position + 1) == Some(&b'/') {
+        match css_to_parse[position..].find("*/") {
+          Some(end) => {
             state.current_comment_state = CommentStateType::None;
-            position += 2;
-            break;
+            position += end + 2;
           }
-          position += 1;
+          None => position = css_to_parse.len(),
         }
         continue;
       }
       // Parse until the end of the current multi line comment is reached
       CommentStateType::SingleLine => {
-        while position < bytes.len() {
-          if bytes[position] == b'\n' {
+        // The `\n` is parsed as normal css
+        match css_to_parse[position..].find('\n') {
+          Some(end) => {
             state.current_comment_state = CommentStateType::None;
-            break;
+            position += end;
           }
-          position += 1;
+          None => position = css_to_parse.len(),
         }
         continue;
       }
@@ -279,15 +278,14 @@ pub fn parse_css(css_string: &str, initial_state: Option<ParserState>) -> Parsed
     // e.g. --foo: { color: red };
     // A `{` after other value text opens a scope
     // e.g. --foo: red .bar { color: blue; }
-    let is_custom_property_brace = state.is_inside_string.is_none()
+    let is_custom_property_brace = match current_character {
+      '{' => state.brace_depth > 0 || state.current_declaration.value.is_empty(),
+      '}' => state.brace_depth > 0,
+      _ => false,
+    } && state.is_inside_string.is_none()
       && state.paren_depth == 0
       && state.is_inside_property_value
-      && state.current_declaration.property.starts_with("--")
-      && match current_character {
-        '{' => state.brace_depth > 0 || state.current_declaration.value.is_empty(),
-        '}' => state.brace_depth > 0,
-        _ => false,
-      };
+      && state.current_declaration.property.starts_with("--");
     if is_custom_property_brace {
       if current_character == '{' {
         state.brace_depth += 1;
