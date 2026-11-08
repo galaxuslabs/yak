@@ -276,7 +276,7 @@ yak was validated across many thousands of real-world users at [Digitec Galaxus]
 
 Read more in the [Digitec Galaxus blog post](https://www.galaxus.ch/page/next-yak-innovation-made-in-zuerich-teil-2-37910).
 
-<img src="https://raw.githubusercontent.com/galaxuslabs/yak/main/readme-assets/dist/css-loading.svg" width="100%" alt="Two page loads on a timeline. With runtime CSS-in-JS, the server renders CSS, sends it inline, and the browser rebuilds it. With yak, 103 Early Hints sends the stylesheet first, and these CSS steps go away." />
+<img src="https://raw.githubusercontent.com/galaxuslabs/yak/main/readme-assets/dist/css-loading.svg" width="100%" alt="One page load on a timeline. With runtime CSS-in-JS, the page gets its styles only after the runtime rebuilds the CSS. With yak, 103 Early Hints sends the stylesheet first, the CSS steps go away, and the page gets its styles earlier." />
 
 ## How it works
 
