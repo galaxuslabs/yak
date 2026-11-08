@@ -287,7 +287,7 @@ where
   emit_css_comments: bool,
   /// True while a constant mixin is expanded into the literal which uses it
   /// e.g. ${highlight} in styled.button`&:hover { ${highlight}; }`
-  /// The declaration of the mixin reports its css errors, so the copy does not
+  /// Suppresses css errors, as the copy would report errors of the parent literal inside the mixin
   expanding_constant_mixin: bool,
 }
 
