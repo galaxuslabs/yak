@@ -263,8 +263,7 @@ impl YakTransform for TransformCssMixin {
         comment_prefix,
         declarations: declarations.to_vec().move_map(|mut declaration| {
           // TODO: Fix nested mixins
-          // The scope is never empty, the check only prevents a panic
-          if !self.is_within_jsx_attribute && !declaration.scope.is_empty() {
+          if !self.is_within_jsx_attribute {
             declaration.scope.remove(0);
           }
           declaration

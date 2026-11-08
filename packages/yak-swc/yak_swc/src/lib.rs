@@ -450,20 +450,19 @@ where
       if !self.expanding_constant_mixin {
         for error in errors {
           let span = css_error_span(quasi, css_code_offset, &error);
-          let (span, message) = match error {
-            CssError::UnexpectedClosingBrace { .. } => (span, UNEXPECTED_CLOSING_BRACE_ERROR),
+          let (span, message) = match (&error, previous_runtime_span) {
+            (CssError::UnexpectedClosingBrace { .. }, _) => (span, UNEXPECTED_CLOSING_BRACE_ERROR),
             // The `{` follows a runtime value with only whitespace between them
             // e.g. styled.div`${media.up("md")} { color: red; }`
-            CssError::EmptySelector { .. }
-              if previous_runtime_span.is_some()
-                && quasi.raw[..(span.lo - quasi.span.lo).0 as usize]
-                  .trim()
-                  .is_empty() =>
+            (CssError::EmptySelector { offset }, Some(runtime_span))
+              if css_code[css_code_offset..]
+                .get(..*offset)
+                .is_some_and(|code| code.trim().is_empty()) =>
             {
-              (previous_runtime_span.unwrap(), DYNAMIC_BLOCK_ERROR)
+              (runtime_span, DYNAMIC_BLOCK_ERROR)
             }
-            CssError::EmptySelector { .. } => (span, EMPTY_SELECTOR_ERROR),
-            CssError::MissingColon { .. } => (span, MISSING_COLON_ERROR),
+            (CssError::EmptySelector { .. }, _) => (span, EMPTY_SELECTOR_ERROR),
+            (CssError::MissingColon { .. }, _) => (span, MISSING_COLON_ERROR),
           };
           HANDLER.with(|handler| {
             handler.struct_span_err(span, message).emit();
