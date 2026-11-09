@@ -1,13 +1,13 @@
-import { styled, css, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 const buttonStyles = /*#__PURE__*/ css(({ $active })=>$active && /*#__PURE__*/ css("input_buttonStyles__$active_m7uBBu", {
         "style": {
-            "--input_buttonStyles__max-width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $letters })=>$letters * 15, "px")
+            "--input_buttonStyles__max-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 15, "px")
         }
     }), {
     "style": {
-        "--input_buttonStyles__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $letters })=>$letters * 10, "px")
+        "--input_buttonStyles__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 10, "px")
     }
 });
 export const ThemedButton = /*YAK EXPORTED STYLED:ThemedButton:input_ThemedButton_m7uBBu*//*YAK Extracted CSS:
@@ -28,11 +28,11 @@ export const ThemedButton = /*YAK EXPORTED STYLED:ThemedButton:input_ThemedButto
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ThemedButton_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_ThemedButton__$active_m7uBBu", {
         "style": {
-            "--input_ThemedButton__max-width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $letters })=>$letters * 15, "px")
+            "--input_ThemedButton__max-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 15, "px")
         }
     }), {
     "style": {
-        "--input_ThemedButton__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $letters })=>$letters * 10, "px")
+        "--input_ThemedButton__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 10, "px")
     }
 }), {
     "displayName": "ThemedButton"
@@ -62,11 +62,11 @@ export const CustomThemedButton = /*YAK EXPORTED STYLED:CustomThemedButton:input
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_CustomThemedButton_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_CustomThemedButton__$active_m7uBBu", {
         "style": {
-            "--input_CustomThemedButton__max-width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $letters })=>$letters * 15, "px")
+            "--input_CustomThemedButton__max-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 15, "px")
         }
     }), {
     "style": {
-        "--input_CustomThemedButton__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $letters })=>$letters * 10, "px")
+        "--input_CustomThemedButton__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 10, "px")
     }
 }), {
     "displayName": "CustomThemedButton"

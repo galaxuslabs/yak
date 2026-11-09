@@ -1,4 +1,4 @@
-import { styled, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "data:text/css;base64,LmlucHV0X1R3aWNlU2FtZUFycm93X203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfVHdpY2VTYW1lQXJyb3dfX2xlZnRfbTd1QkJ1KTsKICByaWdodDogdmFyKC0taW5wdXRfVHdpY2VTYW1lQXJyb3dfX2xlZnRfbTd1QkJ1KTsKfS5pbnB1dF9UeXBlZFZzVW50eXBlZF9tN3VCQnUgewogIHRvcDogdmFyKC0taW5wdXRfVHlwZWRWc1VudHlwZWRfX3RvcF9tN3VCQnUpOwogIGJvdHRvbTogdmFyKC0taW5wdXRfVHlwZWRWc1VudHlwZWRfX3RvcF9tN3VCQnUpOwp9LmlucHV0X1dpdGhDYWxjdWxhdGlvbl9tN3VCQnUgewogIHdpZHRoOiB2YXIoLS1pbnB1dF9XaXRoQ2FsY3VsYXRpb25fX3dpZHRoX203dUJCdSk7CiAgbWF4LXdpZHRoOiB2YXIoLS1pbnB1dF9XaXRoQ2FsY3VsYXRpb25fX3dpZHRoX203dUJCdSk7Cn0uaW5wdXRfRGlmZmVyZW50VW5pdHNfbTd1QkJ1IHsKICB3aWR0aDogdmFyKC0taW5wdXRfRGlmZmVyZW50VW5pdHNfX3dpZHRoX203dUJCdSk7CiAgaGVpZ2h0OiB2YXIoLS1pbnB1dF9EaWZmZXJlbnRVbml0c19faGVpZ2h0X203dUJCdSk7Cn0uaW5wdXRfUGFyZW5zX203dUJCdSB7CiAgbWFyZ2luLWxlZnQ6IHZhcigtLWlucHV0X1BhcmVuc19fbWFyZ2luLWxlZnRfbTd1QkJ1KTsKICBtYXJnaW4tcmlnaHQ6IHZhcigtLWlucHV0X1BhcmVuc19fbWFyZ2luLWxlZnRfbTd1QkJ1KTsKfS5pbnB1dF9EaWZmZXJlbnRQcm9wc19tN3VCQnUgewogIHBhZGRpbmctbGVmdDogdmFyKC0taW5wdXRfRGlmZmVyZW50UHJvcHNfX3BhZGRpbmctbGVmdF9tN3VCQnUpOwogIHBhZGRpbmctcmlnaHQ6IHZhcigtLWlucHV0X0RpZmZlcmVudFByb3BzX19wYWRkaW5nLXJpZ2h0X203dUJCdSk7Cn0uaW5wdXRfRGVzdHJ1Y3R1cmVPcmRlcl9tN3VCQnUgewogIHdpZHRoOiB2YXIoLS1pbnB1dF9EZXN0cnVjdHVyZU9yZGVyX193aWR0aF9tN3VCQnUpOwogIGhlaWdodDogdmFyKC0taW5wdXRfRGVzdHJ1Y3R1cmVPcmRlcl9fd2lkdGhfbTd1QkJ1KTsKfS5pbnB1dF9EZWZhdWx0UmVmZXJlbmNlc1NpYmxpbmdfbTd1QkJ1IHsKICBtaW4td2lkdGg6IHZhcigtLWlucHV0X0RlZmF1bHRSZWZlcmVuY2VzU2libGluZ19fbWluLXdpZHRoX203dUJCdSk7CiAgbWluLWhlaWdodDogdmFyKC0taW5wdXRfRGVmYXVsdFJlZmVyZW5jZXNTaWJsaW5nX19taW4taGVpZ2h0X203dUJCdSk7Cn0uaW5wdXRfRG90X203dUJCdSB7CiAgYW5pbWF0aW9uLXJhbmdlOiBtYXgoMCUsIGNhbGMoKHZhcigtLWlucHV0X0RvdF9fYW5pbWF0aW9uLXJhbmdlX203dUJCdSkgLSAxKSAqIDEwMCUgLyAodmFyKC0taW5wdXRfRG90X19hbmltYXRpb24tcmFuZ2VfbTd1QkJ1LTAxKSAtIDEpKSkKbWluKDEwMCUsIGNhbGMoKHZhcigtLWlucHV0X0RvdF9fYW5pbWF0aW9uLXJhbmdlX203dUJCdSkgKyAxKSAqIDEwMCUgLyAodmFyKC0taW5wdXRfRG90X19hbmltYXRpb24tcmFuZ2VfbTd1QkJ1LTAxKSAtIDEpKSk7Cn0uaW5wdXRfTmVzdGVkX203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfTmVzdGVkX19sZWZ0X203dUJCdSk7CiAgcmlnaHQ6IHZhcigtLWlucHV0X05lc3RlZF9fcmlnaHRfbTd1QkJ1KTsKICBAbWVkaWEgKG1pbi13aWR0aDogNzY4cHgpIHsKICAgIGxlZnQ6IDA7CiAgICByaWdodDogMDsKICB9CiAgQG1lZGlhIChtaW4td2lkdGg6IDEwMjVweCkgewogICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUodmFyKC0taW5wdXRfTmVzdGVkX19sZWZ0X203dUJCdSksIHZhcigtLWlucHV0X05lc3RlZF9fcmlnaHRfbTd1QkJ1KSk7CiAgfQp9";
 // Identical prop arrow used in two declarations
@@ -9,7 +9,7 @@ const TwiceSameArrow = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_TwiceSameArrow_m7uBBu", {
     "style": {
-        "--input_TwiceSameArrow__left_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $x })=>$x, "px")
+        "--input_TwiceSameArrow__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>$x, "px")
     }
 }), {
     "displayName": "TwiceSameArrow"
@@ -22,7 +22,7 @@ const TypedVsUntyped = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_TypedVsUntyped_m7uBBu", {
     "style": {
-        "--input_TypedVsUntyped__top_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $y })=>$y, "px")
+        "--input_TypedVsUntyped__top_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $y })=>$y, "px")
     }
 }), {
     "displayName": "TypedVsUntyped"
@@ -35,7 +35,7 @@ const WithCalculation = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_WithCalculation_m7uBBu", {
     "style": {
-        "--input_WithCalculation__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $ratio })=>Math.min($ratio * 100, 100), "%")
+        "--input_WithCalculation__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $ratio })=>Math.min($ratio * 100, 100), "%")
     }
 }), {
     "displayName": "WithCalculation"
@@ -48,8 +48,8 @@ const DifferentUnits = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DifferentUnits_m7uBBu", {
     "style": {
-        "--input_DifferentUnits__height_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $size })=>$size, "rem"),
-        "--input_DifferentUnits__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $size })=>$size, "px")
+        "--input_DifferentUnits__height_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $size })=>$size, "rem"),
+        "--input_DifferentUnits__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $size })=>$size, "px")
     }
 }), {
     "displayName": "DifferentUnits"
@@ -62,7 +62,7 @@ const Parens = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Parens_m7uBBu", {
     "style": {
-        "--input_Parens__margin-left_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $z })=>$z, "px")
+        "--input_Parens__margin-left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $z })=>$z, "px")
     }
 }), {
     "displayName": "Parens"
@@ -75,8 +75,8 @@ const DifferentProps = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DifferentProps_m7uBBu", {
     "style": {
-        "--input_DifferentProps__padding-left_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $a })=>$a, "px"),
-        "--input_DifferentProps__padding-right_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $b })=>$b, "px")
+        "--input_DifferentProps__padding-left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a })=>$a, "px"),
+        "--input_DifferentProps__padding-right_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $b })=>$b, "px")
     }
 }), {
     "displayName": "DifferentProps"
@@ -89,7 +89,7 @@ const DestructureOrder = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DestructureOrder_m7uBBu", {
     "style": {
-        "--input_DestructureOrder__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $a, $b })=>$a * $b, "px")
+        "--input_DestructureOrder__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b })=>$a * $b, "px")
     }
 }), {
     "displayName": "DestructureOrder"
@@ -102,8 +102,8 @@ const DefaultReferencesSibling = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultReferencesSibling_m7uBBu", {
     "style": {
-        "--input_DefaultReferencesSibling__min-height_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $b = 1, $a })=>$a * $b, "px"),
-        "--input_DefaultReferencesSibling__min-width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $a, $b = $a })=>$a * $b, "px")
+        "--input_DefaultReferencesSibling__min-height_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $b = 1, $a })=>$a * $b, "px"),
+        "--input_DefaultReferencesSibling__min-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b = $a })=>$a * $b, "px")
     }
 }), {
     "displayName": "DefaultReferencesSibling"
@@ -136,10 +136,10 @@ const Nested = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Nested_m7uBBu", {
     "style": {
-        "--input_Nested__left_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $x })=>{
+        "--input_Nested__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
             return $x;
         }, "px"),
-        "--input_Nested__right_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $y })=>$y, "px")
+        "--input_Nested__right_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $y })=>$y, "px")
     }
 }), {
     "displayName": "Nested"

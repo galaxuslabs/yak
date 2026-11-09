@@ -1,4 +1,4 @@
-import { styled, css, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 export const Card = /*YAK EXPORTED STYLED:Card:input_Card_m7uBBu*//*YAK Extracted CSS:
@@ -14,8 +14,8 @@ translate(0, -88px) rotate(var(--input_Card__transform_m7uBBu-01));
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Card_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_Card__$active_m7uBBu"), {
     "style": {
-        "--input_Card__transform_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ index })=>index * 30, "deg"),
-        "--input_Card__transform_m7uBBu-01": /*#__PURE__*/ __yak_unitPostFix(({ index })=>-index * 30, "deg")
+        "--input_Card__transform_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ index })=>index * 30, "deg"),
+        "--input_Card__transform_m7uBBu-01": /*#__PURE__*/ __yak_cssValue(({ index })=>-index * 30, "deg")
     }
 }), {
     "displayName": "Card"

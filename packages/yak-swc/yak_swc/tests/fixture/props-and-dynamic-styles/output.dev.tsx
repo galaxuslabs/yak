@@ -1,4 +1,4 @@
-import { styled, css, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:input_FlexContainer_m7uBBu*//*YAK Extracted CSS:
@@ -17,15 +17,15 @@ export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:input_FlexConta
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FlexContainer_m7uBBu", ({ $bottom })=>/*#__PURE__*/ css("input_FlexContainer___m7uBBu", {
         "style": {
-            "--input_FlexContainer__bottom_m7uBBu": /*#__PURE__*/ __yak_unitPostFix($bottom * 20, "%")
+            "--input_FlexContainer__bottom_m7uBBu": /*#__PURE__*/ __yak_cssValue($bottom * 20, "%")
         }
     }), {
     "style": {
         "--input_FlexContainer__align-items_m7uBBu": ({ $align })=>$align || 'stretch',
         "--input_FlexContainer__flex-direction_m7uBBu": ({ $direction })=>$direction || 'row',
         "--input_FlexContainer__justify-content_m7uBBu": ({ $justify })=>$justify || 'flex-start',
-        "--input_FlexContainer__margin-bottom_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $marginBottom })=>$marginBottom || '0', "px"),
-        "--input_FlexContainer__top_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $top })=>$top * 20, "%")
+        "--input_FlexContainer__margin-bottom_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $marginBottom })=>$marginBottom || '0', "px"),
+        "--input_FlexContainer__top_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $top })=>$top * 20, "%")
     }
 }), {
     "displayName": "FlexContainer"

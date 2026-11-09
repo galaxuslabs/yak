@@ -2,7 +2,6 @@ import { existsSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
-import { createLoaderDataUrl } from "./loader-hooks.ts";
 
 export type EvaluateResult =
   | { ok: true; value: Record<string, unknown>; dependencies: string[] }
@@ -53,8 +52,8 @@ interface PendingEvaluation {
  *
  * In production the compiled `.js` file exists in `dist/` — we prefer that.
  * During development (vitest runs against source), only the `.ts` file exists.
- * Node 22.18.0+ handles `.ts` natively via strip-types, so the fallback works
- * without any flags or loaders.
+ * Node strips the types natively (22.18 or later on Node 22, or 23.6 or later),
+ * so the fallback works without any flags or loaders.
  */
 function resolveWorkerPath(): string {
   const jsPath = fileURLToPath(new URL("./worker.js", import.meta.url));
@@ -68,29 +67,42 @@ function resolveWorkerPath(): string {
 /**
  * Boots a worker and returns a handle with a ready promise.
  *
- * The loader hook data URL is passed via `workerData` rather than having
- * the worker import it from a sibling module. This avoids a module
- * resolution mismatch: source files use `.ts` extensions (required by
- * Node strip-types) while compiled output uses `.js` (rewritten by tsc
- * via `rewriteRelativeImportExtensions`). Since the worker file would need
- * to import loader-hooks with the right extension for its context, passing
- * the data URL through workerData eliminates the problem entirely.
+ * The worker registers its own module hooks on startup, see worker.ts.
+ *
+ * `ready` rejects when the worker fails before it reports ready. Node 23.0 to
+ * 23.4 has no `registerHooks` export, so the worker fails to link there, and
+ * without the rejection that error would crash the host process.
  */
 function bootWorker(): { worker: Worker; ready: Promise<void> } {
   const workerPath = resolveWorkerPath();
-  const loaderDataUrl = createLoaderDataUrl();
-  const worker = new Worker(workerPath, {
-    workerData: { loaderDataUrl },
-  });
-  const ready = new Promise<void>((resolve) => {
+  const worker = new Worker(workerPath);
+  const ready = new Promise<void>((resolve, reject) => {
+    const fail = (reason: string) => {
+      cleanup();
+      reject(
+        new Error(`Could not start the .yak.ts evaluator on Node ${process.version}: ${reason}`),
+      );
+    };
     const onMessage = (msg: { type: string }) => {
       if (msg.type === "ready") {
-        worker.off("message", onMessage);
+        cleanup();
         resolve();
       }
     };
+    const onError = (err: Error) => fail(err.message);
+    const onExit = (code: number) => fail(`the worker exited with code ${code}`);
+    const cleanup = () => {
+      worker.off("message", onMessage);
+      worker.off("error", onError);
+      worker.off("exit", onExit);
+    };
     worker.on("message", onMessage);
+    worker.on("error", onError);
+    worker.on("exit", onExit);
   });
+  // A shadow worker may fail while nobody awaits it: processQueue reports the
+  // error once the shadow is promoted
+  ready.catch(() => {});
   return { worker, ready };
 }
 
@@ -104,12 +116,9 @@ const MAX_STALENESS_RETRIES = 3;
 export async function createEvaluator(): Promise<Evaluator> {
   const resultCache = new Map<string, EvaluateResult>();
   /**
-   * Tracks in-flight evaluation promises by path. When `evaluate()` is called
-   * for a path that's already queued or being evaluated, the same promise is
-   * returned instead of queuing a duplicate. This prevents a second worker
-   * evaluation from producing incomplete dependencies (the ESM resolve hook
-   * only fires on cache misses — a second import on the same worker would
-   * miss transitive deps that are already in the ESM cache).
+   * Holds the promise of each queued or running evaluation by path. A second
+   * `evaluate()` call for the same path gets the same promise, so the worker
+   * evaluates each file once.
    */
   const inflight = new Map<string, Promise<EvaluateResult>>();
 
@@ -167,7 +176,12 @@ export async function createEvaluator(): Promise<Evaluator> {
   let primary = bootWorker();
   let shadow = bootWorker();
 
-  await Promise.all([primary.ready, shadow.ready]);
+  try {
+    await Promise.all([primary.ready, shadow.ready]);
+  } catch (err) {
+    await Promise.all([primary.worker.terminate(), shadow.worker.terminate()]);
+    throw err;
+  }
 
   /**
    * Allow the process to exit naturally when the event loop is otherwise empty.
@@ -224,12 +238,10 @@ export async function createEvaluator(): Promise<Evaluator> {
     const pending = currentEval;
     currentEval = null;
 
-    // Staleness check: if a file was invalidated while this evaluation was
-    // in-flight and the result depends on it, discard the result and retry
-    // on a clean worker. Only checked for successes — errors don't report
-    // deps, and the file watcher will trigger another invalidation when the
-    // source is fixed.
-    if (msg.ok && invalidatedDuringEval.size > 0) {
+    // A result, success or error, that depends on a file invalidated during
+    // the evaluation is stale: retry it on a clean worker, because the watcher
+    // has already fired for that edit
+    if (invalidatedDuringEval.size > 0) {
       const isStale = msg.dependencies.some((dep) => invalidatedDuringEval.has(dep));
       if (isStale) {
         if (pending.retryCount >= MAX_STALENESS_RETRIES) {
@@ -240,6 +252,8 @@ export async function createEvaluator(): Promise<Evaluator> {
               stack: "",
             },
           });
+          // Not cached, so the next evaluate() call of this path starts over
+          inflight.delete(pending.absolutePath);
           processQueue();
           return;
         }
@@ -305,10 +319,9 @@ export async function createEvaluator(): Promise<Evaluator> {
   }
 
   /**
-   * Evaluations are serialized — one at a time per worker. This prevents
-   * interleaved dependency tracking: the loader hook accumulates deps in
-   * a single Set and flushes it after each evaluation. Concurrent imports
-   * would mix dependencies from different entry points.
+   * Evaluations run one at a time per worker. A timeout or a stale result
+   * replaces the whole worker, which would also cancel every other evaluation
+   * running on it.
    *
    * Waits for the primary worker to be ready before sending work. This
    * matters after a swap: the promoted shadow may still be booting.
@@ -318,10 +331,8 @@ export async function createEvaluator(): Promise<Evaluator> {
 
     const next = queue.shift()!;
 
-    // A prior evaluation for the same path may have completed and cached
-    // while this item was queued (e.g. after invalidation + re-queue).
-    // Resolving from cache avoids dispatching to a worker where the module
-    // is already in the ESM cache (which would produce incomplete deps).
+    // Skip the worker when an evaluation of this path finished while the item
+    // waited, for example after an invalidation put it back in the queue
     const alreadyCached = resultCache.get(next.absolutePath);
     if (alreadyCached) {
       inflight.delete(next.absolutePath);
@@ -332,35 +343,48 @@ export async function createEvaluator(): Promise<Evaluator> {
 
     currentEval = next;
 
-    primary.ready.then(() => {
-      if (disposed || currentEval !== next) return;
-      primary.worker.postMessage({
-        type: "evaluate",
-        id: next.id,
-        absolutePath: next.absolutePath,
-      });
+    primary.ready.then(
+      () => {
+        if (disposed || currentEval !== next) return;
+        primary.worker.postMessage({
+          type: "evaluate",
+          id: next.id,
+          absolutePath: next.absolutePath,
+        });
 
-      currentTimeout = setTimeout(() => {
-        if (currentEval !== next) return;
+        currentTimeout = setTimeout(() => {
+          if (currentEval !== next) return;
+          currentEval = null;
+          currentTimeout = null;
+
+          const result: EvaluateResult = {
+            ok: false,
+            error: {
+              message: `Evaluation of ${next.absolutePath} timed out after ${DEFAULT_EVAL_TIMEOUT_MS}ms`,
+              stack: "",
+            },
+          };
+          updateDeps(next.absolutePath, [next.absolutePath]);
+          resultCache.set(next.absolutePath, result);
+          inflight.delete(next.absolutePath);
+          next.resolve(result);
+
+          swapWorkers();
+          processQueue();
+        }, DEFAULT_EVAL_TIMEOUT_MS);
+      },
+      (err: Error) => {
+        // The promoted shadow failed to start, see bootWorker. The result is
+        // not cached, and the dead worker is replaced, so the next call runs
+        // on a fresh worker
+        if (disposed || currentEval !== next) return;
         currentEval = null;
-        currentTimeout = null;
-
-        const result: EvaluateResult = {
-          ok: false,
-          error: {
-            message: `Evaluation of ${next.absolutePath} timed out after ${DEFAULT_EVAL_TIMEOUT_MS}ms`,
-            stack: "",
-          },
-        };
-        updateDeps(next.absolutePath, [next.absolutePath]);
-        resultCache.set(next.absolutePath, result);
         inflight.delete(next.absolutePath);
-        next.resolve(result);
-
+        next.resolve({ ok: false, error: { message: err.message, stack: err.stack ?? "" } });
         swapWorkers();
         processQueue();
-      }, DEFAULT_EVAL_TIMEOUT_MS);
-    });
+      },
+    );
   }
 
   /**
@@ -402,10 +426,7 @@ export async function createEvaluator(): Promise<Evaluator> {
       return Promise.resolve(cached);
     }
 
-    // Deduplicate: if an evaluation is already queued or in-flight for this
-    // path, return the same promise. This prevents a second worker evaluation
-    // that would produce incomplete dependencies (the ESM resolve hook only
-    // fires on cache misses).
+    // Share the promise of a queued or running evaluation of this path
     const pending = inflight.get(absolutePath);
     if (pending) return pending;
 

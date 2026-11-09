@@ -1,4 +1,4 @@
-import { styled, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:ym7uBBu*//*YAK Extracted CSS:
@@ -10,6 +10,6 @@ export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:ym7uBBu*//*YAK 
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", {
     "style": {
         "--ym7uBBu1": getZIndex(),
-        "--ym7uBBu2": /*#__PURE__*/ __yak_unitPostFix(spacing[40].toString(), "px")
+        "--ym7uBBu2": /*#__PURE__*/ __yak_cssValue(spacing[40].toString(), "px")
     }
 });

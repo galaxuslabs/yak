@@ -37,7 +37,7 @@
     "oxlint": "catalog:dev"
   },
   "engines": {
-    "node": ">=22.18.0"
+    "node": "^22.18.0 || >=23.6.0"
   },
   "packageManager": "pnpm@12.14.0"
 }
