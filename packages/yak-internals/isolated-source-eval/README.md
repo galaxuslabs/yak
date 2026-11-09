@@ -32,7 +32,7 @@ sequenceDiagram
 
     You->>E: evaluate("theme.ts")
     E->>P: import("theme.ts")
-    Note right of P: theme.ts imports tokens.ts<br/>Loader hook tracks both files
+    Note right of P: theme.ts imports tokens.ts<br/>Resolve hook tracks both files
     P-->>E: { value, dependencies }
     E-->>You: { ok: true, value, dependencies }
 
@@ -87,11 +87,11 @@ sequenceDiagram
 
 Each evaluator manages two Node.js worker threads — a **primary** that handles evaluations and a **shadow** that sits idle with a clean module cache.
 
-Modules are loaded via native `import()`. A custom ESM loader hook (registered via `module.register()`) intercepts every resolve call to build the dependency tree. Only project source files are tracked — `node_modules` are excluded.
+Modules are loaded via native `import()`. A resolve hook (registered via `module.registerHooks()` inside each worker) sees every resolve call to build the dependency tree. Every file the module loads is tracked, including files in `node_modules` and files loaded with `require()`. Built-in `node:` modules are excluded.
 
 When a file changes, call `invalidate()`. The primary worker (with its stale ESM cache) is terminated, the shadow is promoted instantly, and a new shadow boots in the background. No restart latency.
 
-Node 22.18.0+ strips TypeScript types natively, so `.ts` files work without compilation.
+Node strips TypeScript types natively, so `.ts` files work without compilation. See the Node version in the constraints below.
 
 ## API
 
@@ -167,7 +167,8 @@ await evaluator.dispose();
 
 | Constraint                | Detail                                                                                                                                                                               |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Node 22.18.0+             | Required for native type stripping.                                                                                                                                                  |
+| Node 22.18+ or 23.6+      | Required for native type stripping and `module.registerHooks()`.                                                                                                                     |
+| Node resolution           | Imports resolve with Node's default export conditions, not the bundler's. A workspace package whose `exports` points `development` at `src` and `default` at `dist` loads `dist`.    |
 | Serializable exports only | Uses `postMessage` (structured clone). Functions, Symbols, WeakMaps, and class instances will produce an `{ ok: false }` error. Export plain data instead.                           |
 | No sandboxing             | Evaluated code runs with full Node.js privileges. This is designed for trusted project source files.                                                                                 |
 | No file watching          | This package does not watch the filesystem. Consumers are responsible for calling `invalidate()` when files change.                                                                  |

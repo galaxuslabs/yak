@@ -58,6 +58,11 @@ const config: KnipConfig = {
     "examples/tanstack-start": { entry: ["yak.context.ts"] },
     "examples/vite": { entry: ["yak.context.ts"] },
     "examples/vite-solid": { entry: ["yak.context.ts"] },
+    "readme-assets": {
+      entry: ["scenes/*.tsx"],
+      // The fonts are read by file path
+      ignoreDependencies: ["@fontsource/hanken-grotesk"],
+    },
     e2e: {
       // Copied into each bundler's `.tmp/` next to its playwright.config.ts
       entry: ["playwright-base.ts"],

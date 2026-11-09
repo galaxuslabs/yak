@@ -2,15 +2,18 @@
  * Link previews and search engines get https URLs only. The Pages settings can report an
  * http address for a custom domain, so every host except localhost is upgraded
  */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://yak.js.org").replace(
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://yak.style").replace(
   /^http:\/\/(?!(?:localhost|127\.0\.0\.1)(?:[:/]|$))/,
   "https://",
 );
 
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-// The GitHub Pages build before the domain cutover. Search engines skip it, so it does not
-// compete with yak.js.org.
+// The address without its scheme, as people read and type it: "yak.style"
+export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+
+// A build on the github.io address. Search engines skip it, so it does not compete with
+// yak.style.
 export const IS_PREVIEW_DEPLOY = new URL(SITE_URL).hostname.endsWith(".github.io");
 
 export const asset = (path: string) => `${BASE_PATH}${path}`;

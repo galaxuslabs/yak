@@ -1,6 +1,6 @@
 # @yak/storybook
 
-Storybook addon for [yak](https://yak.js.org/), the zero-runtime CSS-in-JS library with styled-components syntax. It sets up [@yak/react](https://www.npmjs.com/package/@yak/react) in Storybook 10+.
+Storybook addon for [yak](https://yak.style/), the zero-runtime CSS-in-JS library with styled-components syntax. It sets up [@yak/react](https://www.npmjs.com/package/@yak/react) in Storybook 10+.
 
 Supports both Vite and Webpack Storybook builders.
 
@@ -37,4 +37,4 @@ addons: [
 
 ## Documentation
 
-See the full documentation at [yak.js.org/docs/storybook](https://yak.js.org/docs/storybook).
+See the full documentation at [yak.style/docs/storybook](https://yak.style/docs/storybook).

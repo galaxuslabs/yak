@@ -179,7 +179,7 @@ const arrow = (color: string, stroke = 2.6) =>
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 5.5 19.5 12 13 18.5"/></svg>`,
   )}`;
 
-// The page address under the panel, led by a faded arrow: "→ yak.js.org/docs/vite". The arrow
+// The page address under the panel, led by a faded arrow: "→ yak.style/docs/vite". The arrow
 // starts 4px left of the panel text, so the URL itself lines up with the title
 const ARROW_OPACITY = 0.5;
 const link = (url: string) =>
