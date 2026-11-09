@@ -1,4 +1,4 @@
-import { styled, css, __yak_unitPostFix, __yak_mergeCssProp } from "@yak/solid/internal";
+import { styled, css, __yak_mergeCssProp, __yak_cssValue } from "@yak/solid/internal";
 import * as __yak from "@yak/solid/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 export const Button = /*YAK EXPORTED STYLED:Button:ym7uBBu*//*YAK Extracted CSS:
@@ -15,7 +15,7 @@ export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:ym7uBBu1*//*YAK
 */ /* @refresh component */ /*#__PURE__*/ __yak.__yak_div("ym7uBBu1", {
     "style": {
         "--ym7uBBu2": ({ $align })=>$align || "stretch",
-        "--ym7uBBu3": /*#__PURE__*/ __yak_unitPostFix(({ $spacing })=>$spacing * 8, "px")
+        "--ym7uBBu3": /*#__PURE__*/ __yak_cssValue(({ $spacing })=>$spacing * 8, "px")
     }
 });
 export const Elem = ()=><div {...__yak_mergeCssProp(/*YAK Extracted CSS:

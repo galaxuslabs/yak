@@ -44,4 +44,4 @@ Key files to look at:
 - `src/App.tsx` – demonstrates `styled`, `css`, `atoms`, and usage of build-time constants from `.yak` files.
 - `src/theme/*.yak.ts` – shows how to define design tokens in yak files that are evaluated at build time.
 
-For more details, see the [Vite docs page](../../docs/content/docs/vite.mdx) in this repository or the hosted documentation at https://yak.js.org/docs/vite.
+For more details, see the [Vite docs page](../../docs/content/docs/vite.mdx) in this repository or the hosted documentation at https://yak.style/docs/vite.

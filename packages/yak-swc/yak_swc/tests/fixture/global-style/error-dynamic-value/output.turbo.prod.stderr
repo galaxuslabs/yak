@@ -3,7 +3,7 @@
   | 
   | globalStyle`:root { --spacing: 4px; } :root[data-compact] { --spacing: 2px; }`
   | 
-  | See https://yak.js.org/docs/features#globalstyle
+  | See https://yak.style/docs/features#globalstyle
    ,-[input.js:5:1]
  4 |   body {
  5 |     color: ${(props) => props.$color};

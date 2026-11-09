@@ -19,4 +19,4 @@ pnpm example
 
 ## Documentation
 
-See the full docs at [yak.js.org](https://yak.js.org/docs/getting-started).
+See the full docs at [yak.style](https://yak.style/docs/getting-started).

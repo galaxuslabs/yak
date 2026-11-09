@@ -90,7 +90,7 @@ impl YakRuntime {
 
 pub struct YakImports {
   /// Utilities used from "@yak/react/internal"
-  /// e.g. unitPostFix, mergeCssProp
+  /// e.g. cssValue, mergeCssProp
   yak_utilities: FxHashMap<String, Ident>,
   /// Imports from "@yak/react"
   /// Local to Imported mapping
@@ -131,7 +131,7 @@ pub fn visit_module_imports(module: &mut Module) -> YakImports {
   yak_import_visitor.into()
 }
 
-const UTILITIES: &[&str] = &["unitPostFix", "mergeCssProp", "mergeClassNames"];
+const UTILITIES: &[&str] = &["cssValue", "mergeCssProp", "mergeClassNames"];
 
 impl From<YakImportVisitor> for YakImports {
   fn from(value: YakImportVisitor) -> Self {
@@ -259,7 +259,7 @@ impl YakImports {
   }
 
   /// Get the import declaration specifiers for all used utility functions
-  /// i.e. `import { __yak_unitPostFix } from "@yak/react/internal"`
+  /// i.e. `import { __yak_cssValue } from "@yak/react/internal"`
   pub fn get_yak_utility_import_specifiers(&self) -> Vec<ImportSpecifier> {
     self
       .yak_utilities
@@ -570,8 +570,8 @@ mod tests {
   fn test_yak_import_visitor_utility_ident() {
     let visitor = YakImportVisitor::new();
     let mut imports: YakImports = visitor.into();
-    let ident = imports.get_yak_utility_ident("unitPostFix");
-    assert_eq!(ident.sym, "__yak_unitPostFix");
+    let ident = imports.get_yak_utility_ident("cssValue");
+    assert_eq!(ident.sym, "__yak_cssValue");
     let ident = imports.get_yak_utility_ident("mergeCssProp");
     assert_eq!(ident.sym, "__yak_mergeCssProp");
   }

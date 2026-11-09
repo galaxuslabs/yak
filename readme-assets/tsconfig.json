@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "svjeez",
+    "strict": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2022",
+    "noEmit": true,
+    "types": ["node"],
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["*.ts", "*.tsx", "scenes/*.tsx"]
+}

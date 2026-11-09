@@ -1,4 +1,4 @@
-import { styled, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:input_FlexContainer_m7uBBu*//*YAK Extracted CSS:
@@ -9,7 +9,7 @@ export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:input_FlexConta
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FlexContainer_m7uBBu", {
     "style": {
-        "--input_FlexContainer__margin-bottom_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(spacing[40].toString(), "px"),
+        "--input_FlexContainer__margin-bottom_m7uBBu": /*#__PURE__*/ __yak_cssValue(spacing[40].toString(), "px"),
         "--input_FlexContainer__z-index_m7uBBu": getZIndex()
     }
 }), {

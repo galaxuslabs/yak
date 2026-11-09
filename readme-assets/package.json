@@ -1,0 +1,21 @@
+{
+  "name": "readme-assets",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Animated SVGs for the README, written as svjeez scenes",
+  "type": "module",
+  "scripts": {
+    "build": "tsx build.ts",
+    "frames": "svjeez render"
+  },
+  "devDependencies": {
+    "@fontsource/hanken-grotesk": "catalog:dev",
+    "@types/node": "catalog:dev",
+    "@types/subset-font": "catalog:dev",
+    "playwright-core": "catalog:dev",
+    "subset-font": "catalog:dev",
+    "svjeez": "catalog:dev",
+    "tsx": "catalog:dev",
+    "typescript": "catalog:dev"
+  }
+}
