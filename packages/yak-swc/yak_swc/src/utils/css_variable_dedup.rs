@@ -290,8 +290,16 @@ mod tests {
   #[test]
   fn different_unit_wrappers_stay_apart() {
     assert!(!is_deduplicated(
-      "__yak_unitPostFix(({ $size }) => $size, 'px')",
-      "__yak_unitPostFix(({ $size }) => $size, 'rem')"
+      "__yak_cssValue(({ $size }) => $size, 'px')",
+      "__yak_cssValue(({ $size }) => $size, 'rem')"
+    ));
+  }
+
+  #[test]
+  fn different_signs_stay_apart() {
+    assert!(!is_deduplicated(
+      "__yak_cssValue(({ $size }) => $size, 'px')",
+      "__yak_cssValue(({ $size }) => $size, 'px', true)"
     ));
   }
 }

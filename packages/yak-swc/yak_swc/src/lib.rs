@@ -15,11 +15,11 @@ use swc_core::common::errors::HANDLER;
 use swc_core::common::{BytePos, Span, Spanned, SyntaxContext, DUMMY_SP};
 use swc_core::ecma::visit::{Fold, VisitMutWith};
 use swc_core::ecma::{ast::*, visit::VisitMut};
-use utils::add_suffix_to_expr::add_suffix_to_expr;
 use utils::ast_helper::{
   extract_ident_and_parts, is_valid_tagged_tpl, unwrap_type_casts, TemplateIterator,
 };
 use utils::cross_file_selectors::ImportType;
+use utils::css_value_call::css_value_call;
 use utils::css_variable_dedup::CssVariableDedup;
 use utils::fold::css_prop::HasCSSProp;
 use utils::fold::StyledFold;
@@ -36,10 +36,10 @@ pub mod yak_file;
 use math_evaluate::{format_number, try_evaluate, try_evaluate_string};
 
 mod utils {
-  pub(crate) mod add_suffix_to_expr;
   pub(crate) mod ast_helper;
   pub(crate) mod cross_file_selectors;
   pub(crate) mod css_hash;
+  pub(crate) mod css_value_call;
   pub(crate) mod css_variable_dedup;
   pub(crate) mod fold;
   pub(crate) mod native_elements;
@@ -666,6 +666,25 @@ ${{() => {var}}};\n",
               state.current_declaration.value.pop();
               state.is_inside_string = None;
             }
+            // Detect a minus sign directly before the expression:
+            // e.g. styled.button`left: -${({$x}) => $x}px;`
+            // `-var(--x)` is invalid css, so the minus moves into the
+            // runtime value and the css keeps a plain `var(--x)`.
+            // A minus that ends a word like `area-${fn}` or `--${fn}` is
+            // part of a name, not a sign, and stays in the css.
+            let state = css_state.as_ref().unwrap();
+            let negate = state.is_inside_string.is_none()
+              && state
+                .pending_css_segment
+                .strip_suffix('-')
+                .is_some_and(|before| {
+                  !before.ends_with(|c: char| c.is_alphanumeric() || c == '-' || c == '_')
+                });
+            if negate {
+              let state = css_state.as_mut().unwrap();
+              state.pending_css_segment.pop();
+              state.current_declaration.value.pop();
+            }
             // Check if the next quasi starts with a unit
             // e.g. styled.button`left: ${({$x}) => $x}px;`
             let unit = if wrapping_quote.is_some() {
@@ -684,15 +703,16 @@ ${{() => {var}}};\n",
               unit.map_or(0, |unit_str| unit_str.len())
             };
 
-            let css_variable_runtime_expr = if let Some(unit) = unit {
-              add_suffix_to_expr(
+            let css_variable_runtime_expr = if unit.is_some() || negate {
+              css_value_call(
                 *expr.clone(),
                 self
                   .yak_library_imports
                   .as_mut()
                   .unwrap()
-                  .get_yak_utility_ident("unitPostFix"),
-                unit,
+                  .get_yak_utility_ident("cssValue"),
+                unit.unwrap_or_default(),
+                negate,
               )
             } else {
               *expr.clone()

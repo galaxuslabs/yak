@@ -1,4 +1,4 @@
-import { css, __yak_unitPostFix, __yak_mergeCssProp } from "@yak/react/internal";
+import { css, __yak_mergeCssProp, __yak_cssValue } from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 // folds: both arms are fully static
 const Elem = ({ active }: {
@@ -43,7 +43,7 @@ const Elem3 = ({ active, width }: {
 }
 */ /*#__PURE__*/ css({
         "style": {
-            "--ym7uBBu6": /*#__PURE__*/ __yak_unitPostFix(()=>width, "px")
+            "--ym7uBBu6": /*#__PURE__*/ __yak_cssValue(()=>width, "px")
         }
     }, "ym7uBBu5") : /*YAK Extracted CSS:
 .ym7uBBu7 {

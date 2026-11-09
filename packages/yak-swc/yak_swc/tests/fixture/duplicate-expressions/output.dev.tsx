@@ -1,4 +1,4 @@
-import { styled, __yak_unitPostFix } from "@yak/react/internal";
+import { styled, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 // Identical prop arrow used in two declarations
@@ -9,7 +9,7 @@ const TwiceSameArrow = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_TwiceSameArrow_m7uBBu", {
     "style": {
-        "--input_TwiceSameArrow__left_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $x })=>$x, "px")
+        "--input_TwiceSameArrow__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>$x, "px")
     }
 }), {
     "displayName": "TwiceSameArrow"
@@ -22,7 +22,7 @@ const TypedVsUntyped = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_TypedVsUntyped_m7uBBu", {
     "style": {
-        "--input_TypedVsUntyped__top_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $y })=>$y, "px")
+        "--input_TypedVsUntyped__top_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $y })=>$y, "px")
     }
 }), {
     "displayName": "TypedVsUntyped"
@@ -35,7 +35,7 @@ const WithCalculation = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_WithCalculation_m7uBBu", {
     "style": {
-        "--input_WithCalculation__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $ratio })=>Math.min($ratio * 100, 100), "%")
+        "--input_WithCalculation__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $ratio })=>Math.min($ratio * 100, 100), "%")
     }
 }), {
     "displayName": "WithCalculation"
@@ -48,8 +48,8 @@ const DifferentUnits = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DifferentUnits_m7uBBu", {
     "style": {
-        "--input_DifferentUnits__height_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $size })=>$size, "rem"),
-        "--input_DifferentUnits__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $size })=>$size, "px")
+        "--input_DifferentUnits__height_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $size })=>$size, "rem"),
+        "--input_DifferentUnits__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $size })=>$size, "px")
     }
 }), {
     "displayName": "DifferentUnits"
@@ -62,7 +62,7 @@ const Parens = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Parens_m7uBBu", {
     "style": {
-        "--input_Parens__margin-left_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $z })=>$z, "px")
+        "--input_Parens__margin-left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $z })=>$z, "px")
     }
 }), {
     "displayName": "Parens"
@@ -75,8 +75,8 @@ const DifferentProps = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DifferentProps_m7uBBu", {
     "style": {
-        "--input_DifferentProps__padding-left_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $a })=>$a, "px"),
-        "--input_DifferentProps__padding-right_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $b })=>$b, "px")
+        "--input_DifferentProps__padding-left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a })=>$a, "px"),
+        "--input_DifferentProps__padding-right_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $b })=>$b, "px")
     }
 }), {
     "displayName": "DifferentProps"
@@ -89,7 +89,7 @@ const DestructureOrder = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DestructureOrder_m7uBBu", {
     "style": {
-        "--input_DestructureOrder__width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $a, $b })=>$a * $b, "px")
+        "--input_DestructureOrder__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b })=>$a * $b, "px")
     }
 }), {
     "displayName": "DestructureOrder"
@@ -102,8 +102,8 @@ const DefaultReferencesSibling = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultReferencesSibling_m7uBBu", {
     "style": {
-        "--input_DefaultReferencesSibling__min-height_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $b = 1, $a })=>$a * $b, "px"),
-        "--input_DefaultReferencesSibling__min-width_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $a, $b = $a })=>$a * $b, "px")
+        "--input_DefaultReferencesSibling__min-height_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $b = 1, $a })=>$a * $b, "px"),
+        "--input_DefaultReferencesSibling__min-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b = $a })=>$a * $b, "px")
     }
 }), {
     "displayName": "DefaultReferencesSibling"
@@ -136,10 +136,10 @@ const Nested = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Nested_m7uBBu", {
     "style": {
-        "--input_Nested__left_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $x })=>{
+        "--input_Nested__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
             return $x;
         }, "px"),
-        "--input_Nested__right_m7uBBu": /*#__PURE__*/ __yak_unitPostFix(({ $y })=>$y, "px")
+        "--input_Nested__right_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $y })=>$y, "px")
     }
 }), {
     "displayName": "Nested"
