@@ -43,6 +43,7 @@ const config: KnipConfig = {
       ignoreDependencies: yakSwc,
     },
     docs: {
+      entry: ["src/**/*.test.ts"],
       // wasm-pack output of the playground, only present after `build:wasm`
       ignoreUnresolved: ["./wasm"],
       ignoreDependencies: yakSwc,
