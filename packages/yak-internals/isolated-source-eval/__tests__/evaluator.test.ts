@@ -1,4 +1,6 @@
 import { describe, it, expect, afterEach } from "vitest";
+import { mkdtempSync, realpathSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
 import { createEvaluator, type Evaluator } from "../index.ts";
 
@@ -234,6 +236,25 @@ describe("invalidation", () => {
     if (result.ok) {
       expect(result.value.color).toBe("#ff0000");
     }
+  });
+
+  it("retries an error when a dependency is fixed during the first evaluation", async () => {
+    const dir = realpathSync(mkdtempSync(join(tmpdir(), "yak-eval-")));
+    const dep = join(dir, "dep.ts");
+    writeFileSync(
+      dep,
+      'export const value = "broken";\nawait new Promise((r) => setTimeout(r, 200));\nthrow new Error("broken");\n',
+    );
+    writeFileSync(join(dir, "entry.ts"), 'export { value } from "./dep.ts";\n');
+    evaluator = await createEvaluator();
+
+    const promise = evaluator.evaluate(join(dir, "entry.ts"));
+    await new Promise((r) => setTimeout(r, 50));
+    writeFileSync(dep, 'export const value = "fixed";\n');
+    evaluator.invalidate(dep);
+
+    const result = await promise;
+    expect(result.ok && result.value.value).toBe("fixed");
   });
 
   it("cleans up reverseDeps after invalidation", async () => {
