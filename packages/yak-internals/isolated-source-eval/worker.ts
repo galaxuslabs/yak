@@ -2,65 +2,68 @@
  * Worker thread entry point for isolated module evaluation.
  *
  * Each worker is a full Node.js environment with its own ESM module cache.
- * Modules are loaded via dynamic `import()` — Node 22.18.0+ strips TypeScript
+ * Modules are loaded via dynamic `import()`. Node 22.18.0+ strips TypeScript
  * types natively, so no compilation step or flags are needed.
- *
- * The loader hook data URL is received via `workerData` rather than
- * importing it from a sibling module. This avoids a cross-file import
- * resolution problem: Node's strip-types requires `.ts` extensions in
- * source, but compiled output uses `.js`. Passing the URL through
- * `workerData` sidesteps this entirely since the worker file has no
- * local imports beyond node built-ins.
  */
-import { parentPort, workerData } from "node:worker_threads";
-import { MessageChannel } from "node:worker_threads";
-import { pathToFileURL } from "node:url";
+import { parentPort } from "node:worker_threads";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 /**
- * We import `register` from `node:module` instead of calling `module.register()`
- * directly. Node's strip-types parser sees the bare `module` identifier as a
- * CJS global, and combined with top-level `await` (or other ESM syntax), it
- * throws "Cannot determine intended module format". Using the explicit import
- * avoids this ambiguity entirely.
+ * We import `registerHooks` from `node:module` instead of calling
+ * `module.registerHooks()` directly. Node's strip-types parser sees the bare
+ * `module` identifier as a CJS global, and combined with top-level `await`
+ * (or other ESM syntax), it throws "Cannot determine intended module format".
+ * Using the explicit import avoids this ambiguity entirely.
  */
-import { register } from "node:module";
+import { registerHooks } from "node:module";
 
 if (!parentPort) {
   throw new Error("This file must be run as a worker thread");
 }
 
-const loaderDataUrl: string = workerData.loaderDataUrl;
+/**
+ * Holds the absolute paths of the project files that the resolve hook saw
+ * since the last `takeDeps()` call
+ */
+const trackedDeps = new Set<string>();
 
 /**
- * MessageChannel for communicating with the loader hook.
- * port1 stays in this worker thread; port2 is transferred to the loader
- * thread via `register()`'s transferList. This is the only way to get
- * data out of loader hooks, since they run in an isolated loader thread
- * that cannot access worker_threads.parentPort.
+ * Records every resolved project file to build the dependency list.
+ *
+ * `registerHooks()` runs the hook synchronously in this thread, so it writes
+ * to `trackedDeps` directly. Hooks registered here apply to this worker only,
+ * which keeps each worker's `trackedDeps` and module cache separate from the
+ * others.
+ *
+ * Only `file://` URLs outside of `node_modules` are tracked. Node built-ins
+ * (`node:*`) and third-party packages are excluded because consumers only
+ * need to invalidate on project source file changes.
+ *
+ * `fileURLToPath` turns a `file://` URL into an absolute path for the current
+ * platform. On Windows it gives `C:\src\a.ts`, where `URL.pathname` would
+ * give `/C:/src/a.ts`.
  */
-const { port1, port2 } = new MessageChannel();
-
-register(loaderDataUrl, {
-  parentURL: import.meta.url,
-  data: { port: port2 },
-  transferList: [port2],
+registerHooks({
+  resolve(specifier, context, nextResolve) {
+    const result = nextResolve(specifier, context);
+    if (result.url.startsWith("file://") && !result.url.includes("/node_modules/")) {
+      trackedDeps.add(fileURLToPath(result.url));
+    }
+    return result;
+  },
 });
 
 /**
- * Requests the accumulated dependency list from the loader hook.
+ * Returns the dependencies tracked since the last call and clears the set.
  *
- * Called after each `import()` completes. The loader hook clears its
- * internal Set on each request, so dependencies are scoped to the
+ * Called after each `import()` completes, so dependencies are scoped to the
  * most recent evaluation. This is safe because evaluations are
- * serialized — only one runs at a time per worker.
+ * serialized: only one runs at a time per worker.
  */
-function requestDeps(): Promise<string[]> {
-  return new Promise((resolve) => {
-    port1.once("message", (deps: string[]) => {
-      resolve(deps);
-    });
-    port1.postMessage("getDeps");
-  });
+function takeDeps(): string[] {
+  const list = [...trackedDeps];
+  trackedDeps.clear();
+  return list;
 }
 
 parentPort.on("message", async (msg: { type: string; id: number; absolutePath: string }) => {
@@ -71,9 +74,9 @@ parentPort.on("message", async (msg: { type: string; id: number; absolutePath: s
     // The path is only known at runtime, so bundlers must not try to resolve it
     const ns = await import(/* turbopackIgnore: true */ fileUrl);
 
-    const deps = await requestDeps();
+    const deps = takeDeps();
 
-    // The entry point may not appear in the loader hook's dependency set
+    // The entry point may not appear in the dependency set
     // if it was already in the ESM cache from a previous evaluation.
     // The resolve hook only fires on cache misses.
     if (!deps.includes(msg.absolutePath)) {
@@ -104,10 +107,10 @@ parentPort.on("message", async (msg: { type: string; id: number; absolutePath: s
         ? { message: err.message, stack: err.stack ?? "" }
         : { message: String(err), stack: "" };
 
-    // Flush partial dependencies that the loader hook tracked before the
+    // Flush partial dependencies that the resolve hook tracked before the
     // error. This allows the evaluator to register them in the reverse
     // dep map so that fixing the broken file triggers re-evaluation.
-    const deps = await requestDeps();
+    const deps = takeDeps();
     if (!deps.includes(msg.absolutePath)) {
       deps.unshift(msg.absolutePath);
     }
