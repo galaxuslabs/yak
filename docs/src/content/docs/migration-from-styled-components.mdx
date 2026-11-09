@@ -492,12 +492,11 @@ const MyComponent = ({ color }: { color: string }) => {
 
 ## Move some code to yak files
 
-Migrating `styled-components` code with complex logic can take more work. Yak files are evaluated at build time and can hold static values that yak extracts during the build. You can create a `.yak.ts` or `.yak.tsx` file anywhere in your project and yak picks it up.
+Migrating `styled-components` code with complex logic can take more work. Yak files are evaluated at build time and can hold static values that yak extracts during the build. You can create a `.yak.ts` file anywhere in your project and yak picks it up.
 
 <Callout>
-  **Important note on `.yak.tsx` files**: As yak files are evaluated on every code change, they will
-  slow down your dev experience and your production build times. They should only be used as a last
-  resort.
+  `.yak.ts` files hold tokens and other values, not React components. yak runs them in Node, which
+  does not compile JSX, so a `.yak.tsx` file fails to load.
 </Callout>
 
 ### Styles that use calculated values

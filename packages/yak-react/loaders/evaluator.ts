@@ -1,11 +1,12 @@
 /**
- * Turbopack evaluator adapter.
+ * Evaluator adapter for the turbopack and webpack loaders.
  *
- * Bridges the low-level `Evaluator` (worker-thread module evaluator) and
- * turbopack's loader lifecycle. A single `Evaluator` instance is kept as a
- * singleton on `globalThis` because turbopack may create multiple loader
- * instances that share the same process — `Symbol.for` keys guarantee all
- * instances converge on the same evaluator and modification time map.
+ * Both loaders evaluate `.yak.ts` files in the same worker threads as the
+ * Vite plugin, so a `.yak.ts` file gets the same exports on every bundler.
+ *
+ * One `Evaluator` lives on `globalThis`: turbopack may create several loader
+ * instances, and Next.js runs several webpack compilers in one process.
+ * `Symbol.for` keys make all of them share the evaluator and the modification time map.
  *
  * Invalidation uses synchronous modification time polling rather than `fs.watch` because
  * turbopack can re-run a loader before a filesystem watcher event fires,
@@ -32,7 +33,7 @@ const getFileModificationTimes = () =>
 /**
  * Returns the shared evaluator, creating it on first call.
  *
- * Uses `Symbol.for` keys on `globalThis` so every turbopack loader instance
+ * Uses `Symbol.for` keys on `globalThis` so every loader instance
  * in the process converges on the same evaluator and modification time map. A
  * `beforeExit` handler terminates the worker threads when the process winds
  * down.
@@ -55,7 +56,7 @@ export const getEvaluatorSingleton = async (): Promise<Evaluator> => {
 };
 
 /**
- * Turbopack runs the loader for the same compilation file-by-file, but multiple files can share the
+ * Bundlers run the loader for the same compilation file-by-file, but multiple files can share the
  * same dependency. This function detects which dependencies actually changed
  * on disk and invalidates them once — this prevents re-evaluating the same module multiple times in the same compilation
  */
@@ -92,7 +93,8 @@ function recordModificationTimes(deps: string[]): void {
 }
 
 /**
- * Creates an evaluator function scoped to a single loader invocation.
+ * Creates an evaluator function scoped to a single loader invocation
+ * (turbopack) or a single compilation (webpack).
  *
  * Before evaluation, checks whether any previously recorded dependency has
  * changed on disk and invalidates the evaluator cache if so. After a
@@ -103,7 +105,7 @@ function recordModificationTimes(deps: string[]): void {
  *   The returned function accepts:
  *   - `modulePath` — absolute path to the module to evaluate.
  *   - `onDependency` — called once per transitive dependency so the loader
- *     can register file watchers with turbopack.
+ *     can register file watchers with the bundler.
  * @throws If the evaluated module throws at runtime — the original stack
  *   trace from the worker thread is preserved.
  */
