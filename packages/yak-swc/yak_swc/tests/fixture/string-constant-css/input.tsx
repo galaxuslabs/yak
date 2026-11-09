@@ -27,3 +27,12 @@ export const Invalid = styled.div`
     color: ${value};
   }
 `;
+
+const theme = { reset: "margin: 0;" };
+const ticks = "&::before { content: `x`; }";
+
+export const Advice = styled.div`
+  ${theme.reset};
+  ${ticks};
+  color: ${reset};
+`;

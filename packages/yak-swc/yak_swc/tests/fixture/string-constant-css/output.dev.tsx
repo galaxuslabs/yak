@@ -31,3 +31,14 @@ export const Invalid = /*YAK EXPORTED STYLED:Invalid:input_Invalid_m7uBBu*//*YAK
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Invalid_m7uBBu"), {
     "displayName": "Invalid"
 });
+const theme = {
+    reset: "margin: 0;"
+};
+const ticks = "&::before { content: `x`; }";
+export const Advice = /*YAK EXPORTED STYLED:Advice:input_Advice_m7uBBu*//*YAK Extracted CSS:
+.input_Advice_m7uBBu {
+  color: ;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Advice_m7uBBu"), {
+    "displayName": "Advice"
+});

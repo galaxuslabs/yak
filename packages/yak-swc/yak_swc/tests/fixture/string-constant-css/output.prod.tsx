@@ -27,3 +27,12 @@ export const Invalid = /*YAK EXPORTED STYLED:Invalid:ym7uBBu1*//*YAK Extracted C
   }
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBu1");
+const theme = {
+    reset: "margin: 0;"
+};
+const ticks = "&::before { content: `x`; }";
+export const Advice = /*YAK EXPORTED STYLED:Advice:ym7uBBu2*//*YAK Extracted CSS:
+.ym7uBBu2 {
+  color: ;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu2");

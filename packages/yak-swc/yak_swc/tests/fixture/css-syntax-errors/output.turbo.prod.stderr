@@ -31,21 +31,24 @@
     ,-[input.js:33:1]
  32 | export const MissingColon = styled.div`
  33 |   color red;
-    :   ^^^^^^^^^
+    :   ^^^^|^^^^
+    :       `-- change this to `color: red`
  34 |   .foo { margin 0 }
     `----
   x This declaration has no `:`, so the browser ignores it. Use the form `property: value;`.
     ,-[input.js:34:1]
  33 |   color red;
  34 |   .foo { margin 0 }
-    :          ^^^^^^^^^
+    :          ^^^^|^^^
+    :              `-- change this to `margin: 0`
  35 |   padding: 0;
     `----
   x This declaration has no `:`, so the browser ignores it. Use the form `property: value;`.
     ,-[input.js:40:1]
  39 |   padding: 0;
  40 |   color red
-    :   ^^^^^^^^^
+    :   ^^^^|^^^^
+    :       `-- change this to `color: red`
  41 | `;
     `----
   x This bracket is never closed, so yak reads all CSS after it as part of the same statement.

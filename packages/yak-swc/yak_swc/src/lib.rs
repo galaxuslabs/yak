@@ -12,7 +12,7 @@ use swc_core::common::comments::Comment;
 use swc_core::common::comments::CommentKind;
 use swc_core::common::comments::Comments;
 use swc_core::common::errors::HANDLER;
-use swc_core::common::{BytePos, Span, Spanned, SyntaxContext, DUMMY_SP};
+use swc_core::common::{BytePos, MultiSpan, Span, Spanned, SyntaxContext, DUMMY_SP};
 use swc_core::ecma::visit::{Fold, VisitMutWith};
 use swc_core::ecma::{ast::*, visit::VisitMut};
 use utils::ast_helper::{
@@ -190,9 +190,48 @@ styled.div`${desktop} { ... }`";
 
 /// Emitted for a string constant with a whole declaration or rule,
 /// e.g. const reset = "margin: 0; padding: 0;";
-const STRING_CONSTANT_CSS_ERROR: &str = "\
-A constant can only be a CSS value or part of a selector, not a declaration or a rule.\n\
-Use a css mixin instead, for example: const hover = css`&:hover { color: red; }`";
+/// The error points at the usage, the advice at the declaration
+fn emit_string_constant_css_error(
+  usage: Span,
+  declaration: Span,
+  name: &ScopedVariableReference,
+  value: &str,
+  is_valid_mixin: bool,
+) {
+  let name = name.to_readable_string();
+  let mut declaration_span = MultiSpan::from_span(declaration);
+  let advice = if is_valid_mixin {
+    declaration_span.push_span_label(declaration, "move this string into css``".into());
+    // Escape the characters which end or interpolate a template literal
+    let mixin = format!(
+      "css`{}`",
+      value
+        .replace('\\', "\\\\")
+        .replace('`', "\\`")
+        .replace("${", "\\${")
+    );
+    if name.contains('.') {
+      format!("Change the value to a css mixin: {mixin}")
+    } else {
+      format!("Change the constant to a css mixin: const {name} = {mixin};")
+    }
+  } else {
+    declaration_span.push_span_label(declaration, "this string is not a CSS value".into());
+    "A string constant can only hold a CSS value or a part of a selector.".to_string()
+  };
+  HANDLER.with(|handler| {
+    handler
+      .struct_span_err(
+        usage,
+        &format!(
+          "The constant \"{name}\" is not a CSS value or a part of a selector, so it cannot be used here."
+        ),
+      )
+      .span_label(usage, "used here")
+      .span_note(declaration_span, &advice)
+      .emit();
+  });
+}
 
 /// Emitted for a declaration without a `:`, e.g. styled.div`color red;`
 const MISSING_COLON_ERROR: &str = "\
@@ -464,8 +503,27 @@ where
             (CssError::EmptySelector { .. }, _) => (span, EMPTY_SELECTOR_ERROR),
             (CssError::MissingColon { .. }, _) => (span, MISSING_COLON_ERROR),
           };
+          // e.g. `color red` -> change this to `color: red`
+          let (span, suggestion) = match error {
+            CssError::MissingColon { start, end } => {
+              let parsed_css = css_code[css_code_offset..].replace("\\\\", "\\");
+              let declaration = parsed_css.get(start..end).unwrap_or_default().trim_end();
+              // The declaration ends at the `;` or `}`, so whitespace before it is not part of it
+              // e.g. `.foo { margin 0 }`
+              let hi = source_position(quasi, css_code_offset, start + declaration.len());
+              (
+                Span::new(span.lo, hi.max(span.lo + BytePos(1))),
+                missing_colon_suggestion(declaration),
+              )
+            }
+            _ => (span, None),
+          };
           HANDLER.with(|handler| {
-            handler.struct_span_err(span, message).emit();
+            let mut diagnostic = handler.struct_span_err(span, message);
+            if let Some(suggestion) = suggestion {
+              diagnostic.span_label(span, format!("change this to `{suggestion}`"));
+            }
+            diagnostic.emit();
           });
         }
       }
@@ -600,11 +658,27 @@ where
                 // Skip the constant, so it causes no follow-up errors
                 css_state = state_before;
                 if !self.expanding_constant_mixin {
-                  HANDLER.with(|handler| {
-                    handler
-                      .struct_span_err(expr.span(), STRING_CONSTANT_CSS_ERROR)
-                      .emit();
-                  });
+                  // A css mixin can hold the string if it is complete CSS
+                  // e.g. "margin: 0; padding: 0;" but not "red; } color: blue"
+                  let is_inside_property_value = css_state
+                    .as_ref()
+                    .is_some_and(|state| state.is_inside_property_value);
+                  let standalone = parse_css(&literal_value, None);
+                  let is_valid_mixin = !is_inside_property_value
+                    && standalone.errors.is_empty()
+                    && standalone.unclosed_bracket.is_none()
+                    && standalone.state.current_scopes.is_empty()
+                    && standalone.state.paren_depth == 0
+                    && standalone.state.brace_depth == 0
+                    && standalone.state.is_inside_string.is_none()
+                    && standalone.state.current_comment_state == CommentStateType::None;
+                  emit_string_constant_css_error(
+                    expr.span(),
+                    value.span(),
+                    &scoped_name,
+                    &literal_value,
+                    is_valid_mixin,
+                  );
                 }
               }
             } else if let Expr::TaggedTpl(tagged_tpl) = *value {
@@ -1698,6 +1772,20 @@ fn verify_valid_property_value_expr(expr: &Expr) -> bool {
       false
     }
   }
+}
+
+/// Adds the missing colon to a declaration
+/// e.g. `color red` -> `color: red`
+/// None if the code does not start with a property name and a value
+fn missing_colon_suggestion(code: &str) -> Option<String> {
+  let (property, value) = code.trim().split_once(char::is_whitespace)?;
+  let value = value.trim();
+  let is_property_name = property.starts_with(|c: char| c.is_ascii_alphabetic() || c == '-')
+    && property
+      .chars()
+      .all(|c| c.is_ascii_alphanumeric() || c == '-');
+  (is_property_name && !value.is_empty() && !value.contains(['{', '}', ';']))
+    .then(|| format!("{property}: {value}"))
 }
 
 #[cfg(test)]

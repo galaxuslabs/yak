@@ -1,6 +1,6 @@
 import { styled } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LmlucHV0X1ZhbGlkX203dUJCdSB7CiAgY29sb3I6IHJlZDsKICBiYWNrZ3JvdW5kOiB1cmwoZGF0YTppbWFnZS9wbmc7YmFzZTY0LEFBQUEpOwogIC5pY29uIHsKICAgIGNvbG9yOiBibHVlOwogIH0KICBAbWVkaWEgKG1pbi13aWR0aDogNjQwcHgpIHsKICAgIGNvbG9yOiBncmVlbjsKICB9Cn0uaW5wdXRfSW52YWxpZF9tN3VCQnUgewogIC5mb28gewogICAgY29sb3I6IDsKICB9Cn0=";
+import "data:text/css;base64,LmlucHV0X1ZhbGlkX203dUJCdSB7CiAgY29sb3I6IHJlZDsKICBiYWNrZ3JvdW5kOiB1cmwoZGF0YTppbWFnZS9wbmc7YmFzZTY0LEFBQUEpOwogIC5pY29uIHsKICAgIGNvbG9yOiBibHVlOwogIH0KICBAbWVkaWEgKG1pbi13aWR0aDogNjQwcHgpIHsKICAgIGNvbG9yOiBncmVlbjsKICB9Cn0uaW5wdXRfSW52YWxpZF9tN3VCQnUgewogIC5mb28gewogICAgY29sb3I6IDsKICB9Cn0uaW5wdXRfQWR2aWNlX203dUJCdSB7CiAgY29sb3I6IDsKfQ==";
 const primary = "red";
 const selector = ".icon";
 const query = "@media (min-width: 640px)";
@@ -30,4 +30,15 @@ export const Invalid = /*YAK EXPORTED STYLED:Invalid:input_Invalid_m7uBBu*//*YAK
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Invalid_m7uBBu"), {
     "displayName": "Invalid"
+});
+const theme = {
+    reset: "margin: 0;"
+};
+const ticks = "&::before { content: `x`; }";
+export const Advice = /*YAK EXPORTED STYLED:Advice:input_Advice_m7uBBu*//*YAK Extracted CSS:
+.input_Advice_m7uBBu {
+  color: ;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Advice_m7uBBu"), {
+    "displayName": "Advice"
 });
