@@ -133,6 +133,10 @@ cd packages/yak-swc && pnpm prettier
    - Use the examples (`pnpm example` or `pnpm example:vite`) to verify
    - Run `pnpm test` for the full test suite
 
+## Changesets
+
+Every branch needs its own changeset, at least an empty one from `pnpm changeset --empty`. Before you write or edit a changeset, read [.changeset/README.md](.changeset/README.md) and follow its rules.
+
 ## SWC Fixture Tests
 
 The SWC plugin uses fixture-based snapshot testing located in `packages/yak-swc/yak_swc/tests/fixture/`.
