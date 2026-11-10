@@ -6,4 +6,4 @@
 "@yak/eslint-plugin": patch
 ---
 
-The docs moved to [yak.style](https://yak.style).
+The docs moved to [yak.style](https://yak.style)
