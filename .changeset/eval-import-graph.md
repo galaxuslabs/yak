@@ -3,4 +3,4 @@
 "@yak/solid": patch
 ---
 
-A `.yak.ts` file now reloads when any file it imports changes. This includes modules that another `.yak.ts` file imported first, workspace packages reached through a `node_modules` symlink, and files loaded with `require()`.
+Fixes a bug where a `.yak.ts` file did not reload after a file it imports changed, for example a workspace package or a file loaded with `require()`.
