@@ -4,4 +4,4 @@
 "@yak/swc": patch
 ---
 
-A minus before a dynamic value now negates it: `left: -${({ $x }) => $x}px` sets `left` to `-32px` for `$x={32}`.
+Fixes a bug where a minus before a dynamic value produced invalid CSS: `left: -${({ $x }) => $x}px` now sets `left` to `-32px` for `$x={32}`

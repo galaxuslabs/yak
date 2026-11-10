@@ -3,4 +3,4 @@
 "@yak/solid": patch
 ---
 
-When you fix a broken import while a `.yak.ts` file is still loading for the first time, the error now clears instead of staying until the next edit.
+Fixes a bug where an error from a broken import in a `.yak.ts` file stayed after you fixed it until the next edit
