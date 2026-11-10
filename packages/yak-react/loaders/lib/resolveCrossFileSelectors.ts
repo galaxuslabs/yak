@@ -10,6 +10,7 @@ import {
 } from "yak-internals/cross-file-resolver/resolve";
 import { parseExports } from "yak-internals/parse-exports";
 import { YakConfigOptions } from "yak-internals/config";
+import { createCompilationEvaluator } from "../evaluator.js";
 
 export { parseExports };
 
@@ -17,6 +18,8 @@ const compilationCache = new WeakMap<
   Compilation,
   {
     parsedFiles: Map<string, ParsedModule>;
+    /** Created on the first `.yak.ts` import, so the disk check for changed files runs once per compilation */
+    evaluate?: ReturnType<typeof createCompilationEvaluator>;
   }
 >();
 
@@ -105,7 +108,10 @@ function getParseContext(loader: LoaderContext<YakConfigOptions>): ParseContext 
       return { code: await transformedSource };
     },
     async evaluateYakModule(modulePath) {
-      return loader.importModule(modulePath);
+      const cache = getCompilationCache(loader);
+      cache.evaluate ??= createCompilationEvaluator();
+      const evaluate = await cache.evaluate;
+      return evaluate(modulePath, (dependency) => loader.addDependency(dependency));
     },
   };
 }

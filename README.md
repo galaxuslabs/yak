@@ -329,12 +329,12 @@ const Container = styled.div`
 `;
 ```
 
-| Feature        | Code                        | Yak Constant files                      |
-| :------------- | :-------------------------- | :-------------------------------------- |
-| File Extension | `.js`, `.jsx`, `.tsx`, etc. | `.yak.js`, `.yak.jsx`, `.yak.tsx`, etc. |
-| Runs at        | Runtime (Node or Browser)   | Compile time (Bundler)                  |
-| Side effects   | ✅                          | 🚫                                      |
-| Yak Features   | All (`styled`, `css`, ...)  | 🚫                                      |
+| Feature        | Code                        | Yak Constant files   |
+| :------------- | :-------------------------- | :------------------- |
+| File Extension | `.js`, `.jsx`, `.tsx`, etc. | `.yak.ts`, `.yak.js` |
+| Runs at        | Runtime (Node or Browser)   | Compile time (Node)  |
+| Side effects   | ✅                          | 🚫                   |
+| Yak Features   | All (`styled`, `css`, ...)  | 🚫                   |
 
 <img src="https://raw.githubusercontent.com/galaxuslabs/yak/main/readme-assets/dist/build-time-constants.svg" width="100%" alt="At build time, yak runs constants.yak.ts, calculates the values and writes them into the CSS. The constants do not ship to the browser." />
 

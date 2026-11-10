@@ -2,7 +2,7 @@ import * as prettier from "prettier";
 import * as typescriptParser from "prettier/plugins/typescript";
 import * as estreePlugin from "prettier/plugins/estree";
 import init, { start, transform } from "./wasm";
-import { runCssLoader } from "./mocked-loader";
+import { resolveCss } from "./resolve-css";
 import type {
   PlaygroundFile,
   TransformOptions,
@@ -49,7 +49,7 @@ async function transformAll(
   return Promise.all(
     compiled.map(async (file) => ({
       ...file,
-      css: await runCssLoader(
+      css: await resolveCss(
         file,
         compiled.filter((other) => other !== file),
       ),

@@ -843,7 +843,7 @@ yak supports importing constants, mixins, and selectors from normal modules or `
 
 ### Build-Time Constants with `.yak` Files
 
-`.yak.ts` / `.yak.tsx` files are evaluated at build time, which means you can use real JavaScript logic to compute values that then become part of your static CSS. This is the key difference from ordinary `.ts` files. You can map, iterate, and calculate at build time.
+`.yak.ts` files are evaluated at build time, which means you can use real JavaScript logic to compute values that then become part of your static CSS. This is the key difference from ordinary `.ts` files. You can map, iterate, and calculate at build time.
 
 ```tsx title="theme/spacing.yak.ts"
 export const spacing = {
