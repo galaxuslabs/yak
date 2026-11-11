@@ -112,7 +112,10 @@ async function viteYakImpl(
   let basePath = userOptions.basePath ?? "";
   let debugLog: ReturnType<typeof createDebugLogger> = () => {};
   let isServe = false;
-  const sourceFileRegex = /\.(tsx?|m?jsx?)\??/;
+  // "/src/a.tsx" or "/src/a.tsx?v=1", but not "/package.json": the extension
+  // ends the path or comes right before the query, and a package.json that
+  // lists the yak package also passes the code filter of transform below
+  const sourceFileRegex = /\.(tsx?|m?jsx?)(?:\?|$)/;
   // "/src/a.tsx.yak.css" or "/src/a.tsx.yak.css?direct", see resolveId
   const yakCssRegex = /\.yak\.css(?:\?|$)/;
   const yakSwcPath = await findYakSwcPlugin();

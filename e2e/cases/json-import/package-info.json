@@ -1,0 +1,7 @@
+{
+  "name": "json-import",
+  "dependencies": {
+    "@yak/react": "workspace:*",
+    "@yak/solid": "workspace:*"
+  }
+}
