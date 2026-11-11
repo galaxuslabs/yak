@@ -1,0 +1,9 @@
+.github/workflows/build.yml: package names in comments, prose and docs
+.gitignore: package names in comments, prose and docs
+biome.json: package names in comments, prose and docs
+config/transition.ts: package names in imports, mocks and configs, package names in comments, prose and docs
+docs/styling.md: package names in comments, prose and docs
+flyout.module.css: package names in comments, prose and docs
+generator.tsx: package names in imports, mocks and configs, package names in comments, prose and docs
+index.html: package names in comments, prose and docs
+package.json: dependencies and catalogs, package names in comments, prose and docs

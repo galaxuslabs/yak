@@ -1,0 +1,15 @@
+{
+  // @yak/react replaces styled-components
+  "linter": {
+    "rules": {
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": { "styled-components": "Import `styled` from '@yak/react' instead." }
+          }
+        }
+      }
+    }
+  }
+}

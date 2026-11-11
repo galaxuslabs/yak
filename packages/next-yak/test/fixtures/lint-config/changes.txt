@@ -1,0 +1,4 @@
+.oxlintrc.json.fixture: package names in imports, mocks and configs, lint rules and lint plugin names
+button.tsx: package names in imports, mocks and configs, lint rules and lint plugin names
+eslint.config.mjs: package names in imports, mocks and configs, lint rules and lint plugin names
+oxlint-ts/oxlint.config.ts.fixture: package names in imports, mocks and configs, lint rules and lint plugin names

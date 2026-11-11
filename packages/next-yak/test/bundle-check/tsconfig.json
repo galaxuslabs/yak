@@ -1,0 +1,4 @@
+{
+  // the codemod keeps comments
+  "compilerOptions": { "jsxImportSource": "next-yak" }
+}

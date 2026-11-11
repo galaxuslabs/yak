@@ -1,0 +1,7 @@
+biome.json:9 text: The text still contains an old package name.
+config/transition.ts:3 comment: The comment contains `:global()`, which @yak/react does not need.
+generator.tsx:4 text: The text still contains an old package name.
+generator.tsx:5 text: The text still contains an old package name.
+generator.tsx:6 text: The text still contains an old package name.
+generator.tsx:7 regex: The regex contains an old package name.
+package.json:3 text: The text still contains an old package name.

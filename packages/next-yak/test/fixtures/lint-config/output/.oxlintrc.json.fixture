@@ -1,0 +1,8 @@
+{
+  "jsPlugins": ["@yak/eslint-plugin"],
+  "rules": {
+    "@yak/css-nesting-operator": "error",
+    "@yak/enforce-semicolon": "error",
+    "@yak/style-conditions": "warn"
+  }
+}

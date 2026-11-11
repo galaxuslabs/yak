@@ -1,0 +1,5 @@
+# @yak/react needs the SWC cache
+jobs:
+  build:
+    steps:
+      - run: npm install @yak/react

@@ -1,7 +1,0 @@
-  x Function expressions are not allowed in css template literals inside .yak files
-   ,-[input.js:8:1]
- 7 |     line-height: 2rem;
- 8 |     font-weight: ${({ $active }) => $active ? 'bold' : 'normal'};
-   :                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 9 |   `,
-   `----

@@ -1,0 +1,44 @@
+{
+  "name": "app",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "next": "16.4.2",
+    "next-url-state": "1.0.9",
+    "next-yak": "^9.10.3",
+    "react": "19.3.1"
+  },
+  "devDependencies": {
+    "eslint-plugin-yak": "1.4.0",
+    "storybook-addon-yak": "~9.10.3",
+    "yak-swc": "workspace:*"
+  },
+  "peerDependencies": {
+    "zod": "*",
+    "next-yak": ">=9.0.0"
+  },
+  "peerDependenciesMeta": {
+    "next-yak": {
+      "optional": true
+    }
+  },
+  "dependenciesMeta": {
+    "yak-swc@9.10.3": {
+      "built": false
+    }
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "next-yak": "9"
+      }
+    }
+  },
+  "knip": {
+    "ignoreDependencies": ["next-yak"]
+  },
+  "jest": {
+    "transformIgnorePatterns": ["node_modules/(?!next-yak)"]
+  }
+}

@@ -1,0 +1,1 @@
+button.tsx:13 lint rule: @yak/eslint-plugin has no `css-global-deprecated` rule. Remove it.

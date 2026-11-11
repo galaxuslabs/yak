@@ -1,0 +1,5 @@
+# next-yak needs the SWC cache
+jobs:
+  build:
+    steps:
+      - run: npm install next-yak

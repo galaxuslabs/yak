@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "noUnusedLocals": false,
-    "types": ["node", "vitest/globals"]
-  },
-  "exclude": [],
-  "include": ["./**/*", "../**/*"]
-}

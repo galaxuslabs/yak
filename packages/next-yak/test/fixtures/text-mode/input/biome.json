@@ -1,0 +1,15 @@
+{
+  // next-yak replaces styled-components
+  "linter": {
+    "rules": {
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": { "styled-components": "Import `styled` from 'next-yak' instead." }
+          }
+        }
+      }
+    }
+  }
+}

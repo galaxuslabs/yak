@@ -1,0 +1,1 @@
+next.config.ts: package names in imports, mocks and configs, options of withYak, viteYak, pluginYak and the yak-swc plugin

@@ -1,0 +1,5 @@
+already/package.json: dependencies and catalogs
+catalog/package.json: dependencies and catalogs
+inline/package.json: dependencies and catalogs
+package.json: package names in imports, mocks and configs, dependencies and catalogs
+tsconfig.json: package names in imports, mocks and configs

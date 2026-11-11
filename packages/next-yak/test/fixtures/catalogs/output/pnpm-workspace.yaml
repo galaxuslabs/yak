@@ -1,0 +1,19 @@
+packages:
+  - packages/*
+
+catalog:
+  "@yak/eslint-plugin": ^2.0.0
+  "@yak/react": 10.0.0
+  next: 16.4.2
+  react: 19.3.1
+
+catalogs:
+  storybook:
+    # the comment stays
+    "@yak/storybook": 10.0.0
+    "storybook": 10.0.0
+
+minimumReleaseAgeExclude:
+  - "@stylexjs/stylex@0.19.1"
+  - "@yak/react@10.0.0"
+  - "@yak/swc@10.0.0" # the comment stays

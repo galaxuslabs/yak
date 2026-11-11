@@ -1,8 +1,0 @@
----
-source: css_in_js_parser/src/to_css.rs
-expression: to_css(&declarations)
----
-
-.foo {
-  content: "line1\\\nline2";
-}

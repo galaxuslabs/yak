@@ -1,0 +1,1 @@
+package.json:42 text: The text still contains an old package name.

@@ -1,0 +1,3 @@
+jest.config.js:1 Jest config: Add `@yak/react` to `transpilePackages` in the Next.js config.
+vitest.config.ts:22 regex: `.yak.module.css` no longer matches, because @yak/react writes `.yak.css` files.
+vitest.config.ts:24 string: `.yak.module.css` no longer matches, because @yak/react writes `.yak.css` files.

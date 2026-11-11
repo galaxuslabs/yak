@@ -2,13 +2,10 @@
   "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [["next-yak", "yak-swc", "storybook-addon-yak"]],
+  "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "v9",
+  "baseBranch": "v10",
   "updateInternalDependencies": "patch",
-  "ignore": ["@yak/solid"],
-  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
-    "onlyUpdatePeerDependentsWhenOutOfRange": true
-  }
+  "ignore": []
 }

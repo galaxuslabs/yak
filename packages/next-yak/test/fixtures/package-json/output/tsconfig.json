@@ -1,0 +1,8 @@
+{
+  // the comment stays
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "@yak/react",
+    "types": ["@yak/react/types"],
+  },
+}

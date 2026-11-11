@@ -1,28 +1,10 @@
-name: Vite-Tests
+name: Tests
 
 on:
   push:
-    branches: ["main", "v9"]
-    paths:
-      - "./package.json"
-      - "packages/next-yak/**"
-      - "packages/yak-internals/**"
-      - "packages/yak-solid/**"
-      - "packages/yak-swc/**"
-      - "packages/storybook-addon-yak/**"
-      - "packages/eslint-plugin-yak/**"
-      - ".github/workflows/tests.yml"
+    branches: ["v10"]
   pull_request:
-    branches: ["main", "v9"]
-    paths:
-      - "./package.json"
-      - "packages/next-yak/**"
-      - "packages/yak-internals/**"
-      - "packages/yak-solid/**"
-      - "packages/yak-swc/**"
-      - "packages/storybook-addon-yak/**"
-      - "packages/eslint-plugin-yak/**"
-      - ".github/workflows/tests.yml"
+    branches: ["v10"]
   workflow_dispatch:
 
 permissions:
@@ -53,48 +35,17 @@ jobs:
         with:
           run_install: false
 
-      - name: Add Rust wasm targets
-        run: rustup target add wasm32-wasip1 wasm32-unknown-unknown
-      - name: Enable caching
-        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
-        with:
-          workspaces: packages/yak-swc
-      - name: Build with SWC
-        run: pnpm run build:swc
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3.4.3
-        name: Setup pnpm cache
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
       - name: Install dependencies
         run: pnpm install
 
-      - name: Validate wasm fixtures
-        run: pnpm --filter yak-swc test:wasm-fixtures
+      - name: Check formatting
+        run: pnpm format:check
 
-      - name: Build
-        run: pnpm run build
-
-      - name: Build Storybook Addon
-        run: pnpm run --filter=storybook-addon-yak build
-
-      - name: Validate ESLint Plugin Docs
-        run: pnpm --filter eslint-plugin-yak check:docs
+      - name: Lint
+        run: pnpm lint
 
       - name: Test
         run: pnpm run test
 
-      - name: Build Storybook Example (Vite)
-        run: pnpm --filter @example/storybook build-storybook:vite
-
-      - name: Build Storybook Example (Webpack)
-        run: pnpm --filter @example/storybook build-storybook:webpack
+      - name: Integration test
+        run: pnpm run test:integration
