@@ -24,7 +24,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/DigitecGalaxus/next-yak.git"
+    "url": "git+https://github.com/galaxuslabs/yak.git#v9",
+    "directory": "packages/yak-swc"
   },
   "files": [],
   "main": "target/wasm32-wasip1/release/yak_swc.wasm",
