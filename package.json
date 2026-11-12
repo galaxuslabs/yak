@@ -28,7 +28,7 @@
     "test:e2e": "pnpm --filter=next-yak-e2e test",
     "test:e2e:build": "pnpm --filter=next-yak-e2e test:build",
     "watch": "pnpm run --filter=next-yak watch",
-    "release": "pnpm --filter='./packages/*' run build && npm_config_ignore_scripts=true changeset publish"
+    "release": "pnpm --filter='./packages/*' run build && npm_config_ignore_scripts=true changeset publish --tag v9"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:dev",
