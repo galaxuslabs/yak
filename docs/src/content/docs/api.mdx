@@ -108,6 +108,9 @@ The plugins look for a `yak.context` file (`.ts`, `.tsx`, `.js` or `.jsx`) in yo
 `getYakThemeContext` export as the theme. Set [`contextPath`](#plugin-options) to use another file. The function can
 be async. See [Theming](/docs/features#theming).
 
+Reading `cookies()` or `headers()` in this file makes a Next.js App Router route dynamic. For light and dark
+mode on a static route, see [Light and dark mode on static routes](/docs/features#light-dark-static-routes).
+
 ```ts title="yak.context.ts"
 export function getYakThemeContext() {
   return { highContrast: false };
