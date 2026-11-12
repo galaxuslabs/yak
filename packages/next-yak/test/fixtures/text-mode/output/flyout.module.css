@@ -1,0 +1,4 @@
+/* Named try rules cannot be nested inside a @yak/react component. */
+@position-try --flyout {
+  top: 0;
+}

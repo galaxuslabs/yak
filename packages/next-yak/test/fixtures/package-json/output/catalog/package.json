@@ -1,0 +1,8 @@
+{
+  "name": "catalog-user",
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@yak/react": "catalog:",
+    "circular-dependency-plugin": "catalog:"
+  }
+}

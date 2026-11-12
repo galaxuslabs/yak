@@ -1,0 +1,6 @@
+export default {
+  jsPlugins: [{ name: "@yak", specifier: "@yak/eslint-plugin" }],
+  rules: {
+    "@yak/enforce-semicolon": "error",
+  },
+};

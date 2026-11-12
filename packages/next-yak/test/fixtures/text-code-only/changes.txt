@@ -1,0 +1,3 @@
+config/transition.ts: package names in imports, mocks and configs
+generator.tsx: package names in imports, mocks and configs
+package.json: dependencies and catalogs

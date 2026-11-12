@@ -1,0 +1,1 @@
+component.tsx: package names in imports, mocks and configs

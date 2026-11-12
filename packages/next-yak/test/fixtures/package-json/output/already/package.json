@@ -1,0 +1,6 @@
+{
+  "name": "half-migrated",
+  "dependencies": {
+    "@yak/react": "^10.0.0"
+  }
+}

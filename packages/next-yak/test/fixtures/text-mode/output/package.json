@@ -1,0 +1,7 @@
+{
+  "name": "css-mapping",
+  "description": "Uses the CSS classes of @yak/react components",
+  "dependencies": {
+    "@yak/react": "^10.0.0"
+  }
+}

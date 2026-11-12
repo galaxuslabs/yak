@@ -1,0 +1,1 @@
+.storybook/main.ts: package names in imports, mocks and configs

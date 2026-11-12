@@ -1,0 +1,7 @@
+{
+  "name": "css-mapping",
+  "description": "Uses the CSS classes of next-yak components",
+  "dependencies": {
+    "next-yak": "^9.10.3"
+  }
+}

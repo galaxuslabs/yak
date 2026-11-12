@@ -1,0 +1,7 @@
+{
+  "jsc": {
+    "experimental": {
+      "plugins": [["yak-swc", { "basePath": ".", "suppressDeprecationWarnings": true }]]
+    }
+  }
+}

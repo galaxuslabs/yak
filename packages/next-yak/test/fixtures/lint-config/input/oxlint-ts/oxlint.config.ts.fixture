@@ -1,0 +1,7 @@
+export default {
+  jsPlugins: [{ name: "yak", specifier: "eslint-plugin-yak" }],
+  rules: {
+    "yak/enforce-semicolon": "error",
+    "yak/css-global-deprecated": "off",
+  },
+};

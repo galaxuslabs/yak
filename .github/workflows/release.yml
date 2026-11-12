@@ -3,9 +3,8 @@ name: Release
 on:
   push:
     branches:
-      - main
-      # maintenance line for next-yak 9.x, see CONTRIBUTION.md
-      - v9
+      # releases next-yak 10, the codemod to @yak/react
+      - v10
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -40,14 +39,6 @@ jobs:
         name: Install pnpm
         with:
           run_install: false
-
-      - name: Add Rust wasm targets
-        run: rustup target add wasm32-wasip1 wasm32-unknown-unknown
-
-      - name: Enable caching
-        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
-        with:
-          workspaces: packages/yak-swc
 
       - name: Get pnpm store directory
         shell: bash

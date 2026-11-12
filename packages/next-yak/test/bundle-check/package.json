@@ -1,0 +1,6 @@
+{
+  "name": "bundle-check",
+  "dependencies": {
+    "next-yak": "^9.10.3"
+  }
+}

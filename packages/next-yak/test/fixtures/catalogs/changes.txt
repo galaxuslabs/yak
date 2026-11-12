@@ -1,0 +1,2 @@
+.yarnrc.yml: dependencies and catalogs
+pnpm-workspace.yaml: dependencies and catalogs

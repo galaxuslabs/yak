@@ -1,16 +1,4 @@
-.next
 node_modules
-**/docs/dist
 **/next-yak/dist
-**/yak-solid/dist
-**/eslint-plugin-yak/dist
-**/storybook-addon-yak/dist
-examples/**/dist
-storybook-static
-target
-.vercel
-.swc
-.tanstack
-cross-file-tests/__tests__/.tmp/
 *.tgz
 .claude
