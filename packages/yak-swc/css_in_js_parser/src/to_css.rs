@@ -138,7 +138,8 @@ mod tests {
                             color: blue;
         "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_snapshot!(to_css(&declarations));
   }
 
@@ -152,7 +153,8 @@ mod tests {
                             color: blue;
         "#,
       None,
-    );
+    )
+    .expect_valid();
     let (_, declarations2) = parse_css(
       r#"
           .foo {
@@ -161,7 +163,8 @@ mod tests {
                           background: red;
       "#,
       None,
-    );
+    )
+    .expect_valid();
     let combined_declarations: Vec<_> = declarations1.into_iter().chain(declarations2).collect();
     assert_snapshot!(to_css(&combined_declarations));
   }
@@ -176,7 +179,8 @@ mod tests {
                       color: blue;
     "#,
       None,
-    );
+    )
+    .expect_valid();
     let (_, declarations2) = parse_css(
       r#"
       }
@@ -184,7 +188,8 @@ mod tests {
           color: orange;
     "#,
       Some(state1),
-    );
+    )
+    .expect_valid();
     let combined_declarations: Vec<_> = declarations1.into_iter().chain(declarations2).collect();
     assert_eq!(
       to_css(&combined_declarations),
@@ -207,14 +212,16 @@ mod tests {
       .foo
     "#,
       None,
-    );
+    )
+    .expect_valid();
     let (_, declarations2) = parse_css(
       r#"
         {
           color: orange;
     "#,
       Some(state1),
-    );
+    )
+    .expect_valid();
     let combined_declarations: Vec<_> = declarations1.into_iter().chain(declarations2).collect();
     assert_eq!(
       to_css(&combined_declarations),
@@ -235,7 +242,8 @@ mod tests {
                       color: blue;
     "#,
       None,
-    );
+    )
+    .expect_valid();
     let (_, mut declarations2) = parse_css(
       r#"
       }
@@ -243,7 +251,8 @@ mod tests {
           color: orange;
     "#,
       Some(state1),
-    );
+    )
+    .expect_valid();
     declarations2[0].scope.insert(
       0,
       CssScope {
@@ -264,7 +273,8 @@ mod tests {
             }
         "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_snapshot!(to_css(&declarations));
   }
 
@@ -276,14 +286,16 @@ mod tests {
         /* comment
       "#,
       None,
-    );
+    )
+    .expect_valid();
     let (_, declarations2) = parse_css(
       r#"
           bar {*/
             color: orange;
       "#,
       Some(state1),
-    );
+    )
+    .expect_valid();
     let combined_declarations: Vec<_> = declarations1.into_iter().chain(declarations2).collect();
     assert_eq!(
       to_css(&combined_declarations),
@@ -313,7 +325,8 @@ mod tests {
         }
         "#,
       None,
-    );
+    )
+    .expect_valid();
     // The result should show @property at the top level, not nested inside selectors
     assert_eq!(
       to_css(&declarations),
