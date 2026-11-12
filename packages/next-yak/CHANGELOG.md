@@ -1,5 +1,15 @@
 # next-yak
 
+## 9.11.0
+
+### Minor Changes
+
+- 52c7135: Add the `next-yak migrate` command. Run `npx next-yak migrate` to move a project from next-yak to @yak/react.
+
+### Patch Changes
+
+- yak-swc@9.11.0
+
 ## 9.10.3
 
 ### Patch Changes
