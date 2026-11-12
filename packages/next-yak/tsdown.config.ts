@@ -6,9 +6,11 @@ export default defineConfig({
   entry: { cli: "src/cli.ts" },
   format: "esm",
   platform: "node",
-  // next-yak 9 projects run on Node.js 20 or later
+  // next-yak projects run on Node.js 20 or later
   target: "node20",
   dts: false,
+  minify: "dce-only",
+  treeshake: true,
   // the published package has no dependencies, everything is in the bundle
   noExternal: [/.*/],
   outExtensions: () => ({ js: ".js" }),

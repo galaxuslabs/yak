@@ -1,7 +1,7 @@
 # next-yak
 
 next-yak is now [@yak/react](https://www.npmjs.com/package/@yak/react). Version 10 of this package
-contains no runtime. It holds a codemod that moves your project from next-yak 9 to @yak/react 10.
+contains no runtime. It holds a codemod that moves your project from next-yak to @yak/react.
 
 ## Migrate
 
@@ -9,7 +9,7 @@ Commit your changes first, then run this command in the root of your project. Wh
 uncommitted changes, the codemod asks before it continues.
 
 ```bash
-npx next-yak@10 migrate
+npx next-yak migrate
 ```
 
 The codemod changes these parts of your project:
@@ -23,9 +23,9 @@ The codemod changes these parts of your project:
 - the options of `withYak`, `viteYak` and `pluginYak`: `experiments.debug` moves to the top level,
   and the removed options go away
 - the lint config: rule ids move from `yak/` to `@yak/`, and `css-global-deprecated` goes away
-- `.yak.module.css` patterns, because @yak/react writes `.yak.css` files
 
-When it finds code that it cannot change safely, it shows the file and the line. The codemod does
+When it finds code that it cannot change safely, it shows the file and the line. For example, it
+shows `.yak.module.css` patterns, because @yak/react writes `.yak.css` files. The codemod does
 not format the changed files. Run the formatter of your project after it.
 
 The codemod asks whether it should also rename next-yak in comments, prose strings, Markdown and

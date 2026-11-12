@@ -8,9 +8,9 @@ import { CHANGE, type Change } from "./changes.ts";
 import { isMigratable, migrateFile } from "./migrate.ts";
 import { WARNING, type Warning, type WarningType } from "./warnings.ts";
 
-const HELP = `Usage: npx next-yak@10 migrate [folder] [options]
+const HELP = `Usage: npx next-yak migrate [folder] [options]
 
-Moves a project from next-yak 9 to @yak/react 10. The default folder is the current folder.
+Moves a project from next-yak to @yak/react. The default folder is the current folder.
 
 Options:
   --text       Also rename next-yak in comments, prose strings, Markdown and CSS files

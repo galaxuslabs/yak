@@ -24,7 +24,7 @@ export const isMigratable = (file: string, options: Options) =>
   YAML_FILE.test(file) ||
   (options.text && isTextFile(file));
 
-/** migrates one file from next-yak 9 to @yak/react 10 */
+/** migrates one file from next-yak to @yak/react */
 export function migrateFile(file: string, code: string, options: Options): Result {
   const warnings: Warning[] = [];
   const warn = (line: number | undefined, type: WarningType, detail?: string) =>
