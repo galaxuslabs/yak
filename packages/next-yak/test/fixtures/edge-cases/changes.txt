@@ -1,3 +1,4 @@
+async-arrow.tsx: package names in imports, mocks and configs, :global() selectors in yak styles
 bare-calls.mjs: package names in imports, mocks and configs, options of withYak, viteYak, pluginYak and the yak-swc plugin
 cast.ts: package names in imports, mocks and configs, :global() selectors in yak styles
 conditional.mjs: package names in imports, mocks and configs

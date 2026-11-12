@@ -3,14 +3,17 @@ packages:
 
 # Only install versions published at least a day ago
 minimumReleaseAge: 1440
+# Babel 8.1.2 fixes babel/babel#18264. Remove this after 2026-11-12 20:00 UTC.
+minimumReleaseAgeExclude:
+  - "@babel/*"
 
 allowBuilds:
   esbuild: true
 
 catalog:
-  "@babel/parser": 8.1.0
-  "@babel/traverse": 8.1.0
-  "@babel/types": 8.1.0
+  "@babel/parser": 8.1.2
+  "@babel/traverse": 8.1.2
+  "@babel/types": 8.1.2
   "@changesets/cli": 3.0.1
   "@types/node": 26.4.1
   knip: 6.34.0
