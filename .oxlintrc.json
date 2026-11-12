@@ -54,6 +54,7 @@
     "packages/yak-swc/yak_swc/tests/fixture/**",
     "packages/yak-internals/isolated-source-eval/__tests__/fixtures/syntax-error.ts",
     "e2e/**",
-    "docs/**"
+    "docs/**",
+    "packages/next-yak/migrate/cli.js"
   ]
 }

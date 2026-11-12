@@ -18,6 +18,7 @@
     "docs/public/types/",
     "docs/content/docs/eslint-plugin.mdx",
     "packages/eslint-plugin-yak/README.md",
-    "packages/eslint-plugin-yak/docs/"
+    "packages/eslint-plugin-yak/docs/",
+    "packages/next-yak/migrate/cli.js"
   ]
 }

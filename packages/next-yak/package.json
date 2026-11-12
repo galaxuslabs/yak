@@ -24,7 +24,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/DigitecGalaxus/next-yak.git"
+    "url": "git+https://github.com/galaxuslabs/yak.git#v9",
+    "directory": "packages/next-yak"
+  },
+  "bin": {
+    "next-yak": "./migrate/cli.js"
   },
   "files": [
     "dist",
@@ -32,6 +36,7 @@
     "runtime",
     "withYak",
     "rsbuild",
+    "migrate",
     "LICENSE"
   ],
   "type": "module",
