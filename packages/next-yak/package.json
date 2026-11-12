@@ -1,6 +1,6 @@
 {
   "name": "next-yak",
-  "version": "9.10.3",
+  "version": "10.0.0",
   "description": "next-yak is now @yak/react. This package moves a project from next-yak to @yak/react.",
   "keywords": [
     "codemod",
