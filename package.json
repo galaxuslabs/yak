@@ -17,7 +17,7 @@
     "test:watch": "pnpm --filter=next-yak run test:watch",
     "test:snapshots": "pnpm --filter=next-yak --filter=cross-file-tests --filter=yak-swc run test:snapshots",
     "watch": "pnpm run --filter=next-yak watch",
-    "release": "pnpm run --filter=next-yak build && changeset publish --tag v8"
+    "release": "pnpm run --filter=next-yak build && changeset publish --tag latest-8"
   },
   "engines": {
     "node": ">=22"
