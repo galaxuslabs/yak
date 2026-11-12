@@ -73,7 +73,10 @@ function addYakTurbopack(
   const ruleKey = "*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}";
   const yakRule = {
     // skip the loader for files that don't include "@yak/react"
-    condition: { content: /@yak\/react/ },
+    // and for the files of @yak/react itself (installed or in this monorepo), like the vite plugin
+    condition: {
+      all: [{ content: /@yak\/react/ }, { not: { path: /(?:@yak\/react|packages\/yak-react)\// } }],
+    },
     loaders: [yakLoader],
   };
   const existing = nextConfig.turbopack.rules[ruleKey];

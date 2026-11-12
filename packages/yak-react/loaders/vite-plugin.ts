@@ -23,6 +23,7 @@ export type { ViteYakPluginOptions } from "yak-internals/vite-plugin-core";
 export const viteYak = createViteYakPlugin({
   name: "@yak/react",
   reactRefreshReg: true,
-  excludePattern: /packages\/yak-react/,
+  // the files of @yak/react itself, installed or in this monorepo
+  excludePattern: /(?:@yak\/react|packages\/yak-react)\//,
   foldStatic: true,
 });
