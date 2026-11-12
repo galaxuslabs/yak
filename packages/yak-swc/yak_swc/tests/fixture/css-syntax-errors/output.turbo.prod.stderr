@@ -1,0 +1,69 @@
+  x This block has no selector, so its CSS applies to no element. Add a selector before the `{`, for example `&:hover {`.
+   ,-[input.js:5:1]
+ 4 |   color: red;
+ 5 |   { color: blue; }
+   :   ^
+ 6 | `;
+   `----
+  x A block cannot start with a runtime value, because the selector or media query must be known at build time.
+  | Use a constant instead, for example:
+  | 
+  | const desktop = "@media (min-width: 768px)";
+  | styled.div`${desktop} { ... }`
+    ,-[input.js:9:1]
+  8 | export const DynamicSelector = styled.div<{ $selector: string }>`
+  9 |   ${(p) => p.$selector} {
+    :     ^^^^^^^^^^^^^^^^^^
+ 10 |     color: red;
+    `----
+  x A block cannot start with a runtime value, because the selector or media query must be known at build time.
+  | Use a constant instead, for example:
+  | 
+  | const desktop = "@media (min-width: 768px)";
+  | styled.div`${desktop} { ... }`
+    ,-[input.js:19:1]
+ 18 | export const DynamicMediaQuery = styled.div`
+ 19 |   ${media.up("768px")} {
+    :     ^^^^^^^^^^^^^^^^^
+ 20 |     color: red;
+    `----
+  x This declaration has no `:`, so the browser ignores it. Use the form `property: value;`.
+    ,-[input.js:33:1]
+ 32 | export const MissingColon = styled.div`
+ 33 |   color red;
+    :   ^^^^|^^^^
+    :       `-- change this to `color: red`
+ 34 |   .foo { margin 0 }
+    `----
+  x This declaration has no `:`, so the browser ignores it. Use the form `property: value;`.
+    ,-[input.js:34:1]
+ 33 |   color red;
+ 34 |   .foo { margin 0 }
+    :          ^^^^|^^^
+    :              `-- change this to `margin: 0`
+ 35 |   padding: 0;
+    `----
+  x This declaration has no `:`, so the browser ignores it. Use the form `property: value;`.
+    ,-[input.js:40:1]
+ 39 |   padding: 0;
+ 40 |   color red
+    :   ^^^^|^^^^
+    :       `-- change this to `color: red`
+ 41 | `;
+    `----
+  x This bracket is never closed, so yak reads all CSS after it as part of the same statement.
+  | Add the missing `)` or `}`.
+    ,-[input.js:50:1]
+ 49 | export const UnclosedMediaQuery = styled.div`
+ 50 |   @media (min-width: 600px {
+    :          ^
+ 51 |     color: red;
+    `----
+  x This bracket is never closed, so yak reads all CSS after it as part of the same statement.
+  | Add the missing `)` or `}`.
+    ,-[input.js:56:1]
+ 55 | export const UnclosedFunction = styled.div<{ $deg: number }>`
+ 56 |   transform: rotate(${(p) => p.$deg}deg;
+    :                    ^
+ 57 |   color: red;
+    `----

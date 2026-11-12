@@ -94,7 +94,7 @@ impl TransformNestedCss {
 impl YakTransform for TransformNestedCss {
   fn create_css_state(&self, previous_parser_state: Option<ParserState>) -> ParserState {
     // It is safe to unwrap here because the previous_parser_state is always set for a nested css
-    let mut parser_state = previous_parser_state.clone().unwrap();
+    let mut parser_state = previous_parser_state.unwrap().nested();
     // The first scope is the class name which gets attached to the element
     parser_state.current_scopes[0] = CssScope {
       name: css_class_name(&self.class_name),
@@ -184,12 +184,10 @@ impl TransformCssMixin {
 
 impl YakTransform for TransformCssMixin {
   fn create_css_state(&self, _previous_parser_state: Option<ParserState>) -> ParserState {
-    let mut parser_state = ParserState::new();
-    parser_state.current_scopes = vec![CssScope {
+    ParserState::with_scopes(vec![CssScope {
       name: css_class_name(&self.class_name),
       scope_type: ScopeType::AtRule,
-    }];
-    parser_state
+    }])
   }
 
   fn transform_expression(
@@ -471,12 +469,10 @@ fn transform_styled_usages(expression: Box<Expr>, yak_imports: &mut YakImports) 
 
 impl YakTransform for TransformStyled {
   fn create_css_state(&self, _previous_parser_state: Option<ParserState>) -> ParserState {
-    let mut parser_state = ParserState::new();
-    parser_state.current_scopes = vec![CssScope {
+    ParserState::with_scopes(vec![CssScope {
       name: css_class_name(&self.class_name),
       scope_type: ScopeType::AtRule,
-    }];
-    parser_state
+    }])
   }
 
   fn transform_expression(
@@ -634,12 +630,10 @@ impl TransformKeyframes {
 
 impl YakTransform for TransformKeyframes {
   fn create_css_state(&self, _previous_parser_state: Option<ParserState>) -> ParserState {
-    let mut parser_state = ParserState::new();
-    parser_state.current_scopes = vec![CssScope {
+    ParserState::with_scopes(vec![CssScope {
       name: format!("@keyframes {}", self.animation_name),
       scope_type: ScopeType::AtRule,
-    }];
-    parser_state
+    }])
   }
 
   fn transform_expression(
