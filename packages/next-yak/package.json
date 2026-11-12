@@ -9,7 +9,8 @@
   "homepage": "https://yak.js.org/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DigitecGalaxus/next-yak.git"
+    "url": "git+https://github.com/galaxuslabs/yak.git#v8",
+    "directory": "packages/next-yak"
   },
   "bugs": {
     "url": "https://github.com/DigitecGalaxus/next-yak/issues"
@@ -99,11 +100,15 @@
     "vite": "catalog:dev",
     "vitest": "catalog:dev"
   },
+  "bin": {
+    "next-yak": "./migrate/cli.js"
+  },
   "files": [
     "dist",
     "loaders",
     "runtime",
     "withYak",
+    "migrate",
     "LICENSE"
   ],
   "publishConfig": {

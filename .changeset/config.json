@@ -2,10 +2,10 @@
   "$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [["next-yak", "yak-swc"]],
+  "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "main",
+  "baseBranch": "v8",
   "updateInternalDependencies": "patch",
   "ignore": ["benchmarks", "cross-file-tests", "docs", "next-yak-example"]
 }
