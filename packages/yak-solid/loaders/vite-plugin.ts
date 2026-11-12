@@ -24,6 +24,7 @@ export const yak = createViteYakPlugin({
   name: "@yak/solid",
   // @solidjs/vite-plugin owns HMR for Solid components
   reactRefreshReg: false,
-  excludePattern: /packages\/yak-solid/,
+  // the files of @yak/solid itself, installed or in this monorepo
+  excludePattern: /(?:@yak\/solid|packages\/yak-solid)\//,
   foldStatic: true,
 });
