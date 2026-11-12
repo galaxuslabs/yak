@@ -1,5 +1,11 @@
 # next-yak
 
+## 8.1.0
+
+### Minor Changes
+
+- 8931e09: Add the `next-yak migrate` command. Run `npx next-yak migrate` to move a project from next-yak to @yak/react.
+
 ## 8.0.3
 
 ### Patch Changes
