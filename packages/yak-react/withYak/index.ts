@@ -71,12 +71,16 @@ function addYakTurbopack(
   nextConfig.turbopack.rules ||= {};
 
   const ruleKey = "*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}";
-  const rule = {
-    loaders: [] as { loader: string; options: {} }[],
-    ...nextConfig.turbopack.rules[ruleKey],
+  const yakRule = {
+    // skip the loader for files that don't include "@yak/react"
+    // and for the files of @yak/react itself (installed or in this monorepo), like the vite plugin
+    condition: {
+      all: [{ content: /@yak\/react/ }, { not: { path: /(?:@yak\/react|packages\/yak-react)\// } }],
+    },
+    loaders: [yakLoader],
   };
-  rule.loaders.push(yakLoader);
-  nextConfig.turbopack.rules[ruleKey] = rule;
+  const existing = nextConfig.turbopack.rules[ruleKey];
+  nextConfig.turbopack.rules[ruleKey] = existing ? [existing, yakRule].flat() : yakRule;
 
   // Configure resolveAlias for custom yak context (similar to webpack)
   // This allows users to provide a custom context file that will be used

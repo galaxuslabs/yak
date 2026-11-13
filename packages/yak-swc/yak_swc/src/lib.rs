@@ -1,7 +1,7 @@
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
 use css_in_js_parser::{find_char, parse_css, to_css, CommentStateType};
-use css_in_js_parser::{Declaration, ParserState};
+use css_in_js_parser::{CssError, Declaration, ParsedCss, ParserState};
 use rustc_hash::FxHashMap;
 use serde::Deserialize;
 use std::ops::Deref;
@@ -12,7 +12,7 @@ use swc_core::common::comments::Comment;
 use swc_core::common::comments::CommentKind;
 use swc_core::common::comments::Comments;
 use swc_core::common::errors::HANDLER;
-use swc_core::common::{BytePos, Span, Spanned, SyntaxContext, DUMMY_SP};
+use swc_core::common::{BytePos, MultiSpan, Span, Spanned, SyntaxContext, DUMMY_SP};
 use swc_core::ecma::visit::{Fold, VisitMutWith};
 use swc_core::ecma::{ast::*, visit::VisitMut};
 use utils::ast_helper::{
@@ -23,6 +23,7 @@ use utils::css_value_call::css_value_call;
 use utils::css_variable_dedup::CssVariableDedup;
 use utils::fold::css_prop::HasCSSProp;
 use utils::fold::StyledFold;
+use utils::parse_quasi::{css_error_span, parse_quasi, source_position};
 
 mod variable_visitor;
 use variable_visitor::{ScopedVariableReference, VariableVisitor};
@@ -43,6 +44,7 @@ mod utils {
   pub(crate) mod css_variable_dedup;
   pub(crate) mod fold;
   pub(crate) mod native_elements;
+  pub(crate) mod parse_quasi;
 }
 pub mod naming_convention;
 use naming_convention::{CssImportConfig, ImportModeEncoding, NamingConvention};
@@ -168,6 +170,80 @@ Remove the `:global()` wrapper, for example write `.foo` instead of `:global(.fo
 const GLOBAL_STYLE_SCOPE_ERROR: &str =
   "globalStyle must be declared at module scope, not inside a component, function or another css template literal.";
 
+/// Emitted for a `}` without an open block, e.g. css`color: red; }`
+const UNEXPECTED_CLOSING_BRACE_ERROR: &str = "\
+This `}` has no open block to close.\n\
+Remove the `}`, or add the missing `{` before it.";
+
+/// Emitted for a `{` without a selector, e.g. styled.div`{ color: red; }`
+const EMPTY_SELECTOR_ERROR: &str = "\
+This block has no selector, so its CSS applies to no element. \
+Add a selector before the `{`, for example `&:hover {`.";
+
+/// Emitted for a runtime value before a `{`,
+/// e.g. styled.div`${({ theme }) => theme.breakpoints.up("md")} { color: red; }`
+const DYNAMIC_BLOCK_ERROR: &str = "\
+A block cannot start with a runtime value, because the selector or media query must be known at build time.\n\
+Use a constant instead, for example:\n\n\
+const desktop = \"@media (min-width: 768px)\";\n\
+styled.div`${desktop} { ... }`";
+
+/// Emitted for a string constant with a whole declaration or rule,
+/// e.g. const reset = "margin: 0; padding: 0;";
+/// The error points at the usage, the advice at the declaration
+fn emit_string_constant_css_error(
+  usage: Span,
+  declaration: Span,
+  name: &ScopedVariableReference,
+  value: &str,
+  is_valid_mixin: bool,
+) {
+  let name = name.to_readable_string();
+  let mut declaration_span = MultiSpan::from_span(declaration);
+  let advice = if is_valid_mixin {
+    declaration_span.push_span_label(declaration, "move this string into css``".into());
+    // Escape the characters which end or interpolate a template literal
+    let mixin = format!(
+      "css`{}`",
+      value
+        .replace('\\', "\\\\")
+        .replace('`', "\\`")
+        .replace("${", "\\${")
+    );
+    if name.contains('.') {
+      format!("Change the value to a css mixin: {mixin}")
+    } else {
+      format!("Change the constant to a css mixin: const {name} = {mixin};")
+    }
+  } else {
+    declaration_span.push_span_label(declaration, "this string is not a CSS value".into());
+    "A string constant can only hold a CSS value or a part of a selector.".to_string()
+  };
+  HANDLER.with(|handler| {
+    handler
+      .struct_span_err(
+        usage,
+        &format!(
+          "The constant \"{name}\" is not a CSS value or a part of a selector, so it cannot be used here."
+        ),
+      )
+      .span_label(usage, "used here")
+      .span_note(declaration_span, &advice)
+      .emit();
+  });
+}
+
+/// Emitted for a declaration without a `:`, e.g. styled.div`color red;`
+const MISSING_COLON_ERROR: &str = "\
+This declaration has no `:`, so the browser ignores it. \
+Use the form `property: value;`.";
+
+/// Emitted for a `(` or `{` which is still open at the end of a literal,
+/// e.g. styled.div`@media (min-width: 600px { color: red; }`
+const UNCLOSED_BRACKET_ERROR: &str = "\
+This bracket is never closed, so yak reads all CSS after it as part of the same statement.\n\
+Add the missing `)` or `}`.";
+
 pub struct TransformVisitor<GenericComments>
 where
   // SWC provides different comment types for production and testing
@@ -248,6 +324,10 @@ where
   strict_css_prop: bool,
   /// Emit the /*YAK Extracted CSS:*/ comments loaders parse to extract the CSS
   emit_css_comments: bool,
+  /// True while a constant mixin is expanded into the literal which uses it
+  /// e.g. ${highlight} in styled.button`&:hover { ${highlight}; }`
+  /// Suppresses css errors, as the copy would report errors of the parent literal inside the mixin
+  expanding_constant_mixin: bool,
 }
 
 impl<GenericComments> TransformVisitor<GenericComments>
@@ -295,6 +375,7 @@ where
       function_depth: 0,
       strict_css_prop,
       emit_css_comments,
+      expanding_constant_mixin: false,
     }
   }
 
@@ -374,6 +455,14 @@ where
     let mut template_iter = TemplateIterator::new(&mut n.tpl);
     // Javascript Quasi (TplElement) and Expressions (Exprs) are interleaved
     // e.g. styled.button`color: ${primary};` => [TplElement, Expr, TplElement]
+    // Span of the runtime interpolation before the current quasi
+    let mut previous_runtime_span: Option<Span> = None;
+    // A nested literal can start inside the brackets of its parent
+    let initial_bracket_depth = css_state
+      .as_ref()
+      .map_or(0, |state| state.paren_depth + state.brace_depth);
+    // The quasi index, the quasi offset and the parsed css offset of the open bracket
+    let mut open_bracket: Option<(usize, usize, usize)> = None;
     while let Some(pair) = template_iter.next() {
       let is_last_pair = pair.is_last;
       let quasi = pair.quasi;
@@ -391,10 +480,72 @@ where
       };
       // The offset value is set by a previous expression when a unit is moved into a css variable
       // e.g. styled.button`left: ${({$x}) => $x}px;` -> `left: var(--left);`
-      // The escaping of the css code is removed as a slash requires escaping in js string literals
-      // e.g. styled.button`content: "\\2022"` -> `content: "\2022"`
-      let quasi_css_code = &css_code[css_code_offset..].replace("\\\\", "\\");
-      let (new_state, new_declarations) = parse_css(quasi_css_code, css_state);
+      let ParsedCss {
+        state: new_state,
+        declarations: new_declarations,
+        errors,
+        unclosed_bracket,
+      } = parse_quasi(&css_code, css_code_offset, css_state);
+      if !self.expanding_constant_mixin {
+        for error in errors {
+          let span = css_error_span(quasi, css_code_offset, &error);
+          let (span, message) = match (&error, previous_runtime_span) {
+            (CssError::UnexpectedClosingBrace { .. }, _) => (span, UNEXPECTED_CLOSING_BRACE_ERROR),
+            // The `{` follows a runtime value with only whitespace between them
+            // e.g. styled.div`${media.up("md")} { color: red; }`
+            (CssError::EmptySelector { offset }, Some(runtime_span))
+              if css_code[css_code_offset..]
+                .get(..*offset)
+                .is_some_and(|code| code.trim().is_empty()) =>
+            {
+              (runtime_span, DYNAMIC_BLOCK_ERROR)
+            }
+            (CssError::EmptySelector { .. }, _) => (span, EMPTY_SELECTOR_ERROR),
+            (CssError::MissingColon { .. }, _) => (span, MISSING_COLON_ERROR),
+          };
+          // e.g. `color red` -> change this to `color: red`
+          let (span, suggestion) = match error {
+            CssError::MissingColon { start, end } => {
+              let parsed_css = css_code[css_code_offset..].replace("\\\\", "\\");
+              let declaration = parsed_css.get(start..end).unwrap_or_default().trim_end();
+              // The declaration ends at the `;` or `}`, so whitespace before it is not part of it
+              // e.g. `.foo { margin 0 }`
+              let hi = source_position(quasi, css_code_offset, start + declaration.len());
+              (
+                Span::new(span.lo, hi.max(span.lo + BytePos(1))),
+                missing_colon_suggestion(declaration),
+              )
+            }
+            _ => (span, None),
+          };
+          HANDLER.with(|handler| {
+            let mut diagnostic = handler.struct_span_err(span, message);
+            if let Some(suggestion) = suggestion {
+              diagnostic.span_label(span, format!("change this to `{suggestion}`"));
+            }
+            diagnostic.emit();
+          });
+        }
+      }
+      // The span is only computed for the error
+      // e.g. styled.div`@media (min-width: 600px { color: red; }`
+      if let Some(offset) = unclosed_bracket {
+        open_bracket = Some((pair.index, css_code_offset, offset));
+      }
+      if is_last_pair
+        && !self.expanding_constant_mixin
+        && new_state.paren_depth + new_state.brace_depth > initial_bracket_depth
+      {
+        let span = open_bracket.map_or(quasi.span, |(index, start, offset)| {
+          let lo = source_position(&quasis[index], start, offset);
+          Span::new(lo, lo + BytePos(1))
+        });
+        HANDLER.with(|handler| {
+          handler.struct_span_err(span, UNCLOSED_BRACKET_ERROR).emit();
+        });
+      }
+      // Set again below if the expression after this quasi is a runtime value
+      previous_runtime_span = None;
       css_code_offset = 0;
       css_state = Some(new_state);
 
@@ -428,10 +579,9 @@ where
         // e.g. styled.button`width: ${100 + 20}px;`
         if let Some(evaluated_math_calculation) = try_evaluate(expr, &self.variables) {
           // Format to 4 decimal places
-          let (new_state, new_declarations) =
-            parse_css(&format_number(evaluated_math_calculation), css_state);
-          css_state = Some(new_state);
-          self.current_declaration.extend(new_declarations);
+          let parsed = parse_css(&format_number(evaluated_math_calculation), css_state);
+          css_state = Some(parsed.state);
+          self.current_declaration.extend(parsed.declarations);
         }
         // Handle constants in css expressions
         // e.g. styled.button`color: ${primary};` (Ident)
@@ -439,9 +589,9 @@ where
         else if let Some(scoped_name) = extract_ident_and_parts(expr, true) {
           // Known StyledComponents, Mixin or Animations in the same file
           if let Some(referenced_yak_css) = self.variable_name_selector_mapping.get(&scoped_name) {
-            let (new_state, new_declarations) = parse_css(referenced_yak_css, css_state);
-            css_state = Some(new_state);
-            self.current_declaration.extend(new_declarations);
+            let parsed = parse_css(referenced_yak_css, css_state);
+            css_state = Some(parsed.state);
+            self.current_declaration.extend(parsed.declarations);
           }
           // Cross-file references
           // e.g.:
@@ -476,8 +626,7 @@ where
               import_kind.encode_module_import(import_type, scoped_name.parts);
 
             // TODO Track Dynamic Mixins as runtime dependency to pass props: `runtime_expressions.push(*expr.clone());`
-            let (new_state, _) = parse_css(&cross_file_import_token, css_state);
-            css_state = Some(new_state);
+            css_state = Some(parse_css(&cross_file_import_token, css_state).state);
           }
           // Constants
           else if let Some(value) = self.variables.get_const_value(&scoped_name) {
@@ -489,15 +638,61 @@ where
             // const negativeGap = `-${gap}`;
             // styled.button`margin: ${negativeGap};` -> margin: -20px
             if let Some(literal_value) = try_evaluate_string(&value, &self.variables) {
-              let (new_state, _) = parse_css(&literal_value, css_state);
-              css_state = Some(new_state);
+              let state_before = css_state.clone();
+              let ParsedCss {
+                state: new_state,
+                declarations,
+                errors,
+                ..
+              } = parse_css(&literal_value, css_state);
+              // The constant must not end a declaration or open or close a block
+              // e.g. const reset = "margin: 0; padding: 0;";
+              let is_value = declarations.is_empty()
+                && errors.is_empty()
+                && state_before
+                  .as_ref()
+                  .is_none_or(|state| state.current_scopes == new_state.current_scopes);
+              if is_value {
+                css_state = Some(new_state);
+              } else {
+                // Skip the constant, so it causes no follow-up errors
+                css_state = state_before;
+                if !self.expanding_constant_mixin {
+                  // A css mixin can hold the string if it is complete CSS
+                  // e.g. "margin: 0; padding: 0;" but not "red; } color: blue"
+                  let is_inside_property_value = css_state
+                    .as_ref()
+                    .is_some_and(|state| state.is_inside_property_value);
+                  let standalone = parse_css(&literal_value, None);
+                  let is_valid_mixin = !is_inside_property_value
+                    && standalone.errors.is_empty()
+                    && standalone.unclosed_bracket.is_none()
+                    && standalone.state.current_scopes.is_empty()
+                    && standalone.state.paren_depth == 0
+                    && standalone.state.brace_depth == 0
+                    && standalone.state.is_inside_string.is_none()
+                    && standalone.state.current_comment_state == CommentStateType::None;
+                  emit_string_constant_css_error(
+                    expr.span(),
+                    value.span(),
+                    &scoped_name,
+                    &literal_value,
+                    is_valid_mixin,
+                  );
+                }
+              }
             } else if let Expr::TaggedTpl(tagged_tpl) = *value {
               // constant mixins e.g.
               // const highlight = css`color: red;`
               // const Button = styled.button`&:hover { ${highlight}; }`
               if is_valid_tagged_tpl(&tagged_tpl, self.yak_imports().yak_css_idents()) {
-                let (inline_runtime_exprs, inline_runtime_css_vars) =
-                  self.process_yak_literal(&mut tagged_tpl.clone(), css_state.clone());
+                let was_expanding_constant_mixin = self.expanding_constant_mixin;
+                self.expanding_constant_mixin = true;
+                let (inline_runtime_exprs, inline_runtime_css_vars) = self.process_yak_literal(
+                  &mut tagged_tpl.clone(),
+                  css_state.as_ref().map(ParserState::nested),
+                );
+                self.expanding_constant_mixin = was_expanding_constant_mixin;
                 runtime_expressions.extend(inline_runtime_exprs);
                 runtime_css_variables.extend(inline_runtime_css_vars);
               }
@@ -514,8 +709,7 @@ where
                 self
                   .variable_name_selector_mapping
                   .insert(scoped_name.clone(), keyframe_name.clone());
-                let (new_state, _) = parse_css(&keyframe_name, css_state);
-                css_state = Some(new_state);
+                css_state = Some(parse_css(&keyframe_name, css_state).state);
               } else {
                 HANDLER.with(|handler| {
                   handler
@@ -581,7 +775,7 @@ ${{() => {var}}};\n",
         else if let Expr::TaggedTpl(tpl) = &mut **expr {
           if is_valid_tagged_tpl(tpl, self.yak_imports().yak_css_idents()) {
             let (inline_runtime_exprs, inline_runtime_css_vars) =
-              self.process_yak_literal(tpl, css_state.clone());
+              self.process_yak_literal(tpl, css_state.as_ref().map(ParserState::nested));
             runtime_expressions.extend(inline_runtime_exprs);
             runtime_css_variables.extend(inline_runtime_css_vars);
           } else {
@@ -750,8 +944,7 @@ ${{() => {var}}};\n",
               runtime_css_variables.insert(format!("--{}", name), css_variable_runtime_expr);
               name
             });
-            let (new_state, _) = parse_css(&format!("var(--{})", css_variable_name), css_state);
-            css_state = Some(new_state);
+            css_state = Some(parse_css(&format!("var(--{})", css_variable_name), css_state).state);
           }
 
           let was_inside_runtime_expression = self.inside_runtime_expression;
@@ -763,6 +956,7 @@ ${{() => {var}}};\n",
           // it is probably a nested css expression
           if !is_inside_property_value {
             runtime_expressions.push(*expr.clone());
+            previous_runtime_span = Some(expr.span());
           }
 
           // revert to the css state before the current expression or literal
@@ -1578,6 +1772,20 @@ fn verify_valid_property_value_expr(expr: &Expr) -> bool {
       false
     }
   }
+}
+
+/// Adds the missing colon to a declaration
+/// e.g. `color red` -> `color: red`
+/// None if the code does not start with a property name and a value
+fn missing_colon_suggestion(code: &str) -> Option<String> {
+  let (property, value) = code.trim().split_once(char::is_whitespace)?;
+  let value = value.trim();
+  let is_property_name = property.starts_with(|c: char| c.is_ascii_alphabetic() || c == '-')
+    && property
+      .chars()
+      .all(|c| c.is_ascii_alphanumeric() || c == '-');
+  (is_property_name && !value.is_empty() && !value.contains(['{', '}', ';']))
+    .then(|| format!("{property}: {value}"))
 }
 
 #[cfg(test)]

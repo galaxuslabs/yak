@@ -6,7 +6,12 @@
   "license": "MIT",
   "author": "Jan Nicklas",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*",
+    "benchmarks",
+    "docs",
+    "e2e",
+    "e2e/bundlers/*"
   ],
   "scripts": {
     "changeset": "changeset",

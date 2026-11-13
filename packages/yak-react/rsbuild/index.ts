@@ -61,6 +61,7 @@ export function pluginYak(yakOptions: YakConfigOptions = {}): RsbuildPlugin {
               {
                 loader: rspackLoaderPath,
                 options: { yakOptions, yakPluginOptions, cssUrlsFromRoot: true },
+                codeFilter: "@yak/react",
               },
             ],
           },

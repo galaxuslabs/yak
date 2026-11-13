@@ -12,6 +12,12 @@ pub struct ParserState {
   pub current_declaration: Declaration,
   pub pending_css_segment: String,
   pub paren_depth: usize,
+  /// The depth of `{` inside a custom property value
+  /// e.g. --foo: { color: red };
+  pub brace_depth: usize,
+  /// The number of locked scopes at the start of `current_scopes`
+  /// A `}` can not close a locked scope
+  scope_floor: usize,
 }
 
 impl ParserState {
@@ -25,6 +31,25 @@ impl ParserState {
       current_declaration: Declaration::new(),
       pending_css_segment: String::new(),
       paren_depth: 0,
+      brace_depth: 0,
+      scope_floor: 0,
+    }
+  }
+
+  /// Creates a state with the given scopes open and locked
+  pub fn with_scopes(scopes: Vec<CssScope>) -> Self {
+    Self {
+      scope_floor: scopes.len(),
+      current_scopes: scopes,
+      ..Self::new()
+    }
+  }
+
+  /// Copies the state and locks all scopes which are open now
+  pub fn nested(&self) -> Self {
+    Self {
+      scope_floor: self.current_scopes.len(),
+      ..self.clone()
     }
   }
 }
@@ -76,21 +101,76 @@ impl Declaration {
   }
 }
 
-/// Parses a CSS string and returns the final parser state along with parsed declarations.
+/// The result of `parse_css`
+#[must_use]
+#[derive(Debug)]
+pub struct ParsedCss {
+  /// The state to continue parsing with the next css string
+  pub state: ParserState,
+  pub declarations: Vec<Declaration>,
+  pub errors: Vec<CssError>,
+  /// The byte position of the `(` or `{` which is still open at the end of the css string
+  /// `None` if all brackets are closed or if the bracket opened in a previous `parse_css` call
+  /// e.g. @media (min-width: 600px {
+  ///             ^
+  pub unclosed_bracket: Option<usize>,
+}
+
+#[cfg(test)]
+impl ParsedCss {
+  /// Fails the test if the css has errors
+  pub(crate) fn expect_valid(self) -> (ParserState, Vec<Declaration>) {
+    assert!(self.errors.is_empty(), "{:?}", self.errors);
+    (self.state, self.declarations)
+  }
+}
+
+/// All offsets are byte positions in the css string of the `parse_css` call
+#[derive(Debug, Clone, PartialEq)]
+pub enum CssError {
+  /// A `}` without an open block
+  /// e.g. color: red; }
+  UnexpectedClosingBrace { offset: usize },
+  /// A `{` without a selector before it
+  /// e.g. color: red; { color: blue; }
+  EmptySelector { offset: usize },
+  /// A declaration without a `:`
+  /// e.g. color red;
+  /// `start` is 0 if the declaration started in a previous `parse_css` call
+  /// `end` is the position of the `;` or `}` after the declaration
+  MissingColon { start: usize, end: usize },
+}
+
+impl CssError {
+  /// The bytes of the css string which the error is about
+  pub fn range(&self) -> std::ops::Range<usize> {
+    match *self {
+      CssError::UnexpectedClosingBrace { offset } | CssError::EmptySelector { offset } => {
+        offset..offset + 1
+      }
+      CssError::MissingColon { start, end } => start..end,
+    }
+  }
+}
+
+/// A declaration like `color red;` has a property but no `:`
+/// At-rules like `@import url(a.css);` have no `:` either
+fn is_missing_colon(state: &ParserState) -> bool {
+  !state.current_declaration.property.is_empty()
+    && !state.is_inside_property_value
+    && !state.is_inside_at_rule
+}
+
+/// Parses a CSS string and returns the final parser state, the parsed declarations and the errors.
 ///
 /// # Arguments
 ///
 /// * `css_string` - A string slice containing the CSS to parse
 /// * `initial_state` - An optional initial parser state from a previous parsing
-///
-/// # Returns
-///
-/// A tuple containing the final `ParserState` and a vector of `Declaration`s
-pub fn parse_css(
-  css_string: &str,
-  initial_state: Option<ParserState>,
-) -> (ParserState, Vec<Declaration>) {
+pub fn parse_css(css_string: &str, initial_state: Option<ParserState>) -> ParsedCss {
   let mut state = initial_state.unwrap_or_default();
+  // The error offsets start at `css_string`
+  let pending_css_segment_length = state.pending_css_segment.len();
 
   // Prepend any pending CSS segment from the previous state
   let css_to_parse = if !state.pending_css_segment.is_empty() {
@@ -100,6 +180,7 @@ pub fn parse_css(
     state.is_inside_property_value = false;
     state.is_inside_at_rule = false;
     state.paren_depth = 0;
+    state.brace_depth = 0;
     state.current_declaration = Declaration::new();
     state.pending_css_segment.clone() + css_string
   } else {
@@ -109,13 +190,20 @@ pub fn parse_css(
   let mut current_code = String::new();
   let mut back_slashes = 0;
   let mut declarations = Vec::new();
+  let mut errors = Vec::new();
+  // Byte position of the current property
+  let mut property_start = 0;
+  // Byte position of the outermost open `(` or `{` in a value or an at-rule
+  let mut open_bracket_position = None;
 
-  let chars: Vec<char> = css_to_parse.chars().collect();
-  let mut char_position = 0;
+  let bytes = css_to_parse.as_bytes();
+  // Byte position in `css_string` (without the pending css segment of the previous call)
+  let offset = |position: usize| position.saturating_sub(pending_css_segment_length);
+  // Byte position in `css_to_parse`
+  let mut position = 0;
 
-  while char_position < chars.len() {
+  while let Some(current_character) = css_to_parse[position..].chars().next() {
     let previous_back_slashes = back_slashes;
-    let current_character = chars[char_position];
 
     // Count backslashes to detect escaped characters
     // e.g.:
@@ -130,27 +218,24 @@ pub fn parse_css(
     match state.current_comment_state {
       // Parse until the end of the current multi line comment is reached
       CommentStateType::MultiLine => {
-        while char_position < chars.len() {
-          if chars[char_position] == '*'
-            && char_position + 1 < chars.len()
-            && chars[char_position + 1] == '/'
-          {
+        match css_to_parse[position..].find("*/") {
+          Some(end) => {
             state.current_comment_state = CommentStateType::None;
-            char_position += 2;
-            break;
+            position += end + 2;
           }
-          char_position += 1;
+          None => position = css_to_parse.len(),
         }
         continue;
       }
       // Parse until the end of the current multi line comment is reached
       CommentStateType::SingleLine => {
-        while char_position < chars.len() {
-          if chars[char_position] == '\n' {
+        // The `\n` is parsed as normal css
+        match css_to_parse[position..].find('\n') {
+          Some(end) => {
             state.current_comment_state = CommentStateType::None;
-            break;
+            position += end;
           }
-          char_position += 1;
+          None => position = css_to_parse.len(),
         }
         continue;
       }
@@ -174,10 +259,14 @@ pub fn parse_css(
       }
     }
 
-    // Detect parens outside of strings for property values
+    // Detect parens outside of strings for property values and at-rules
     // e.g.
     // .foo { background: url('https://example.com'); }
-    if state.is_inside_string.is_none() && state.is_inside_property_value {
+    // @apply --foo({ color: red });
+    let was_inside_brackets = state.paren_depth + state.brace_depth > 0;
+    if state.is_inside_string.is_none()
+      && (state.is_inside_property_value || state.is_inside_at_rule)
+    {
       if current_character == '(' {
         state.paren_depth += 1;
       } else if current_character == ')' && state.paren_depth > 0 {
@@ -185,36 +274,57 @@ pub fn parse_css(
       }
     }
 
-    // Inside a string, just add the character to the current code no matter what
+    // Detect a block as the value of a custom property
+    // e.g. --foo: { color: red };
+    // A `{` after other value text opens a scope
+    // e.g. --foo: red .bar { color: blue; }
+    let is_custom_property_brace = match current_character {
+      '{' => state.brace_depth > 0 || state.current_declaration.value.is_empty(),
+      '}' => state.brace_depth > 0,
+      _ => false,
+    } && state.is_inside_string.is_none()
+      && state.paren_depth == 0
+      && state.is_inside_property_value
+      && state.current_declaration.property.starts_with("--");
+    if is_custom_property_brace {
+      if current_character == '{' {
+        state.brace_depth += 1;
+      } else {
+        state.brace_depth -= 1;
+      }
+    }
+
+    let is_inside_brackets = state.paren_depth + state.brace_depth > 0;
+    if !is_inside_brackets {
+      open_bracket_position = None;
+    } else if !was_inside_brackets {
+      open_bracket_position = Some(position);
+    }
+
+    // Inside a string or brackets, just add the character to the current code no matter what
     // e.g. content: "{ ; } @ !"
-    if state.is_inside_string.is_some() || state.paren_depth > 0 {
+    if state.is_inside_string.is_some() || is_inside_brackets || is_custom_property_brace {
       current_code.push(current_character);
       state.current_declaration.value.push(current_character);
-      char_position += 1;
+      position += current_character.len_utf8();
       continue;
     }
     // Detect multi-line comments
     // e.g.
     // .foo { color: red; } /* This is a comment */
     //                      ^
-    else if current_character == '/'
-      && char_position + 1 < chars.len()
-      && chars[char_position + 1] == '*'
-    {
+    else if current_character == '/' && bytes.get(position + 1) == Some(&b'*') {
       state.current_comment_state = CommentStateType::MultiLine;
-      char_position += 2;
+      position += 2;
       continue;
     }
     // Detect single line comments
     // e.g.
     // .foo { color: red; } // This is a comment
     //                       ^
-    else if current_character == '/'
-      && char_position + 1 < chars.len()
-      && chars[char_position + 1] == '/'
-    {
+    else if current_character == '/' && bytes.get(position + 1) == Some(&b'/') {
       state.current_comment_state = CommentStateType::SingleLine;
-      char_position += 2;
+      position += 2;
       continue;
     }
     // Detect scope closing
@@ -225,19 +335,34 @@ pub fn parse_css(
     // .foo { color: black }
     //                     ^
     else if current_character == '}' {
-      state.current_scopes.pop();
+      if is_missing_colon(&state) {
+        errors.push(CssError::MissingColon {
+          start: offset(property_start),
+          end: offset(position),
+        });
+      }
       current_code.clear();
       state.is_inside_property_value = false;
-      state
-        .current_declaration
-        .scope
-        .clone_from(&state.current_scopes);
-      // a closing brace acts similar to a semicolon as it
-      // closes the current declaration
+      // a closing brace also ends the declaration before it
+      // e.g. .foo { color: black }
       if !state.current_declaration.property.is_empty() {
+        state
+          .current_declaration
+          .scope
+          .clone_from(&state.current_scopes);
         state.current_declaration.closed = true;
         declarations.push(state.current_declaration.clone());
         state.current_declaration = Declaration::new();
+      }
+      // Skip a closing brace without an open block and remember its position
+      // e.g. color: black; }
+      //                    ^
+      if state.current_scopes.len() > state.scope_floor {
+        state.current_scopes.pop();
+      } else {
+        errors.push(CssError::UnexpectedClosingBrace {
+          offset: offset(position),
+        });
       }
     }
     // Detect scope opening
@@ -248,6 +373,13 @@ pub fn parse_css(
     // @media (max-width: 600px) {
     //                           ^
     else if current_character == '{' {
+      // e.g. color: red; { color: blue; }
+      //                  ^
+      if current_code.trim().is_empty() {
+        errors.push(CssError::EmptySelector {
+          offset: offset(position),
+        });
+      }
       state.current_scopes.push(CssScope {
         name: current_code.trim().to_string(),
         scope_type: if state.is_inside_at_rule {
@@ -267,6 +399,12 @@ pub fn parse_css(
     // color: red;
     //           ^
     else if current_character == ';' {
+      if is_missing_colon(&state) {
+        errors.push(CssError::MissingColon {
+          start: offset(property_start),
+          end: offset(position),
+        });
+      }
       current_code.clear();
       state.is_inside_property_value = false;
       state.is_inside_at_rule = false;
@@ -306,13 +444,13 @@ pub fn parse_css(
     // ^
     // Trim any leading whitespace in front of the value
     else {
-      let previous_character = if char_position == 0 {
+      let previous_character = if position == 0 {
         state.current_declaration.value.chars().last()
       } else {
-        Some(chars[char_position - 1])
+        css_to_parse[..position].chars().next_back()
       };
 
-      let is_previous_character_empty = (char_position > 0 && current_code.is_empty())
+      let is_previous_character_empty = (position > 0 && current_code.is_empty())
         || previous_character.is_none_or(|c| c.is_whitespace());
       let is_current_character_empty = current_character.is_whitespace();
 
@@ -323,12 +461,15 @@ pub fn parse_css(
             state.current_declaration.value.push(current_character);
           }
         } else {
+          if state.current_declaration.property.is_empty() {
+            property_start = position;
+          }
           state.current_declaration.property.push(current_character);
         }
       }
     }
 
-    char_position += 1;
+    position += current_character.len_utf8();
   }
 
   // Store any uncategorized CSS code for later parsing
@@ -342,7 +483,15 @@ pub fn parse_css(
     state.pending_css_segment.clear();
   }
 
-  (state, declarations)
+  ParsedCss {
+    state,
+    declarations,
+    errors,
+    // A bracket in the pending css segment opened in a previous call
+    unclosed_bracket: open_bracket_position
+      .filter(|&position| position >= pending_css_segment_length)
+      .map(offset),
+  }
 }
 
 #[cfg(test)]
@@ -360,7 +509,8 @@ mod tests {
                         color: blue;
     "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -373,7 +523,8 @@ mod tests {
                         /* hello .world { color: red; }
     "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -386,7 +537,8 @@ mod tests {
                         background: url('https://example.com
     "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -399,7 +551,8 @@ mod tests {
                         background: url("https://example.com
     "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -412,7 +565,8 @@ mod tests {
                         background: url(https://example.com
     "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -426,7 +580,8 @@ mod tests {
                         color: blue
     "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -446,7 +601,8 @@ mod tests {
 
         "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -471,7 +627,8 @@ mod tests {
     }
   "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -483,7 +640,8 @@ mod tests {
           color: orange
     "#,
       None,
-    );
+    )
+    .expect_valid();
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -495,13 +653,15 @@ mod tests {
           color: orange
     "#,
       None,
-    );
+    )
+    .expect_valid();
     let (state2, declarations2) = parse_css(
       r#"
         ;
     "#,
       Some(state1.clone()),
-    );
+    )
+    .expect_valid();
     let all_declarations = declarations
       .into_iter()
       .chain(declarations2)
@@ -511,7 +671,12 @@ mod tests {
 
   #[test]
   fn test_parse_css_starting_with_an_invalid_curly() {
-    let (state, declarations) = parse_css(
+    let ParsedCss {
+      state,
+      declarations,
+      errors,
+      ..
+    } = parse_css(
       r#"
         }
         .foo {
@@ -519,6 +684,7 @@ mod tests {
     "#,
       None,
     );
+    assert_eq!(errors, vec![CssError::UnexpectedClosingBrace { offset: 9 }]);
     assert_debug_snapshot!((state, declarations));
   }
 
@@ -529,13 +695,246 @@ mod tests {
           .foo {
               transform: translate(-50%, -50%) rotate("#,
       None,
-    );
-    let (state2, _) = parse_css(r#"20deg) translate(0, -88px) rotate("#, Some(state1));
-    let (_, declarations3) = parse_css(r#"90deg);"#, Some(state2));
+    )
+    .expect_valid();
+    let (state2, _) =
+      parse_css(r#"20deg) translate(0, -88px) rotate("#, Some(state1)).expect_valid();
+    let (_, declarations3) = parse_css(r#"90deg);"#, Some(state2)).expect_valid();
     assert_eq!(declarations3.len(), 1);
     assert_eq!(
       declarations3[0].value.trim(),
       "translate(-50%, -50%) rotate(20deg) translate(0, -88px) rotate(90deg)"
     );
+  }
+
+  #[test]
+  fn test_parse_css_last_declaration_without_semicolon_stays_in_block() {
+    let result = parse_css(".foo { color: black } color: red;", None);
+    assert_eq!(result.declarations.len(), 2);
+    assert_eq!(result.declarations[0].property, "color");
+    assert_eq!(result.declarations[0].value.trim(), "black");
+    assert_eq!(result.declarations[0].scope.len(), 1);
+    assert_eq!(result.declarations[0].scope[0].name, ".foo");
+    assert!(result.declarations[1].scope.is_empty());
+    assert!(result.errors.is_empty());
+  }
+
+  #[test]
+  fn test_parse_css_closing_brace_does_not_close_the_scope_floor() {
+    let initial_state = ParserState::with_scopes(vec![CssScope {
+      name: ".root".to_string(),
+      scope_type: ScopeType::AtRule,
+    }]);
+    let result = parse_css("color: red } color: blue;", Some(initial_state));
+    assert_eq!(
+      result.errors,
+      vec![CssError::UnexpectedClosingBrace { offset: 11 }]
+    );
+    assert_eq!(result.state.current_scopes.len(), 1);
+    assert_eq!(result.declarations.len(), 2);
+    for declaration in &result.declarations {
+      assert_eq!(declaration.scope.len(), 1);
+      assert_eq!(declaration.scope[0].name, ".root");
+    }
+  }
+
+  #[test]
+  fn test_parse_css_unexpected_closing_brace_offset_is_relative_to_the_input() {
+    let result = parse_css("color: red; } .foo { color: blue; }", None);
+    assert_eq!(
+      result.errors,
+      vec![CssError::UnexpectedClosingBrace { offset: 12 }]
+    );
+    // The offset does not include the pending css of the previous call
+    let result = parse_css(".foo { section:has(a)", None);
+    let result = parse_css(" } } color: red;", Some(result.state));
+    assert_eq!(
+      result.errors,
+      vec![CssError::UnexpectedClosingBrace { offset: 3 }]
+    );
+  }
+
+  #[test]
+  fn test_parse_css_nested_literal_does_not_close_outer_blocks() {
+    let outer = parse_css(".foo {", Some(ParserState::with_scopes(vec![])));
+    let result = parse_css("color: red; } padding: 0;", Some(outer.state.nested()));
+    assert_eq!(
+      result.errors,
+      vec![CssError::UnexpectedClosingBrace { offset: 12 }]
+    );
+    assert_eq!(result.declarations.len(), 2);
+    for declaration in &result.declarations {
+      assert_eq!(declaration.scope.len(), 1);
+      assert_eq!(declaration.scope[0].name, ".foo");
+    }
+  }
+
+  #[test]
+  fn test_parse_css_empty_selector() {
+    let result = parse_css("color: red; { color: blue; } .foo { color: green; }", None);
+    assert_eq!(result.errors, vec![CssError::EmptySelector { offset: 12 }]);
+  }
+
+  #[test]
+  fn test_parse_css_missing_colon() {
+    let result = parse_css("color red; padding: 0; .foo { margin 0 }", None);
+    assert_eq!(
+      result.errors,
+      vec![
+        CssError::MissingColon { start: 0, end: 9 },
+        CssError::MissingColon { start: 30, end: 39 },
+      ]
+    );
+  }
+
+  #[test]
+  fn test_parse_css_at_rule_without_colon_is_valid() {
+    let result = parse_css("@import url(a.css); @charset 'utf-8';", None);
+    assert!(result.errors.is_empty());
+  }
+
+  #[test]
+  fn test_parse_css_error_offsets_are_bytes() {
+    let result = parse_css("content: \"ä\"; }", None);
+    assert_eq!(
+      result.errors,
+      vec![CssError::UnexpectedClosingBrace { offset: 15 }]
+    );
+    assert_eq!(&"content: \"ä\"; }"[result.errors[0].range()], "}");
+    // Multi-byte chars in comments and in a property
+    let css = "/* ä */ // ü\n ä red; }";
+    let result = parse_css(css, None);
+    assert_eq!(result.errors.len(), 2);
+    assert_eq!(&css[result.errors[0].range()], "ä red");
+    assert_eq!(&css[result.errors[1].range()], "}");
+  }
+
+  #[test]
+  fn test_parse_css_custom_property_with_block_value() {
+    let result = parse_css(".foo { --a: { color: red }; --b: { foo; bar } }", None);
+    assert!(result.errors.is_empty());
+    assert_eq!(result.state.current_scopes.len(), 0);
+    assert_eq!(result.declarations.len(), 2);
+    assert_eq!(result.declarations[0].property, "--a");
+    assert_eq!(result.declarations[0].value.trim(), "{ color: red }");
+    assert_eq!(result.declarations[1].property, "--b");
+    assert_eq!(result.declarations[1].value.trim(), "{ foo; bar }");
+    for declaration in &result.declarations {
+      assert_eq!(declaration.scope.len(), 1);
+      assert_eq!(declaration.scope[0].name, ".foo");
+    }
+  }
+
+  #[test]
+  fn test_parse_css_block_in_normal_property_value_opens_a_scope() {
+    let result = parse_css(".foo { color: red &:hover { color: blue; } }", None);
+    assert_eq!(result.state.current_scopes.len(), 0);
+    assert_eq!(result.declarations[0].scope.len(), 2);
+    // Only a block at the start of a custom property value is part of the value
+    let result = parse_css(".foo { --a: url(a.css) .bar { color: blue; } }", None);
+    assert_eq!(result.state.current_scopes.len(), 0);
+    assert_eq!(result.declarations[0].property, "color");
+    assert_eq!(result.declarations[0].scope.len(), 2);
+  }
+
+  #[test]
+  fn test_parse_css_block_in_at_rule_parens() {
+    let result = parse_css(
+      ".foo { @apply --mixin({ color: red; }); padding: 0; }",
+      None,
+    );
+    assert!(result.errors.is_empty());
+    assert_eq!(result.state.current_scopes.len(), 0);
+    let padding = result.declarations.last().unwrap();
+    assert_eq!(padding.property, "padding");
+    assert_eq!(padding.scope.len(), 1);
+    assert_eq!(padding.scope[0].name, ".foo");
+  }
+
+  #[test]
+  fn test_parse_css_nested_at_rules() {
+    let result = parse_css(
+      r#"
+        @media (min-width: 600px) {
+          @supports (display: grid) and (not (display: inline-grid)) {
+            .foo {
+              @apply --mixin({ color: red; });
+              --a: { color: red };
+              color: blue;
+            }
+          }
+        }
+      "#,
+      None,
+    );
+    assert!(result.errors.is_empty());
+    assert_eq!(result.state.current_scopes.len(), 0);
+    let color = result.declarations.last().unwrap();
+    assert_eq!(color.property, "color");
+    assert_eq!(
+      color
+        .scope
+        .iter()
+        .map(|scope| scope.name.as_str())
+        .collect::<Vec<_>>(),
+      vec![
+        "@media (min-width: 600px)",
+        "@supports (display: grid) and (not (display: inline-grid))",
+        ".foo"
+      ]
+    );
+  }
+
+  #[test]
+  fn test_parse_css_newer_at_rules() {
+    for css in [
+      "@scope (.card) to (.content) { img { border: 1px solid; } }",
+      ".foo { @container style(--a: 1) { color: red; } }",
+      "@function --double(--a) { result: calc(var(--a) * 2); }",
+      "@starting-style { .foo { opacity: 0; } }",
+      "@layer base, components;",
+    ] {
+      let result = parse_css(css, None);
+      assert!(result.errors.is_empty(), "{css}");
+      assert_eq!(result.state.current_scopes.len(), 0, "{css}");
+      assert_eq!(result.unclosed_bracket, None, "{css}");
+    }
+  }
+
+  #[test]
+  fn test_parse_css_unclosed_bracket() {
+    let css = "@media (min-width: 600px { color: red; }";
+    let result = parse_css(css, None);
+    assert_eq!(result.unclosed_bracket, Some(7));
+    assert_eq!(result.state.paren_depth, 1);
+    let css = ".foo { background: rgb(0 0 0; }";
+    assert_eq!(
+      &css[parse_css(css, None).unclosed_bracket.unwrap()..][..1],
+      "("
+    );
+    let css = ".foo { --a: { color: red; ";
+    assert_eq!(
+      &css[parse_css(css, None).unclosed_bracket.unwrap()..][..1],
+      "{"
+    );
+    // Closed brackets
+    let result = parse_css(".foo { transform: rotate(1deg) scale(2); }", None);
+    assert_eq!(result.unclosed_bracket, None);
+  }
+
+  #[test]
+  fn test_parse_css_unclosed_bracket_of_a_previous_call() {
+    let first = parse_css(".foo { transform: rotate(", None);
+    assert_eq!(first.unclosed_bracket, Some(24));
+    // The bracket opened in the first call
+    let second = parse_css("1deg", Some(first.state));
+    assert_eq!(second.unclosed_bracket, None);
+    assert_eq!(second.state.paren_depth, 1);
+    let third = parse_css(") scale(", Some(second.state));
+    assert_eq!(third.unclosed_bracket, Some(7));
+    let fourth = parse_css("2); }", Some(third.state));
+    assert_eq!(fourth.unclosed_bracket, None);
+    assert_eq!(fourth.state.paren_depth, 0);
+    assert!(fourth.errors.is_empty());
   }
 }
