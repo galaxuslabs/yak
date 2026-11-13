@@ -20,26 +20,29 @@
 
 ### Patch Changes
 
-- 76b9ac8: Fix the warning `INVALID_ANNOTATION` that Rolldown reported
+- Fix the warning `INVALID_ANNOTATION` that Rolldown reported ([#685](https://github.com/galaxuslabs/yak/pull/685))
 
 ## 10.0.0-rc.1
 
 ### Major Changes
 
-- e030a2d: Remove the CSS Modules output. The option `importMode.transpilation` and the option `suppressDeprecationWarnings` no longer exist.
-- e030a2d: A `:global()` selector is now a build error.
+- Remove the CSS Modules output. The option `importMode.transpilation` and the option `suppressDeprecationWarnings` no longer exist. ([#667](https://github.com/galaxuslabs/yak/pull/667))
+
+- A `:global()` selector is now a build error. ([#667](https://github.com/galaxuslabs/yak/pull/667))
 
 ### Patch Changes
 
-- 5d9ada3: Update dependencies and add support for next.js 16.4
+- Update dependencies and add support for next.js 16.4 ([#688](https://github.com/galaxuslabs/yak/pull/688))
 
 ## 10.0.0-rc.0
 
 ### Major Changes
 
-- 50ef4de: Rename `yak-swc` to `@yak/swc`.
-- 50ef4de: The default yak package is now `@yak/react` instead of `next-yak`.
-- 50ef4de: Imports from `next-yak` are no longer compiled. Import from `@yak/react` instead.
+- Rename `yak-swc` to `@yak/swc`. ([#665](https://github.com/galaxuslabs/yak/pull/665))
+
+- The default yak package is now `@yak/react` instead of `next-yak`. ([#665](https://github.com/galaxuslabs/yak/pull/665))
+
+- Imports from `next-yak` are no longer compiled. Import from `@yak/react` instead. ([#665](https://github.com/galaxuslabs/yak/pull/665))
 
 ## 9.10.2
 
@@ -49,40 +52,43 @@
 
 ### Minor Changes
 
-- 71b8d7b: Update dependencies and publish the direct dependencies with semver ranges instead of exact pins
+- Update dependencies and publish the direct dependencies with semver ranges instead of exact pins ([#641](https://github.com/galaxuslabs/yak/pull/641))
 
 ### Patch Changes
 
-- 5c80c54: Fix an issue where a css prop combined with a spread didn't hydrate on SolidJS.
+- Fix an issue where a css prop combined with a spread didn't hydrate on SolidJS. ([#645](https://github.com/galaxuslabs/yak/pull/645))
 
 ## 9.9.0
 
 ### Minor Changes
 
-- d7be766: Add support for `SolidJS` together with the new `@yak/solid` package
+- Add support for `SolidJS` together with the new `@yak/solid` package ([#632](https://github.com/galaxuslabs/yak/pull/632))
 
 ### Patch Changes
 
-- 63847f8: Reject `css` prop values which can not apply styles (e.g. `css={[a, b]}` or `css={{ color: "red" }}`)
-- 1a5a828: Folding a static styled component into a plain element now removes all `$`-prefixed props
+- Reject `css` prop values which can not apply styles (e.g. `css={[a, b]}` or `css={{ color: "red" }}`) ([#637](https://github.com/galaxuslabs/yak/pull/637))
+
+- Folding a static styled component into a plain element now removes all `$`-prefixed props ([#633](https://github.com/galaxuslabs/yak/pull/633))
 
 ## 9.8.0
 
 ### Minor Changes
 
-- 9efbae5: Interpolations of the same function in one styled component now share a single CSS variable, so the function runs once per render and the element carries fewer inline style entries.
+- Interpolations of the same function in one styled component now share a single CSS variable, so the function runs once per render and the element carries fewer inline style entries. ([#626](https://github.com/galaxuslabs/yak/pull/626))
 
 ### Patch Changes
 
-- 1060025: CSS variables of styled components declared in object literals now carry the full path in development, e.g. `--buttons_primary__color` instead of `--buttons__color-01`.
+- CSS variables of styled components declared in object literals now carry the full path in development, e.g. `--buttons_primary__color` instead of `--buttons__color-01`. ([#629](https://github.com/galaxuslabs/yak/pull/629))
 
 ## 9.7.0
 
 ### Minor Changes
 
-- eebca6f: Fold statically known css props into a plain `className` at build time instead of emitting a per-render `__yak_mergeCssProp` call, e.g. `<div css={css`color: red`} />` becomes `<div className="yX" />` and conditional styles become `className={"yX" + (on ? " yX1" : "")}`. Elements with an existing `className`, spread props or dynamic values keep the runtime merge path unchanged, as does every css prop when `foldStatic: false`; a css prop that references a mixin is a compile error.
-- eebca6f: The css prop now rejects a reference to styles declared elsewhere (`css={mixin}`) with a compile error. Wrap the reference in a css template instead: `css={css`${mixin}`}`. Such a reference compiles to nothing at the usage, so it silently rendered unstyled.
-- 67b8875: Add JSX folding: a usage of a styled component declared in the same file compiles to a plain element, skipping the runtime wrapper. Rendering gets considerably faster, and nothing needs configuring.
+- Fold statically known css props into a plain `className` at build time instead of emitting a per-render `__yak_mergeCssProp` call, e.g. `<div css={css`color: red`} />` becomes `<div className="yX" />` and conditional styles become `className={"yX" + (on ? " yX1" : "")}`. Elements with an existing `className`, spread props or dynamic values keep the runtime merge path unchanged, as does every css prop when `foldStatic: false`; a css prop that references a mixin is a compile error. ([#567](https://github.com/galaxuslabs/yak/pull/567))
+
+- The css prop now rejects a reference to styles declared elsewhere (`css={mixin}`) with a compile error. Wrap the reference in a css template instead: `css={css`${mixin}`}`. Such a reference compiles to nothing at the usage, so it silently rendered unstyled. ([#567](https://github.com/galaxuslabs/yak/pull/567))
+
+- Add JSX folding: a usage of a styled component declared in the same file compiles to a plain element, skipping the runtime wrapper. Rendering gets considerably faster, and nothing needs configuring. ([#568](https://github.com/galaxuslabs/yak/pull/568))
 
   ```tsx
   const Icon = styled.span<{ $active?: boolean }>`
@@ -113,33 +119,37 @@
 
 ### Patch Changes
 
-- 011ace5: A `className` string next to a `css` prop kept its JSX encoding: `className="Food &amp; Drink"` rendered the entity into the DOM class, and a backslash class like `before:content-['\2713']` broke the build with a SyntaxError. The value now reaches the DOM exactly as written.
-- eebca6f: Drop empty css props at build time instead of emitting a dead class name, e.g. `<div css={css``} />` becomes `<div />` and an empty ternary arm folds to `""`. A nested empty ` css` `` also folds to an empty class name instead of keeping the whole css prop on the runtime merge path.
-- 06a6c95: A folded `className` merge keeps the user's class name exactly as written: backslashes, HTML entities and emoji reach the DOM byte for byte.
+- A `className` string next to a `css` prop kept its JSX encoding: `className="Food &amp; Drink"` rendered the entity into the DOM class, and a backslash class like `before:content-['\2713']` broke the build with a SyntaxError. The value now reaches the DOM exactly as written. ([#614](https://github.com/galaxuslabs/yak/pull/614))
+
+- Drop empty css props at build time instead of emitting a dead class name, e.g. `<div css={css``} />` becomes `<div />` and an empty ternary arm folds to `""`. A nested empty ` css` `` also folds to an empty class name instead of keeping the whole css prop on the runtime merge path. ([#567](https://github.com/galaxuslabs/yak/pull/567))
+
+- A folded `className` merge keeps the user's class name exactly as written: backslashes, HTML entities and emoji reach the DOM byte for byte. ([#615](https://github.com/galaxuslabs/yak/pull/615))
 
 ## 9.6.0
 
 ### Minor Changes
 
-- 00e5021: Add `globalStyle` to write global styles that are extracted at build time and apply once the file is imported
+- Add `globalStyle` to write global styles that are extracted at build time and apply once the file is imported ([#571](https://github.com/galaxuslabs/yak/pull/571))
 
 ## 9.5.1
 
 ### Patch Changes
 
-- 056b4d9: Fix a stray `/*#__PURE__*/` on inlined `css` mixins that could make a bundler tree-shake away an entire export under the wasm plugin
-- 056b4d9: Emit the default-export marker for styled components exported through a TS cast (e.g. `export default Page as typeof Page`) so cross-file default imports resolve correctly
-- 280f4c9: Add a `strictCssProp` option (default `true`) that fails the build on a `css` prop next-yak can't handle. Turn it off to leave unrecognized `css` props untouched, e.g. when another library on the same element uses its own `css` prop. Invalid `css` props are now left in place rather than silently stripped.
+- Fix a stray `/*#__PURE__*/` on inlined `css` mixins that could make a bundler tree-shake away an entire export under the wasm plugin ([#572](https://github.com/galaxuslabs/yak/pull/572))
+
+- Emit the default-export marker for styled components exported through a TS cast (e.g. `export default Page as typeof Page`) so cross-file default imports resolve correctly ([#572](https://github.com/galaxuslabs/yak/pull/572))
+
+- Add a `strictCssProp` option (default `true`) that fails the build on a `css` prop next-yak can't handle. Turn it off to leave unrecognized `css` props untouched, e.g. when another library on the same element uses its own `css` prop. Invalid `css` props are now left in place rather than silently stripped. ([#574](https://github.com/galaxuslabs/yak/pull/574))
 
 ## 9.5.0
 
 ### Minor Changes
 
-- c9bd2de: Update dependencies
+- Update dependencies ([#566](https://github.com/galaxuslabs/yak/pull/566))
 
 ### Patch Changes
 
-- 5d40a77: Fix building the SWC plugin on Rust 1.96+ and upgrade swc_core from 56.0.0 to 68.0.6.
+- Fix building the SWC plugin on Rust 1.96+ and upgrade swc_core from 56.0.0 to 68.0.6. ([#559](https://github.com/galaxuslabs/yak/pull/559))
 
   Rust 1.96 removed the implicit `--allow-undefined` for wasm targets, which broke linking the plugin (`undefined symbol: __set_transform_result`). The wasm build now passes the link-arg explicitly, the Rust toolchain is pinned via `rust-toolchain.toml`, and swc_core (plus the separately pinned swc crates) moved to the current major. No behavior changes — all transform snapshots are unchanged.
 
@@ -147,11 +157,15 @@
 
 ### Patch Changes
 
-- df860c9: Fix dynamic interpolations wrapped in CSS string quotes (e.g. `content: "${(p) => p.$x}"`)
-- 07d80d0: Fix typecasts (`as unknown as ...`) breaking cross-file selectors, mixin inlining and keyframes references.
-- f18484e: TypeScript casts (`as`, `as const`, `!`, `satisfies`, parens) inside CSS interpolations no longer prevent values from being statically inlined.
-- 75beb6b: Emit an error when a dynamic interpolation is used inside an at-rule query.
-- 842c24c: Fix HMR full page reloads for styled-only files by injecting `$RefreshReg$` for exported styled components
+- Fix dynamic interpolations wrapped in CSS string quotes (e.g. `content: "${(p) => p.$x}"`) ([#532](https://github.com/galaxuslabs/yak/pull/532))
+
+- Fix typecasts (`as unknown as ...`) breaking cross-file selectors, mixin inlining and keyframes references. ([#535](https://github.com/galaxuslabs/yak/pull/535))
+
+- TypeScript casts (`as`, `as const`, `!`, `satisfies`, parens) inside CSS interpolations no longer prevent values from being statically inlined. ([#536](https://github.com/galaxuslabs/yak/pull/536))
+
+- Emit an error when a dynamic interpolation is used inside an at-rule query. ([#534](https://github.com/galaxuslabs/yak/pull/534))
+
+- Fix HMR full page reloads for styled-only files by injecting `$RefreshReg$` for exported styled components ([#524](https://github.com/galaxuslabs/yak/pull/524))
 
 ## 9.4.1
 
@@ -159,9 +173,11 @@
 
 ### Patch Changes
 
-- caac236: Fix false "Could not parse member expression" error for dynamic computed member access in runtime expressions (e.g. `SIZES[size].width`)
-- f7198df: Skip empty CSS imports
-- e77edd3: Fix referencing components without any styles
+- Fix false "Could not parse member expression" error for dynamic computed member access in runtime expressions (e.g. `SIZES[size].width`) ([#504](https://github.com/galaxuslabs/yak/pull/504))
+
+- Skip empty CSS imports ([#502](https://github.com/galaxuslabs/yak/pull/502))
+
+- Fix referencing components without any styles ([#503](https://github.com/galaxuslabs/yak/pull/503))
 
 ## 9.3.0
 
@@ -169,24 +185,25 @@
 
 ### Patch Changes
 
-- bc1f82e: Updated dependencies
+- Updated dependencies ([#475](https://github.com/galaxuslabs/yak/pull/475))
 
 ## 9.1.0
 
 ### Minor Changes
 
-- ddb0e93: Add deprecation warning for `:global()` selectors
+- Add deprecation warning for `:global()` selectors ([#448](https://github.com/galaxuslabs/yak/pull/448))
 
 ### Patch Changes
 
-- 3e4fc3b: Add experimental vite support
-- 846cc4c: Unified CSS import configuration with placeholder support
+- Add experimental vite support ([#434](https://github.com/galaxuslabs/yak/pull/434))
+
+- Unified CSS import configuration with placeholder support ([#454](https://github.com/galaxuslabs/yak/pull/454))
 
 ## 9.0.0
 
 ### Major Changes
 
-- a85dcba: Add support for next.js 16.1.0
+- Add support for next.js 16.1.0 ([#449](https://github.com/galaxuslabs/yak/pull/449))
 
 ## 8.0.2
 
@@ -196,34 +213,35 @@
 
 ### Major Changes
 
-- 24caa1f: Add limited Turbopack support (Limitation: .yak files can't use `import` statements)
-- 6f84e74: Update to Next.js 16
+- Add limited Turbopack support (Limitation: .yak files can't use `import` statements) ([#421](https://github.com/galaxuslabs/yak/pull/421))
+
+- Update to Next.js 16 ([#420](https://github.com/galaxuslabs/yak/pull/420))
 
 ### Minor Changes
 
-- 2e43185: Add support for async RSC Yak Theme Contexts (yak.context.ts)
+- Add support for async RSC Yak Theme Contexts (yak.context.ts) ([#429](https://github.com/galaxuslabs/yak/pull/429))
 
 ### Patch Changes
 
-- cea6d53: Allow exporting Yak components as default expressions
+- Allow exporting Yak components as default expressions ([#402](https://github.com/galaxuslabs/yak/pull/402))
 
 ## 7.0.0
 
 ### Major Changes
 
-- e4d230c: Add support for next.js >= 15.4.4
+- Add support for next.js >= 15.4.4 ([#411](https://github.com/galaxuslabs/yak/pull/411))
 
 ## 6.0.0
 
 ### Major Changes
 
-- 9835170: Update swc_core to be compatible with Next.js 15.4
+- Update swc_core to be compatible with Next.js 15.4 ([#387](https://github.com/galaxuslabs/yak/pull/387))
 
 ## 5.7.2
 
 ### Patch Changes
 
-- 460a5da: Fixed an issue when only `atoms` are used
+- Fixed an issue when only `atoms` are used ([#383](https://github.com/galaxuslabs/yak/pull/383))
 
 ## 5.7.1
 
@@ -231,160 +249,166 @@
 
 ### Minor Changes
 
-- eeaae8f: Added support for atoms in CSS prop & enhanced atoms function to manipulate class names and styles in a callback
+- Added support for atoms in CSS prop & enhanced atoms function to manipulate class names and styles in a callback ([#375](https://github.com/galaxuslabs/yak/pull/375))
 
 ### Patch Changes
 
-- 938bca4: Improve typings
-- ab58a54: Added support for constant string and number keys of object in the same file
+- Improve typings ([#363](https://github.com/galaxuslabs/yak/pull/363))
+
+- Added support for constant string and number keys of object in the same file ([#374](https://github.com/galaxuslabs/yak/pull/374))
 
 ## 5.6.1
 
 ### Patch Changes
 
-- cb02484: Add cross file constant supports also for default or namespace imports
+- Add cross file constant supports also for default or namespace imports ([#360](https://github.com/galaxuslabs/yak/pull/360))
 
 ## 5.6.0
 
 ### Minor Changes
 
-- 6c859e5: Add new "experiments.transpilationMode" option to transpile to CSS instead of CSS Modules
-- a8fce5a: Make swc plugin integration an enabled-by-default cargo feature (not used in playground)
+- Add new "experiments.transpilationMode" option to transpile to CSS instead of CSS Modules ([#349](https://github.com/galaxuslabs/yak/pull/349))
+
+- Make swc plugin integration an enabled-by-default cargo feature (not used in playground) ([#343](https://github.com/galaxuslabs/yak/pull/343))
 
 ## 5.5.0
 
 ### Minor Changes
 
-- 6ed6e55: Updated all dependencies
+- Updated all dependencies ([#332](https://github.com/galaxuslabs/yak/pull/332))
 
 ### Patch Changes
 
-- 720e426: Add support for turbopacks relative filepaths
+- Add support for turbopacks relative filepaths ([#334](https://github.com/galaxuslabs/yak/pull/334))
 
 ## 5.4.0
 
 ### Minor Changes
 
-- 2ba5777: Add support for `@property` inside `styled` and `css` tags
+- Add support for `@property` inside `styled` and `css` tags ([#327](https://github.com/galaxuslabs/yak/pull/327))
 
 ## 5.3.1
 
 ### Patch Changes
 
-- 4c9d3c3: Fix animation references by using "global()" instead of ":global()"
+- Fix animation references by using "global()" instead of ":global()" ([#323](https://github.com/galaxuslabs/yak/pull/323))
 
 ## 5.3.0
 
 ### Minor Changes
 
-- 3fde4f1: use a turbopack compatible swc plugin path
+- use a turbopack compatible swc plugin path ([#318](https://github.com/galaxuslabs/yak/pull/318))
 
 ### Patch Changes
 
-- 14f2db8: Fix keyframe animation references when used before declaration
+- Fix keyframe animation references when used before declaration ([#321](https://github.com/galaxuslabs/yak/pull/321))
 
 ## 5.2.2
 
 ### Patch Changes
 
-- cd964ac: fix cross file selectors
-- 364f415: fix recursive class name replacement inside mixins
+- fix cross file selectors ([#314](https://github.com/galaxuslabs/yak/pull/314))
+
+- fix recursive class name replacement inside mixins ([#317](https://github.com/galaxuslabs/yak/pull/317))
 
 ## 5.2.1
 
 ### Patch Changes
 
-- 4f69bd9: fix class name escaping in dev mode
+- fix class name escaping in dev mode ([#310](https://github.com/galaxuslabs/yak/pull/310))
 
 ## 5.2.0
 
 ### Minor Changes
 
-- d018370: minify class names for production builds
+- minify class names for production builds ([#220](https://github.com/galaxuslabs/yak/pull/220))
 
 ## 5.1.0
 
 ### Minor Changes
 
-- e2afeb9: Improved React DevTools support - Styled components created with next-yak now show up with their actual variable names in React DevTools instead of a generic yak label
+- Improved React DevTools support - Styled components created with next-yak now show up with their actual variable names in React DevTools instead of a generic yak label ([#300](https://github.com/galaxuslabs/yak/pull/300))
 
 ### Patch Changes
 
-- d461cf5: Mark `__yak_unitPostFix` as pure (generated code)
-- b3e4fec: Minor refactoring of visitors
+- Mark `__yak_unitPostFix` as pure (generated code) ([#299](https://github.com/galaxuslabs/yak/pull/299))
+
+- Minor refactoring of visitors ([#296](https://github.com/galaxuslabs/yak/pull/296))
 
 ## 5.0.0
 
 ### Major Changes
 
-- 6fd9b9a: **swc:** Update to swc_core 16.0.0 (compatible with @swc/core@1.11.1)
+- **swc:** Update to swc_core 16.0.0 (compatible with @swc/core@1.11.1) ([#281](https://github.com/galaxuslabs/yak/pull/281))
 
 ## 4.1.0
 
 ### Minor Changes
 
-- 0eac2b4: improve bundle size by compiling styled.TAG_NAME
+- improve bundle size by compiling styled.TAG_NAME ([#154](https://github.com/galaxuslabs/yak/pull/154))
 
 ### Patch Changes
 
-- ea744ac: Update wasm target to wasm-wasip1
+- Update wasm target to wasm-wasip1 ([#259](https://github.com/galaxuslabs/yak/pull/259))
 
 ## 4.0.4
 
 ### Patch Changes
 
-- 171898f: Fix issue with the css prop where it wouldn't be generated when used inside an exported component
-- d4379a2: Updated all dependencies
+- Fix issue with the css prop where it wouldn't be generated when used inside an exported component ([#253](https://github.com/galaxuslabs/yak/pull/253))
+
+- Updated all dependencies ([#251](https://github.com/galaxuslabs/yak/pull/251))
 
 ## 4.0.3
 
 ### Patch Changes
 
-- 154da2f: fix css prop class name access in nested jsx
+- fix css prop class name access in nested jsx ([#245](https://github.com/galaxuslabs/yak/pull/245))
 
 ## 4.0.2
 
 ### Patch Changes
 
-- 5ce7f16: Enable css prop support for styled components, not just native HTML elements by fixing a bug in the types
-- 2f0ba89: Enable conditional styling for the css prop
+- Enable css prop support for styled components, not just native HTML elements by fixing a bug in the types ([#243](https://github.com/galaxuslabs/yak/pull/243))
+
+- Enable conditional styling for the css prop ([#242](https://github.com/galaxuslabs/yak/pull/242))
 
 ## 4.0.1
 
 ### Patch Changes
 
-- 859db1c: Improve cross-os hashes to be more consistent.
+- Improve cross-os hashes to be more consistent. ([#237](https://github.com/galaxuslabs/yak/pull/237))
 
 ## 4.0.0
 
 ### Major Changes
 
-- f204637: Add support for Next.js 15.0.4 (SWC 5.x)
+- Add support for Next.js 15.0.4 (SWC 5.x) ([#235](https://github.com/galaxuslabs/yak/pull/235))
 
 ## 3.1.0
 
 ### Minor Changes
 
-- fcba925: allow to define a prefix for generated css names like variables
+- allow to define a prefix for generated css names like variables ([#225](https://github.com/galaxuslabs/yak/pull/225))
 
 ### Patch Changes
 
-- 3d6e505: fix a parsing bug for unquoted urls inside url()
+- fix a parsing bug for unquoted urls inside url() ([#227](https://github.com/galaxuslabs/yak/pull/227))
 
 ## 3.0.1
 
 ### Patch Changes
 
-- 411ad36: Better error message for wrong usage of dynamic properties in nested template
+- Better error message for wrong usage of dynamic properties in nested template ([#212](https://github.com/galaxuslabs/yak/pull/212))
 
 ## 3.0.0
 
 ### Major Changes
 
-- 94f083f: Upgrade SWC to 3.x to add support for Next.js 15.0.0
+- Upgrade SWC to 3.x to add support for Next.js 15.0.0 ([#196](https://github.com/galaxuslabs/yak/pull/196))
 
 ## 0.8.0
 
 ### Minor Changes
 
-- 7a080ab: Improved CSS class name generation using FNV-1a hashing for better cross-platform consistency and shorter identifiers
+- Improved CSS class name generation using FNV-1a hashing for better cross-platform consistency and shorter identifiers ([#205](https://github.com/galaxuslabs/yak/pull/205))

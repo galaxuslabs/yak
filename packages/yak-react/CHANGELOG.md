@@ -24,104 +24,105 @@
 
 ### Patch Changes
 
-- 681904e: Relative `url()` paths in yak styles load their files, also when a mixin from another directory uses them.
-- 4e83e0b: With Rsbuild, relative `url()` paths in yak styles load their files.
-- 243320b: Remove the two "Module not found" warnings that Turbopack showed for the `.yak` file evaluator
-- Updated dependencies [76b9ac8]
+- Relative `url()` paths in yak styles load their files, also when a mixin from another directory uses them. ([#693](https://github.com/galaxuslabs/yak/pull/693))
+
+- With Rsbuild, relative `url()` paths in yak styles load their files. ([#694](https://github.com/galaxuslabs/yak/pull/694))
+
+- Remove the two "Module not found" warnings that Turbopack showed for the `.yak` file evaluator ([#696](https://github.com/galaxuslabs/yak/pull/696))
+- Updated dependencies:
   - @yak/swc@10.0.0-rc.2
 
 ## 10.0.0-rc.1
 
 ### Major Changes
 
-- e030a2d: Remove CSS Modules. `@yak/react` now always writes plain CSS. Remove the options `experiments.transpilationMode` and `experiments.suppressDeprecationWarnings` from the config.
-- c04e52c: Move the option `experiments.debug` to `debug`.
-- 9496360: `@yak/react` is now ESM only and needs Node.js 22.18 or later.
+- Remove CSS Modules. `@yak/react` now always writes plain CSS. Remove the options `experiments.transpilationMode` and `experiments.suppressDeprecationWarnings` from the config. ([#667](https://github.com/galaxuslabs/yak/pull/667))
+
+- Move the option `experiments.debug` to `debug`. ([#680](https://github.com/galaxuslabs/yak/pull/680))
+
+- `@yak/react` is now ESM only and needs Node.js 22.18 or later. ([#668](https://github.com/galaxuslabs/yak/pull/668))
 
 ### Patch Changes
 
-- 5d9ada3: Update dependencies and add support for next.js 16.4
-- b48da1f: Resolve cross-file constants, mixins and styled components that are exported with a local export list (`export { x }`, `export { x as y }`, `export { x as default }`) or re-exported from an import.
-- daacb46: Fix Rsbuild builds with `@rsbuild/plugin-babel` failing with ".inputSourceMap must be a boolean, object, or undefined"
-- Updated dependencies [5d9ada3]
-- Updated dependencies [e030a2d]
-- Updated dependencies [e030a2d]
+- Update dependencies and add support for next.js 16.4 ([#688](https://github.com/galaxuslabs/yak/pull/688))
+
+- Resolve cross-file constants, mixins and styled components that are exported with a local export list (`export { x }`, `export { x as y }`, `export { x as default }`) or re-exported from an import. ([#676](https://github.com/galaxuslabs/yak/pull/676))
+
+- Fix Rsbuild builds with `@rsbuild/plugin-babel` failing with ".inputSourceMap must be a boolean, object, or undefined" ([#675](https://github.com/galaxuslabs/yak/pull/675))
+- Updated dependencies:
   - @yak/swc@10.0.0-rc.1
 
 ## 10.0.0-rc.0
 
 ### Major Changes
 
-- 50ef4de: Rename `next-yak` to `@yak/react`.
+- Rename `next-yak` to `@yak/react`. ([#665](https://github.com/galaxuslabs/yak/pull/665))
 
 ### Patch Changes
 
-- Updated dependencies [50ef4de]
-- Updated dependencies [50ef4de]
-- Updated dependencies [50ef4de]
+- Updated dependencies:
   - @yak/swc@10.0.0-rc.0
 
 ## 9.10.2
 
 ### Patch Changes
 
-- 06f0195: `transpilationMode: "Css"` now lets co-located `.yak.css` files be imported from any module.
+- `transpilationMode: "Css"` now lets co-located `.yak.css` files be imported from any module. ([#553](https://github.com/galaxuslabs/yak/pull/553))
 - yak-swc@9.10.2
 
 ## 9.10.1
 
 ### Patch Changes
 
-- ee11260: Respect Vite's file access restrictions when loading virtual CSS modules in the dev server.
+- Respect Vite's file access restrictions when loading virtual CSS modules in the dev server. ([#660](https://github.com/galaxuslabs/yak/pull/660))
 - yak-swc@9.10.1
 
 ## 9.10.0
 
 ### Minor Changes
 
-- 71b8d7b: Update dependencies and publish the direct dependencies with semver ranges instead of exact pins
+- Update dependencies and publish the direct dependencies with semver ranges instead of exact pins ([#641](https://github.com/galaxuslabs/yak/pull/641))
 
 ### Patch Changes
 
-- 5c80c54: Fix an issue where a css prop combined with a spread didn't hydrate on SolidJS.
-- dbd8e7e: Fix Turbopack rewriting files that import next-yak without declaring styles
-- Updated dependencies [5c80c54]
-- Updated dependencies [71b8d7b]
+- Fix an issue where a css prop combined with a spread didn't hydrate on SolidJS. ([#645](https://github.com/galaxuslabs/yak/pull/645))
+
+- Fix Turbopack rewriting files that import next-yak without declaring styles ([#642](https://github.com/galaxuslabs/yak/pull/642))
+- Updated dependencies:
   - yak-swc@9.10.0
 
 ## 9.9.0
 
 ### Minor Changes
 
-- d7be766: Add support for `SolidJS` together with the new `@yak/solid` package
+- Add support for `SolidJS` together with the new `@yak/solid` package ([#632](https://github.com/galaxuslabs/yak/pull/632))
 
 ### Patch Changes
 
-- 63847f8: Reject `css` prop values which can not apply styles (e.g. `css={[a, b]}` or `css={{ color: "red" }}`)
-- aeee845: Fix parsing of `.jsx`, `.js`, `.mjs` and `.cjs` files with Turbopack and Rsbuild
-- Updated dependencies [63847f8]
-- Updated dependencies [1a5a828]
-- Updated dependencies [d7be766]
+- Reject `css` prop values which can not apply styles (e.g. `css={[a, b]}` or `css={{ color: "red" }}`) ([#637](https://github.com/galaxuslabs/yak/pull/637))
+
+- Fix parsing of `.jsx`, `.js`, `.mjs` and `.cjs` files with Turbopack and Rsbuild ([#639](https://github.com/galaxuslabs/yak/pull/639))
+- Updated dependencies:
   - yak-swc@9.9.0
 
 ## 9.8.0
 
 ### Patch Changes
 
-- Updated dependencies [9efbae5]
-- Updated dependencies [1060025]
+- Updated dependencies:
   - yak-swc@9.8.0
 
 ## 9.7.0
 
 ### Minor Changes
 
-- 5ea3955: Improve runtime render performance by collecting class names via string append instead of Set round-trips, rendering styled() composition chains as a single wrapper and skipping prop/style processing entirely for static components
+- Improve runtime render performance by collecting class names via string append instead of Set round-trips, rendering styled() composition chains as a single wrapper and skipping prop/style processing entirely for static components ([#558](https://github.com/galaxuslabs/yak/pull/558))
 
   Components with fully static styles no longer receive a default `style: {}` prop, and a user-passed `style` object is forwarded by reference instead of cloned on every render; components with dynamic styles are unchanged.
 
-- 5ea3955: The runtime no longer deduplicates class names, so the same class applied twice — e.g. an `atoms()` utility that is already on the element, or a shared `css` block toggled by two conditions — now appears twice in the class attribute. This is rendering-neutral, as CSS applies a class once however often it is listed.
-- 67b8875: Add JSX folding: a usage of a styled component declared in the same file compiles to a plain element, skipping the runtime wrapper. Rendering gets considerably faster, and nothing needs configuring.
+- The runtime no longer deduplicates class names, so the same class applied twice — e.g. an `atoms()` utility that is already on the element, or a shared `css` block toggled by two conditions — now appears twice in the class attribute. This is rendering-neutral, as CSS applies a class once however often it is listed. ([#558](https://github.com/galaxuslabs/yak/pull/558))
+
+- Add JSX folding: a usage of a styled component declared in the same file compiles to a plain element, skipping the runtime wrapper. Rendering gets considerably faster, and nothing needs configuring. ([#568](https://github.com/galaxuslabs/yak/pull/568))
 
   ```tsx
   const Icon = styled.span<{ $active?: boolean }>`
@@ -152,376 +153,375 @@
 
 ### Patch Changes
 
-- 7d9d0dc: Fix the css prop dropping spread props: `<div css={css`...`} {...props} />` now forwards `onClick`, `aria-*` and every other prop to the element instead of keeping only `className` and `style`.
-- Updated dependencies [011ace5]
-- Updated dependencies [eebca6f]
-- Updated dependencies [eebca6f]
-- Updated dependencies [eebca6f]
-- Updated dependencies [06a6c95]
-- Updated dependencies [67b8875]
+- Fix the css prop dropping spread props: `<div css={css`...`} {...props} />` now forwards `onClick`, `aria-*` and every other prop to the element instead of keeping only `className` and `style`. ([#582](https://github.com/galaxuslabs/yak/pull/582))
+- Updated dependencies:
   - yak-swc@9.7.0
 
 ## 9.6.0
 
 ### Minor Changes
 
-- 00e5021: Add `globalStyle` to write global styles that are extracted at build time and apply once the file is imported
+- Add `globalStyle` to write global styles that are extracted at build time and apply once the file is imported ([#571](https://github.com/galaxuslabs/yak/pull/571))
 
 ### Patch Changes
 
-- Updated dependencies [00e5021]
+- Updated dependencies:
   - yak-swc@9.6.0
 
 ## 9.5.1
 
 ### Patch Changes
 
-- 280f4c9: Add a `strictCssProp` option (default `true`) that fails the build on a `css` prop next-yak can't handle. Turn it off to leave unrecognized `css` props untouched, e.g. when another library on the same element uses its own `css` prop. Invalid `css` props are now left in place rather than silently stripped.
-- Updated dependencies [056b4d9]
-- Updated dependencies [056b4d9]
-- Updated dependencies [280f4c9]
+- Add a `strictCssProp` option (default `true`) that fails the build on a `css` prop next-yak can't handle. Turn it off to leave unrecognized `css` props untouched, e.g. when another library on the same element uses its own `css` prop. Invalid `css` props are now left in place rather than silently stripped. ([#574](https://github.com/galaxuslabs/yak/pull/574))
+- Updated dependencies:
   - yak-swc@9.5.1
 
 ## 9.5.0
 
 ### Minor Changes
 
-- 818e953: Declare React >=19 as peer dependency.
+- Declare React >=19 as peer dependency. ([#561](https://github.com/galaxuslabs/yak/pull/561))
 
   The runtime already requires React 19 since 8.0.0 — `useTheme` is built on the `use()` hook (added for async RSC theme contexts in #429), which does not exist in React 18. The peer dependency range just didn't reflect that yet, so React 18 installs would pass `npm install` and then crash at runtime when rendering a themed or dynamic component. This makes the existing requirement explicit.
 
-- 527b667: Add rsbuild 2 support with the new `next-yak/rsbuild` plugin
-- c9bd2de: Update dependencies
+- Add rsbuild 2 support with the new `next-yak/rsbuild` plugin ([#562](https://github.com/galaxuslabs/yak/pull/562))
+
+- Update dependencies ([#566](https://github.com/galaxuslabs/yak/pull/566))
 
 ### Patch Changes
 
-- Updated dependencies [5d40a77]
-- Updated dependencies [c9bd2de]
+- Updated dependencies:
   - yak-swc@9.5.0
 
 ## 9.4.2
 
 ### Patch Changes
 
-- 14cbb13: Fix type issues for cjs consumers
-- 2d9b301: Updated all dependencies
-- 02de881: fix css resolution for vite rsc
-- c54871a: Improve error messages for unsupported cross-file exports
-- 75beb6b: Emit an error when a dynamic interpolation is used inside an at-rule query.
-- 6582ebd: Fixed types in bun workspaces
-- 842c24c: Fix HMR full page reloads for styled-only files by injecting `$RefreshReg$` for exported styled components
-- Updated dependencies [df860c9]
-- Updated dependencies [07d80d0]
-- Updated dependencies [f18484e]
-- Updated dependencies [75beb6b]
-- Updated dependencies [842c24c]
+- Fix type issues for cjs consumers ([#546](https://github.com/galaxuslabs/yak/pull/546))
+
+- Updated all dependencies ([#539](https://github.com/galaxuslabs/yak/pull/539))
+
+- fix css resolution for vite rsc ([#529](https://github.com/galaxuslabs/yak/pull/529))
+
+- Improve error messages for unsupported cross-file exports ([#533](https://github.com/galaxuslabs/yak/pull/533))
+
+- Emit an error when a dynamic interpolation is used inside an at-rule query. ([#534](https://github.com/galaxuslabs/yak/pull/534))
+
+- Fixed types in bun workspaces ([#531](https://github.com/galaxuslabs/yak/pull/531))
+
+- Fix HMR full page reloads for styled-only files by injecting `$RefreshReg$` for exported styled components ([#524](https://github.com/galaxuslabs/yak/pull/524))
+- Updated dependencies:
   - yak-swc@9.4.2
 
 ## 9.4.1
 
 ### Patch Changes
 
-- 2da1696: Fix multi env evaluator lifecycle in shared environment builds
-- c1b8ad6: Drop @babel/traverse in favor of @babel/parser (smaller footprint and faster parsing)
-- 15f9faf: Update all dependencies
-- 680d9aa: Fix vite build hang with multi-environment builds
-- 2c58837: Fix React Fast Refresh full page reloads for styled-only files by renaming internal component function from `yak` to `Yak`
+- Fix multi env evaluator lifecycle in shared environment builds ([#512](https://github.com/galaxuslabs/yak/pull/512))
+
+- Drop @babel/traverse in favor of @babel/parser (smaller footprint and faster parsing) ([#516](https://github.com/galaxuslabs/yak/pull/516))
+
+- Update all dependencies ([#518](https://github.com/galaxuslabs/yak/pull/518))
+
+- Fix vite build hang with multi-environment builds ([#510](https://github.com/galaxuslabs/yak/pull/510))
+
+- Fix React Fast Refresh full page reloads for styled-only files by renaming internal component function from `yak` to `Yak` ([#520](https://github.com/galaxuslabs/yak/pull/520))
   - yak-swc@9.4.1
 
 ## 9.4.0
 
 ### Minor Changes
 
-- b90e1b5: Add turbopack support with worker based .yak.ts evaluation
+- Add turbopack support with worker based .yak.ts evaluation ([#485](https://github.com/galaxuslabs/yak/pull/485))
 
 ### Patch Changes
 
-- Updated dependencies [caac236]
-- Updated dependencies [f7198df]
-- Updated dependencies [e77edd3]
+- Updated dependencies:
   - yak-swc@9.4.0
 
 ## 9.3.0
 
 ### Minor Changes
 
-- 2e9ad49: Evaluate TypeScript files inside Node.js workers with types stripped out
+- Evaluate TypeScript files inside Node.js workers with types stripped out ([#476](https://github.com/galaxuslabs/yak/pull/476))
 
 ### Patch Changes
 
-- e414bca: Add basePath as new vite plugin option for monorepo setups
-- f7ef4cc: Fix theme augmentation
-- 7e2614b: Fix vite plugin HMR under windows
+- Add basePath as new vite plugin option for monorepo setups ([#493](https://github.com/galaxuslabs/yak/pull/493))
+
+- Fix theme augmentation ([#497](https://github.com/galaxuslabs/yak/pull/497))
+
+- Fix vite plugin HMR under windows ([#496](https://github.com/galaxuslabs/yak/pull/496))
   - yak-swc@9.3.0
 
 ## 9.2.0
 
 ### Minor Changes
 
-- 87091fe: Improve the debugging API
+- Improve the debugging API ([#471](https://github.com/galaxuslabs/yak/pull/471))
 
 ### Patch Changes
 
-- f90c65b: Add optional peer dependencies
-- 60e8041: fix HMR for CSS in Vite
-- 8c1b6f1: Export the YakComponent type to fix TS4023 errors when re-exporting styled components with declaration emit enabled
-- 0841721: Report transformation errors during cross file resolve
-- Updated dependencies [bc1f82e]
+- Add optional peer dependencies ([#470](https://github.com/galaxuslabs/yak/pull/470))
+
+- fix HMR for CSS in Vite ([#477](https://github.com/galaxuslabs/yak/pull/477))
+
+- Export the YakComponent type to fix TS4023 errors when re-exporting styled components with declaration emit enabled ([#483](https://github.com/galaxuslabs/yak/pull/483))
+
+- Report transformation errors during cross file resolve ([#480](https://github.com/galaxuslabs/yak/pull/480))
+- Updated dependencies:
   - yak-swc@9.2.0
 
 ## 9.1.0
 
 ### Minor Changes
 
-- ddb0e93: Add deprecation warning for `:global()` selectors
+- Add deprecation warning for `:global()` selectors ([#448](https://github.com/galaxuslabs/yak/pull/448))
 
 ### Patch Changes
 
-- 3e4fc3b: Add experimental vite support
-- 846cc4c: Unified CSS import configuration with placeholder support
-- Updated dependencies [3e4fc3b]
-- Updated dependencies [ddb0e93]
-- Updated dependencies [846cc4c]
+- Add experimental vite support ([#434](https://github.com/galaxuslabs/yak/pull/434))
+
+- Unified CSS import configuration with placeholder support ([#454](https://github.com/galaxuslabs/yak/pull/454))
+- Updated dependencies:
   - yak-swc@9.1.0
 
 ## 9.0.0
 
 ### Patch Changes
 
-- Updated dependencies [a85dcba]
+- Updated dependencies:
   - yak-swc@9.0.0
 
 ## 8.0.2
 
 ### Patch Changes
 
-- b41703b: Fix turbopack loader invocation by transpiling to CJS instead of ESM
+- Fix turbopack loader invocation by transpiling to CJS instead of ESM ([#441](https://github.com/galaxuslabs/yak/pull/441))
   - yak-swc@8.0.2
 
 ## 8.0.1
 
 ### Patch Changes
 
-- f6e8912: Fix plugin invocation in turbopack loader
+- Fix plugin invocation in turbopack loader ([#438](https://github.com/galaxuslabs/yak/pull/438))
   - yak-swc@8.0.1
 
 ## 8.0.0
 
 ### Major Changes
 
-- 24caa1f: Add limited Turbopack support (Limitation: .yak files can't use `import` statements)
-- 6f84e74: Update to Next.js 16
+- Add limited Turbopack support (Limitation: .yak files can't use `import` statements) ([#421](https://github.com/galaxuslabs/yak/pull/421))
+
+- Update to Next.js 16 ([#420](https://github.com/galaxuslabs/yak/pull/420))
 
 ### Minor Changes
 
-- 2e43185: Add support for async RSC Yak Theme Contexts (yak.context.ts)
+- Add support for async RSC Yak Theme Contexts (yak.context.ts) ([#429](https://github.com/galaxuslabs/yak/pull/429))
 
 ### Patch Changes
 
-- cea6d53: Allow exporting Yak components as default expressions
-- Updated dependencies [cea6d53]
-- Updated dependencies [2e43185]
-- Updated dependencies [24caa1f]
-- Updated dependencies [6f84e74]
+- Allow exporting Yak components as default expressions ([#402](https://github.com/galaxuslabs/yak/pull/402))
+- Updated dependencies:
   - yak-swc@8.0.0
 
 ## 7.0.0
 
 ### Minor Changes
 
-- a5e730d: extract the cross-file resolution logic to make it reusable with different bundlers
+- extract the cross-file resolution logic to make it reusable with different bundlers ([#389](https://github.com/galaxuslabs/yak/pull/389))
 
 ### Patch Changes
 
-- d3cbeae: Updated all packages
-- 39ffa4a: Fix playground cross-file resolving
-- Updated dependencies [e4d230c]
+- Updated all packages ([#400](https://github.com/galaxuslabs/yak/pull/400))
+
+- Fix playground cross-file resolving ([#401](https://github.com/galaxuslabs/yak/pull/401))
+- Updated dependencies:
   - yak-swc@7.0.0
 
 ## 6.0.0
 
 ### Patch Changes
 
-- Updated dependencies [9835170]
+- Updated dependencies:
   - yak-swc@6.0.0
 
 ## 5.7.2
 
 ### Patch Changes
 
-- Updated dependencies [460a5da]
+- Updated dependencies:
   - yak-swc@5.7.2
 
 ## 5.7.1
 
 ### Patch Changes
 
-- 3d1f3ef: Fixed css variables not being applied
+- Fixed css variables not being applied ([#381](https://github.com/galaxuslabs/yak/pull/381))
   - yak-swc@5.7.1
 
 ## 5.7.0
 
 ### Minor Changes
 
-- eeaae8f: Added support for atoms in CSS prop & enhanced atoms function to manipulate class names and styles in a callback
+- Added support for atoms in CSS prop & enhanced atoms function to manipulate class names and styles in a callback ([#375](https://github.com/galaxuslabs/yak/pull/375))
 
 ### Patch Changes
 
-- 938bca4: Improve typings
-- 2088124: Added a new type 'GenericYakComponentOf<>' to be used for generic components
-- Updated dependencies [938bca4]
-- Updated dependencies [ab58a54]
-- Updated dependencies [eeaae8f]
+- Improve typings ([#363](https://github.com/galaxuslabs/yak/pull/363))
+
+- Added a new type 'GenericYakComponentOf<>' to be used for generic components ([#371](https://github.com/galaxuslabs/yak/pull/371))
+- Updated dependencies:
   - yak-swc@5.7.0
 
 ## 5.6.1
 
 ### Patch Changes
 
-- Updated dependencies [cb02484]
+- Updated dependencies:
   - yak-swc@5.6.1
 
 ## 5.6.0
 
 ### Minor Changes
 
-- 0c45802: Add support for custom web components
-- 6c859e5: Add new "experiments.transpilationMode" option to transpile to CSS instead of CSS Modules
+- Add support for custom web components ([#353](https://github.com/galaxuslabs/yak/pull/353))
+
+- Add new "experiments.transpilationMode" option to transpile to CSS instead of CSS Modules ([#349](https://github.com/galaxuslabs/yak/pull/349))
 
 ### Patch Changes
 
-- 380cb4e: Improve cross file compilation performance by removing the serialization
-- b7ce763: Fixed an issue with the replacement of nested constants
-- Updated dependencies [6c859e5]
-- Updated dependencies [a8fce5a]
+- Improve cross file compilation performance by removing the serialization ([#346](https://github.com/galaxuslabs/yak/pull/346))
+
+- Fixed an issue with the replacement of nested constants ([#357](https://github.com/galaxuslabs/yak/pull/357))
+- Updated dependencies:
   - yak-swc@5.6.0
 
 ## 5.5.0
 
 ### Minor Changes
 
-- 6ed6e55: Updated all dependencies
+- Updated all dependencies ([#332](https://github.com/galaxuslabs/yak/pull/332))
 
 ### Patch Changes
 
-- 720e426: Add support for turbopacks relative filepaths
-- Updated dependencies [720e426]
-- Updated dependencies [6ed6e55]
+- Add support for turbopacks relative filepaths ([#334](https://github.com/galaxuslabs/yak/pull/334))
+- Updated dependencies:
   - yak-swc@5.5.0
 
 ## 5.4.0
 
 ### Minor Changes
 
-- 2ba5777: Add support for `@property` inside `styled` and `css` tags
+- Add support for `@property` inside `styled` and `css` tags ([#327](https://github.com/galaxuslabs/yak/pull/327))
 
 ### Patch Changes
 
-- Updated dependencies [2ba5777]
+- Updated dependencies:
   - yak-swc@5.4.0
 
 ## 5.3.1
 
 ### Patch Changes
 
-- 4c9d3c3: Fix animation references by using "global()" instead of ":global()"
-- Updated dependencies [4c9d3c3]
+- Fix animation references by using "global()" instead of ":global()" ([#323](https://github.com/galaxuslabs/yak/pull/323))
+- Updated dependencies:
   - yak-swc@5.3.1
 
 ## 5.3.0
 
 ### Minor Changes
 
-- 3fde4f1: use a turbopack compatible swc plugin path
+- use a turbopack compatible swc plugin path ([#318](https://github.com/galaxuslabs/yak/pull/318))
 
 ### Patch Changes
 
-- 14f2db8: Fix keyframe animation references when used before declaration
-- Updated dependencies [3fde4f1]
-- Updated dependencies [14f2db8]
+- Fix keyframe animation references when used before declaration ([#321](https://github.com/galaxuslabs/yak/pull/321))
+- Updated dependencies:
   - yak-swc@5.3.0
 
 ## 5.2.2
 
 ### Patch Changes
 
-- cd964ac: fix cross file selectors
-- 364f415: fix recursive class name replacement inside mixins
-- Updated dependencies [cd964ac]
-- Updated dependencies [364f415]
+- fix cross file selectors ([#314](https://github.com/galaxuslabs/yak/pull/314))
+
+- fix recursive class name replacement inside mixins ([#317](https://github.com/galaxuslabs/yak/pull/317))
+- Updated dependencies:
   - yak-swc@5.2.2
 
 ## 5.2.1
 
 ### Patch Changes
 
-- 4f69bd9: fix class name escaping in dev mode
-- Updated dependencies [4f69bd9]
+- fix class name escaping in dev mode ([#310](https://github.com/galaxuslabs/yak/pull/310))
+- Updated dependencies:
   - yak-swc@5.2.1
 
 ## 5.2.0
 
 ### Minor Changes
 
-- dd11a02: Expose `minify` as an explicit option to `withYak`. It defaults to `NODE_ENV === 'production'`
-- d018370: minify class names for production builds
+- Expose `minify` as an explicit option to `withYak`. It defaults to `NODE_ENV === 'production'` ([#302](https://github.com/galaxuslabs/yak/pull/302))
+
+- minify class names for production builds ([#220](https://github.com/galaxuslabs/yak/pull/220))
 
 ### Patch Changes
 
-- 60a1bb0: Automatically add the css prop to all components that can receive `className` and `style`.
-- Updated dependencies [d018370]
+- Automatically add the css prop to all components that can receive `className` and `style`. ([#295](https://github.com/galaxuslabs/yak/pull/295))
+- Updated dependencies:
   - yak-swc@5.2.0
 
 ## 5.1.0
 
 ### Minor Changes
 
-- e2afeb9: Improved React DevTools support - Styled components created with next-yak now show up with their actual variable names in React DevTools instead of a generic yak label
+- Improved React DevTools support - Styled components created with next-yak now show up with their actual variable names in React DevTools instead of a generic yak label ([#300](https://github.com/galaxuslabs/yak/pull/300))
 
 ### Patch Changes
 
-- Updated dependencies [d461cf5]
-- Updated dependencies [b3e4fec]
-- Updated dependencies [e2afeb9]
+- Updated dependencies:
   - yak-swc@5.1.0
 
 ## 5.0.0
 
 ### Major Changes
 
-- 6fd9b9a: Add compatibility with Next.js 15.2.1
+- Add compatibility with Next.js 15.2.1 ([#281](https://github.com/galaxuslabs/yak/pull/281))
 
 ### Patch Changes
 
-- Updated dependencies [6fd9b9a]
+- Updated dependencies:
   - yak-swc@5.0.0
 
 ## 4.1.1
 
 ### Patch Changes
 
-- 79bb695: Fix dead-lock inside webpack caused by css-loader cache
+- Fix dead-lock inside webpack caused by css-loader cache ([#275](https://github.com/galaxuslabs/yak/pull/275))
 
 ## 4.1.0
 
 ### Minor Changes
 
-- 0eac2b4: improve bundle size by compiling styled.TAG_NAME
+- improve bundle size by compiling styled.TAG_NAME ([#154](https://github.com/galaxuslabs/yak/pull/154))
 
 ### Patch Changes
 
-- Updated dependencies [ea744ac]
-- Updated dependencies [0eac2b4]
+- Updated dependencies:
   - yak-swc@4.1.0
 
 ## 4.0.4
 
 ### Patch Changes
 
-- 171898f: Fix issue with the css prop where it wouldn't be generated when used inside an exported component
-- d4379a2: Updated all dependencies
-- 7f90169: Updated @types/react to 19.0.2
-- 145c621: Refactor CSS prop types to improve type inference and consistency
+- Fix issue with the css prop where it wouldn't be generated when used inside an exported component ([#253](https://github.com/galaxuslabs/yak/pull/253))
+
+- Updated all dependencies ([#251](https://github.com/galaxuslabs/yak/pull/251))
+
+- Updated @types/react to 19.0.2 ([#250](https://github.com/galaxuslabs/yak/pull/250))
+
+- Refactor CSS prop types to improve type inference and consistency ([#257](https://github.com/galaxuslabs/yak/pull/257))
   - Added new type `CSSProp` to be used by custom components to receive the `css` prop in a somewhat typesafe way
   - Updated `css` function to return `ComponentStyle` only
 
@@ -529,67 +529,70 @@
 
 ### Patch Changes
 
-- 154da2f: fix css prop class name access in nested jsx
-- Updated dependencies [154da2f]
+- fix css prop class name access in nested jsx ([#245](https://github.com/galaxuslabs/yak/pull/245))
+- Updated dependencies:
   - yak-swc@4.0.3
 
 ## 4.0.2
 
 ### Patch Changes
 
-- 5ce7f16: Enable css prop support for styled components, not just native HTML elements by fixing a bug in the types
-- 2f0ba89: Enable conditional styling for the css prop
-- Updated dependencies [2f0ba89][5ce7f16]
+- Enable css prop support for styled components, not just native HTML elements by fixing a bug in the types ([#243](https://github.com/galaxuslabs/yak/pull/243))
+
+- Enable conditional styling for the css prop ([#242](https://github.com/galaxuslabs/yak/pull/242))
+- Updated dependencies:
   - yak-swc@4.0.2
 
 ## 4.0.1
 
 ### Patch Changes
 
-- Updated dependencies [859db1c]
+- Updated dependencies:
   - yak-swc@4.0.1
 
 ## 4.0.0
 
 ### Major Changes
 
-- d77a860: Upgrade to React 19
-- f204637: Add support for Next.js 15.0.4 (SWC 5.x)
+- Upgrade to React 19 ([#234](https://github.com/galaxuslabs/yak/pull/234))
+
+- Add support for Next.js 15.0.4 (SWC 5.x) ([#235](https://github.com/galaxuslabs/yak/pull/235))
 
 ## 3.1.0
 
 ### Minor Changes
 
-- efa3009: allow to define a prefix for generated css names like variables
+- allow to define a prefix for generated css names like variables ([#232](https://github.com/galaxuslabs/yak/pull/232))
 
 ### Patch Changes
 
-- 0b95fc1: Improve the error message for dynamic css functions when returning invalid values
-- Updated dependencies [3d6e505]
-- Updated dependencies [fcba925]
+- Improve the error message for dynamic css functions when returning invalid values ([#230](https://github.com/galaxuslabs/yak/pull/230))
+- Updated dependencies:
   - yak-swc@3.1.0
 
 ## 3.0.1
 
 ### Patch Changes
 
-- fb2b2ca: Fix types to allow using constants in keyframes
-- 70a94a9: Updated React TypeScript definitions:
+- Fix types to allow using constants in keyframes ([#215](https://github.com/galaxuslabs/yak/pull/215))
+
+- Updated React TypeScript definitions: ([#206](https://github.com/galaxuslabs/yak/pull/206))
   - @types/react from 18.2.28 to 18.3.12
   - @types/react-dom from 18.2.13 to 18.3.1
-- 365af90: Fix type inference bug for selectors inside mixins
-- Updated dependencies [411ad36]
+
+- Fix type inference bug for selectors inside mixins ([#217](https://github.com/galaxuslabs/yak/pull/217))
+- Updated dependencies:
   - yak-swc@3.0.1
 
 ## 3.0.0
 
 ### Major Changes
 
-- 94f083f: Upgrade SWC to 3.x to add support for Next.js 15.0.0
+- Upgrade SWC to 3.x to add support for Next.js 15.0.0 ([#196](https://github.com/galaxuslabs/yak/pull/196))
 
 ### Patch Changes
 
-- Updated dependencies [94f083f]
+- Updated dependencies:
   - yak-swc@3.0.0
 
 ## 2.4.0
