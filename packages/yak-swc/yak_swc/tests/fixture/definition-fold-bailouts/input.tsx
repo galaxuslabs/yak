@@ -46,6 +46,20 @@ export const OrOperator = styled.div<{ $on: boolean }>`
   ${({ $on }) => !$on || css`color: red;`}
 `;
 
+// `OrOperator` above folds because `!$on` is a boolean; here the left side
+// could be an object, whose class name the runtime would add
+export const OrUnprovable = styled.div<{ $on: unknown }>`
+  ${({ $on }) => $on || css`color: red;`}
+`;
+
+export const OrChainUnprovable = styled.div<{ $a: boolean; $b: unknown }>`
+  ${({ $a, $b }) => !$a || $b || css`color: red;`}
+`;
+
+export const NullishOperator = styled.div<{ $on?: boolean }>`
+  ${({ $on }) => $on ?? css`color: red;`}
+`;
+
 export const StyleRead = styled.div`
   ${({ style }) => style && css`color: red;`}
 `;

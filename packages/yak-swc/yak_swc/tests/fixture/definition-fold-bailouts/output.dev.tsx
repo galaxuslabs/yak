@@ -74,8 +74,31 @@ export const OrOperator = /*YAK EXPORTED STYLED:OrOperator:input_OrOperator_m7uB
 .input_OrOperator___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrOperator_m7uBBu", ({ $on })=>!$on || /*#__PURE__*/ css("input_OrOperator___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrOperator_m7uBBu", 0, ({ $on: __yak_$on })=>"input_OrOperator_m7uBBu" + (!__yak_$on ? "" : " input_OrOperator___m7uBBu")), {
     "displayName": "OrOperator"
+});
+// `OrOperator` above folds because `!$on` is a boolean; here the left side
+// could be an object, whose class name the runtime would add
+export const OrUnprovable = /*YAK EXPORTED STYLED:OrUnprovable:input_OrUnprovable_m7uBBu*//*YAK Extracted CSS:
+.input_OrUnprovable__not_\$on_m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrUnprovable_m7uBBu", ({ $on })=>$on || /*#__PURE__*/ css("input_OrUnprovable__not_$on_m7uBBu")), {
+    "displayName": "OrUnprovable"
+});
+export const OrChainUnprovable = /*YAK EXPORTED STYLED:OrChainUnprovable:input_OrChainUnprovable_m7uBBu*//*YAK Extracted CSS:
+.input_OrChainUnprovable___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrChainUnprovable_m7uBBu", ({ $a, $b })=>!$a || $b || /*#__PURE__*/ css("input_OrChainUnprovable___m7uBBu")), {
+    "displayName": "OrChainUnprovable"
+});
+export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:input_NullishOperator_m7uBBu*//*YAK Extracted CSS:
+.input_NullishOperator___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NullishOperator_m7uBBu", ({ $on })=>$on ?? /*#__PURE__*/ css("input_NullishOperator___m7uBBu")), {
+    "displayName": "NullishOperator"
 });
 export const StyleRead = /*YAK EXPORTED STYLED:StyleRead:input_StyleRead_m7uBBu*//*YAK Extracted CSS:
 .input_StyleRead__style_m7uBBu {

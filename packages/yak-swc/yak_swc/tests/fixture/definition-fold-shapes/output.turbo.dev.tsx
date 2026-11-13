@@ -1,7 +1,7 @@
 import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LmlucHV0X0lkZW50X19wX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0Jsb2NrX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAwOwp9Ci5pbnB1dF9CbG9ja19fX203dUJCdS0wMSB7CiAgcGFkZGluZzogNHB4Owp9LmlucHV0X0hlbHBlcl9fX203dUJCdSB7CiAgZm9udC1zaXplOiAyZW07Cn0uaW5wdXRfVGhlbWVkX190aGVtZV9kYXJrX203dUJCdSB7CiAgY29sb3I6IHdoaXRlOwp9Ci5pbnB1dF9UaGVtZWRfX19tN3VCQnUgewogIGNvbG9yOiBibGFjazsKfS5pbnB1dF9OZXN0ZWRfX1wkYS1hbmQtXCRiX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfQouaW5wdXRfTmVzdGVkX19fbTd1QkJ1IHsKICBtYXJnaW46IDA7Cn0uaW5wdXRfT3V0ZXJfX19tN3VCQnUtMDEgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfV3JhcHBlZF9fXCR4X203dUJCdSB7CiAgY29sb3I6IGdyZWVuOwp9LmlucHV0X0Nzc1ZhcmlhYmxlX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9Ci5pbnB1dF9Dc3NWYXJpYWJsZV9tN3VCQnUgewogIGxlZnQ6IHZhcigtLWlucHV0X0Nzc1ZhcmlhYmxlX19sZWZ0X203dUJCdSk7Cn0uaW5wdXRfVGhlbWVWYXJpYWJsZV9tN3VCQnUgewogIGNvbG9yOiB2YXIoLS1pbnB1dF9UaGVtZVZhcmlhYmxlX19jb2xvcl9tN3VCQnUpOwp9LmlucHV0X05lc3RlZFZhcmlhYmxlX19cJG9uX203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfTmVzdGVkVmFyaWFibGVfX2xlZnRfbTd1QkJ1KTsKICB0b3A6IHZhcigtLWlucHV0X05lc3RlZFZhcmlhYmxlX190b3BfbTd1QkJ1KTsKfQ==";
+import "data:text/css;base64,LmlucHV0X0lkZW50X19wX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0Jsb2NrX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAwOwp9Ci5pbnB1dF9CbG9ja19fX203dUJCdS0wMSB7CiAgcGFkZGluZzogNHB4Owp9LmlucHV0X0hlbHBlcl9fX203dUJCdSB7CiAgZm9udC1zaXplOiAyZW07Cn0uaW5wdXRfVGhlbWVkX190aGVtZV9kYXJrX203dUJCdSB7CiAgY29sb3I6IHdoaXRlOwp9Ci5pbnB1dF9UaGVtZWRfX19tN3VCQnUgewogIGNvbG9yOiBibGFjazsKfS5pbnB1dF9OZXN0ZWRfX1wkYS1hbmQtXCRiX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfQouaW5wdXRfTmVzdGVkX19fbTd1QkJ1IHsKICBtYXJnaW46IDA7Cn0uaW5wdXRfT3V0ZXJfX19tN3VCQnUtMDEgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfV3JhcHBlZF9fXCR4X203dUJCdSB7CiAgY29sb3I6IGdyZWVuOwp9LmlucHV0X0Nzc1ZhcmlhYmxlX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9Ci5pbnB1dF9Dc3NWYXJpYWJsZV9tN3VCQnUgewogIGxlZnQ6IHZhcigtLWlucHV0X0Nzc1ZhcmlhYmxlX19sZWZ0X203dUJCdSk7Cn0uaW5wdXRfVGhlbWVWYXJpYWJsZV9tN3VCQnUgewogIGNvbG9yOiB2YXIoLS1pbnB1dF9UaGVtZVZhcmlhYmxlX19jb2xvcl9tN3VCQnUpOwp9LmlucHV0X05lc3RlZFZhcmlhYmxlX19cJG9uX203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfTmVzdGVkVmFyaWFibGVfX2xlZnRfbTd1QkJ1KTsKICB0b3A6IHZhcigtLWlucHV0X05lc3RlZFZhcmlhYmxlX190b3BfbTd1QkJ1KTsKfS5pbnB1dF9PckNvbXBhcmlzb25fX19tN3VCQnUgewogIHBhZGRpbmc6IDA7Cn0uaW5wdXRfT3JDaGFpbl9fX203dUJCdSB7CiAgY29sb3I6IG9yYW5nZTsKfQ==";
 // identifier props parameter read through members
 export const Ident = /*YAK EXPORTED STYLED:Ident:input_Ident_m7uBBu*//*YAK Extracted CSS:
 .input_Ident__p_\$on_m7uBBu {
@@ -98,4 +98,19 @@ export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:input_NestedV
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedVariable_m7uBBu", 2, ({ $on: __yak_$on, $x: __yak_$x, $big: __yak_$big }, __yak_style)=>"input_NestedVariable_m7uBBu" + (__yak_$on ? " input_NestedVariable__$on_m7uBBu" + (__yak_style["--input_NestedVariable__left_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$x * 2, "px")), __yak_style["--input_NestedVariable__top_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$big ? 8 : 4, "px")), "") : "")), {
     "displayName": "NestedVariable"
+});
+// `||` folds when its left side is always `true` or `false`
+export const OrComparison = /*YAK EXPORTED STYLED:OrComparison:input_OrComparison_m7uBBu*//*YAK Extracted CSS:
+.input_OrComparison___m7uBBu {
+  padding: 0;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrComparison_m7uBBu", 0, ({ $size: __yak_$size })=>"input_OrComparison_m7uBBu" + (__yak_$size !== "s" ? "" : " input_OrComparison___m7uBBu")), {
+    "displayName": "OrComparison"
+});
+export const OrChain = /*YAK EXPORTED STYLED:OrChain:input_OrChain_m7uBBu*//*YAK Extracted CSS:
+.input_OrChain___m7uBBu {
+  color: orange;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrChain_m7uBBu", 0, ({ $a: __yak_$a, $b: __yak_$b })=>"input_OrChain_m7uBBu" + (!__yak_$a || !__yak_$b ? "" : " input_OrChain___m7uBBu")), {
+    "displayName": "OrChain"
 });

@@ -1,7 +1,7 @@
 import { styled, css, atoms, __yak_cssValue } from "@yak/react/internal";
 import { mixin, calc } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LmlucHV0X1Jlc3RfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0RlZmF1bHRfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0NvbXB1dGVkX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0VzY2FwaW5nX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X011bHRpU3RhdGVtZW50X19vbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfRnVuY3Rpb25FeHByZXNzaW9uX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9TdHlsZVJlYWRJblZhbHVlX203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfU3R5bGVSZWFkSW5WYWx1ZV9fbGVmdF9tN3VCQnUpOwp9LmlucHV0X09yT3BlcmF0b3JfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfU3R5bGVSZWFkX19zdHlsZV9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfTWl4aW5JbnRlcnBvbGF0aW9uX203dUJCdSB7CiAgLS15YWstY3NzLWltcG9ydDogdXJsKCIuL2hlbHBlcnM6bWl4aW4iLG1peGluKTsKfQ==";
+import "data:text/css;base64,LmlucHV0X1Jlc3RfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0RlZmF1bHRfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0NvbXB1dGVkX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0VzY2FwaW5nX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X011bHRpU3RhdGVtZW50X19vbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfRnVuY3Rpb25FeHByZXNzaW9uX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9TdHlsZVJlYWRJblZhbHVlX203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfU3R5bGVSZWFkSW5WYWx1ZV9fbGVmdF9tN3VCQnUpOwp9LmlucHV0X09yT3BlcmF0b3JfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfT3JVbnByb3ZhYmxlX19ub3RfXCRvbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfT3JDaGFpblVucHJvdmFibGVfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfTnVsbGlzaE9wZXJhdG9yX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X1N0eWxlUmVhZF9fc3R5bGVfbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X01peGluSW50ZXJwb2xhdGlvbl9tN3VCQnUgewogIC0teWFrLWNzcy1pbXBvcnQ6IHVybCgiLi9oZWxwZXJzOm1peGluIixtaXhpbik7Cn0=";
 export const Rest = /*YAK EXPORTED STYLED:Rest:input_Rest_m7uBBu*//*YAK Extracted CSS:
 .input_Rest__\$on_m7uBBu {
   color: red;
@@ -74,8 +74,31 @@ export const OrOperator = /*YAK EXPORTED STYLED:OrOperator:input_OrOperator_m7uB
 .input_OrOperator___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrOperator_m7uBBu", ({ $on })=>!$on || /*#__PURE__*/ css("input_OrOperator___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrOperator_m7uBBu", 0, ({ $on: __yak_$on })=>"input_OrOperator_m7uBBu" + (!__yak_$on ? "" : " input_OrOperator___m7uBBu")), {
     "displayName": "OrOperator"
+});
+// `OrOperator` above folds because `!$on` is a boolean; here the left side
+// could be an object, whose class name the runtime would add
+export const OrUnprovable = /*YAK EXPORTED STYLED:OrUnprovable:input_OrUnprovable_m7uBBu*//*YAK Extracted CSS:
+.input_OrUnprovable__not_\$on_m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrUnprovable_m7uBBu", ({ $on })=>$on || /*#__PURE__*/ css("input_OrUnprovable__not_$on_m7uBBu")), {
+    "displayName": "OrUnprovable"
+});
+export const OrChainUnprovable = /*YAK EXPORTED STYLED:OrChainUnprovable:input_OrChainUnprovable_m7uBBu*//*YAK Extracted CSS:
+.input_OrChainUnprovable___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrChainUnprovable_m7uBBu", ({ $a, $b })=>!$a || $b || /*#__PURE__*/ css("input_OrChainUnprovable___m7uBBu")), {
+    "displayName": "OrChainUnprovable"
+});
+export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:input_NullishOperator_m7uBBu*//*YAK Extracted CSS:
+.input_NullishOperator___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NullishOperator_m7uBBu", ({ $on })=>$on ?? /*#__PURE__*/ css("input_NullishOperator___m7uBBu")), {
+    "displayName": "NullishOperator"
 });
 export const StyleRead = /*YAK EXPORTED STYLED:StyleRead:input_StyleRead_m7uBBu*//*YAK Extracted CSS:
 .input_StyleRead__style_m7uBBu {
