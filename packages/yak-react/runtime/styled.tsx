@@ -1,6 +1,8 @@
 import { css, CSSInterpolation, ClassNames, yakComponentSymbol } from "./cssLiteral.js";
 import * as INTERNAL from "./internals/propMarkers.js";
 import React from "react";
+// the automatic runtime reuses the filtered props object instead of copying it
+import { jsx } from "react/jsx-runtime";
 import type {
   Attrs,
   AttrsMerged,
@@ -134,7 +136,7 @@ const yakStyled: StyledInternal = (Component, attrs) => {
               ? incoming + " " + staticClassName
               : staticClassName
             : incoming || undefined;
-          return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
+          return renderTarget(Target, filteredProps);
         }
       : (props) => {
           // attrs functions and dynamic style functions receive the theme
@@ -179,7 +181,7 @@ const yakStyled: StyledInternal = (Component, attrs) => {
 
           // render the chain's target directly — parent wrappers contribute only
           // their (already merged) attrs and style processors
-          return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
+          return renderTarget(Target, filteredProps);
         };
 
     // Direct write instead of Object.assign (faster & smaller)
@@ -189,6 +191,30 @@ const yakStyled: StyledInternal = (Component, attrs) => {
     taggedYak[yakComponentSymbol] = [Yak, mergedAttrsFn, runtimeStyleProcessor, targetComponent];
     return taggedYak;
   };
+};
+
+/**
+ * Renders the target with the filtered props, which belong to this render only
+ *
+ * `jsx()` keeps the props object. JSX syntax copies it in both JSX runtimes:
+ * `<Target {...props} />` becomes `createElement(Target, props)` or
+ * `jsx(Target, { ...props })`. React freezes the props object in development,
+ * so nothing may write to it after this call, and it must never be an object
+ * the caller owns
+ *
+ * A `key` from attrs is passed separately, like JSX does, so React does not
+ * warn about a spread key: `.attrs({ key: "a" })` renders
+ * `jsx(Target, { className: "x" }, "a")`
+ *
+ * Like JSX in React 19, `jsx()` ignores the `defaultProps` of a function
+ * component
+ */
+const renderTarget = (Target: React.ElementType, props: Record<string, unknown>) => {
+  if ("key" in props) {
+    const { key, ...rest } = props;
+    return jsx(Target, rest, key as React.Key);
+  }
+  return jsx(Target, props);
 };
 
 /**
