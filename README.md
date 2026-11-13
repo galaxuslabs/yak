@@ -8,7 +8,7 @@ Vanilla CSS syntax in TypeScript, with zero runtime. yak is CSS-in-JS for React 
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/galaxuslabs/yak/blob/main/LICENSE)
 
-> **Formerly next-yak.** Same library, same team. From version 10 the React package is [`@yak/react`](https://www.npmjs.com/package/@yak/react), and versions before 10 stay on npm as [`next-yak`](https://www.npmjs.com/package/next-yak). The [migration guide](https://yak.style/docs/migration-from-next-yak) covers the switch.
+> **Formerly next-yak.** Same library, same team. From version 10 the React package is [`@yak/react`](https://www.npmjs.com/package/@yak/react), and versions before 10 stay on npm as [`next-yak`](https://www.npmjs.com/package/next-yak). Run `npx next-yak migrate` to switch, and see the [migration guide](https://yak.style/docs/migration-from-next-yak) for the details.
 
 yak runs in production at [Digitec Galaxus](https://www.galaxus.ch), the largest e-commerce platform in Switzerland, across thousands of styled components, and measurably improved its Core Web Vitals there.
 

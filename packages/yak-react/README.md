@@ -9,7 +9,7 @@
 
 Works with **Next.js** (webpack and Turbopack), **Vite** 7+ (including Vite 8 with Rolldown), **Rsbuild** 2+ and **Storybook**. Any Vite-based framework works too, including react-router and TanStack Start.
 
-> **Formerly next-yak.** Versions before 10 stay on npm as [`next-yak`](https://www.npmjs.com/package/next-yak). The [migration guide](https://yak.style/docs/migration-from-next-yak) covers the switch.
+> **Formerly next-yak.** Versions before 10 stay on npm as [`next-yak`](https://www.npmjs.com/package/next-yak). Run `npx next-yak migrate` to switch, and see the [migration guide](https://yak.style/docs/migration-from-next-yak) for the details.
 
 yak runs in production at [Digitec Galaxus](https://www.galaxus.ch), the largest e-commerce platform in Switzerland, across thousands of styled components.
 

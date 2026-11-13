@@ -4,8 +4,9 @@ import { absoluteUrl, SITE_DESCRIPTION } from "@/lib/site";
 export const revalidate = false;
 
 const RENAME_NOTE = `Up to version 9, the React package was called \`next-yak\`. From version 10 it is \`@yak/react\`:
-install \`@yak/react\` and import from \`@yak/react\`, never from \`next-yak\`. The ESLint plugin is
-\`@yak/eslint-plugin\`, the Storybook addon is \`@yak/storybook\` and the Solid package is \`@yak/solid\`.`;
+install \`@yak/react\` and import from \`@yak/react\`, never from \`next-yak\`. \`npx next-yak migrate\` moves
+a project from \`next-yak\` to \`@yak/react\`. The ESLint plugin is \`@yak/eslint-plugin\`,
+the Storybook addon is \`@yak/storybook\` and the Solid package is \`@yak/solid\`.`;
 
 // The llms.txt format: https://llmstxt.org
 export async function GET() {
