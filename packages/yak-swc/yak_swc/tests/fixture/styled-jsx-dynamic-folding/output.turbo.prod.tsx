@@ -12,7 +12,7 @@ const IconContainer = /*YAK Extracted CSS:
 .ym7uBBu1 {
   margin-right: 12px;
 }
-*/ /*#__PURE__*/ __yak.__yak_span("ym7uBBu", ({ $hasChildren })=>$hasChildren && /*#__PURE__*/ css("ym7uBBu1"));
+*/ /*#__PURE__*/ __yak.__yak_span("ym7uBBu", 0, ({ $hasChildren: __yak_$hasChildren })=>"ym7uBBu" + (__yak_$hasChildren ? " ym7uBBu1" : ""));
 // folds: ternary mixin plus a second expression
 const Many = /*YAK Extracted CSS:
 .ym7uBBu2 {
@@ -27,7 +27,7 @@ const Many = /*YAK Extracted CSS:
 .ym7uBBu5 {
   font-weight: bold;
 }
-*/ /*#__PURE__*/ __yak.__yak_p("ym7uBBu2", ({ $variant })=>$variant === "primary" ? /*#__PURE__*/ css("ym7uBBu3") : /*#__PURE__*/ css("ym7uBBu4"), ({ $bold })=>$bold && /*#__PURE__*/ css("ym7uBBu5"));
+*/ /*#__PURE__*/ __yak.__yak_p("ym7uBBu2", 0, ({ $variant: __yak_$variant, $bold: __yak_$bold })=>"ym7uBBu2" + (__yak_$variant === "primary" ? " ym7uBBu3" : " ym7uBBu4") + (__yak_$bold ? " ym7uBBu5" : ""));
 // folds: zero-arg expressions reference the outer scope like the css prop
 const isCompact = true;
 const Scoped = /*YAK Extracted CSS:
@@ -37,7 +37,7 @@ const Scoped = /*YAK Extracted CSS:
 .ym7uBBu7 {
   line-height: 1;
 }
-*/ /*#__PURE__*/ __yak.__yak_em("ym7uBBu6", ()=>isCompact && /*#__PURE__*/ css("ym7uBBu7"));
+*/ /*#__PURE__*/ __yak.__yak_em("ym7uBBu6", 0, ()=>"ym7uBBu6" + (isCompact ? " ym7uBBu7" : ""));
 // the twice-referenced $size attribute is read at two sites, so an impure
 // value would be evaluated twice - it is bound once instead
 const Twice = /*YAK Extracted CSS:
@@ -47,7 +47,7 @@ const Twice = /*YAK Extracted CSS:
 .ym7uBBu9 {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBu8", ({ $size })=>$size && $size === "big" && /*#__PURE__*/ css("ym7uBBu9"));
+*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBu8", 0, ({ $size: __yak_$size })=>"ym7uBBu8" + (__yak_$size && __yak_$size === "big" ? " ym7uBBu9" : ""));
 // folds: one read, inside a callback - an impure value would run once per list
 // element, so a single read is enough to bind it
 const sizes = [
@@ -59,14 +59,14 @@ const InCallback = /*YAK Extracted CSS:
 .ym7uBBuB {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuA", ({ $n })=>sizes.some((x)=>x > $n) && /*#__PURE__*/ css("ym7uBBuB"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuA", 0, ({ $n: __yak_$n })=>"ym7uBBuA" + (sizes.some((x)=>x > __yak_$n) ? " ym7uBBuB" : ""));
 // folds: one read, behind a short circuit - an impure value would not run at
 // all when the left side is falsy
 const ShortCircuit = /*YAK Extracted CSS:
 .ym7uBBuD {
   color: blue;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuC", ({ $b })=>isCompact && $b && /*#__PURE__*/ css("ym7uBBuD"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuC", 0, ({ $b: __yak_$b })=>"ym7uBBuC" + (isCompact && __yak_$b ? " ym7uBBuD" : ""));
 // folds: the conditions read $a before $b, the attributes pass $b first - the
 // arguments follow the attributes, not the conditions
 const Pair = /*YAK Extracted CSS:
@@ -76,7 +76,7 @@ const Pair = /*YAK Extracted CSS:
 .ym7uBBuG {
   top: 0;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuE", ({ $a })=>$a && /*#__PURE__*/ css("ym7uBBuF"), ({ $b })=>$b && /*#__PURE__*/ css("ym7uBBuG"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuE", 0, ({ $a: __yak_$a, $b: __yak_$b })=>"ym7uBBuE" + (__yak_$a ? " ym7uBBuF" : "") + (__yak_$b ? " ym7uBBuG" : ""));
 // folds: a single condition to pin what counts as safe to inline
 const colors = {
     big: "red"
@@ -85,7 +85,7 @@ const Boxed = /*YAK Extracted CSS:
 .ym7uBBuI {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuH", ({ $v })=>$v && /*#__PURE__*/ css("ym7uBBuI"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuH", 0, ({ $v: __yak_$v })=>"ym7uBBuH" + (__yak_$v ? " ym7uBBuI" : ""));
 // folds: an arrow returning from a block body is a condition like any other
 const BlockBody = /*YAK Extracted CSS:
 .ym7uBBuJ {
@@ -94,16 +94,14 @@ const BlockBody = /*YAK Extracted CSS:
 .ym7uBBuK {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_aside("ym7uBBuJ", ({ $wide })=>{
-    return $wide && /*#__PURE__*/ css("ym7uBBuK");
-});
+*/ /*#__PURE__*/ __yak.__yak_aside("ym7uBBuJ", 0, ({ $wide: __yak_$wide })=>"ym7uBBuJ" + (__yak_$wide ? " ym7uBBuK" : ""));
 // usages bail: only plain destructuring substitutes - a rename, a default or a
 // rest element all keep the runtime path
 const Renamed = /*YAK Extracted CSS:
 .ym7uBBuM {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_mark("ym7uBBuL", ({ $size: size })=>size && size === "big" && /*#__PURE__*/ css("ym7uBBuM"));
+*/ /*#__PURE__*/ __yak.__yak_mark("ym7uBBuL", 0, ({ $size: __yak_$size })=>"ym7uBBuL" + (__yak_$size && __yak_$size === "big" ? " ym7uBBuM" : ""));
 const Defaulted = /*YAK Extracted CSS:
 .ym7uBBuO {
   padding: 8px;
@@ -135,7 +133,7 @@ const ActionButton = /*YAK Extracted CSS:
 .ym7uBBuU {
   cursor: pointer;
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBuT", ({ disabled })=>!disabled && /*#__PURE__*/ css("ym7uBBuU"));
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBuT", 0, ({ disabled: __yak_disabled })=>"ym7uBBuT" + (!__yak_disabled ? " ym7uBBuU" : ""));
 // usages bail: the runtime injects the theme which is unknown at build time
 const Themed = /*YAK Extracted CSS:
 .ym7uBBuV {
@@ -144,7 +142,7 @@ const Themed = /*YAK Extracted CSS:
 .ym7uBBuW {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_strong("ym7uBBuV", ({ theme, $accent })=>theme.highContrast && $accent && /*#__PURE__*/ css("ym7uBBuW"));
+*/ /*#__PURE__*/ __yak.__yak_strong("ym7uBBuV", 1, ({ $accent: __yak_$accent }, __yak_style, __yak_theme)=>"ym7uBBuV" + (__yak_theme.highContrast && __yak_$accent ? " ym7uBBuW" : ""));
 // usages bail: the mixin carries a css variable set through the style prop
 const NestedCssVariable = /*YAK Extracted CSS:
 .ym7uBBuY {
@@ -160,7 +158,7 @@ const DynamicExtended = /*YAK Extracted CSS:
 .ym7uBBub {
   color: red;
 }
-*/ /*#__PURE__*/ (styled(ImportedCard))("ym7uBBua", ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBub"));
+*/ /*#__PURE__*/ (styled(ImportedCard))("ym7uBBua", 0, ({ $active: __yak_$active })=>"ym7uBBua" + (__yak_$active ? " ym7uBBub" : ""));
 // usages bail: attrs
 const DynamicAttrs = /*YAK Extracted CSS:
 .ym7uBBud {
@@ -168,7 +166,7 @@ const DynamicAttrs = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ (__yak.__yak_button.attrs({
     type: "button"
-}))("ym7uBBuc", ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBud"));
+}))("ym7uBBuc", 0, ({ $active: __yak_$active })=>"ym7uBBuc" + (__yak_$active ? " ym7uBBud" : ""));
 // usages bail: a namespaced attribute is keyed by its plain name everywhere
 // below, so it would evaluate on the element without ever counting as an
 // obstacle the parameter block may not jump - `<use xlink:href>` is the
@@ -180,20 +178,20 @@ const Sprite = /*YAK Extracted CSS:
 .ym7uBBug {
   opacity: 0.5;
 }
-*/ /*#__PURE__*/ __yak.__yak_use("ym7uBBue", ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBuf"), ({ $muted })=>$muted && /*#__PURE__*/ css("ym7uBBug"));
+*/ /*#__PURE__*/ __yak.__yak_use("ym7uBBue", 0, ({ $active: __yak_$active, $muted: __yak_$muted })=>"ym7uBBue" + (__yak_$active ? " ym7uBBuf" : "") + (__yak_$muted ? " ym7uBBug" : ""));
 // usages bail: the runtime passes more than the attributes to the expressions
 const ClassNameBail = /*YAK Extracted CSS:
 .ym7uBBui {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuh", ({ className })=>className && /*#__PURE__*/ css("ym7uBBui"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuh", 0, ({ className: __yak_className })=>"ym7uBBuh" + (__yak_className ? " ym7uBBui" : ""));
 // usages bail: React strips key before the component sees props, so the
 // runtime reads undefined - substituting the attribute value would diverge
 const KeyBail = /*YAK Extracted CSS:
 .ym7uBBuk {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBuj", ({ key })=>key === "active" && /*#__PURE__*/ css("ym7uBBuk"));
+*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBuj", 0, ({ key: __yak_key })=>"ym7uBBuj" + (__yak_key === "active" ? " ym7uBBuk" : ""));
 // folds: identifier param with member access - `(p) => p.$x` is the common
 // real-world styled-components style
 const MemberButton = /*YAK Extracted CSS:
@@ -212,7 +210,7 @@ const MemberButton = /*YAK Extracted CSS:
 .ym7uBBup {
   width: 100%;
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBul", (p)=>!p.$active && /*#__PURE__*/ css("ym7uBBum"), (p)=>p.$variant === "secondary" && /*#__PURE__*/ css("ym7uBBun"), (p)=>p.$variant === "ghost" && /*#__PURE__*/ css("ym7uBBuo"), (p)=>p.$fullWidth && /*#__PURE__*/ css("ym7uBBup"));
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBul", 0, ({ $active: __yak_$active, $variant: __yak_$variant, $fullWidth: __yak_$fullWidth })=>"ym7uBBul" + (!__yak_$active ? " ym7uBBum" : "") + (__yak_$variant === "secondary" ? " ym7uBBun" : "") + (__yak_$variant === "ghost" ? " ym7uBBuo" : "") + (__yak_$fullWidth ? " ym7uBBup" : ""));
 // usages bail: the whole props object escapes into the function call
 const MemberEscape = /*YAK Extracted CSS:
 .ym7uBBur {
@@ -224,7 +222,7 @@ const MemberTheme = /*YAK Extracted CSS:
 .ym7uBBut {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBus", (p)=>p.theme.highContrast && p.$accent && /*#__PURE__*/ css("ym7uBBut"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBus", 1, ({ $accent: __yak_$accent }, __yak_style, __yak_theme)=>"ym7uBBus" + (__yak_theme.highContrast && __yak_$accent ? " ym7uBBut" : ""));
 // usages bail: computed member access
 const MemberComputed = /*YAK Extracted CSS:
 .ym7uBBuv {
@@ -236,14 +234,14 @@ const MemberKey = /*YAK Extracted CSS:
 .ym7uBBux {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBuw", (p)=>p.key === "active" && /*#__PURE__*/ css("ym7uBBux"));
+*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBuw", 0, ({ key: __yak_key })=>"ym7uBBuw" + (__yak_key === "active" ? " ym7uBBux" : ""));
 // folds: passing key at a call site never blocks folding - only reading it
 // inside a style expression does
 const KeyedRow = /*YAK Extracted CSS:
 .ym7uBBuz {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBuy", (p)=>p.$active && /*#__PURE__*/ css("ym7uBBuz"));
+*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBuy", 0, ({ $active: __yak_$active })=>"ym7uBBuy" + (__yak_$active ? " ym7uBBuz" : ""));
 const Optimizable = ({ active, size, i: i1 }: {
     active?: boolean;
     size?: string;

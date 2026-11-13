@@ -12,4 +12,4 @@ export const ThemedButton = /*YAK EXPORTED STYLED:ThemedButton:ym7uBBu*//*YAK Ex
     color: red;
   }
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBu1"));
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu", 0, ({ $active: __yak_$active })=>"ym7uBBu" + (__yak_$active ? " ym7uBBu1" : ""));

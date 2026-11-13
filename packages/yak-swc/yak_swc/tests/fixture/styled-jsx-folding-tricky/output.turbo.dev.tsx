@@ -15,7 +15,7 @@ const Toggle = /*YAK Extracted CSS:
 .input_Toggle__\$on_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_Toggle_m7uBBu", ({ $on })=>$on && /*#__PURE__*/ css("input_Toggle__$on_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_Toggle_m7uBBu", 0, ({ $on: __yak_$on })=>"input_Toggle_m7uBBu" + (__yak_$on ? " input_Toggle__$on_m7uBBu" : "")), {
     "displayName": "Toggle"
 });
 // dynamic component reading two $props, to place an impure obstacle between the
@@ -27,7 +27,7 @@ const Range = /*YAK Extracted CSS:
 .input_Range__\$b_m7uBBu {
   color: blue;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_span("input_Range_m7uBBu", ({ $a })=>$a && /*#__PURE__*/ css("input_Range__$a_m7uBBu"), ({ $b })=>$b && /*#__PURE__*/ css("input_Range__$b_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_span("input_Range_m7uBBu", 0, ({ $a: __yak_$a, $b: __yak_$b })=>"input_Range_m7uBBu" + (__yak_$a ? " input_Range__$a_m7uBBu" : "") + (__yak_$b ? " input_Range__$b_m7uBBu" : "")), {
     "displayName": "Range"
 });
 // dynamic component whose condition reads a non-$ prop that also stays on the
@@ -36,7 +36,7 @@ const ActionButton = /*YAK Extracted CSS:
 .input_ActionButton___m7uBBu {
   cursor: pointer;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ActionButton_m7uBBu", ({ disabled })=>!disabled && /*#__PURE__*/ css("input_ActionButton___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ActionButton_m7uBBu", 0, ({ disabled: __yak_disabled })=>"input_ActionButton_m7uBBu" + (!__yak_disabled ? " input_ActionButton___m7uBBu" : "")), {
     "displayName": "ActionButton"
 });
 // static component for the plain className merges

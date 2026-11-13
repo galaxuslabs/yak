@@ -826,7 +826,7 @@ fn attr_purity(attr_values: &FxHashMap<Atom, PropValue>, name: &str) -> Purity {
 /// One parameter per prop *name*, so a prop read by two conditions, or twice by
 /// one condition, is still bound exactly once
 #[derive(Default)]
-struct ParamBinder {
+pub(super) struct ParamBinder {
   /// prop name -> the parameter standing in for every read of it
   bound: FxHashMap<Atom, Ident>,
   /// the parameter names handed out so far - deriving the name from the prop
@@ -841,7 +841,7 @@ impl ParamBinder {
   /// for the same reason: the parameter shares a scope with the attribute
   /// values baked in around it, so a bare `$tilt` would capture the user's own
   /// `$tilt` in `<Row $tilt={f()} $b={$tilt} />`
-  fn param_for(&mut self, name: &Atom) -> Ident {
+  pub(super) fn param_for(&mut self, name: &Atom) -> Ident {
     if let Some(param) = self.bound.get(name) {
       return param.clone();
     }
@@ -1029,7 +1029,7 @@ impl VisitMut for BakeParams<'_> {
 }
 
 /// Matches a function body holding a single `return <expr>;`
-fn single_return_expr(block: &FunctionBody) -> Option<&Expr> {
+pub(super) fn single_return_expr(block: &FunctionBody) -> Option<&Expr> {
   let [Stmt::Return(return_stmt)] = block.stmts.as_slice() else {
     return None;
   };

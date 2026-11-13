@@ -12,6 +12,6 @@ export const ThemedButton = /*YAK EXPORTED STYLED:ThemedButton:input_ThemedButto
     color: red;
   }
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ThemedButton_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_ThemedButton__$active_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ThemedButton_m7uBBu", 0, ({ $active: __yak_$active })=>"input_ThemedButton_m7uBBu" + (__yak_$active ? " input_ThemedButton__$active_m7uBBu" : "")), {
     "displayName": "ThemedButton"
 });

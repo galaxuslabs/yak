@@ -144,12 +144,35 @@ export type ClassNameCollector = {
  * values at render time; purely static processors (class names only) can
  * skip theme lookup and style-object allocation. A static processor also
  * carries the class names it always adds as `$className` (possibly empty).
+ *
+ * A processor built from a compiled fold function carries it as `$fold`,
+ * together with its `$flags` (see `FoldFunction` below).
  */
 export type RuntimeStyleProcessor<T> = ((
   props: T,
   classNames: ClassNameCollector,
   style: React.CSSProperties,
-) => void) & { $dynamic?: boolean; $className?: string };
+) => void) & {
+  $dynamic?: boolean;
+  $className?: string;
+  $fold?: FoldFunction;
+  $flags?: number;
+};
+
+/**
+ * The function the compiler emits for a styled component whose runtime
+ * expressions only toggle class names. It returns the complete class string:
+ *
+ * ```js
+ * styled.button`${({ $on }) => $on && css`color: red;`}`
+ * // compiled
+ * __yak_button("yB", 0, ({ $on: __yak_$on }) => "yB" + (__yak_$on ? " yB1" : ""))
+ * ```
+ *
+ * `theme` is the yak theme. The fold render function passes it only when the
+ * flags ask for it. The function does not use the second parameter.
+ */
+export type FoldFunction = (props: any, style: any, theme: any) => string;
 
 /**
  * Utility type to keep the generic API of a component while still being able to use it in a selector

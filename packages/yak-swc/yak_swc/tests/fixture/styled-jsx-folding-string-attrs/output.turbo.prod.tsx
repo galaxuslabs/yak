@@ -11,7 +11,7 @@ const Category = /*YAK Extracted CSS:
 .ym7uBBu1 {
   color: crimson;
 }
-*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBu", ({ $label })=>$label === "Food & Drink" && /*#__PURE__*/ css("ym7uBBu1"));
+*/ /*#__PURE__*/ __yak.__yak_li("ym7uBBu", 0, ({ $label: __yak_$label })=>"ym7uBBu" + (__yak_$label === "Food & Drink" ? " ym7uBBu1" : ""));
 const Shortcut = /*YAK Extracted CSS:
 .ym7uBBu2 {
   color: grey;
@@ -19,7 +19,7 @@ const Shortcut = /*YAK Extracted CSS:
 .ym7uBBu3 {
   color: dodgerblue;
 }
-*/ /*#__PURE__*/ __yak.__yak_kbd("ym7uBBu2", ({ $keys })=>$keys === "a\\tb" && /*#__PURE__*/ css("ym7uBBu3"));
+*/ /*#__PURE__*/ __yak.__yak_kbd("ym7uBBu2", 0, ({ $keys: __yak_$keys })=>"ym7uBBu2" + (__yak_$keys === "a\\tb" ? " ym7uBBu3" : ""));
 // A static merge goes through expression position so a backslash escape in the
 // user className survives the JSX re-parse instead of doubling
 const Cross = /*YAK Extracted CSS:

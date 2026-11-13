@@ -91,7 +91,7 @@ const ToggleBase = /*YAK Extracted CSS:
 .input_ToggleBase__\$on_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ToggleBase_m7uBBu", ({ $on })=>$on && /*#__PURE__*/ css("input_ToggleBase__$on_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ToggleBase_m7uBBu", 0, ({ $on: __yak_$on })=>"input_ToggleBase_m7uBBu" + (__yak_$on ? " input_ToggleBase__$on_m7uBBu" : "")), {
     "displayName": "ToggleBase"
 });
 // folds to the wrapped component: a dynamic parent never collapses
