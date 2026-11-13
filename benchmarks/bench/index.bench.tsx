@@ -49,6 +49,25 @@ import { IdiomaticTreeYak } from "./generated/IdiomaticTree.yak.compiled";
 import { IdiomaticTreeStyled } from "./generated/IdiomaticTree.styled-components";
 import { IdiomaticDynamicPropsComponentsYak } from "./generated/IdiomaticDynamicProps.yak.compiled";
 import { IdiomaticDynamicPropsComponentsStyled } from "./generated/IdiomaticDynamicProps.styled-components";
+import * as RuntimePathsYak from "./generated/RuntimePaths.yak.compiled";
+import * as RuntimePathsStyled from "./generated/RuntimePaths.styled-components";
+
+// One row per render path of the yak styled runtime (see bench/runtime-paths).
+// The other workloads mostly declare and render their components in one
+// module, where the compiler folds them into plain elements, so without these
+// rows a change to the runtime would barely show up
+const RUNTIME_PATHS: Array<[label: string, name: string]> = [
+  ["Static", "Static"],
+  ["Static with className", "StaticClassName"],
+  ["Static .attrs({...})", "StaticAttrs"],
+  ["Static styled(Custom)", "StaticCustom"],
+  ["Static styled(styled)", "StaticChain"],
+  ["Class toggles", "ClassToggle"],
+  ["CSS variable", "CssVariable"],
+  ["Theme function", "Theme"],
+  [".attrs(fn)", "AttrsFunction"],
+  ["Dynamic styled(styled)", "DynamicChain"],
+];
 
 // Each row pairs the styled-components and yak variants of one workload.
 // Order here is the order rendered in the output table.
@@ -119,6 +138,11 @@ const ROWS: Array<{ label: string; styled: string; yak: string }> = [
     styled: "render SsrExtractionStyled",
     yak: "render SsrExtractionYak",
   },
+  ...RUNTIME_PATHS.map(([label, name]) => ({
+    label: `Runtime path: ${label}`,
+    styled: `render RuntimePath${name}Styled`,
+    yak: `render RuntimePath${name}Yak`,
+  })),
 ];
 
 const results = new Map<string, number>();
@@ -317,7 +341,26 @@ function renderTable(baseline: Map<string, number> | undefined): string {
     })
     .add("render SsrExtractionYak", () => {
       renderToString(<PureComponentsYak />).length;
-    })
+    });
+
+  // Runtime paths: one styled-components and one yak case per path
+  for (const [, name] of RUNTIME_PATHS) {
+    const Styled = RuntimePathsStyled[
+      `RuntimePath${name}Styled` as keyof typeof RuntimePathsStyled
+    ] as React.FunctionComponent;
+    const Yak = RuntimePathsYak[
+      `RuntimePath${name}Yak` as keyof typeof RuntimePathsYak
+    ] as React.FunctionComponent;
+    suite
+      .add(`render RuntimePath${name}Styled`, () => {
+        renderToString(<Styled />).length;
+      })
+      .add(`render RuntimePath${name}Yak`, () => {
+        renderToString(<Yak />).length;
+      });
+  }
+
+  suite
 
     .on("cycle", function (event: Benchmark.Event) {
       const target = event.target as Benchmark.Target & {

@@ -49,4 +49,5 @@ Every benchmark has the same three layers:
 - `minSamples: 50` on the suite to keep iteration counts stable across runs.
 - For each library we use _its_ idiomatic build-time-extracted form. Mixing them produces meaningless numbers. See `bench/css-prop/gen.ts` for the spelled-out reasoning.
 - The `Idiomatic*` benchmarks (e.g. `IdiomaticTree`) pair with their CSS-variable counterparts (`Tree`) to isolate the cost of CSS-variable emission vs class-toggle composition.
+- The `Runtime path` rows (`bench/runtime-paths`) render each component from another module than the one declaring it. Within one module `foldStatic` turns static usages into plain elements, so most other workloads barely run the styled runtime. These rows are the ones that move when `runtime/styled.tsx` changes.
 - The workflow runs on shared GitHub Actions runners, which are noisy. Treat large swings as signal and single-digit deltas as noise.
