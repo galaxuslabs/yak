@@ -1,6 +1,9 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "changelog": [
+    "./changelog.mts",
+    { "repo": "galaxuslabs/yak", "template": "\n- {summary} {ref}" }
+  ],
   "commit": false,
   "fixed": [["@yak/react", "@yak/swc", "@yak/storybook"]],
   "linked": [],
