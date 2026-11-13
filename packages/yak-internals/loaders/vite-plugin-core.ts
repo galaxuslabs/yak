@@ -112,7 +112,9 @@ async function viteYakImpl(
   let basePath = userOptions.basePath ?? "";
   let debugLog: ReturnType<typeof createDebugLogger> = () => {};
   let isServe = false;
-  const sourceFileRegex = /\.(tsx?|m?jsx?)\??/;
+  // .ts, .tsx, .js, .jsx, .mjs and .mjsx files with or without a query:
+  // "/src/a.tsx" or "/src/a.tsx?v=1"
+  const sourceFileRegex = /\.(tsx?|m?jsx?)(?:\?|$)/;
   // "/src/a.tsx.yak.css" or "/src/a.tsx.yak.css?direct", see resolveId
   const yakCssRegex = /\.yak\.css(?:\?|$)/;
   const yakSwcPath = await findYakSwcPlugin();
