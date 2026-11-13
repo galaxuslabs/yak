@@ -148,7 +148,7 @@ export function css<TProps>(...args: Array<any>): RuntimeStyleProcessor<TProps> 
           classNames.add(className);
         }
       },
-      { $dynamic: false },
+      { $dynamic: false, $className: className || "" },
     );
   }
 
