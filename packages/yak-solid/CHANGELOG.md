@@ -1,5 +1,35 @@
 # @yak/solid
 
+## 0.5.0
+
+### Minor Changes
+
+- Constants built from other constants of the same file with a template literal now work in styles like `` const NEGATIVE_GAP = `-${GAP / 2}px` `` ([#709](https://github.com/galaxuslabs/yak/pull/709))
+
+- A missing `:` or an unmatched bracket in styles now stops the build with an error that shows the line, like `color red;` or `@media (min-width: 600px {`, so fix the lines it reports when you update ([#684](https://github.com/galaxuslabs/yak/pull/684))
+
+- Static math in styles now supports `**` like `${(GAP + 1) ** 2}px` ([#710](https://github.com/galaxuslabs/yak/pull/710))
+
+### Patch Changes
+
+- Fixes a bug where a block that ends without a `;`, like `&:hover { color: blue }`, applied its CSS outside the block, so the element was always blue ([#684](https://github.com/galaxuslabs/yak/pull/684))
+
+- Fixes a bug where a `.yak.ts` file did not reload after a file it imports changed, for example a workspace package or a file loaded with `require()` ([#718](https://github.com/galaxuslabs/yak/pull/718))
+
+- `@yak/react` and `@yak/solid` now require Node.js 22.18+ or 23.6+, the first versions that strip TypeScript types without a flag ([#719](https://github.com/galaxuslabs/yak/pull/719))
+
+- Fixes a bug where an error from a broken import in a `.yak.ts` file stayed after you fixed it until the next edit ([#722](https://github.com/galaxuslabs/yak/pull/722))
+
+- Fixes a bug where a minus before a dynamic value produced invalid CSS: `left: -${({ $x }) => $x}px` now sets `left` to `-32px` for `$x={32}` ([#724](https://github.com/galaxuslabs/yak/pull/724))
+
+- Vite and Next.js with Turbopack no longer print a `module.register()` deprecation warning on Node 26 ([#716](https://github.com/galaxuslabs/yak/pull/716))
+
+- Fixes a bug where Vite failed with a syntax error like `Error transforming /…/package.json` on `import pkg from "./package.json"` ([#735](https://github.com/galaxuslabs/yak/pull/735))
+
+- The docs moved to [yak.style](https://yak.style) ([#728](https://github.com/galaxuslabs/yak/pull/728))
+- Updated dependencies:
+  - @yak/swc@10.1.0
+
 ## 0.4.0
 
 ### Minor Changes

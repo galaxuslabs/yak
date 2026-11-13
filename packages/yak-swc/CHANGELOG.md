@@ -1,5 +1,23 @@
 # @yak/swc
 
+## 10.1.0
+
+### Minor Changes
+
+- Constants built from other constants of the same file with a template literal now work in styles like `` const NEGATIVE_GAP = `-${GAP / 2}px` `` ([#709](https://github.com/galaxuslabs/yak/pull/709))
+
+- A missing `:` or an unmatched bracket in styles now stops the build with an error that shows the line, like `color red;` or `@media (min-width: 600px {`, so fix the lines it reports when you update ([#684](https://github.com/galaxuslabs/yak/pull/684))
+
+- Static math in styles now supports `**` like `${(GAP + 1) ** 2}px` ([#710](https://github.com/galaxuslabs/yak/pull/710))
+
+### Patch Changes
+
+- Fixes a bug where a block that ends without a `;`, like `&:hover { color: blue }`, applied its CSS outside the block, so the element was always blue ([#684](https://github.com/galaxuslabs/yak/pull/684))
+
+- Fixes a bug where a minus before a dynamic value produced invalid CSS: `left: -${({ $x }) => $x}px` now sets `left` to `-32px` for `$x={32}` ([#724](https://github.com/galaxuslabs/yak/pull/724))
+
+- The docs moved to [yak.style](https://yak.style) ([#728](https://github.com/galaxuslabs/yak/pull/728))
+
 ## 10.0.0
 
 `yak-swc` is now `@yak/swc`. The [migration guide](https://yak.js.org/docs/migration-from-next-yak) covers the switch.

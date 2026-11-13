@@ -1,5 +1,11 @@
 # @yak/storybook
 
+## 10.1.0
+
+### Patch Changes
+
+- The docs moved to [yak.style](https://yak.style) ([#728](https://github.com/galaxuslabs/yak/pull/728))
+
 ## 10.0.0
 
 `storybook-addon-yak` is now `@yak/storybook`. The [migration guide](https://yak.js.org/docs/migration-from-next-yak) covers the switch.

@@ -1,6 +1,6 @@
 {
   "name": "@yak/solid",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "yak for Solid: vanilla CSS syntax in TypeScript with zero runtime. The styled-components API, compiled to plain CSS at build time. Targets Solid 2.",
   "keywords": [
     "css",
