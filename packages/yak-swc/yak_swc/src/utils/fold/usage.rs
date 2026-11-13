@@ -1029,7 +1029,7 @@ impl VisitMut for BakeParams<'_> {
 }
 
 /// Matches a function body holding a single `return <expr>;`
-fn single_return_expr(block: &FunctionBody) -> Option<&Expr> {
+pub(super) fn single_return_expr(block: &FunctionBody) -> Option<&Expr> {
   let [Stmt::Return(return_stmt)] = block.stmts.as_slice() else {
     return None;
   };

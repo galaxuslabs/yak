@@ -13,5 +13,9 @@ test(
     const inactive = page.getByTestId("bar-inactive");
     await expect(inactive).toHaveCSS("width", "100px");
     await expect(inactive).toHaveCSS("background-color", "rgb(128, 128, 128)");
+
+    const sized = page.getByTestId("sized");
+    await expect(sized).toHaveCSS("width", "30px");
+    await expect(sized).toHaveCSS("height", "10px");
   }),
 );

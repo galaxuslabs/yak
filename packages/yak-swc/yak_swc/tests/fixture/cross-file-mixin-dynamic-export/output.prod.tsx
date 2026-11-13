@@ -52,4 +52,4 @@ export const Button = /*YAK EXPORTED STYLED:Button:ym7uBBu6*//*YAK Extracted CSS
     color: red;
   }
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu6", ({ $isSet })=>$isSet && true && true && true && /*#__PURE__*/ css("ym7uBBu7", ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBu8")), ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBu9"), ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBuA"));
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu6", 0, ({ $isSet, $active })=>"ym7uBBu6" + ($isSet && true && true && true ? " ym7uBBu7" + ($active ? " ym7uBBu8" : "") : "") + ($active ? " ym7uBBu9" : "") + ($active ? " ym7uBBuA" : ""));
