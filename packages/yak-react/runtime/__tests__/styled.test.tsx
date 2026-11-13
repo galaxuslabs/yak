@@ -651,3 +651,182 @@ describe("dynamic runtime function processing", () => {
     `);
   });
 });
+
+describe("render path", () => {
+  // records the props a custom component receives
+  const recordProps = () => {
+    const received: Array<Record<string, unknown>> = [];
+    const Custom = (props: Record<string, unknown>) => {
+      received.push(props);
+      return null;
+    };
+    return { Custom, received };
+  };
+
+  it("should merge class names of a static styled(styled) chain in order", () => {
+    const Base = styled.div("base");
+    const Empty = styled(Base)();
+    const Leaf = styled(Empty)("leaf");
+
+    const { container } = render(
+      <>
+        <Leaf />
+        <Leaf className="incoming" />
+        <Leaf className="" />
+        <Empty className="incoming" />
+        <Leaf $hidden data-test={undefined} />
+      </>,
+    );
+
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <div
+          class="base leaf"
+        />
+        <div
+          class="incoming base leaf"
+        />
+        <div
+          class="base leaf"
+        />
+        <div
+          class="incoming base"
+        />
+        <div
+          class="base leaf"
+        />
+      </div>
+    `);
+  });
+
+  it("should not render a class attribute for a component without classes", () => {
+    const Component = styled.div();
+
+    const { container } = render(
+      <>
+        <Component />
+        <Component className="incoming" />
+      </>,
+    );
+
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <div />
+        <div
+          class="incoming"
+        />
+      </div>
+    `);
+  });
+
+  it("should pass neither $-props nor the theme to a custom component on any path", () => {
+    const { Custom, received } = recordProps();
+    const Static = styled(Custom)("static");
+    const StaticAttrs = styledFn(Custom).attrs({ "data-attrs": "yes" })("static");
+    const AttrsFunction = styledFn(Custom).attrs((p) => ({ "data-attrs": p.$value }))("static");
+    const Dynamic = styled(Custom)(css("dynamic", (p) => p.$value && css("on")));
+    const DynamicChain = styled(Dynamic)("leaf");
+
+    render(
+      <YakThemeProvider theme={{ color: "red" }}>
+        <Static id="a" $value="x" />
+        <StaticAttrs id="a" $value="x" />
+        <AttrsFunction id="a" $value="x" />
+        <Dynamic id="a" $value="x" />
+        <DynamicChain id="a" $value="x" />
+      </YakThemeProvider>,
+    );
+
+    // the style prop is covered by the style tests
+    expect(received.map(({ style: _style, ...props }) => props)).toEqual([
+      { id: "a", className: "static" },
+      { id: "a", className: "static", "data-attrs": "yes" },
+      { id: "a", className: "static", "data-attrs": "x" },
+      { id: "a", className: "dynamic on" },
+      { id: "a", className: "dynamic on leaf" },
+    ]);
+  });
+
+  it("should not mutate the style object passed by the caller", () => {
+    const style = Object.freeze({ color: "red" });
+    const Static = styled.div("static");
+    const StaticAttrs = styledFn("div").attrs({ style: { margin: "1px" } })("static");
+    const Dynamic = styled.div(css("dynamic", { style: { "--size": (p) => p.$size } }));
+
+    const { container } = render(
+      <>
+        <Static style={style} />
+        <StaticAttrs style={style} />
+        <Dynamic style={style} $size="2px" />
+      </>,
+    );
+
+    expect(style).toEqual({ color: "red" });
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <div
+          class="static"
+          style="color: red;"
+        />
+        <div
+          class="static"
+          style="color: red; margin: 1px;"
+        />
+        <div
+          class="dynamic"
+          style="color: red; --size: 2px;"
+        />
+      </div>
+    `);
+  });
+
+  it("should apply defaultProps of a wrapped function component", () => {
+    const Link = ({ className, href }: { className?: string; href?: string }) => (
+      <a className={className} href={href} />
+    );
+    Link.defaultProps = { href: "/default" };
+    const Static = styled(Link)("static");
+    const Dynamic = styled(Link)(css("dynamic", (p) => p.$active && css("active")));
+
+    const { container } = render(
+      <>
+        <Static />
+        <Dynamic $active />
+        <Static href="/explicit" />
+      </>,
+    );
+
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <a
+          class="static"
+          href="/default"
+        />
+        <a
+          class="dynamic active"
+          href="/default"
+        />
+        <a
+          class="static"
+          href="/explicit"
+        />
+      </div>
+    `);
+  });
+
+  it("should use a key returned by attrs as the React key", () => {
+    const { Custom, received } = recordProps();
+    const Keyed = styledFn(Custom).attrs({ key: "fixed" })("keyed");
+    const errors: unknown[][] = [];
+    const originalError = console.error;
+    console.error = (...args) => errors.push(args);
+    try {
+      render(<Keyed id="a" />);
+    } finally {
+      console.error = originalError;
+    }
+
+    expect(received).toEqual([{ id: "a", className: "keyed" }]);
+    expect(errors).toEqual([]);
+  });
+});
