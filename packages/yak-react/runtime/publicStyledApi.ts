@@ -142,13 +142,14 @@ export type ClassNameCollector = {
  *
  * `$dynamic` marks processors that execute user functions or write style
  * values at render time; purely static processors (class names only) can
- * skip theme lookup and style-object allocation.
+ * skip theme lookup and style-object allocation. A static processor also
+ * carries the class names it always adds as `$className` (possibly empty).
  */
 export type RuntimeStyleProcessor<T> = ((
   props: T,
   classNames: ClassNameCollector,
   style: React.CSSProperties,
-) => void) & { $dynamic?: boolean };
+) => void) & { $dynamic?: boolean; $className?: string };
 
 /**
  * Utility type to keep the generic API of a component while still being able to use it in a selector
