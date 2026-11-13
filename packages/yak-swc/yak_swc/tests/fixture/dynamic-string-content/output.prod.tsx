@@ -13,23 +13,14 @@ const Input = /*YAK Extracted CSS:
     content: var(--ym7uBBu2);
   }
 }
-*/ /*#__PURE__*/ __yak.__yak_input("ym7uBBu", {
-    "style": {
-        "--ym7uBBu1": (p)=>p.$placeholder,
-        "--ym7uBBu2": (p)=>p.$marker
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_input("ym7uBBu", 2, ({ $placeholder: __yak_$placeholder, $marker: __yak_$marker }, __yak_style)=>"ym7uBBu" + (__yak_style["--ym7uBBu1"] = String(__yak_$placeholder), __yak_style["--ym7uBBu2"] = String(__yak_$marker), ""));
 // var() inside url() works because url() evaluates the var, so
 // `url("${...}")` is also stripped to `url(var(--xxx))`.
 const Bg = /*YAK Extracted CSS:
 .ym7uBBu3 {
   background: url(var(--ym7uBBu4));
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu3", {
-    "style": {
-        "--ym7uBBu4": (p)=>p.$url
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu3", 2, ({ $url: __yak_$url }, __yak_style)=>"ym7uBBu3" + (__yak_style["--ym7uBBu4"] = String(__yak_$url), ""));
 // Partial interpolation is intentionally NOT rewritten — the surrounding
 // static text means the user must restructure their CSS (e.g. split into
 // multiple values) for var() to actually substitute.
@@ -39,8 +30,4 @@ const Partial = /*YAK Extracted CSS:
     content: "Hello var(--ym7uBBu6)";
   }
 }
-*/ /*#__PURE__*/ __yak.__yak_span("ym7uBBu5", {
-    "style": {
-        "--ym7uBBu6": (p)=>p.$name
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_span("ym7uBBu5", 2, ({ $name: __yak_$name }, __yak_style)=>"ym7uBBu5" + (__yak_style["--ym7uBBu6"] = String(__yak_$name), ""));

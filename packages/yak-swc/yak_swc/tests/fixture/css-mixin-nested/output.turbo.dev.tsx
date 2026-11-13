@@ -26,15 +26,7 @@ export const ThemedButton = /*YAK EXPORTED STYLED:ThemedButton:input_ThemedButto
 .input_ThemedButton_m7uBBu {
   width: var(--input_ThemedButton__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ThemedButton_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_ThemedButton__$active_m7uBBu", {
-        "style": {
-            "--input_ThemedButton__max-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 15, "px")
-        }
-    }), {
-    "style": {
-        "--input_ThemedButton__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 10, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ThemedButton_m7uBBu", 2, ({ $active: __yak_$active, $letters: __yak_$letters }, __yak_style)=>"input_ThemedButton_m7uBBu" + (__yak_$active ? " input_ThemedButton__$active_m7uBBu" + (__yak_style["--input_ThemedButton__max-width_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$letters * 15, "px")), "") : "") + (__yak_style["--input_ThemedButton__width_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$letters * 10, "px")), "")), {
     "displayName": "ThemedButton"
 });
 export const CustomThemedButton = /*YAK EXPORTED STYLED:CustomThemedButton:input_CustomThemedButton_m7uBBu*//*YAK Extracted CSS:
@@ -60,14 +52,6 @@ export const CustomThemedButton = /*YAK EXPORTED STYLED:CustomThemedButton:input
     width: var(--input_CustomThemedButton__width_m7uBBu);
   }
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_CustomThemedButton_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_CustomThemedButton__$active_m7uBBu", {
-        "style": {
-            "--input_CustomThemedButton__max-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 15, "px")
-        }
-    }), {
-    "style": {
-        "--input_CustomThemedButton__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 10, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_CustomThemedButton_m7uBBu", 2, ({ $active: __yak_$active, $letters: __yak_$letters }, __yak_style)=>"input_CustomThemedButton_m7uBBu" + (__yak_$active ? " input_CustomThemedButton__$active_m7uBBu" + (__yak_style["--input_CustomThemedButton__max-width_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$letters * 15, "px")), "") : "") + (__yak_style["--input_CustomThemedButton__width_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$letters * 10, "px")), "")), {
     "displayName": "CustomThemedButton"
 });

@@ -15,18 +15,6 @@ export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:input_FlexConta
 .input_FlexContainer___m7uBBu {
   bottom: var(--input_FlexContainer__bottom_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FlexContainer_m7uBBu", ({ $bottom })=>/*#__PURE__*/ css("input_FlexContainer___m7uBBu", {
-        "style": {
-            "--input_FlexContainer__bottom_m7uBBu": /*#__PURE__*/ __yak_cssValue($bottom * 20, "%")
-        }
-    }), {
-    "style": {
-        "--input_FlexContainer__align-items_m7uBBu": ({ $align })=>$align || 'stretch',
-        "--input_FlexContainer__flex-direction_m7uBBu": ({ $direction })=>$direction || 'row',
-        "--input_FlexContainer__justify-content_m7uBBu": ({ $justify })=>$justify || 'flex-start',
-        "--input_FlexContainer__margin-bottom_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $marginBottom })=>$marginBottom || '0', "px"),
-        "--input_FlexContainer__top_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $top })=>$top * 20, "%")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FlexContainer_m7uBBu", 2, ({ $bottom: __yak_$bottom, $align: __yak_$align, $direction: __yak_$direction, $justify: __yak_$justify, $marginBottom: __yak_$marginBottom, $top: __yak_$top }, __yak_style)=>"input_FlexContainer_m7uBBu" + (" input_FlexContainer___m7uBBu" + (__yak_style["--input_FlexContainer__bottom_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$bottom * 20, "%")), "")) + (__yak_style["--input_FlexContainer__align-items_m7uBBu"] = String(__yak_$align || 'stretch'), __yak_style["--input_FlexContainer__flex-direction_m7uBBu"] = String(__yak_$direction || 'row'), __yak_style["--input_FlexContainer__justify-content_m7uBBu"] = String(__yak_$justify || 'flex-start'), __yak_style["--input_FlexContainer__margin-bottom_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$marginBottom || '0', "px")), __yak_style["--input_FlexContainer__top_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$top * 20, "%")), "")), {
     "displayName": "FlexContainer"
 });

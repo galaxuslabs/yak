@@ -11,6 +11,7 @@ import { describe, expect, it } from "vitest";
 import { YakThemeProvider } from "../context";
 import { css } from "../cssLiteral";
 import { styled } from "../styled";
+import { cssValue } from "../internals/cssValue";
 
 const html = (element: React.ReactElement) => {
   const result = render(element).container.innerHTML;
@@ -42,5 +43,32 @@ describe("definition fold", () => {
         ),
       ).toBe(html(React.createElement(unfolded, { theme: { dark: false } })));
     }
+  });
+
+  it("writes CSS variables into a copy of the style prop", () => {
+    const unfolded = styled("div")(
+      "yV",
+      ({ $on }) => $on && css("yV1", { style: { "--n": cssValue(2 * 3, "px") } }),
+      { style: { "--x": cssValue(({ $x }) => $x, "px"), "--y": ({ $y }) => $y } },
+    );
+    const folded = styled("div")(
+      "yV",
+      2,
+      ({ $on, $x, $y }, style) =>
+        "yV" +
+        ($on ? " yV1" + ((style["--n"] = String(cssValue(2 * 3, "px"))), "") : "") +
+        ((style["--x"] = String(cssValue($x, "px"))), (style["--y"] = String($y)), ""),
+    );
+    const userStyle = { color: "red" };
+    for (const $on of [false, true]) {
+      const props = { $on, $x: 4, $y: "a", style: userStyle, className: "u" };
+      expect(html(React.createElement(folded, props))).toBe(
+        html(React.createElement(unfolded, props)),
+      );
+    }
+    expect(userStyle).toEqual({ color: "red" });
+    expect(html(React.createElement(folded, { $on: true, $x: 4, $y: "a" }))).toBe(
+      '<div class="yV yV1" style="--n: 6px; --x: 4px; --y: a;"></div>',
+    );
   });
 });

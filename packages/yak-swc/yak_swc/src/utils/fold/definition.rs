@@ -3,9 +3,9 @@
 //! A dynamic styled component compiles to its class name plus one runtime
 //! expression per interpolation. At runtime every nested `css("x")` call
 //! allocates a style processor, which the runtime then calls only to add a
-//! class name. When every runtime expression only toggles class names, this
-//! module compiles them into one function that returns the complete class
-//! string instead:
+//! class name. When every runtime expression only toggles class names or
+//! sets CSS variables, this module compiles them into one function that
+//! returns the complete class string instead:
 //!
 //! ```js
 //! // source
@@ -22,14 +22,31 @@
 //!   "yB" + (__yak_$active ? " yB1" : "") + (__yak_$size === "s" ? " yB2" : " yB3"))
 //! ```
 //!
+//! A dynamic value inside a property is a CSS variable. The fold function
+//! writes it into the style object it gets as its second argument:
+//!
+//! ```js
+//! // source
+//! styled.div`left: ${({ $x }) => $x}px;`
+//! // compiled without this fold
+//! __yak.__yak_div("yD", { style: { "--yD1": __yak_cssValue(({ $x }) => $x, "px") } })
+//! // compiled with this fold
+//! __yak.__yak_div("yD", 2, ({ $x: __yak_$x }, __yak_style) =>
+//!   "yD" + (__yak_style["--yD1"] = String(__yak_cssValue(__yak_$x, "px")), ""))
+//! ```
+//!
 //! Words used in this module:
 //! - *fold function*: the generated arrow `(props, style, theme) => classString`.
 //! - *flags*: the number before the fold function. Its presence tells the
 //!   runtime that the next argument is a fold function, and its bits say what
-//!   the runtime has to pass in ([`FLAG_THEME`]).
+//!   the runtime has to pass in ([`FLAG_THEME`], [`FLAG_STYLE`]).
+//! - *style object*: the copy of the `style` prop the runtime passes as the
+//!   second argument when the flags ask for it. The runtime renders it.
 //! - *piece*: the class names one runtime expression adds, as a string
 //!   expression that is either empty or starts with a space, e.g.
 //!   `(on ? " yB1" : "")`.
+//! - *write piece*: the piece of a CSS variable. It writes to the style
+//!   object and adds no class name: `(__yak_style["--yD1"] = String(x), "")`.
 //!
 //! Every condition stays where the user wrote it, so it runs exactly as often
 //! and in the same order as on the runtime path: a nested condition only runs
@@ -44,9 +61,11 @@ use swc_core::{
   atoms::Atom,
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
-    ArrowExpr, ArrowFunctionBody, AssignExpr, AssignPatProp, BinExpr, BinaryOp, BindingIdent,
-    CallExpr, CondExpr, Expr, Id, Ident, IdentName, KeyValuePatProp, KeyValueProp, Lit, MemberProp,
-    Number, ObjectPat, ObjectPatProp, ParenExpr, Pat, Prop, PropName,
+    ArrowExpr, ArrowFunctionBody, AssignExpr, AssignOp, AssignPatProp, AssignTarget, BinExpr,
+    BinaryOp, BindingIdent, CallExpr, Callee, ComputedPropName, CondExpr, Expr, Id, Ident,
+    IdentName, KeyValuePatProp, KeyValueProp, Lit, MemberExpr, MemberProp, Number, ObjectLit,
+    ObjectPat, ObjectPatProp, ParenExpr, Pat, Prop, PropName, PropOrSpread, SeqExpr,
+    SimpleAssignTarget,
   },
   ecma::visit::{VisitMut, VisitMutWith},
 };
@@ -59,6 +78,9 @@ use crate::yak_imports::YakImports;
 /// The fold function reads the theme: the runtime calls `useTheme()` and passes
 /// the theme as the third argument
 pub(crate) const FLAG_THEME: u32 = 1;
+/// The fold function writes CSS variables: the runtime passes a fresh copy of
+/// the style prop as the second argument and renders it
+pub(crate) const FLAG_STYLE: u32 = 2;
 
 /// The third parameter of the fold function, e.g. `({ theme }) => theme.dark`
 /// reads `__yak_theme.dark`
@@ -70,34 +92,50 @@ const STYLE_PARAM: &str = "__yak_style";
 /// Compiles the runtime expressions of a styled component into the flags and
 /// the fold function, e.g. `[0, ({ $on: __yak_$on }) => "yB" + (__yak_$on ? " yB1" : "")]`
 ///
-/// Returns `None` if any expression is not a class-toggling arrow; the
-/// component then keeps its runtime expressions unchanged
+/// Returns `None` if any expression is not an arrow that toggles class names
+/// or if a CSS variable has a value the fold cannot take over; the component
+/// then keeps its runtime expressions unchanged
 pub(crate) fn fold_definition(
   class_name: &str,
   runtime_expressions: &[Expr],
+  css_variables: &FxHashMap<String, Expr>,
   yak_imports: &YakImports,
 ) -> Option<Vec<Expr>> {
-  if runtime_expressions.is_empty() {
+  if runtime_expressions.is_empty() && css_variables.is_empty() {
     return None;
   }
   let mut folder = DefinitionFolder {
     yak_imports,
     params: FoldParams::default(),
+    writes_style: false,
   };
   let mut class_name_expr = str_expr(class_name.into());
   for expression in runtime_expressions {
     let piece = folder.fold_arrow(expression)?;
     class_name_expr = concat(class_name_expr, piece);
   }
-  let flags = if folder.params.reads_theme {
-    FLAG_THEME
-  } else {
-    0
-  };
+  // the runtime writes the CSS variables of the component after it ran the
+  // runtime expressions, in the key order of the compiled `{ style: {...} }`
+  if !css_variables.is_empty() {
+    let mut keys: Vec<&String> = css_variables.keys().collect();
+    keys.sort();
+    let mut writes = Vec::new();
+    for key in keys {
+      writes.push(folder.fold_style_write(key, &css_variables[key])?);
+    }
+    class_name_expr = concat(class_name_expr, write_piece(writes));
+  }
+  let mut flags = 0;
+  if folder.params.reads_theme {
+    flags |= FLAG_THEME;
+  }
+  if folder.writes_style {
+    flags |= FLAG_STYLE;
+  }
   let fold_function = Expr::Arrow(ArrowExpr {
     span: DUMMY_SP,
     ctxt: SyntaxContext::empty(),
-    params: folder.params.into_params(),
+    params: folder.params.into_params(folder.writes_style),
     body: Box::new(ArrowFunctionBody::Expr(class_name_expr)),
     is_async: false,
     is_generator: false,
@@ -117,6 +155,7 @@ pub(crate) fn fold_definition(
 struct DefinitionFolder<'a> {
   yak_imports: &'a YakImports,
   params: FoldParams,
+  writes_style: bool,
 }
 
 impl DefinitionFolder<'_> {
@@ -127,6 +166,13 @@ impl DefinitionFolder<'_> {
   /// identifier which is only read through members (`p => p.$on`). The body is
   /// an expression or a block with a single `return`
   fn fold_arrow(&mut self, expression: &Expr) -> Option<Box<Expr>> {
+    let body = self.bind_arrow(expression)?;
+    self.fold_value(body)
+  }
+
+  /// Registers the props parameter of a runtime expression and returns the
+  /// expression the arrow returns
+  fn bind_arrow<'e>(&mut self, expression: &'e Expr) -> Option<&'e Expr> {
     let Expr::Arrow(arrow) = unwrap_type_casts(expression) else {
       return None;
     };
@@ -168,7 +214,105 @@ impl DefinitionFolder<'_> {
       }
       _ => return None,
     }
-    self.fold_value(body)
+    Some(body)
+  }
+
+  /// Compiles one CSS variable into a write to the style object, e.g.
+  /// `"--yX": __yak_cssValue(({ $x }) => $x, "px")` ->
+  /// `__yak_style["--yX"] = String(__yak_cssValue(__yak_$x, "px"))`
+  ///
+  /// The runtime stores `String(value)`, so the write does too. The runtime
+  /// also calls a value again while it is a function; the fold function does
+  /// not, so a value that evaluates to a function is a known difference
+  fn fold_style_write(&mut self, key: &str, value: &Expr) -> Option<Box<Expr>> {
+    let value = self.fold_style_value(value)?;
+    self.writes_style = true;
+    Some(Box::new(Expr::Assign(AssignExpr {
+      span: DUMMY_SP,
+      op: AssignOp::Assign,
+      left: AssignTarget::Simple(SimpleAssignTarget::Member(MemberExpr {
+        span: DUMMY_SP,
+        obj: Box::new(Expr::Ident(Ident::from(STYLE_PARAM))),
+        prop: MemberProp::Computed(ComputedPropName {
+          span: DUMMY_SP,
+          expr: str_expr(key.into()),
+        }),
+      })),
+      right: Box::new(Expr::Call(CallExpr {
+        span: DUMMY_SP,
+        ctxt: SyntaxContext::empty(),
+        callee: Callee::Expr(Box::new(Expr::Ident(Ident::from("String")))),
+        args: vec![value.into()],
+        type_args: None,
+      })),
+    })))
+  }
+
+  /// The value of a CSS variable with its prop reads replaced: an arrow
+  /// becomes its return value and `__yak_cssValue(arrow, unit)` keeps the
+  /// call around the return value.
+  ///
+  /// Every other value sits in a nested `css(...)` call and is an expression
+  /// of the enclosing arrow, e.g. `$x` in `({ $x }) => css`left: ${$x}px;``.
+  /// It is only rewritten. Outside a nested `css` the compiler accepts only
+  /// arrows as property values
+  fn fold_style_value(&mut self, value: &Expr) -> Option<Box<Expr>> {
+    match unwrap_type_casts(value) {
+      Expr::Arrow(_) => {
+        let body = self.bind_arrow(value)?;
+        self.params.substitute(body)
+      }
+      Expr::Call(call) if is_css_value_call(call) => {
+        let mut call = call.clone();
+        let first = call.args.first_mut()?;
+        if first.spread.is_some() {
+          return None;
+        }
+        first.expr = self.fold_style_value(&first.expr)?;
+        for arg in call.args.iter().skip(1) {
+          if !matches!(&*arg.expr, Expr::Lit(_)) {
+            return None;
+          }
+        }
+        Some(Box::new(Expr::Call(call)))
+      }
+      // an identifier or member could hold a helper function, which the
+      // runtime would call with the props: only a destructured prop is safe
+      Expr::Ident(ident) if !self.params.locals.contains_key(&ident.to_id()) => None,
+      Expr::Member(member) if !matches!(&*member.obj, Expr::Ident(obj) if self.params.member_params.contains(&obj.to_id())) => {
+        None
+      }
+      Expr::Fn(_) => None,
+      other => self.params.substitute(other),
+    }
+  }
+
+  /// Folds the `{ style: { "--yX": value } }` argument of a nested css call
+  /// into its writes: `(__yak_style["--yX"] = String(value), "")`
+  fn fold_style_object(&mut self, object: &ObjectLit) -> Option<Box<Expr>> {
+    let [PropOrSpread::Prop(prop)] = object.props.as_slice() else {
+      return None;
+    };
+    let Prop::KeyValue(KeyValueProp { key, value }) = &**prop else {
+      return None;
+    };
+    if prop_name(key)? != "style" {
+      return None;
+    }
+    let Expr::Object(variables) = &**value else {
+      return None;
+    };
+    let mut writes = Vec::new();
+    for variable in &variables.props {
+      let PropOrSpread::Prop(variable) = variable else {
+        return None;
+      };
+      let Prop::KeyValue(KeyValueProp { key, value }) = &**variable else {
+        return None;
+      };
+      writes.push(self.fold_style_write(&prop_name(key)?, value)?);
+    }
+    Some(write_piece(writes))
   }
 
   /// Folds what a runtime expression returns: a `css(...)` call, a falsy
@@ -216,7 +360,9 @@ impl DefinitionFolder<'_> {
           class_name = Some(value.value.clone())
         }
         Expr::Arrow(_) => pieces.push(self.fold_arrow(&arg.expr)?),
-        // css variables (`{ style: {...} }`), mixin references and anything else
+        // css variables: `css("x", { style: { "--yX": value } })`
+        Expr::Object(object) => pieces.push(self.fold_style_object(object)?),
+        // mixin references and anything else
         _ => return None,
       }
     }
@@ -282,9 +428,10 @@ impl FoldParams {
     (!substitution.failed).then_some(condition)
   }
 
-  /// `({ $on: __yak_$on }, __yak_style, __yak_theme)`, with the style and
-  /// theme parameters only when the theme is read
-  fn into_params(self) -> Vec<Pat> {
+  /// `({ $on: __yak_$on }, __yak_style, __yak_theme)`, with the style
+  /// parameter only when the function writes CSS variables or reads the
+  /// theme, and the theme parameter only when it reads the theme
+  fn into_params(self, writes_style: bool) -> Vec<Pat> {
     let props = Pat::Object(ObjectPat {
       span: DUMMY_SP,
       props: self
@@ -301,14 +448,20 @@ impl FoldParams {
       type_ann: None,
     });
     let empty_props = matches!(&props, Pat::Object(pattern) if pattern.props.is_empty());
-    if !self.reads_theme {
-      return if empty_props { vec![] } else { vec![props] };
+    let style = Pat::Ident(BindingIdent::from(Ident::from(STYLE_PARAM)));
+    if self.reads_theme {
+      vec![
+        props,
+        style,
+        Pat::Ident(BindingIdent::from(Ident::from(THEME_PARAM))),
+      ]
+    } else if writes_style {
+      vec![props, style]
+    } else if empty_props {
+      vec![]
+    } else {
+      vec![props]
     }
-    vec![
-      props,
-      Pat::Ident(BindingIdent::from(Ident::from(STYLE_PARAM))),
-      Pat::Ident(BindingIdent::from(Ident::from(THEME_PARAM))),
-    ]
   }
 }
 
@@ -402,6 +555,33 @@ fn is_falsy_literal(expr: &Expr) -> bool {
     Expr::Ident(ident) => ident.sym == "undefined",
     _ => false,
   }
+}
+
+/// `__yak_cssValue(...)`, the helper that adds the unit to a CSS variable
+fn is_css_value_call(call: &CallExpr) -> bool {
+  matches!(&call.callee, Callee::Expr(callee) if matches!(&**callee, Expr::Ident(ident) if ident.sym == "__yak_cssValue"))
+}
+
+/// The text of a plain or quoted object key
+fn prop_name(key: &PropName) -> Option<String> {
+  match key {
+    PropName::Ident(ident) => Some(ident.sym.to_string()),
+    PropName::Str(value) => value.value.as_str().map(str::to_string),
+    _ => None,
+  }
+}
+
+/// `(write1, write2, "")`: style writes as a piece that adds no class name,
+/// so they run at their place in the class string expression
+fn write_piece(mut writes: Vec<Box<Expr>>) -> Box<Expr> {
+  writes.push(str_expr("".into()));
+  Box::new(Expr::Paren(ParenExpr {
+    span: DUMMY_SP,
+    expr: Box::new(Expr::Seq(SeqExpr {
+      span: DUMMY_SP,
+      exprs: writes,
+    })),
+  }))
 }
 
 fn empty_piece() -> Box<Expr> {

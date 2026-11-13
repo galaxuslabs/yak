@@ -73,11 +73,7 @@ export const UnclosedMediaQuery = /*YAK EXPORTED STYLED:UnclosedMediaQuery:input
 });
 export const UnclosedFunction = /*YAK EXPORTED STYLED:UnclosedFunction:input_UnclosedFunction_m7uBBu*//*YAK Extracted CSS:
 
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_UnclosedFunction_m7uBBu", {
-    "style": {
-        "--input_UnclosedFunction__transform_m7uBBu": /*#__PURE__*/ __yak_cssValue((p)=>p.$deg, "deg")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_UnclosedFunction_m7uBBu", 2, ({ $deg: __yak_$deg }, __yak_style)=>"input_UnclosedFunction_m7uBBu" + (__yak_style["--input_UnclosedFunction__transform_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$deg, "deg")), "")), {
     "displayName": "UnclosedFunction"
 });
 export const CustomPropertyBlock = /*YAK EXPORTED STYLED:CustomPropertyBlock:input_CustomPropertyBlock_m7uBBu*//*YAK Extracted CSS:

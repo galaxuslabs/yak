@@ -7,11 +7,7 @@ const TwiceSameArrow = /*YAK Extracted CSS:
   left: var(--input_TwiceSameArrow__left_m7uBBu);
   right: var(--input_TwiceSameArrow__left_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_TwiceSameArrow_m7uBBu", {
-    "style": {
-        "--input_TwiceSameArrow__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>$x, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_TwiceSameArrow_m7uBBu", 2, ({ $x: __yak_$x }, __yak_style)=>"input_TwiceSameArrow_m7uBBu" + (__yak_style["--input_TwiceSameArrow__left_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$x, "px")), "")), {
     "displayName": "TwiceSameArrow"
 });
 // Identical logic, but one side carries a TS parameter annotation
@@ -20,11 +16,7 @@ const TypedVsUntyped = /*YAK Extracted CSS:
   top: var(--input_TypedVsUntyped__top_m7uBBu);
   bottom: var(--input_TypedVsUntyped__top_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_TypedVsUntyped_m7uBBu", {
-    "style": {
-        "--input_TypedVsUntyped__top_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $y })=>$y, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_TypedVsUntyped_m7uBBu", 2, ({ $y: __yak_$y }, __yak_style)=>"input_TypedVsUntyped_m7uBBu" + (__yak_style["--input_TypedVsUntyped__top_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$y, "px")), "")), {
     "displayName": "TypedVsUntyped"
 });
 // Identical calculation including a Math.min call
@@ -33,11 +25,7 @@ const WithCalculation = /*YAK Extracted CSS:
   width: var(--input_WithCalculation__width_m7uBBu);
   max-width: var(--input_WithCalculation__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_WithCalculation_m7uBBu", {
-    "style": {
-        "--input_WithCalculation__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $ratio })=>Math.min($ratio * 100, 100), "%")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_WithCalculation_m7uBBu", 2, ({ $ratio: __yak_$ratio }, __yak_style)=>"input_WithCalculation_m7uBBu" + (__yak_style["--input_WithCalculation__width_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(Math.min(__yak_$ratio * 100, 100), "%")), "")), {
     "displayName": "WithCalculation"
 });
 // Same expression but different trailing units: must stay separate
@@ -46,12 +34,7 @@ const DifferentUnits = /*YAK Extracted CSS:
   width: var(--input_DifferentUnits__width_m7uBBu);
   height: var(--input_DifferentUnits__height_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DifferentUnits_m7uBBu", {
-    "style": {
-        "--input_DifferentUnits__height_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $size })=>$size, "rem"),
-        "--input_DifferentUnits__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $size })=>$size, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DifferentUnits_m7uBBu", 2, ({ $size: __yak_$size }, __yak_style)=>"input_DifferentUnits_m7uBBu" + (__yak_style["--input_DifferentUnits__height_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$size, "rem")), __yak_style["--input_DifferentUnits__width_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$size, "px")), "")), {
     "displayName": "DifferentUnits"
 });
 // Parenthesized arrow vs plain arrow
@@ -60,11 +43,7 @@ const Parens = /*YAK Extracted CSS:
   margin-left: var(--input_Parens__margin-left_m7uBBu);
   margin-right: var(--input_Parens__margin-left_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Parens_m7uBBu", {
-    "style": {
-        "--input_Parens__margin-left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $z })=>$z, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Parens_m7uBBu", 2, ({ $z: __yak_$z }, __yak_style)=>"input_Parens_m7uBBu" + (__yak_style["--input_Parens__margin-left_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$z, "px")), "")), {
     "displayName": "Parens"
 });
 // Different props: must stay separate
@@ -73,12 +52,7 @@ const DifferentProps = /*YAK Extracted CSS:
   padding-left: var(--input_DifferentProps__padding-left_m7uBBu);
   padding-right: var(--input_DifferentProps__padding-right_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DifferentProps_m7uBBu", {
-    "style": {
-        "--input_DifferentProps__padding-left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a })=>$a, "px"),
-        "--input_DifferentProps__padding-right_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $b })=>$b, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DifferentProps_m7uBBu", 2, ({ $a: __yak_$a, $b: __yak_$b }, __yak_style)=>"input_DifferentProps_m7uBBu" + (__yak_style["--input_DifferentProps__padding-left_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$a, "px")), __yak_style["--input_DifferentProps__padding-right_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$b, "px")), "")), {
     "displayName": "DifferentProps"
 });
 // Same bindings, different destructuring order in the parameter
@@ -87,11 +61,7 @@ const DestructureOrder = /*YAK Extracted CSS:
   width: var(--input_DestructureOrder__width_m7uBBu);
   height: var(--input_DestructureOrder__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DestructureOrder_m7uBBu", {
-    "style": {
-        "--input_DestructureOrder__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b })=>$a * $b, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DestructureOrder_m7uBBu", 2, ({ $a: __yak_$a, $b: __yak_$b }, __yak_style)=>"input_DestructureOrder_m7uBBu" + (__yak_style["--input_DestructureOrder__width_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$a * __yak_$b, "px")), "")), {
     "displayName": "DestructureOrder"
 });
 // A sibling-referencing default: reordering changes behavior
@@ -114,12 +84,7 @@ const Dot = /*YAK Extracted CSS:
   animation-range: max(0%, calc((var(--input_Dot__animation-range_m7uBBu) - 1) * 100% / (var(--input_Dot__animation-range_m7uBBu-01) - 1)))
 min(100%, calc((var(--input_Dot__animation-range_m7uBBu) + 1) * 100% / (var(--input_Dot__animation-range_m7uBBu-01) - 1)));
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Dot_m7uBBu", {
-    "style": {
-        "--input_Dot__animation-range_m7uBBu": ({ $index })=>$index,
-        "--input_Dot__animation-range_m7uBBu-01": ({ $slideCount })=>$slideCount
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Dot_m7uBBu", 2, ({ $index: __yak_$index, $slideCount: __yak_$slideCount }, __yak_style)=>"input_Dot_m7uBBu" + (__yak_style["--input_Dot__animation-range_m7uBBu"] = String(__yak_$index), __yak_style["--input_Dot__animation-range_m7uBBu-01"] = String(__yak_$slideCount), "")), {
     "displayName": "Dot"
 });
 const Nested = /*YAK Extracted CSS:
@@ -134,13 +99,6 @@ const Nested = /*YAK Extracted CSS:
     transform: translate(var(--input_Nested__left_m7uBBu), var(--input_Nested__right_m7uBBu));
   }
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Nested_m7uBBu", {
-    "style": {
-        "--input_Nested__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
-            return $x;
-        }, "px"),
-        "--input_Nested__right_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $y })=>$y, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Nested_m7uBBu", 2, ({ $x: __yak_$x, $y: __yak_$y }, __yak_style)=>"input_Nested_m7uBBu" + (__yak_style["--input_Nested__left_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$x, "px")), __yak_style["--input_Nested__right_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$y, "px")), "")), {
     "displayName": "Nested"
 });
