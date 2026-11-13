@@ -178,11 +178,7 @@ const NestedCssVariable = /*YAK Extracted CSS:
 .input_NestedCssVariable__\$active_m7uBBu {
   width: var(--input_NestedCssVariable__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedCssVariable_m7uBBu", ({ $active, $size })=>$active && /*#__PURE__*/ css("input_NestedCssVariable__$active_m7uBBu", {
-        "style": {
-            "--input_NestedCssVariable__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>$size, "px")
-        }
-    })), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedCssVariable_m7uBBu", 2, ({ $active, $size }, style)=>"input_NestedCssVariable_m7uBBu" + ($active ? " input_NestedCssVariable__$active_m7uBBu" + (style["--input_NestedCssVariable__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($size, "px"), "") : "")), {
     "displayName": "NestedCssVariable"
 });
 // usages bail: the $prop forwarding semantics depend on the wrapped component

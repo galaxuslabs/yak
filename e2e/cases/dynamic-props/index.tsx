@@ -33,12 +33,18 @@ const Sized = styled.div<{ $size: number; $on: boolean }>`
     `}
 `;
 
+// One style object for a styled component and a plain element. The styled
+// component adds its CSS variable for `width` to its own style only
+const sharedStyle = { opacity: 0.5 };
+
 export default function App() {
   return (
     <>
       <Bar data-testid="bar-active" $width={200} $active={true} />
       <Bar data-testid="bar-inactive" $width={100} $active={false} />
       <Sized data-testid="sized" $size={3} $on={true} />
+      <Bar data-testid="bar-shared-style" style={sharedStyle} $width={50} $active={false} />
+      <span data-testid="shared-style" style={sharedStyle} />
     </>
   );
 }

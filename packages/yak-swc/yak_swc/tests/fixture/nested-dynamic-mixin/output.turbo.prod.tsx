@@ -19,8 +19,4 @@ const ContainerFluid = /*YAK Extracted CSS:
 .ym7uBBu {
   margin-top: var(--ym7uBBu3);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", ({ $isApp, $pageHeaderHeight })=>$isApp ? /*#__PURE__*/ css("ym7uBBu1") : /*#__PURE__*/ css("ym7uBBu2"), {
-    "style": {
-        "--ym7uBBu3": /*#__PURE__*/ __yak_cssValue(({ $pageHeaderHeight })=>$pageHeaderHeight, "px")
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", 2, ({ $isApp, $pageHeaderHeight }, style)=>"ym7uBBu" + ($isApp ? " ym7uBBu1" : " ym7uBBu2") + (style["--ym7uBBu3"] = /*#__PURE__*/ __yak_cssValue($pageHeaderHeight, "px"), ""));

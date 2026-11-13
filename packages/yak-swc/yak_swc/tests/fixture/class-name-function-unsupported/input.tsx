@@ -38,9 +38,8 @@ export const AtomsReturn = styled.div<{ $on: boolean }>`
   ${({ $on }) => $on && atoms("flex")}
 `;
 
-export const CssVariable = styled.div<{ $x: number }>`
-  ${({ $x }) => $x > 1 && css`color: red;`}
-  left: ${({ $x }) => $x}px;
+export const StyleReadInValue = styled.div`
+  left: ${({ style }) => style.left}px;
 `;
 
 export const OrOperator = styled.div<{ $on: boolean }>`

@@ -45,3 +45,24 @@ export const Outer = styled.span<{ $a: boolean; $b: boolean }>`
 export const Wrapped = styled(Ident).attrs({ role: "note" })<{ $x: boolean }>`
   ${({ $x }) => $x && css`color: green;`}
 `;
+
+// a dynamic value inside a property is a CSS variable, which the fold
+// function writes into the style object
+export const CssVariable = styled.div<{ $x: number }>`
+  ${({ $x }) => $x > 1 && css`color: red;`}
+  left: ${({ $x }) => $x}px;
+`;
+
+export const ThemeVariable = styled.div`
+  color: ${({ theme }) => theme.color};
+`;
+
+// a variable in a nested css is written only when its branch runs
+export const NestedVariable = styled.div<{ $on: boolean; $x: number; $big: boolean }>`
+  ${({ $on, $x, $big }) =>
+    $on &&
+    css`
+      left: ${$x * 2}px;
+      top: ${$big ? 8 : 4}px;
+    `}
+`;

@@ -1564,25 +1564,26 @@ where
     }
 
     // A dynamic styled component whose runtime expressions only toggle
-    // class names compiles to one function that returns the class string, e.g.
+    // class names or set CSS variables compiles to one function that returns
+    // the class string, e.g.
     // `__yak_button("yB", ({ $on }) => $on && css("yB1"))` ->
     // `__yak_button("yB", 0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`.
     // It runs on the finished runtime expressions, after the same-file fold
     // above took its own copy of them
-    let runtime_expressions = match transform.get_component_class_name() {
-      Some(class_name)
-        if is_top_level
-          && yak_library_function_name.deref() == "styled"
-          && runtime_css_variables.is_empty() =>
-      {
+    let folded = match transform.get_component_class_name() {
+      Some(class_name) if is_top_level && yak_library_function_name.deref() == "styled" => {
         fold_class_names(
           class_name,
           &runtime_expressions,
+          &runtime_css_variables,
           self.yak_library_imports.as_ref().unwrap(),
         )
-        .unwrap_or(runtime_expressions)
       }
-      _ => runtime_expressions,
+      _ => None,
+    };
+    let (runtime_expressions, runtime_css_variables) = match folded {
+      Some(folded) => (folded, FxHashMap::default()),
+      None => (runtime_expressions, runtime_css_variables),
     };
 
     let transform_result = transform.transform_expression(

@@ -1,7 +1,9 @@
-use self::fold_class_name_condition::concat;
+use self::fold_class_name_condition::join_folded_class_names;
+use self::fold_css_variable_function::create_folded_css_variable_definition;
 use self::merge_arrow_parameters::FoldParams;
 use crate::utils::ast_helper::{single_return_expr, str_expr, unwrap_type_casts};
 use crate::yak_imports::{YakImports, YakRuntime};
+use rustc_hash::FxHashMap;
 use swc_core::{
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
@@ -11,6 +13,7 @@ use swc_core::{
 };
 
 mod fold_class_name_condition;
+mod fold_css_variable_function;
 mod merge_arrow_parameters;
 
 /// The flags are the number before the folded function, e.g. the `0` in
@@ -29,6 +32,10 @@ const FLAGS_PROPS_ONLY: u32 = 0;
 /// The folded function reads the theme: the runtime calls `useTheme()` and
 /// passes the theme as the third argument
 const FLAG_THEME: u32 = 1;
+
+/// The folded function writes CSS variables: the runtime passes a fresh copy
+/// of the style prop as the second argument and renders it
+const FLAG_STYLE: u32 = 2;
 
 /// Turns the conditions of a styled component into one "folded" function that
 /// returns its class names
@@ -55,38 +62,58 @@ const FLAG_THEME: u32 = 1;
 ///
 /// Returns the flags and the folded function, e.g.
 /// `[0, ({ $on }) => "yB" + ($on ? " yB1" : "")]`, or `None` if a runtime
-/// expression is not an arrow that toggles class names. The component then
+/// expression is not an arrow that toggles class names or a CSS variable has
+/// a value the folded function cannot write. The component then
 /// keeps its compiled shape with one function per condition, so nothing
 /// changes for it
 pub(crate) fn fold_class_names(
   class_name: &str,
   runtime_expressions: &[Expr],
+  css_variables: &FxHashMap<String, Expr>,
   yak_imports: &YakImports,
 ) -> Option<Vec<Expr>> {
   // The Solid runtime takes no folded function
   if yak_imports.runtime() != YakRuntime::React {
     return None;
   }
-  if runtime_expressions.is_empty() {
+  if runtime_expressions.is_empty() && css_variables.is_empty() {
     return None;
   }
   let mut folder = ClassNameFolder {
     yak_imports,
     params: FoldParams::default(),
+    writes_style: false,
   };
   let mut class_name_expr = str_expr(class_name.into());
   for expression in runtime_expressions {
-    let piece = folder.fold_arrow(expression)?;
-    class_name_expr = concat(class_name_expr, piece);
+    let folded_class_names = folder.fold_arrow(expression)?;
+    class_name_expr = join_folded_class_names(class_name_expr, folded_class_names);
+  }
+  // the runtime writes the CSS variables of the component after it ran the
+  // runtime expressions, in the key order of the compiled `{ style: {...} }`
+  if !css_variables.is_empty() {
+    let mut keys: Vec<&String> = css_variables.keys().collect();
+    keys.sort();
+    let mut definitions = Vec::new();
+    for key in keys {
+      definitions.push(folder.fold_css_variable_definition(key, &css_variables[key])?);
+    }
+    class_name_expr = join_folded_class_names(
+      class_name_expr,
+      create_folded_css_variable_definition(definitions),
+    );
   }
   let mut flags = FLAGS_PROPS_ONLY;
   if folder.params.reads_theme {
     flags |= FLAG_THEME;
   }
+  if folder.writes_style {
+    flags |= FLAG_STYLE;
+  }
   let fold_function = Expr::Arrow(ArrowExpr {
     span: DUMMY_SP,
     ctxt: SyntaxContext::empty(),
-    params: folder.params.into_params(),
+    params: folder.params.into_params(folder.writes_style),
     body: Box::new(ArrowFunctionBody::Expr(class_name_expr)),
     is_async: false,
     is_generator: false,
@@ -106,16 +133,24 @@ pub(crate) fn fold_class_names(
 struct ClassNameFolder<'a> {
   yak_imports: &'a YakImports,
   params: FoldParams,
+  writes_style: bool,
 }
 
 impl ClassNameFolder<'_> {
   /// Folds one runtime expression, e.g. `({ $on }) => $on && css("yB1")`,
-  /// into its piece `($on ? " yB1" : "")`
+  /// into the class names it adds: `($on ? " yB1" : "")`
   ///
   /// The arrow takes no parameter, a destructuring with plain keys, or one
   /// identifier which is only read through members (`p => p.$on`). The body is
   /// an expression or a block with a single `return`
   fn fold_arrow(&mut self, expression: &Expr) -> Option<Box<Expr>> {
+    let body = self.bind_arrow(expression)?;
+    self.fold_value(body)
+  }
+
+  /// Registers the props parameter of a runtime expression and returns the
+  /// expression the arrow returns
+  fn bind_arrow<'e>(&mut self, expression: &'e Expr) -> Option<&'e Expr> {
     let Expr::Arrow(arrow) = unwrap_type_casts(expression) else {
       return None;
     };
@@ -157,6 +192,6 @@ impl ClassNameFolder<'_> {
       }
       _ => return None,
     }
-    self.fold_value(body)
+    Some(body)
   }
 }

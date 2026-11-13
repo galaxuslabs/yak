@@ -8,7 +8,7 @@ it.each([
   [-32, "px", true, "32px"],
   ["2rem", "", true, "-2rem"],
   ["-2rem", "", true, "2rem"],
-  [undefined, "px", true, undefined],
+  [undefined, "px", true, "undefined"],
 ])("cssValue(%j, %j, %j) is %j", (arg, unit, negate, expected) => {
   expect(cssValue(arg, unit, negate)).toBe(expected);
 });

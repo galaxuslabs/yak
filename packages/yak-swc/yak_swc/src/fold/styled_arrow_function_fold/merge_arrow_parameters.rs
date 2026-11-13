@@ -111,9 +111,10 @@ impl FoldParams {
     Ident::new("theme".into(), DUMMY_SP, self.ctxt())
   }
 
-  /// `({ $on, class: __yak_class }, style, theme)`, with the style and theme
-  /// parameters only when the theme is read
-  pub(super) fn into_params(mut self) -> Vec<Pat> {
+  /// `({ $on, class: __yak_class }, style, theme)`, with the style parameter
+  /// only when the function writes CSS variables or reads the theme, and the
+  /// theme parameter only when it reads the theme
+  pub(super) fn into_params(mut self, writes_style: bool) -> Vec<Pat> {
     let style = self.style_param();
     let theme = self.theme_param();
     let props = Pat::Object(ObjectPat {
@@ -139,14 +140,16 @@ impl FoldParams {
       type_ann: None,
     });
     let empty_props = matches!(&props, Pat::Object(pattern) if pattern.props.is_empty());
-    if !self.reads_theme {
-      return if empty_props { vec![] } else { vec![props] };
+    let style = Pat::Ident(BindingIdent::from(style));
+    if self.reads_theme {
+      vec![props, style, Pat::Ident(BindingIdent::from(theme))]
+    } else if writes_style {
+      vec![props, style]
+    } else if empty_props {
+      vec![]
+    } else {
+      vec![props]
     }
-    vec![
-      props,
-      Pat::Ident(BindingIdent::from(style)),
-      Pat::Ident(BindingIdent::from(theme)),
-    ]
   }
 }
 

@@ -1,7 +1,7 @@
-import { styled, css } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LmlucHV0X0lkZW50X19wX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0Jsb2NrX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAwOwp9Ci5pbnB1dF9CbG9ja19fX203dUJCdS0wMSB7CiAgcGFkZGluZzogNHB4Owp9LmlucHV0X0hlbHBlcl9fX203dUJCdSB7CiAgZm9udC1zaXplOiAyZW07Cn0uaW5wdXRfVGhlbWVkX190aGVtZV9kYXJrX203dUJCdSB7CiAgY29sb3I6IHdoaXRlOwp9Ci5pbnB1dF9UaGVtZWRfX19tN3VCQnUgewogIGNvbG9yOiBibGFjazsKfS5pbnB1dF9OZXN0ZWRfX1wkYS1hbmQtXCRiX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfQouaW5wdXRfTmVzdGVkX19fbTd1QkJ1IHsKICBtYXJnaW46IDA7Cn0uaW5wdXRfT3V0ZXJfX19tN3VCQnUtMDEgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfV3JhcHBlZF9fXCR4X203dUJCdSB7CiAgY29sb3I6IGdyZWVuOwp9";
+import "data:text/css;base64,LmlucHV0X0lkZW50X19wX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0Jsb2NrX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAwOwp9Ci5pbnB1dF9CbG9ja19fX203dUJCdS0wMSB7CiAgcGFkZGluZzogNHB4Owp9LmlucHV0X0hlbHBlcl9fX203dUJCdSB7CiAgZm9udC1zaXplOiAyZW07Cn0uaW5wdXRfVGhlbWVkX190aGVtZV9kYXJrX203dUJCdSB7CiAgY29sb3I6IHdoaXRlOwp9Ci5pbnB1dF9UaGVtZWRfX19tN3VCQnUgewogIGNvbG9yOiBibGFjazsKfS5pbnB1dF9OZXN0ZWRfX1wkYS1hbmQtXCRiX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfQouaW5wdXRfTmVzdGVkX19fbTd1QkJ1IHsKICBtYXJnaW46IDA7Cn0uaW5wdXRfT3V0ZXJfX19tN3VCQnUtMDEgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfV3JhcHBlZF9fXCR4X203dUJCdSB7CiAgY29sb3I6IGdyZWVuOwp9LmlucHV0X0Nzc1ZhcmlhYmxlX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9Ci5pbnB1dF9Dc3NWYXJpYWJsZV9tN3VCQnUgewogIGxlZnQ6IHZhcigtLWlucHV0X0Nzc1ZhcmlhYmxlX19sZWZ0X203dUJCdSk7Cn0uaW5wdXRfVGhlbWVWYXJpYWJsZV9tN3VCQnUgewogIGNvbG9yOiB2YXIoLS1pbnB1dF9UaGVtZVZhcmlhYmxlX19jb2xvcl9tN3VCQnUpOwp9LmlucHV0X05lc3RlZFZhcmlhYmxlX19cJG9uX203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfTmVzdGVkVmFyaWFibGVfX2xlZnRfbTd1QkJ1KTsKICB0b3A6IHZhcigtLWlucHV0X05lc3RlZFZhcmlhYmxlX190b3BfbTd1QkJ1KTsKfQ==";
 // identifier props parameter read through members
 export const Ident = /*YAK EXPORTED STYLED:Ident:input_Ident_m7uBBu*//*YAK Extracted CSS:
 .input_Ident__p_\$on_m7uBBu {
@@ -70,4 +70,32 @@ export const Wrapped = /*YAK EXPORTED STYLED:Wrapped:input_Wrapped_m7uBBu*//*YAK
     role: "note"
 }))("input_Wrapped_m7uBBu", 0, ({ $x })=>"input_Wrapped_m7uBBu" + ($x ? " input_Wrapped__$x_m7uBBu" : "")), {
     "displayName": "Wrapped"
+});
+// a dynamic value inside a property is a CSS variable, which the fold
+// function writes into the style object
+export const CssVariable = /*YAK EXPORTED STYLED:CssVariable:input_CssVariable_m7uBBu*//*YAK Extracted CSS:
+.input_CssVariable___m7uBBu {
+  color: red;
+}
+.input_CssVariable_m7uBBu {
+  left: var(--input_CssVariable__left_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_CssVariable_m7uBBu", 2, ({ $x }, style)=>"input_CssVariable_m7uBBu" + ($x > 1 ? " input_CssVariable___m7uBBu" : "") + (style["--input_CssVariable__left_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($x, "px"), "")), {
+    "displayName": "CssVariable"
+});
+export const ThemeVariable = /*YAK EXPORTED STYLED:ThemeVariable:input_ThemeVariable_m7uBBu*//*YAK Extracted CSS:
+.input_ThemeVariable_m7uBBu {
+  color: var(--input_ThemeVariable__color_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ThemeVariable_m7uBBu", 3, ({}, style, theme)=>"input_ThemeVariable_m7uBBu" + (style["--input_ThemeVariable__color_m7uBBu"] = theme.color, "")), {
+    "displayName": "ThemeVariable"
+});
+// a variable in a nested css is written only when its branch runs
+export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:input_NestedVariable_m7uBBu*//*YAK Extracted CSS:
+.input_NestedVariable__\$on_m7uBBu {
+  left: var(--input_NestedVariable__left_m7uBBu);
+  top: var(--input_NestedVariable__top_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedVariable_m7uBBu", 2, ({ $on, $x, $big }, style)=>"input_NestedVariable_m7uBBu" + ($on ? " input_NestedVariable__$on_m7uBBu" + (style["--input_NestedVariable__left_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($x * 2, "px"), style["--input_NestedVariable__top_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($big ? 8 : 4, "px"), "") : "")), {
+    "displayName": "NestedVariable"
 });

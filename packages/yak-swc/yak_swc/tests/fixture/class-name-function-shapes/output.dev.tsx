@@ -1,4 +1,4 @@
-import { styled, css } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
@@ -70,4 +70,32 @@ export const Wrapped = /*YAK EXPORTED STYLED:Wrapped:input_Wrapped_m7uBBu*//*YAK
     role: "note"
 }))("input_Wrapped_m7uBBu", 0, ({ $x })=>"input_Wrapped_m7uBBu" + ($x ? " input_Wrapped__$x_m7uBBu" : "")), {
     "displayName": "Wrapped"
+});
+// a dynamic value inside a property is a CSS variable, which the fold
+// function writes into the style object
+export const CssVariable = /*YAK EXPORTED STYLED:CssVariable:input_CssVariable_m7uBBu*//*YAK Extracted CSS:
+.input_CssVariable___m7uBBu {
+  color: red;
+}
+.input_CssVariable_m7uBBu {
+  left: var(--input_CssVariable__left_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_CssVariable_m7uBBu", 2, ({ $x }, style)=>"input_CssVariable_m7uBBu" + ($x > 1 ? " input_CssVariable___m7uBBu" : "") + (style["--input_CssVariable__left_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($x, "px"), "")), {
+    "displayName": "CssVariable"
+});
+export const ThemeVariable = /*YAK EXPORTED STYLED:ThemeVariable:input_ThemeVariable_m7uBBu*//*YAK Extracted CSS:
+.input_ThemeVariable_m7uBBu {
+  color: var(--input_ThemeVariable__color_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ThemeVariable_m7uBBu", 3, ({}, style, theme)=>"input_ThemeVariable_m7uBBu" + (style["--input_ThemeVariable__color_m7uBBu"] = theme.color, "")), {
+    "displayName": "ThemeVariable"
+});
+// a variable in a nested css is written only when its branch runs
+export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:input_NestedVariable_m7uBBu*//*YAK Extracted CSS:
+.input_NestedVariable__\$on_m7uBBu {
+  left: var(--input_NestedVariable__left_m7uBBu);
+  top: var(--input_NestedVariable__top_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedVariable_m7uBBu", 2, ({ $on, $x, $big }, style)=>"input_NestedVariable_m7uBBu" + ($on ? " input_NestedVariable__$on_m7uBBu" + (style["--input_NestedVariable__left_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($x * 2, "px"), style["--input_NestedVariable__top_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($big ? 8 : 4, "px"), "") : "")), {
+    "displayName": "NestedVariable"
 });

@@ -25,10 +25,19 @@
  * `negate` flips the sign: a number is negated, so -32 becomes "32px",
  * and a string loses or gains a leading minus, so "-2rem" becomes "2rem".
  * A string like "var(--gap)" turns into the invalid "-var(--gap)".
- * Any value other than a number or a string returns undefined, so the
- * css variable stays unset.
+ *
+ * Any other value is a mistake, like the `undefined` of a missing prop. It
+ * throws in development. In production it becomes text like "undefined",
+ * which is no valid css value, so the property falls back to its default.
+ * It must not stay `undefined`: React leaves such a style value out, and the
+ * element would inherit the variable from an ancestor that renders the same
+ * component.
  */
-export const cssValue = (arg: unknown, unit: string, negate?: boolean): unknown => {
+export const cssValue = (
+  arg: unknown,
+  unit: string,
+  negate?: boolean,
+): string | ((props: unknown) => unknown) => {
   switch (typeof arg) {
     case "function":
       return (props: unknown) => cssValue(arg(props), unit, negate);
@@ -37,4 +46,10 @@ export const cssValue = (arg: unknown, unit: string, negate?: boolean): unknown 
     case "string":
       return (negate ? (arg.startsWith("-") ? arg.slice(1) : "-" + arg) : arg) + unit;
   }
+  // the `process.env` lookup costs time in Node without a bundler, so it
+  // stays on this path for invalid values
+  if (process.env.NODE_ENV === "development") {
+    throw new Error(`Dynamic CSS values must be a string or number but got ${JSON.stringify(arg)}`);
+  }
+  return String(arg);
 };

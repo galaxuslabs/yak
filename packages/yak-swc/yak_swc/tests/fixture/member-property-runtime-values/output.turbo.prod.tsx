@@ -19,18 +19,10 @@ const StyledDiv = /*YAK Extracted CSS:
   width: var(--ym7uBBu1);
   height: 24px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", {
-    "style": {
-        "--ym7uBBu1": ({ $size })=>SIZES[$size].width
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", 2, ({ $size }, style)=>"ym7uBBu" + (style["--ym7uBBu1"] = SIZES[$size].width, ""));
 const StyledButton = /*YAK Extracted CSS:
 .ym7uBBu3 {
   width: var(--ym7uBBu4);
   height: 32px;
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu2", ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBu3", {
-        "style": {
-            "--ym7uBBu4": ({ $size })=>SIZES[$size].width
-        }
-    }));
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu2", 2, ({ $active, $size }, style)=>"ym7uBBu2" + ($active ? " ym7uBBu3" + (style["--ym7uBBu4"] = SIZES[$size].width, "") : ""));
