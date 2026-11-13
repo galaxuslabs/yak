@@ -91,7 +91,7 @@ const yakStyled: StyledInternal = (Component, attrs) => {
     const runtimeStylesFn = css(
       styles,
       ...(values as CSSInterpolation<unknown>[]),
-    ) as RuntimeStyleProcessor<unknown>;
+    ) as unknown as RuntimeStyleProcessor<unknown>;
     const runtimeStyleProcessor = buildRuntimeStylesProcessor(
       runtimeStylesFn,
       parentRuntimeStylesFn,
@@ -100,11 +100,14 @@ const yakStyled: StyledInternal = (Component, attrs) => {
     /**
      * A component is static when it has no attrs or a constant `.attrs({...})`,
      * and no dynamic styles. A constant attrs object cannot read the theme, so
-     * a static component adds the same class names on every render. `styled()`
-     * picks the render function here: the static one skips the theme lookup
-     * and the style copy
+     * a static component adds the same class names on every render and its
+     * processor carries them as the string `$className`.
+     *
+     * `styled()` picks the render function here: the static one skips the
+     * theme lookup and the style copy
      */
     const isStatic = (!mergedAttrsFn || staticAttrs) && !runtimeStyleProcessor.$dynamic;
+    const staticClassName = isStatic ? runtimeStyleProcessor.$className : undefined;
 
     const Yak: React.FunctionComponent = isStatic
       ? /**
@@ -130,9 +133,15 @@ const yakStyled: StyledInternal = (Component, attrs) => {
           const filteredProps = removeNonDomProperties(source) as {
             className?: string;
           };
-          const classNames = new ClassNames(source.className);
-          runtimeStyleProcessor(source, classNames, undefined as unknown as React.CSSProperties);
-          filteredProps.className = classNames.value || undefined;
+          // The incoming class names come first, like in the dynamic function:
+          // styled(styled.div("a"))("b") with className="in" renders "in a b".
+          // A component without any class name renders no class attribute
+          const incoming = source.className;
+          filteredProps.className = staticClassName
+            ? incoming
+              ? incoming + " " + staticClassName
+              : staticClassName
+            : incoming || undefined;
           return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
         }
       : /**
@@ -327,24 +336,36 @@ type StaticAttrsCarrier = { [K in typeof INTERNAL.STATIC_ATTRS]?: object };
 const buildRuntimeStylesProcessor = <T,>(
   runtimeStylesFn: RuntimeStyleProcessor<T>,
   parentRuntimeStylesFn?: RuntimeStyleProcessor<T>,
-) => {
+): RuntimeStyleProcessor<T> => {
   if (runtimeStylesFn && parentRuntimeStylesFn) {
-    const combined: RuntimeStyleProcessor<T> = Object.assign(
-      (
-        props: T,
-        classNames: Parameters<RuntimeStyleProcessor<T>>[1],
-        style: React.CSSProperties,
-      ) => {
-        parentRuntimeStylesFn(props, classNames, style);
-        runtimeStylesFn(props, classNames, style);
-      },
-      // the chain is dynamic if any level is dynamic
-      { $dynamic: runtimeStylesFn.$dynamic || parentRuntimeStylesFn.$dynamic },
-    );
-    return combined;
+    const combined = (
+      props: T,
+      classNames: Parameters<RuntimeStyleProcessor<T>>[1],
+      style: React.CSSProperties,
+    ) => {
+      parentRuntimeStylesFn(props, classNames, style);
+      runtimeStylesFn(props, classNames, style);
+    };
+    // the chain is dynamic if any level is dynamic
+    return runtimeStylesFn.$dynamic || parentRuntimeStylesFn.$dynamic
+      ? Object.assign(combined, { $dynamic: true as const })
+      : Object.assign(combined, {
+          $dynamic: false as const,
+          $className: joinStaticClassNames(
+            parentRuntimeStylesFn.$className,
+            runtimeStylesFn.$className,
+          ),
+        });
   }
   return runtimeStylesFn || parentRuntimeStylesFn;
 };
+
+/**
+ * Joins the `$className` of two static processors, the parent first:
+ * join("a", "b") gives "a b" and join("", "b") gives "b"
+ */
+const joinStaticClassNames = (parent: string, own: string) =>
+  parent && own ? parent + " " + own : parent || own;
 
 /**
  * Internal function where attrs are passed to be processed

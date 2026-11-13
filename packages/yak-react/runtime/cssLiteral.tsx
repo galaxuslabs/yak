@@ -1,5 +1,5 @@
 import type { YakTheme } from "./index.ts";
-import { ClassNameCollector, RuntimeStyleProcessor } from "./publicStyledApi.js";
+import { ClassNameCollector, RuntimeStyleProcessor, StyleFunction } from "./publicStyledApi.js";
 
 export const yakComponentSymbol = Symbol("yak");
 
@@ -94,7 +94,7 @@ export function css<TProps>(
   styles: TemplateStringsArray,
   ...values: CSSInterpolation<NoInfer<TProps> & { theme: YakTheme }>[]
 ): ComponentStyles<TProps>;
-export function css<TProps>(...args: Array<any>): RuntimeStyleProcessor<TProps> {
+export function css<TProps>(...args: Array<any>): StyleFunction<TProps> {
   // Normally this  could be an array of strings passed, but as we transpile the usage of css`` ourselves, we control the arguments
   // and ensure that only the first argument is a string (class name of the non-dynamic styles)
   let className: string | undefined;
@@ -141,6 +141,8 @@ export function css<TProps>(...args: Array<any>): RuntimeStyleProcessor<TProps> 
   // This is just an optimization for the common case where there are no dynamic css functions
   // `$dynamic: false` lets the styled runtime skip theme lookup and
   // style-object allocation entirely for static components
+  // `$className` lets a static `styled(Component)` chain join the class names
+  // of its levels once at definition
   if (dynamicCssFunctions.length === 0) {
     return Object.assign(
       (_: unknown, classNames: ClassNameCollector) => {
@@ -148,8 +150,8 @@ export function css<TProps>(...args: Array<any>): RuntimeStyleProcessor<TProps> 
           classNames.add(className);
         }
       },
-      { $dynamic: false },
-    );
+      { $dynamic: false as const, $className: className || "" },
+    ) satisfies RuntimeStyleProcessor<TProps>;
   }
 
   return Object.assign(
@@ -161,8 +163,8 @@ export function css<TProps>(...args: Array<any>): RuntimeStyleProcessor<TProps> 
         unwrapProps(props, dynamicCssFunctions[i], classNames, allStyles);
       }
     },
-    { $dynamic: true },
-  );
+    { $dynamic: true as const },
+  ) satisfies RuntimeStyleProcessor<TProps>;
 }
 
 // Dynamic CSS with runtime logic
