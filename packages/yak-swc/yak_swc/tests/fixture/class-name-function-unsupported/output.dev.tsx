@@ -70,12 +70,12 @@ export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:input_Sty
 }), {
     "displayName": "StyleReadInValue"
 });
-export const OrOperator = /*YAK EXPORTED STYLED:OrOperator:input_OrOperator_m7uBBu*//*YAK Extracted CSS:
-.input_OrOperator___m7uBBu {
+export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:input_NullishOperator_m7uBBu*//*YAK Extracted CSS:
+.input_NullishOperator___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrOperator_m7uBBu", ({ $on })=>!$on || /*#__PURE__*/ css("input_OrOperator___m7uBBu")), {
-    "displayName": "OrOperator"
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NullishOperator_m7uBBu", ({ $on })=>$on ?? /*#__PURE__*/ css("input_NullishOperator___m7uBBu")), {
+    "displayName": "NullishOperator"
 });
 export const StyleRead = /*YAK EXPORTED STYLED:StyleRead:input_StyleRead_m7uBBu*//*YAK Extracted CSS:
 .input_StyleRead__style_m7uBBu {

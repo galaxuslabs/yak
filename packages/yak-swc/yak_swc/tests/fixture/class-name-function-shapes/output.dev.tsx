@@ -99,3 +99,25 @@ export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:input_NestedV
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedVariable_m7uBBu", 2, ({ $on, $x, $big }, style)=>"input_NestedVariable_m7uBBu" + ($on ? " input_NestedVariable__$on_m7uBBu" + (style["--input_NestedVariable__left_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($x * 2, "px"), style["--input_NestedVariable__top_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($big ? 8 : 4, "px"), "") : "")), {
     "displayName": "NestedVariable"
 });
+// a truthy left side of `||` adds nothing
+export const OrProp = /*YAK EXPORTED STYLED:OrProp:input_OrProp_m7uBBu*//*YAK Extracted CSS:
+.input_OrProp__not_\$label_m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrProp_m7uBBu", 0, ({ $label })=>"input_OrProp_m7uBBu" + ($label ? "" : " input_OrProp__not_$label_m7uBBu")), {
+    "displayName": "OrProp"
+});
+export const OrComparison = /*YAK EXPORTED STYLED:OrComparison:input_OrComparison_m7uBBu*//*YAK Extracted CSS:
+.input_OrComparison___m7uBBu {
+  padding: 0;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrComparison_m7uBBu", 0, ({ $size })=>"input_OrComparison_m7uBBu" + ($size !== "s" ? "" : " input_OrComparison___m7uBBu")), {
+    "displayName": "OrComparison"
+});
+export const OrChain = /*YAK EXPORTED STYLED:OrChain:input_OrChain_m7uBBu*//*YAK Extracted CSS:
+.input_OrChain___m7uBBu {
+  color: orange;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrChain_m7uBBu", 0, ({ $a, $b })=>"input_OrChain_m7uBBu" + (!$a || !$b ? "" : " input_OrChain___m7uBBu")), {
+    "displayName": "OrChain"
+});

@@ -66,3 +66,16 @@ export const NestedVariable = styled.div<{ $on: boolean; $x: number; $big: boole
       top: ${$big ? 8 : 4}px;
     `}
 `;
+
+// a truthy left side of `||` adds nothing
+export const OrProp = styled.div<{ $label?: string }>`
+  ${({ $label }) => $label || css`color: red;`}
+`;
+
+export const OrComparison = styled.div<{ $size: string }>`
+  ${({ $size }) => $size !== "s" || css`padding: 0;`}
+`;
+
+export const OrChain = styled.div<{ $a: boolean; $b: boolean }>`
+  ${({ $a, $b }) => !$a || !$b || css`color: orange;`}
+`;

@@ -79,3 +79,19 @@ export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:ym7uBBuO*//*Y
   top: var(--ym7uBBuR);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuO", 2, ({ $on, $x, $big }, style)=>"ym7uBBuO" + ($on ? " ym7uBBuP" + (style["--ym7uBBuQ"] = /*#__PURE__*/ __yak_cssValue($x * 2, "px"), style["--ym7uBBuR"] = /*#__PURE__*/ __yak_cssValue($big ? 8 : 4, "px"), "") : ""));
+// a truthy left side of `||` adds nothing
+export const OrProp = /*YAK EXPORTED STYLED:OrProp:ym7uBBuS*//*YAK Extracted CSS:
+.ym7uBBuT {
+  color: red;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuS", 0, ({ $label })=>"ym7uBBuS" + ($label ? "" : " ym7uBBuT"));
+export const OrComparison = /*YAK EXPORTED STYLED:OrComparison:ym7uBBuU*//*YAK Extracted CSS:
+.ym7uBBuV {
+  padding: 0;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuU", 0, ({ $size })=>"ym7uBBuU" + ($size !== "s" ? "" : " ym7uBBuV"));
+export const OrChain = /*YAK EXPORTED STYLED:OrChain:ym7uBBuW*//*YAK Extracted CSS:
+.ym7uBBuX {
+  color: orange;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuW", 0, ({ $a, $b })=>"ym7uBBuW" + (!$a || !$b ? "" : " ym7uBBuX"));

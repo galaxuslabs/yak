@@ -52,11 +52,11 @@ export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:ym7uBBuE*
         "--ym7uBBuF": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
     }
 });
-export const OrOperator = /*YAK EXPORTED STYLED:OrOperator:ym7uBBuG*//*YAK Extracted CSS:
+export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:ym7uBBuG*//*YAK Extracted CSS:
 .ym7uBBuH {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuG", ({ $on })=>!$on || /*#__PURE__*/ css("ym7uBBuH"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuG", ({ $on })=>$on ?? /*#__PURE__*/ css("ym7uBBuH"));
 export const StyleRead = /*YAK EXPORTED STYLED:StyleRead:ym7uBBuI*//*YAK Extracted CSS:
 .ym7uBBuJ {
   color: red;
