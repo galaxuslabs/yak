@@ -42,8 +42,8 @@ export const StyleReadInValue = styled.div`
   left: ${({ style }) => style.left}px;
 `;
 
-export const OrOperator = styled.div<{ $on: boolean }>`
-  ${({ $on }) => !$on || css`color: red;`}
+export const NullishOperator = styled.div<{ $on?: boolean }>`
+  ${({ $on }) => $on ?? css`color: red;`}
 `;
 
 export const StyleRead = styled.div`

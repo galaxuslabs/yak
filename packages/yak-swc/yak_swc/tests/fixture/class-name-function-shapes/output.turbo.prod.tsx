@@ -1,7 +1,7 @@
 import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVKIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1TCk7Cn0ueW03dUJCdU0gewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGxlZnQ6IHZhcigtLXltN3VCQnVRKTsKICB0b3A6IHZhcigtLXltN3VCQnVSKTsKfQ==";
+import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVKIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1TCk7Cn0ueW03dUJCdU0gewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGxlZnQ6IHZhcigtLXltN3VCQnVRKTsKICB0b3A6IHZhcigtLXltN3VCQnVSKTsKfS55bTd1QkJ1VCB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1ViB7CiAgcGFkZGluZzogMDsKfS55bTd1QkJ1WCB7CiAgY29sb3I6IG9yYW5nZTsKfQ==";
 // identifier props parameter read through members
 export const Ident = /*YAK EXPORTED STYLED:Ident:ym7uBBu*//*YAK Extracted CSS:
 .ym7uBBu1 {
@@ -79,3 +79,19 @@ export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:ym7uBBuO*//*Y
   top: var(--ym7uBBuR);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuO", 2, ({ $on, $x, $big }, style)=>"ym7uBBuO" + ($on ? " ym7uBBuP" + (style["--ym7uBBuQ"] = /*#__PURE__*/ __yak_cssValue($x * 2, "px"), style["--ym7uBBuR"] = /*#__PURE__*/ __yak_cssValue($big ? 8 : 4, "px"), "") : ""));
+// a truthy left side of `||` adds nothing
+export const OrProp = /*YAK EXPORTED STYLED:OrProp:ym7uBBuS*//*YAK Extracted CSS:
+.ym7uBBuT {
+  color: red;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuS", 0, ({ $label })=>"ym7uBBuS" + ($label ? "" : " ym7uBBuT"));
+export const OrComparison = /*YAK EXPORTED STYLED:OrComparison:ym7uBBuU*//*YAK Extracted CSS:
+.ym7uBBuV {
+  padding: 0;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuU", 0, ({ $size })=>"ym7uBBuU" + ($size !== "s" ? "" : " ym7uBBuV"));
+export const OrChain = /*YAK EXPORTED STYLED:OrChain:ym7uBBuW*//*YAK Extracted CSS:
+.ym7uBBuX {
+  color: orange;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuW", 0, ({ $a, $b })=>"ym7uBBuW" + (!$a || !$b ? "" : " ym7uBBuX"));

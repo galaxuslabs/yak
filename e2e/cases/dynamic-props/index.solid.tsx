@@ -73,6 +73,16 @@ const Tag = styled.span<{ $variant: "primary" | "danger" | "ghost"; $size?: "s" 
   }}px;
 `;
 
+// `||` adds the styles on its right side when the left side is falsy
+const Fallback = styled.div<{ $label?: string }>`
+  height: 10px;
+  ${({ $label }) =>
+    $label ||
+    css`
+      height: 30px;
+    `}
+`;
+
 // One style object for a styled component and a plain element. The styled
 // component adds its CSS variable for `width` to its own style only
 const sharedStyle = { opacity: 0.5 };
@@ -83,6 +93,8 @@ export default function App() {
       <Bar data-testid="bar-active" $width={200} $active={true} />
       <Bar data-testid="bar-inactive" $width={100} $active={false} />
       <Sized data-testid="sized" $size={3} $on={true} />
+      <Fallback data-testid="fallback" />
+      <Fallback data-testid="fallback-label" $label="label" />
       <Bar data-testid="bar-shared-style" style={sharedStyle} $width={50} $active={false} />
       <span data-testid="shared-style" style={sharedStyle} />
       <Tag data-testid="tag-primary" $variant="primary" $size="s" />
