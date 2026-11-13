@@ -1,7 +1,7 @@
 ---
 title: Migration from next-yak
 navTitle: From next-yak
-description: How to move a project from next-yak 9 to @yak/react 10. The API stays the same, so only package names, imports and a few options change.
+description: How to move a project from next-yak to @yak/react, with the codemod or by hand. The API stays the same, so only package names, imports and a few options change.
 cardTitle: Move from | next-yak to yak
 ---
 
@@ -31,6 +31,22 @@ land in `@yak/react`.
 - Node.js 22.18 or later on Node 22, or 23.6 or later
 - Next.js 16.4 or later, Vite 7 or later, or Rsbuild 2 or later
 - React 19
+
+## Run the codemod
+
+The codemod makes most of the changes on this page for you. Commit your work first, then run it in the root of
+your project:
+
+```bash
+npx next-yak migrate
+```
+
+To migrate by hand or to check what the codemod did, follow the steps below.
+
+<Callout type="info">
+  If npx shows `could not determine executable to run`, your project has an older `next-yak` version without the
+  codemod installed. Run `npx next-yak@latest migrate` instead.
+</Callout>
 
 ## 1. Replace the packages
 

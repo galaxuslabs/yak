@@ -33,8 +33,9 @@ plugins take the same option.
 ### A file still imports from next-yak
 
 `@yak/swc` only transforms imports from `@yak/react` and `@yak/solid`. A file that still imports from `next-yak`
-builds without an error, but yak never compiles it, so its styles silently go missing. Search the project for
-`next-yak` and follow the [migration guide](/docs/migration-from-next-yak).
+builds without an error, but yak never compiles it, so its styles silently go missing. Run `npx next-yak migrate` to
+update the remaining imports, or search the project for `next-yak` and follow the
+[migration guide](/docs/migration-from-next-yak).
 
 ### styled-components wins the specificity
 

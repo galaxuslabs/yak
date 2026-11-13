@@ -63,7 +63,17 @@ The obvious new name was `yak`, but on npm it looked squatted. We asked npm supp
 
 ## How to migrate from next-yak to @yak/react
 
-The API does not change. `styled`, `css`, `keyframes`, `globalStyle` and the `css` prop work the same, and only the steps below change. `@yak/react` 10 needs Node.js 22.18 or later, and with Next.js it needs version 16.4 or later. The [migration guide](/docs/migration-from-next-yak) in the docs has the same steps and stays up to date.
+The API does not change. `styled`, `css`, `keyframes`, `globalStyle` and the `css` prop work the same as before.
+`@yak/react` 10 needs Node.js 22.18 or later, and with Next.js it needs version 16.4 or later.
+
+The fastest way to migrate is the codemod. Commit your work first, then run it in the root of your project:
+
+```bash
+npx next-yak migrate
+```
+
+To migrate by hand or to check what the codemod did, follow the steps below or the
+[migration guide](/docs/migration-from-next-yak).
 
 ### 1. Replace the packages
 
