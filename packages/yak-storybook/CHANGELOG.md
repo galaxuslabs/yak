@@ -22,22 +22,23 @@ No changes in this release.
 
 ### Major Changes
 
-- e030a2d: Remove the option `experiments.transpilationMode`. The addon now always writes plain CSS.
-- 3724852: `@yak/storybook` needs Node.js 22.18 or later. CommonJS code can now load it with `require()`.
+- Remove the option `experiments.transpilationMode`. The addon now always writes plain CSS. ([#667](https://github.com/galaxuslabs/yak/pull/667))
+
+- `@yak/storybook` needs Node.js 22.18 or later. CommonJS code can now load it with `require()`. ([#681](https://github.com/galaxuslabs/yak/pull/681))
 
 ### Patch Changes
 
-- e9006fa: Support storybook 11
+- Support storybook 11 ([#687](https://github.com/galaxuslabs/yak/pull/687))
 
 ## 10.0.0-rc.0
 
 ### Major Changes
 
-- 50ef4de: Rename `storybook-addon-yak` to `@yak/storybook`.
+- Rename `storybook-addon-yak` to `@yak/storybook`. ([#665](https://github.com/galaxuslabs/yak/pull/665))
 
 ### Patch Changes
 
-- Updated dependencies [50ef4de]
+- Updated dependencies:
   - @yak/react@10.0.0-rc.0
 
 ## 9.10.2
@@ -48,7 +49,7 @@ No changes in this release.
 
 ### Minor Changes
 
-- 71b8d7b: Update dependencies and publish the direct dependencies with semver ranges instead of exact pins
+- Update dependencies and publish the direct dependencies with semver ranges instead of exact pins ([#641](https://github.com/galaxuslabs/yak/pull/641))
 
 ## 9.9.0
 
@@ -66,53 +67,40 @@ No changes in this release.
 
 ### Patch Changes
 
-- 2d9b301: Updated all dependencies
+- Updated all dependencies ([#539](https://github.com/galaxuslabs/yak/pull/539))
 
 ## 9.4.1
 
 ### Patch Changes
 
-- Updated dependencies [2da1696]
-- Updated dependencies [c1b8ad6]
-- Updated dependencies [15f9faf]
-- Updated dependencies [680d9aa]
-- Updated dependencies [2c58837]
+- Updated dependencies:
   - next-yak@9.4.1
 
 ## 9.4.0
 
 ### Patch Changes
 
-- Updated dependencies [b90e1b5]
+- Updated dependencies:
   - next-yak@9.4.0
 
 ## 9.3.0
 
 ### Patch Changes
 
-- Updated dependencies [e414bca]
-- Updated dependencies [f7ef4cc]
-- Updated dependencies [7e2614b]
-- Updated dependencies [2e9ad49]
+- Updated dependencies:
   - next-yak@9.3.0
 
 ## 9.2.0
 
 ### Patch Changes
 
-- Updated dependencies [87091fe]
-- Updated dependencies [f90c65b]
-- Updated dependencies [60e8041]
-- Updated dependencies [8c1b6f1]
-- Updated dependencies [0841721]
+- Updated dependencies:
   - next-yak@9.2.0
 
 ## 9.1.0
 
 ### Patch Changes
 
-- 7ea675a: Release initial storybook addon for next-yak
-- Updated dependencies [3e4fc3b]
-- Updated dependencies [ddb0e93]
-- Updated dependencies [846cc4c]
+- Release initial storybook addon for next-yak ([#457](https://github.com/galaxuslabs/yak/pull/457))
+- Updated dependencies:
   - next-yak@9.1.0

@@ -35,6 +35,7 @@
     "release": "pnpm --filter='./packages/*' run build && npm_config_ignore_scripts=true changeset publish"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "catalog:dev",
     "@changesets/cli": "catalog:dev",
     "@yak/eslint-plugin": "workspace:*",
     "knip": "catalog:dev",
