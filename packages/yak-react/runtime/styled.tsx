@@ -96,81 +96,79 @@ const yakStyled: StyledInternal = (Component, attrs) => {
       runtimeStylesFn,
       parentRuntimeStylesFn,
     );
-    const Yak: React.FunctionComponent = (props) => {
-      // fast path for components that contribute the same thing on every
-      // render — no attrs at all, or a constant `.attrs({...})` which cannot
-      // read the theme — and no dynamic styles. Contributes the chain's class
-      // names and strips $-props; skips theme lookup, prop spreading and style
-      // cloning entirely (this is NOT against the rule of hooks — the condition
-      // is constant for the lifetime of the component)
-      if ((!mergedAttrsFn || staticAttrs) && !runtimeStyleProcessor.$dynamic) {
-        // without attrs `source` aliases `props`, so the class names are
-        // written to the fresh, filtered object rather than back into props
-        const source = (
-          staticAttrs
-            ? combineProps(
-                props as { className?: string; style?: React.CSSProperties },
-                staticAttrs,
-              )
-            : props
-        ) as { className?: string; style?: React.CSSProperties };
-        const filteredProps = removeNonDomProperties(source) as {
-          className?: string;
-        };
-        const classNames = new ClassNames(source.className);
-        runtimeStyleProcessor(source, classNames, undefined as unknown as React.CSSProperties);
-        filteredProps.className = classNames.value || undefined;
-        const Target = targetComponent as React.ElementType;
-        return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
-      }
+    const Target = targetComponent as React.ElementType;
+    // A component is static when it has no attrs or a constant `.attrs({...})`,
+    // and no dynamic styles. A constant attrs object cannot read the theme, so
+    // a static component adds the same class names on every render. `styled()`
+    // picks the render function here: the static one skips the theme lookup
+    // and the style copy
+    const isStatic = (!mergedAttrsFn || staticAttrs) && !runtimeStyleProcessor.$dynamic;
 
-      // attrs functions and dynamic style functions receive the theme —
-      // fully static components take the fast path above and never read the
-      // theme context
-      const theme = useTheme();
-
-      // overwrite and merge the current props with the processed attrs, the
-      // merged attrs function runs the attrs of every level of the chain
-      // from the innermost to the outermost
-      const combinedProps = combineProps(
-        {
-          theme,
-          ...(props as {
+    const Yak: React.FunctionComponent = isStatic
+      ? (props) => {
+          // without attrs `source` aliases `props`, so the class names are
+          // written to the fresh, filtered object rather than back into props
+          const source = (
+            staticAttrs
+              ? combineProps(
+                  props as { className?: string; style?: React.CSSProperties },
+                  staticAttrs,
+                )
+              : props
+          ) as { className?: string; style?: React.CSSProperties };
+          const filteredProps = removeNonDomProperties(source) as {
             className?: string;
-            style?: React.CSSProperties;
-          }),
-        } as {
-          theme: YakTheme;
-          className?: string;
-          style?: React.CSSProperties;
-        },
-        mergedAttrsFn?.({ theme, ...(props as any) }),
-      );
+          };
+          const classNames = new ClassNames(source.className);
+          runtimeStyleProcessor(source, classNames, undefined as unknown as React.CSSProperties);
+          filteredProps.className = classNames.value || undefined;
+          return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
+        }
+      : (props) => {
+          // attrs functions and dynamic style functions receive the theme
+          const theme = useTheme();
 
-      // execute all functions inside the style literal
-      // e.g. styled.button`color: ${props => props.color};`
-      const classNames = new ClassNames(combinedProps.className);
-      // static processors never write style values, so the incoming style
-      // object can be passed through without a defensive copy
-      const styles = runtimeStyleProcessor.$dynamic
-        ? { ...combinedProps.style }
-        : combinedProps.style;
-      runtimeStyleProcessor(combinedProps, classNames, styles as React.CSSProperties);
+          // overwrite and merge the current props with the processed attrs, the
+          // merged attrs function runs the attrs of every level of the chain
+          // from the innermost to the outermost
+          const combinedProps = combineProps(
+            {
+              theme,
+              ...(props as {
+                className?: string;
+                style?: React.CSSProperties;
+              }),
+            } as {
+              theme: YakTheme;
+              className?: string;
+              style?: React.CSSProperties;
+            },
+            mergedAttrsFn?.({ theme, ...(props as any) }),
+          );
 
-      combinedProps.className = classNames.value || undefined;
-      if (styles !== combinedProps.style) {
-        combinedProps.style = styles;
-      }
+          // execute all functions inside the style literal
+          // e.g. styled.button`color: ${props => props.color};`
+          const classNames = new ClassNames(combinedProps.className);
+          // static processors never write style values, so the incoming style
+          // object can be passed through without a defensive copy
+          const styles = runtimeStyleProcessor.$dynamic
+            ? { ...combinedProps.style }
+            : combinedProps.style;
+          runtimeStyleProcessor(combinedProps, classNames, styles as React.CSSProperties);
 
-      // removes the yak theme (after the runtime styles read it) together with
-      // all $-props, so they reach neither DOM elements nor custom components
-      const filteredProps = removeNonDomProperties(combinedProps, theme);
+          combinedProps.className = classNames.value || undefined;
+          if (styles !== combinedProps.style) {
+            combinedProps.style = styles;
+          }
 
-      // render the chain's target directly — parent wrappers contribute only
-      // their (already merged) attrs and style processors
-      const Target = targetComponent as React.ElementType;
-      return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
-    };
+          // removes the yak theme (after the runtime styles read it) together with
+          // all $-props, so they reach neither DOM elements nor custom components
+          const filteredProps = removeNonDomProperties(combinedProps, theme);
+
+          // render the chain's target directly — parent wrappers contribute only
+          // their (already merged) attrs and style processors
+          return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
+        };
 
     // Direct write instead of Object.assign (faster & smaller)
     const taggedYak = Yak as React.FunctionComponent & {
