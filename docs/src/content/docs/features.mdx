@@ -740,192 +740,47 @@ const Button = styled.button`
 
 See [Theming](/docs/api#theming) in the API reference for `useTheme`, `YakThemeProvider` and `yak.context.ts`.
 
-<Callout type="warn">
-  Reading `cookies()` or `headers()` in `getYakThemeContext` makes a Next.js App Router route
-  dynamic, so the page cannot be cached as static HTML. For light and dark mode on a static
-  route, use the recipe below instead of putting the color scheme in the theme context.
-</Callout>
-
 ### Light and dark mode on static routes [#light-dark-static-routes]
 
-The cookie example above is the right tool for values that must be known on the server, like a
-brand or a feature flag. Light and dark mode does not need that. If you read the color scheme
-from a cookie during server rendering, the route becomes dynamic. If you read it only on the
-client, for example from `localStorage` inside a component, the route stays static, but it is
-easy to get a hydration mismatch: the server HTML is the same for every visitor, then the
-client paints a different tree once it knows the theme.
+In styled-components you switch light and dark mode with two theme objects in a
+`ThemeProvider`. In yak the natural translation is `${({ theme }) => …}` with
+`yak.context.ts`. Those values are resolved at render time, and reading
+`cookies()` there makes the route dynamic.
 
-Keep the theme in CSS instead. The server still sends one HTML document, the browser picks the
-colors, and a small script can apply a saved preference before the first paint. This is the
-same approach [yak.style](https://yak.style) uses.
+Use static `light-dark()` tokens instead of `theme`:
 
-#### Follow the OS with `color-scheme` and `light-dark()`
-
-Set `color-scheme: light dark` on the root element so `light-dark()` uses the operating system
-preference when no override is set. These values are static design tokens, so yak inlines them
-at build time.
-
-```tsx title="theme.tsx"
-import { css } from "@yak/react";
-
+```ts
 export const colors = {
-  background: "light-dark(#faf5ef, #2b273b)",
-  text: "light-dark(#4a2c82, #d7d3e8)",
+  background: "light-dark(#fff, #111)",
+  text: "light-dark(#111, #eee)",
 };
+```
 
-export const themeRoot = css`
-  color-scheme: light dark;
+```tsx
+import { globalStyle } from "@yak/react";
 
-  &[data-theme="dark"] {
-    color-scheme: dark;
+globalStyle`
+  :root {
+    color-scheme: light dark;
   }
-
-  &[data-theme="light"] {
+  :root[data-theme="light"] {
     color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
   }
 `;
 ```
 
-```tsx title="app/layout.tsx"
-import { styled } from "@yak/react";
-import { colors, themeRoot } from "../theme";
-
-const Html = styled.html`
-  ${themeRoot};
+```tsx
+const Page = styled.main`
   background: ${colors.background};
   color: ${colors.text};
 `;
 ```
 
-`[data-theme]` switches `color-scheme`, which makes every `light-dark()` follow the chosen
-theme. Native form controls and scrollbars follow it too. If you prefer not to use
-`light-dark()`, set CSS variables under `@media (prefers-color-scheme: dark)` and
-`:root[data-theme="dark"]` instead.
-
-#### Apply a saved preference before paint
-
-Store the user's choice in `localStorage`, not in a cookie that a Server Component reads. A
-blocking script at the start of `<body>` sets `data-theme` on `<html>` before the first paint,
-so the page does not flash the operating system theme first.
-
-Add `suppressHydrationWarning` on the `<html>` element. The server HTML has no `data-theme`
-attribute, and the script may add one before React hydrates. The warning is suppressed only
-on that element, not on the whole tree.
-
-```tsx title="app/layout.tsx"
-const setTheme = `
-try {
-  var t = localStorage.getItem("theme");
-  if (t === "light" || t === "dark")
-    document.documentElement.dataset.theme = t;
-} catch (e) {}
-`;
-
-export default function RootLayout({ children }) {
-  return (
-    <Html lang="en" suppressHydrationWarning>
-      <body>
-        <script dangerouslySetInnerHTML={{ __html: setTheme }} />
-        {children}
-      </body>
-    </Html>
-  );
-}
-```
-
-#### Toggle the theme on the client
-
-The toggle only writes `localStorage` and the `data-theme` attribute. It does not need
-`YakThemeProvider` or `yak.context.ts`.
-
-Do not pick logos, icons or whole subtrees with JavaScript during render. The server cannot
-read the operating system preference or `localStorage`, so a condition like
-`localStorage.getItem("theme") === "dark" ? <DarkLogo /> : <LightLogo />` hydrates with the
-wrong tree. Let CSS choose the face instead, so the first paint is already correct:
-
-```tsx title="theme-toggle.tsx"
-"use client";
-
-import { styled } from "@yak/react";
-
-type Theme = "system" | "light" | "dark";
-
-function applyTheme(theme: Theme) {
-  const el = document.documentElement;
-  try {
-    if (theme === "system") {
-      delete el.dataset.theme;
-      localStorage.removeItem("theme");
-    } else {
-      el.dataset.theme = theme;
-      localStorage.setItem("theme", theme);
-    }
-  } catch {}
-}
-
-function readTheme(): Theme {
-  const forced = document.documentElement.dataset.theme;
-  return forced === "light" || forced === "dark" ? forced : "system";
-}
-
-export function ThemeToggle() {
-  return (
-    <Button
-      type="button"
-      aria-label="Toggle color theme"
-      onClick={() => {
-        const theme = readTheme();
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        // From System, force the side the OS is not giving, so every click changes the page.
-        const next: Theme =
-          theme === "system" ? (prefersDark ? "light" : "dark") : "system";
-        applyTheme(next);
-      }}
-    >
-      <SystemFace aria-hidden="true">System</SystemFace>
-      <LightFace aria-hidden="true">Light</LightFace>
-      <DarkFace aria-hidden="true">Dark</DarkFace>
-    </Button>
-  );
-}
-
-const Face = styled.span`
-  display: none;
-`;
-
-// No data-theme means the page follows the OS, so show "System".
-const SystemFace = styled(Face)`
-  :root:not([data-theme]) & {
-    display: inline;
-  }
-`;
-
-const LightFace = styled(Face)`
-  :root[data-theme="light"] & {
-    display: inline;
-  }
-`;
-
-const DarkFace = styled(Face)`
-  :root[data-theme="dark"] & {
-    display: inline;
-  }
-`;
-
-const Button = styled.button`
-  color: inherit;
-`;
-```
-
-Render `<ThemeToggle />` in your root layout or header.
-
-If you need the theme in JavaScript after mount, for example to pass a color to a chart, read
-it with `useSyncExternalStore` and a server snapshot such as `"system"`. That snapshot keeps
-hydration aligned with the server HTML, then the client updates after mount. A
-`typeof window !== "undefined"` branch does not, and will mismatch.
-
-Use `YakThemeProvider` and `yak.context.ts` for values that must be known on the server. Those
-routes are dynamic, and that is expected.
+Other approaches exist too, such as CSS variables or following the operating
+system preference only.
 
 ## CSS Prop
 
