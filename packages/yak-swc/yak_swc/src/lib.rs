@@ -22,6 +22,7 @@ use utils::cross_file_selectors::ImportType;
 use utils::css_value_call::css_value_call;
 use utils::css_variable_dedup::CssVariableDedup;
 use utils::fold::css_prop::HasCSSProp;
+use utils::fold::definition::fold_definition;
 use utils::fold::StyledFold;
 use utils::parse_quasi::{css_error_span, parse_quasi, source_position};
 
@@ -1561,6 +1562,29 @@ where
         );
       }
     }
+
+    // A dynamic React styled component whose runtime expressions only toggle
+    // class names compiles to one function that returns the class string, e.g.
+    // `__yak_button("yB", ({ $on }) => $on && css("yB1"))` ->
+    // `__yak_button("yB", 0, ({ $on: __yak_$on }) => "yB" + (__yak_$on ? " yB1" : ""))`.
+    // It runs on the finished runtime expressions, after the same-file fold
+    // above took its own copy of them
+    let runtime_expressions = match transform.get_component_class_name() {
+      Some(class_name)
+        if is_top_level
+          && yak_library_function_name.deref() == "styled"
+          && runtime_css_variables.is_empty()
+          && matches!(self.yak_imports().runtime(), YakRuntime::React) =>
+      {
+        fold_definition(
+          class_name,
+          &runtime_expressions,
+          self.yak_library_imports.as_ref().unwrap(),
+        )
+        .unwrap_or(runtime_expressions)
+      }
+      _ => runtime_expressions,
+    };
 
     let transform_result = transform.transform_expression(
       n,

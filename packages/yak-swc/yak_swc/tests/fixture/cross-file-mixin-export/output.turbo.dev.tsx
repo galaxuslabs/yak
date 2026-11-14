@@ -34,7 +34,7 @@ export const Button = /*YAK EXPORTED STYLED:Button:input_Button_m7uBBu*//*YAK Ex
     color: black;
   }
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_Button_m7uBBu", ({ $isSet })=>$isSet && true && true && true && /*#__PURE__*/ css("input_Button___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_Button_m7uBBu", 0, ({ $isSet: __yak_$isSet })=>"input_Button_m7uBBu" + (__yak_$isSet && true && true && true ? " input_Button___m7uBBu" : "")), {
     "displayName": "Button"
 });
 export const aspectRatios = {

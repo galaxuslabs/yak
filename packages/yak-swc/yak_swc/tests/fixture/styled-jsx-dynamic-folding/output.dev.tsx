@@ -12,7 +12,7 @@ const IconContainer = /*YAK Extracted CSS:
 .input_IconContainer__\$hasChildren_m7uBBu {
   margin-right: 12px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_span("input_IconContainer_m7uBBu", ({ $hasChildren })=>$hasChildren && /*#__PURE__*/ css("input_IconContainer__$hasChildren_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_span("input_IconContainer_m7uBBu", 0, ({ $hasChildren: __yak_$hasChildren })=>"input_IconContainer_m7uBBu" + (__yak_$hasChildren ? " input_IconContainer__$hasChildren_m7uBBu" : "")), {
     "displayName": "IconContainer"
 });
 // folds: ternary mixin plus a second expression
@@ -29,7 +29,7 @@ const Many = /*YAK Extracted CSS:
 .input_Many__\$bold_m7uBBu {
   font-weight: bold;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_p("input_Many_m7uBBu", ({ $variant })=>$variant === "primary" ? /*#__PURE__*/ css("input_Many___m7uBBu") : /*#__PURE__*/ css("input_Many___m7uBBu-01"), ({ $bold })=>$bold && /*#__PURE__*/ css("input_Many__$bold_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_p("input_Many_m7uBBu", 0, ({ $variant: __yak_$variant, $bold: __yak_$bold })=>"input_Many_m7uBBu" + (__yak_$variant === "primary" ? " input_Many___m7uBBu" : " input_Many___m7uBBu-01") + (__yak_$bold ? " input_Many__$bold_m7uBBu" : "")), {
     "displayName": "Many"
 });
 // folds: zero-arg expressions reference the outer scope like the css prop
@@ -41,7 +41,7 @@ const Scoped = /*YAK Extracted CSS:
 .input_Scoped__isCompact_m7uBBu {
   line-height: 1;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_em("input_Scoped_m7uBBu", ()=>isCompact && /*#__PURE__*/ css("input_Scoped__isCompact_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_em("input_Scoped_m7uBBu", 0, ()=>"input_Scoped_m7uBBu" + (isCompact ? " input_Scoped__isCompact_m7uBBu" : "")), {
     "displayName": "Scoped"
 });
 // the twice-referenced $size attribute is read at two sites, so an impure
@@ -53,7 +53,7 @@ const Twice = /*YAK Extracted CSS:
 .input_Twice___m7uBBu {
   padding: 8px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_Twice_m7uBBu", ({ $size })=>$size && $size === "big" && /*#__PURE__*/ css("input_Twice___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_Twice_m7uBBu", 0, ({ $size: __yak_$size })=>"input_Twice_m7uBBu" + (__yak_$size && __yak_$size === "big" ? " input_Twice___m7uBBu" : "")), {
     "displayName": "Twice"
 });
 // folds: one read, inside a callback - an impure value would run once per list
@@ -67,7 +67,7 @@ const InCallback = /*YAK Extracted CSS:
 .input_InCallback___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_InCallback_m7uBBu", ({ $n })=>sizes.some((x)=>x > $n) && /*#__PURE__*/ css("input_InCallback___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_InCallback_m7uBBu", 0, ({ $n: __yak_$n })=>"input_InCallback_m7uBBu" + (sizes.some((x)=>x > __yak_$n) ? " input_InCallback___m7uBBu" : "")), {
     "displayName": "InCallback"
 });
 // folds: one read, behind a short circuit - an impure value would not run at
@@ -76,7 +76,7 @@ const ShortCircuit = /*YAK Extracted CSS:
 .input_ShortCircuit___m7uBBu {
   color: blue;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ShortCircuit_m7uBBu", ({ $b })=>isCompact && $b && /*#__PURE__*/ css("input_ShortCircuit___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ShortCircuit_m7uBBu", 0, ({ $b: __yak_$b })=>"input_ShortCircuit_m7uBBu" + (isCompact && __yak_$b ? " input_ShortCircuit___m7uBBu" : "")), {
     "displayName": "ShortCircuit"
 });
 // folds: the conditions read $a before $b, the attributes pass $b first - the
@@ -88,7 +88,7 @@ const Pair = /*YAK Extracted CSS:
 .input_Pair__\$b_m7uBBu {
   top: 0;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Pair_m7uBBu", ({ $a })=>$a && /*#__PURE__*/ css("input_Pair__$a_m7uBBu"), ({ $b })=>$b && /*#__PURE__*/ css("input_Pair__$b_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Pair_m7uBBu", 0, ({ $a: __yak_$a, $b: __yak_$b })=>"input_Pair_m7uBBu" + (__yak_$a ? " input_Pair__$a_m7uBBu" : "") + (__yak_$b ? " input_Pair__$b_m7uBBu" : "")), {
     "displayName": "Pair"
 });
 // folds: a single condition to pin what counts as safe to inline
@@ -99,7 +99,7 @@ const Boxed = /*YAK Extracted CSS:
 .input_Boxed__\$v_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Boxed_m7uBBu", ({ $v })=>$v && /*#__PURE__*/ css("input_Boxed__$v_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Boxed_m7uBBu", 0, ({ $v: __yak_$v })=>"input_Boxed_m7uBBu" + (__yak_$v ? " input_Boxed__$v_m7uBBu" : "")), {
     "displayName": "Boxed"
 });
 // folds: an arrow returning from a block body is a condition like any other
@@ -110,9 +110,7 @@ const BlockBody = /*YAK Extracted CSS:
 .input_BlockBody__\$wide_m7uBBu {
   padding: 8px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_aside("input_BlockBody_m7uBBu", ({ $wide })=>{
-    return $wide && /*#__PURE__*/ css("input_BlockBody__$wide_m7uBBu");
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_aside("input_BlockBody_m7uBBu", 0, ({ $wide: __yak_$wide })=>"input_BlockBody_m7uBBu" + (__yak_$wide ? " input_BlockBody__$wide_m7uBBu" : "")), {
     "displayName": "BlockBody"
 });
 // usages bail: only plain destructuring substitutes - a rename, a default or a
@@ -121,7 +119,7 @@ const Renamed = /*YAK Extracted CSS:
 .input_Renamed___m7uBBu {
   padding: 8px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_mark("input_Renamed_m7uBBu", ({ $size: size })=>size && size === "big" && /*#__PURE__*/ css("input_Renamed___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_mark("input_Renamed_m7uBBu", 0, ({ $size: __yak_$size })=>"input_Renamed_m7uBBu" + (__yak_$size && __yak_$size === "big" ? " input_Renamed___m7uBBu" : "")), {
     "displayName": "Renamed"
 });
 const Defaulted = /*YAK Extracted CSS:
@@ -161,7 +159,7 @@ const ActionButton = /*YAK Extracted CSS:
 .input_ActionButton___m7uBBu {
   cursor: pointer;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ActionButton_m7uBBu", ({ disabled })=>!disabled && /*#__PURE__*/ css("input_ActionButton___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ActionButton_m7uBBu", 0, ({ disabled: __yak_disabled })=>"input_ActionButton_m7uBBu" + (!__yak_disabled ? " input_ActionButton___m7uBBu" : "")), {
     "displayName": "ActionButton"
 });
 // usages bail: the runtime injects the theme which is unknown at build time
@@ -172,7 +170,7 @@ const Themed = /*YAK Extracted CSS:
 .input_Themed___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_strong("input_Themed_m7uBBu", ({ theme, $accent })=>theme.highContrast && $accent && /*#__PURE__*/ css("input_Themed___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_strong("input_Themed_m7uBBu", 1, ({ $accent: __yak_$accent }, __yak_style, __yak_theme)=>"input_Themed_m7uBBu" + (__yak_theme.highContrast && __yak_$accent ? " input_Themed___m7uBBu" : "")), {
     "displayName": "Themed"
 });
 // usages bail: the mixin carries a css variable set through the style prop
@@ -192,7 +190,7 @@ const DynamicExtended = /*YAK Extracted CSS:
 .input_DynamicExtended__\$active_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ (styled(ImportedCard))("input_DynamicExtended_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_DynamicExtended__$active_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ (styled(ImportedCard))("input_DynamicExtended_m7uBBu", 0, ({ $active: __yak_$active })=>"input_DynamicExtended_m7uBBu" + (__yak_$active ? " input_DynamicExtended__$active_m7uBBu" : "")), {
     "displayName": "DynamicExtended"
 });
 // usages bail: attrs
@@ -202,7 +200,7 @@ const DynamicAttrs = /*YAK Extracted CSS:
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ (__yak.__yak_button.attrs({
     type: "button"
-}))("input_DynamicAttrs_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_DynamicAttrs__$active_m7uBBu")), {
+}))("input_DynamicAttrs_m7uBBu", 0, ({ $active: __yak_$active })=>"input_DynamicAttrs_m7uBBu" + (__yak_$active ? " input_DynamicAttrs__$active_m7uBBu" : "")), {
     "displayName": "DynamicAttrs"
 });
 // usages bail: a namespaced attribute is keyed by its plain name everywhere
@@ -216,7 +214,7 @@ const Sprite = /*YAK Extracted CSS:
 .input_Sprite__\$muted_m7uBBu {
   opacity: 0.5;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_use("input_Sprite_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_Sprite__$active_m7uBBu"), ({ $muted })=>$muted && /*#__PURE__*/ css("input_Sprite__$muted_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_use("input_Sprite_m7uBBu", 0, ({ $active: __yak_$active, $muted: __yak_$muted })=>"input_Sprite_m7uBBu" + (__yak_$active ? " input_Sprite__$active_m7uBBu" : "") + (__yak_$muted ? " input_Sprite__$muted_m7uBBu" : "")), {
     "displayName": "Sprite"
 });
 // usages bail: the runtime passes more than the attributes to the expressions
@@ -224,7 +222,7 @@ const ClassNameBail = /*YAK Extracted CSS:
 .input_ClassNameBail__className_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ClassNameBail_m7uBBu", ({ className })=>className && /*#__PURE__*/ css("input_ClassNameBail__className_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ClassNameBail_m7uBBu", 0, ({ className: __yak_className })=>"input_ClassNameBail_m7uBBu" + (__yak_className ? " input_ClassNameBail__className_m7uBBu" : "")), {
     "displayName": "ClassNameBail"
 });
 // usages bail: React strips key before the component sees props, so the
@@ -233,7 +231,7 @@ const KeyBail = /*YAK Extracted CSS:
 .input_KeyBail___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_KeyBail_m7uBBu", ({ key })=>key === "active" && /*#__PURE__*/ css("input_KeyBail___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_KeyBail_m7uBBu", 0, ({ key: __yak_key })=>"input_KeyBail_m7uBBu" + (__yak_key === "active" ? " input_KeyBail___m7uBBu" : "")), {
     "displayName": "KeyBail"
 });
 // folds: identifier param with member access - `(p) => p.$x` is the common
@@ -254,7 +252,7 @@ const MemberButton = /*YAK Extracted CSS:
 .input_MemberButton__p_\$fullWidth_m7uBBu {
   width: 100%;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_MemberButton_m7uBBu", (p)=>!p.$active && /*#__PURE__*/ css("input_MemberButton___m7uBBu"), (p)=>p.$variant === "secondary" && /*#__PURE__*/ css("input_MemberButton___m7uBBu-01"), (p)=>p.$variant === "ghost" && /*#__PURE__*/ css("input_MemberButton___m7uBBu-02"), (p)=>p.$fullWidth && /*#__PURE__*/ css("input_MemberButton__p_$fullWidth_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_MemberButton_m7uBBu", 0, ({ $active: __yak_$active, $variant: __yak_$variant, $fullWidth: __yak_$fullWidth })=>"input_MemberButton_m7uBBu" + (!__yak_$active ? " input_MemberButton___m7uBBu" : "") + (__yak_$variant === "secondary" ? " input_MemberButton___m7uBBu-01" : "") + (__yak_$variant === "ghost" ? " input_MemberButton___m7uBBu-02" : "") + (__yak_$fullWidth ? " input_MemberButton__p_$fullWidth_m7uBBu" : "")), {
     "displayName": "MemberButton"
 });
 // usages bail: the whole props object escapes into the function call
@@ -270,7 +268,7 @@ const MemberTheme = /*YAK Extracted CSS:
 .input_MemberTheme___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_MemberTheme_m7uBBu", (p)=>p.theme.highContrast && p.$accent && /*#__PURE__*/ css("input_MemberTheme___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_MemberTheme_m7uBBu", 1, ({ $accent: __yak_$accent }, __yak_style, __yak_theme)=>"input_MemberTheme_m7uBBu" + (__yak_theme.highContrast && __yak_$accent ? " input_MemberTheme___m7uBBu" : "")), {
     "displayName": "MemberTheme"
 });
 // usages bail: computed member access
@@ -286,7 +284,7 @@ const MemberKey = /*YAK Extracted CSS:
 .input_MemberKey___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_MemberKey_m7uBBu", (p)=>p.key === "active" && /*#__PURE__*/ css("input_MemberKey___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_MemberKey_m7uBBu", 0, ({ key: __yak_key })=>"input_MemberKey_m7uBBu" + (__yak_key === "active" ? " input_MemberKey___m7uBBu" : "")), {
     "displayName": "MemberKey"
 });
 // folds: passing key at a call site never blocks folding - only reading it
@@ -295,7 +293,7 @@ const KeyedRow = /*YAK Extracted CSS:
 .input_KeyedRow__p_\$active_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_KeyedRow_m7uBBu", (p)=>p.$active && /*#__PURE__*/ css("input_KeyedRow__p_$active_m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_KeyedRow_m7uBBu", 0, ({ $active: __yak_$active })=>"input_KeyedRow_m7uBBu" + (__yak_$active ? " input_KeyedRow__p_$active_m7uBBu" : "")), {
     "displayName": "KeyedRow"
 });
 const Optimizable = ({ active, size, i: i1 }: {

@@ -73,7 +73,7 @@ const ToggleBase = /*YAK Extracted CSS:
 .ym7uBBuC {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBuB", ({ $on })=>$on && /*#__PURE__*/ css("ym7uBBuC"));
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBuB", 0, ({ $on: __yak_$on })=>"ym7uBBuB" + (__yak_$on ? " ym7uBBuC" : ""));
 // folds to the wrapped component: a dynamic parent never collapses
 const OfDynamic = /*YAK Extracted CSS:
 .ym7uBBuD {

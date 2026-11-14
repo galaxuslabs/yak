@@ -11,7 +11,7 @@ const Category = /*YAK Extracted CSS:
 .input_Category___m7uBBu {
   color: crimson;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_Category_m7uBBu", ({ $label })=>$label === "Food & Drink" && /*#__PURE__*/ css("input_Category___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_li("input_Category_m7uBBu", 0, ({ $label: __yak_$label })=>"input_Category_m7uBBu" + (__yak_$label === "Food & Drink" ? " input_Category___m7uBBu" : "")), {
     "displayName": "Category"
 });
 const Shortcut = /*YAK Extracted CSS:
@@ -21,7 +21,7 @@ const Shortcut = /*YAK Extracted CSS:
 .input_Shortcut___m7uBBu {
   color: dodgerblue;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_kbd("input_Shortcut_m7uBBu", ({ $keys })=>$keys === "a\\tb" && /*#__PURE__*/ css("input_Shortcut___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_kbd("input_Shortcut_m7uBBu", 0, ({ $keys: __yak_$keys })=>"input_Shortcut_m7uBBu" + (__yak_$keys === "a\\tb" ? " input_Shortcut___m7uBBu" : "")), {
     "displayName": "Shortcut"
 });
 // A static merge goes through expression position so a backslash escape in the

@@ -15,7 +15,7 @@ const Toggle = /*YAK Extracted CSS:
 .ym7uBBu1 {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu", ({ $on })=>$on && /*#__PURE__*/ css("ym7uBBu1"));
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu", 0, ({ $on: __yak_$on })=>"ym7uBBu" + (__yak_$on ? " ym7uBBu1" : ""));
 // dynamic component reading two $props, to place an impure obstacle between the
 // bound props
 const Range = /*YAK Extracted CSS:
@@ -25,14 +25,14 @@ const Range = /*YAK Extracted CSS:
 .ym7uBBu4 {
   color: blue;
 }
-*/ /*#__PURE__*/ __yak.__yak_span("ym7uBBu2", ({ $a })=>$a && /*#__PURE__*/ css("ym7uBBu3"), ({ $b })=>$b && /*#__PURE__*/ css("ym7uBBu4"));
+*/ /*#__PURE__*/ __yak.__yak_span("ym7uBBu2", 0, ({ $a: __yak_$a, $b: __yak_$b })=>"ym7uBBu2" + (__yak_$a ? " ym7uBBu3" : "") + (__yak_$b ? " ym7uBBu4" : ""));
 // dynamic component whose condition reads a non-$ prop that also stays on the
 // DOM element
 const ActionButton = /*YAK Extracted CSS:
 .ym7uBBu6 {
   cursor: pointer;
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu5", ({ disabled })=>!disabled && /*#__PURE__*/ css("ym7uBBu6"));
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu5", 0, ({ disabled: __yak_disabled })=>"ym7uBBu5" + (!__yak_disabled ? " ym7uBBu6" : ""));
 // static component for the plain className merges
 const Card = /*YAK Extracted CSS:
 .ym7uBBu7 {

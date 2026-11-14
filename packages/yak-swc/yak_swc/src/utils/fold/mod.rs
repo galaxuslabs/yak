@@ -52,6 +52,7 @@ use crate::yak_imports::YakImports;
 
 mod css_expr;
 pub(crate) mod css_prop;
+pub(crate) mod definition;
 mod purity;
 mod usage;
 
