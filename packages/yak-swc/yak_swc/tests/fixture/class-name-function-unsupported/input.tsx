@@ -38,6 +38,20 @@ export const AtomsReturn = styled.div<{ $on: boolean }>`
   ${({ $on }) => $on && atoms("flex")}
 `;
 
+// the runtime evaluates a value inside a nested css once per render and
+// calls the result with the props if it is a function
+export const NestedHelperValue = styled.div<{ $on: boolean }>`
+  ${({ $on }) =>
+    $on &&
+    css`
+      color: ${calc("primary")};
+    `}
+`;
+
+export const ValueReturnsFunction = styled.div<{ $x: number }>`
+  left: ${({ $x }) => () => $x}px;
+`;
+
 export const StyleReadInValue = styled.div`
   left: ${({ style }) => style.left}px;
 `;

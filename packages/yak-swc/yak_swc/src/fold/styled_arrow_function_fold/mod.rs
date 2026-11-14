@@ -99,7 +99,7 @@ pub(crate) fn fold_class_names(
     keys.sort();
     let mut definitions = Vec::new();
     for key in keys {
-      definitions.push(folder.fold_css_variable_definition(key, &css_variables[key])?);
+      definitions.push(folder.fold_css_variable_definition(key, &css_variables[key], false)?);
     }
     class_name_expr = join_folded_class_names(
       class_name_expr,
