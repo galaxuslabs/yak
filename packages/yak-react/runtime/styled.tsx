@@ -99,10 +99,16 @@ const yakStyled: StyledInternal = (Component, attrs) => {
     const Target = targetComponent as React.ElementType;
     // A component is static when it has no attrs or a constant `.attrs({...})`,
     // and no dynamic styles. A constant attrs object cannot read the theme, so
-    // a static component adds the same class names on every render. `styled()`
-    // picks the render function here: the static one skips the theme lookup
-    // and the style copy
-    const isStatic = (!mergedAttrsFn || staticAttrs) && !runtimeStyleProcessor.$dynamic;
+    // a static component adds the same class names on every render and its
+    // processor carries them as the string `$className`. `styled()` picks the
+    // render function here: the static one skips the theme lookup and the
+    // style copy. A static processor without `$className` renders through the
+    // dynamic function, which asks the processor for its class names
+    const staticClassName = runtimeStyleProcessor.$className;
+    const isStatic =
+      (!mergedAttrsFn || staticAttrs) &&
+      !runtimeStyleProcessor.$dynamic &&
+      staticClassName !== undefined;
 
     const Yak: React.FunctionComponent = isStatic
       ? (props) => {
@@ -119,9 +125,15 @@ const yakStyled: StyledInternal = (Component, attrs) => {
           const filteredProps = removeNonDomProperties(source) as {
             className?: string;
           };
-          const classNames = new ClassNames(source.className);
-          runtimeStyleProcessor(source, classNames, undefined as unknown as React.CSSProperties);
-          filteredProps.className = classNames.value || undefined;
+          // The incoming class names come first, like in the dynamic function:
+          // styled(styled.div("a"))("b") with className="in" renders "in a b".
+          // A component without any class name renders no class attribute
+          const incoming = source.className;
+          filteredProps.className = staticClassName
+            ? incoming
+              ? incoming + " " + staticClassName
+              : staticClassName
+            : incoming || undefined;
           return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
         }
       : (props) => {
@@ -321,12 +333,32 @@ const buildRuntimeStylesProcessor = <T,>(
         runtimeStylesFn(props, classNames, style);
       },
       // the chain is dynamic if any level is dynamic
-      { $dynamic: runtimeStylesFn.$dynamic || parentRuntimeStylesFn.$dynamic },
+      runtimeStylesFn.$dynamic || parentRuntimeStylesFn.$dynamic
+        ? { $dynamic: true }
+        : {
+            $dynamic: false,
+            $className: joinStaticClassNames(
+              parentRuntimeStylesFn.$className,
+              runtimeStylesFn.$className,
+            ),
+          },
     );
     return combined;
   }
   return runtimeStylesFn || parentRuntimeStylesFn;
 };
+
+/**
+ * Joins the `$className` of two static processors, the parent first:
+ * join("a", "b") gives "a b" and join("", "b") gives "b". Returns undefined
+ * if either level does not know its class names
+ */
+const joinStaticClassNames = (parent: string | undefined, own: string | undefined) =>
+  parent === undefined || own === undefined
+    ? undefined
+    : parent && own
+      ? parent + " " + own
+      : parent || own;
 
 /**
  * Internal function where attrs are passed to be processed

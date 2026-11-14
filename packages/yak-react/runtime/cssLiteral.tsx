@@ -141,6 +141,8 @@ export function css<TProps>(...args: Array<any>): RuntimeStyleProcessor<TProps> 
   // This is just an optimization for the common case where there are no dynamic css functions
   // `$dynamic: false` lets the styled runtime skip theme lookup and
   // style-object allocation entirely for static components
+  // `$className` lets a static `styled(Component)` chain join the class names
+  // of its levels once at definition
   if (dynamicCssFunctions.length === 0) {
     return Object.assign(
       (_: unknown, classNames: ClassNameCollector) => {
@@ -148,7 +150,7 @@ export function css<TProps>(...args: Array<any>): RuntimeStyleProcessor<TProps> 
           classNames.add(className);
         }
       },
-      { $dynamic: false },
+      { $dynamic: false, $className: className || "" },
     );
   }
 

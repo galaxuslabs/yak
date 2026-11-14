@@ -651,3 +651,19 @@ describe("dynamic runtime function processing", () => {
     `);
   });
 });
+
+describe("render path", () => {
+  it("should keep the class name of a child whose static parent has none", () => {
+    const Leaf = styled(styled.div())("leaf");
+
+    const { container } = render(<Leaf />);
+
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <div
+          class="leaf"
+        />
+      </div>
+    `);
+  });
+});
