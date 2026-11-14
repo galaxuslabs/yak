@@ -32,6 +32,8 @@ import { IdiomaticTreeYak } from "../../../bench/generated/IdiomaticTree.yak";
 import { IdiomaticTreeStyled } from "../../../bench/generated/IdiomaticTree.styled-components";
 import { IdiomaticDynamicPropsComponentsYak } from "../../../bench/generated/IdiomaticDynamicProps.yak";
 import { IdiomaticDynamicPropsComponentsStyled } from "../../../bench/generated/IdiomaticDynamicProps.styled-components";
+import { RuntimePathsYak } from "../../../bench/generated/RuntimePaths.yak";
+import { RuntimePathsStyled } from "../../../bench/generated/RuntimePaths.styled-components";
 
 // Maps slug -> { yak, styled } component pair. Source-imported (not the
 // .compiled variants) so the yak webpack loader extracts the CSS the
@@ -53,6 +55,7 @@ const components: Record<string, { Yak: React.FC<any>; Styled: React.FC<any> }> 
     Yak: IdiomaticDynamicPropsComponentsYak,
     Styled: IdiomaticDynamicPropsComponentsStyled,
   },
+  "runtime-paths": { Yak: RuntimePathsYak, Styled: RuntimePathsStyled },
 };
 
 const Page = styled.div`

@@ -90,4 +90,10 @@ export const benchmarks: BenchmarkEntry[] = [
     description:
       "DynamicPropsComponents rewritten with class toggles for every $primary/$size/$variant/$disabled branch.",
   },
+  {
+    slug: "runtime-paths",
+    name: "RuntimePaths",
+    description:
+      "1000 elements per render path of the styled runtime: static, .attrs, styled(Custom), styled(styled) chains, class toggles, CSS variables and theme functions. Rendered from another module, so the compiler does not fold them.",
+  },
 ];
