@@ -12,11 +12,6 @@ export const Card = /*YAK EXPORTED STYLED:Card:input_Card_m7uBBu*//*YAK Extracte
   transform: translate(-50%, -50%) rotate(var(--input_Card__transform_m7uBBu))
 translate(0, -88px) rotate(var(--input_Card__transform_m7uBBu-01));
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Card_m7uBBu", ({ $active })=>$active && /*#__PURE__*/ css("input_Card__$active_m7uBBu"), {
-    "style": {
-        "--input_Card__transform_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ index })=>index * 30, "deg"),
-        "--input_Card__transform_m7uBBu-01": /*#__PURE__*/ __yak_cssValue(({ index })=>-index * 30, "deg")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Card_m7uBBu", 2, ({ $active: __yak_$active, index: __yak_index }, __yak_style)=>"input_Card_m7uBBu" + (__yak_$active ? " input_Card__$active_m7uBBu" : "") + (__yak_style["--input_Card__transform_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_index * 30, "deg")), __yak_style["--input_Card__transform_m7uBBu-01"] = String(/*#__PURE__*/ __yak_cssValue(-__yak_index * 30, "deg")), "")), {
     "displayName": "Card"
 });

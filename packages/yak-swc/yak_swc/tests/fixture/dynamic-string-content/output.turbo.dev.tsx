@@ -13,12 +13,7 @@ const Input = /*YAK Extracted CSS:
     content: var(--input_Input__content_m7uBBu-01);
   }
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_input("input_Input_m7uBBu", {
-    "style": {
-        "--input_Input__content_m7uBBu": (p)=>p.$placeholder,
-        "--input_Input__content_m7uBBu-01": (p)=>p.$marker
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_input("input_Input_m7uBBu", 2, ({ $placeholder: __yak_$placeholder, $marker: __yak_$marker }, __yak_style)=>"input_Input_m7uBBu" + (__yak_style["--input_Input__content_m7uBBu"] = String(__yak_$placeholder), __yak_style["--input_Input__content_m7uBBu-01"] = String(__yak_$marker), "")), {
     "displayName": "Input"
 });
 // var() inside url() works because url() evaluates the var, so
@@ -27,11 +22,7 @@ const Bg = /*YAK Extracted CSS:
 .input_Bg_m7uBBu {
   background: url(var(--input_Bg__background_m7uBBu));
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Bg_m7uBBu", {
-    "style": {
-        "--input_Bg__background_m7uBBu": (p)=>p.$url
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Bg_m7uBBu", 2, ({ $url: __yak_$url }, __yak_style)=>"input_Bg_m7uBBu" + (__yak_style["--input_Bg__background_m7uBBu"] = String(__yak_$url), "")), {
     "displayName": "Bg"
 });
 // Partial interpolation is intentionally NOT rewritten — the surrounding
@@ -43,10 +34,6 @@ const Partial = /*YAK Extracted CSS:
     content: "Hello var(--input_Partial__content_m7uBBu)";
   }
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_span("input_Partial_m7uBBu", {
-    "style": {
-        "--input_Partial__content_m7uBBu": (p)=>p.$name
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_span("input_Partial_m7uBBu", 2, ({ $name: __yak_$name }, __yak_style)=>"input_Partial_m7uBBu" + (__yak_style["--input_Partial__content_m7uBBu"] = String(__yak_$name), "")), {
     "displayName": "Partial"
 });

@@ -1,7 +1,7 @@
 import { styled, css, atoms, __yak_cssValue } from "@yak/react/internal";
 import { mixin, calc } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LmlucHV0X1Jlc3RfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0RlZmF1bHRfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0NvbXB1dGVkX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0VzY2FwaW5nX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X011bHRpU3RhdGVtZW50X19vbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfRnVuY3Rpb25FeHByZXNzaW9uX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9Dc3NWYXJpYWJsZV9fX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfQouaW5wdXRfQ3NzVmFyaWFibGVfbTd1QkJ1IHsKICBsZWZ0OiB2YXIoLS1pbnB1dF9Dc3NWYXJpYWJsZV9fbGVmdF9tN3VCQnUpOwp9LmlucHV0X09yT3BlcmF0b3JfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfU3R5bGVSZWFkX19zdHlsZV9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfTWl4aW5JbnRlcnBvbGF0aW9uX203dUJCdSB7CiAgLS15YWstY3NzLWltcG9ydDogdXJsKCIuL2hlbHBlcnM6bWl4aW4iLG1peGluKTsKfQ==";
+import "data:text/css;base64,LmlucHV0X1Jlc3RfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0RlZmF1bHRfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0NvbXB1dGVkX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0VzY2FwaW5nX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X011bHRpU3RhdGVtZW50X19vbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfRnVuY3Rpb25FeHByZXNzaW9uX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9TdHlsZVJlYWRJblZhbHVlX203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfU3R5bGVSZWFkSW5WYWx1ZV9fbGVmdF9tN3VCQnUpOwp9LmlucHV0X09yT3BlcmF0b3JfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfU3R5bGVSZWFkX19zdHlsZV9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfTWl4aW5JbnRlcnBvbGF0aW9uX203dUJCdSB7CiAgLS15YWstY3NzLWltcG9ydDogdXJsKCIuL2hlbHBlcnM6bWl4aW4iLG1peGluKTsKfQ==";
 export const Rest = /*YAK EXPORTED STYLED:Rest:input_Rest_m7uBBu*//*YAK Extracted CSS:
 .input_Rest__\$on_m7uBBu {
   color: red;
@@ -59,19 +59,16 @@ export const AtomsReturn = /*YAK EXPORTED STYLED:AtomsReturn:input_AtomsReturn_m
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsReturn_m7uBBu", ({ $on })=>$on && atoms("flex")), {
     "displayName": "AtomsReturn"
 });
-export const CssVariable = /*YAK EXPORTED STYLED:CssVariable:input_CssVariable_m7uBBu*//*YAK Extracted CSS:
-.input_CssVariable___m7uBBu {
-  color: red;
+export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:input_StyleReadInValue_m7uBBu*//*YAK Extracted CSS:
+.input_StyleReadInValue_m7uBBu {
+  left: var(--input_StyleReadInValue__left_m7uBBu);
 }
-.input_CssVariable_m7uBBu {
-  left: var(--input_CssVariable__left_m7uBBu);
-}
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_CssVariable_m7uBBu", ({ $x })=>$x > 1 && /*#__PURE__*/ css("input_CssVariable___m7uBBu"), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_StyleReadInValue_m7uBBu", {
     "style": {
-        "--input_CssVariable__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>$x, "px")
+        "--input_StyleReadInValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
     }
 }), {
-    "displayName": "CssVariable"
+    "displayName": "StyleReadInValue"
 });
 export const OrOperator = /*YAK EXPORTED STYLED:OrOperator:input_OrOperator_m7uBBu*//*YAK Extracted CSS:
 .input_OrOperator___m7uBBu {

@@ -9,9 +9,4 @@ const ThemedComponent = /*YAK Extracted CSS:
   padding: 20px;
   border-radius: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", {
-    "style": {
-        "--ym7uBBu1": (props)=>props.theme.background,
-        "--ym7uBBu2": (props)=>props.theme.text
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", 3, ({}, __yak_style, __yak_theme)=>"ym7uBBu" + (__yak_style["--ym7uBBu1"] = String(__yak_theme.background), __yak_style["--ym7uBBu2"] = String(__yak_theme.text), ""));

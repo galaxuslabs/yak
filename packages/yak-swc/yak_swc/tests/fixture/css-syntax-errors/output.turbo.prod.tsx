@@ -59,11 +59,7 @@ export const UnclosedMediaQuery = /*YAK EXPORTED STYLED:UnclosedMediaQuery:ym7uB
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBu7");
 export const UnclosedFunction = /*YAK EXPORTED STYLED:UnclosedFunction:ym7uBBu8*//*YAK Extracted CSS:
 
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu8", {
-    "style": {
-        "--ym7uBBu9": /*#__PURE__*/ __yak_cssValue((p)=>p.$deg, "deg")
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu8", 2, ({ $deg: __yak_$deg }, __yak_style)=>"ym7uBBu8" + (__yak_style["--ym7uBBu9"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$deg, "deg")), ""));
 export const CustomPropertyBlock = /*YAK EXPORTED STYLED:CustomPropertyBlock:ym7uBBuA*//*YAK Extracted CSS:
 .ym7uBBuA {
   --mixin: { color: red };

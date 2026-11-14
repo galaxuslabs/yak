@@ -37,11 +37,7 @@ const Dynamic = /*YAK Extracted CSS:
 .input_Dynamic_m7uBBu {
   color: var(--input_Dynamic__color_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Dynamic_m7uBBu", {
-    "style": {
-        "--input_Dynamic__color_m7uBBu": ({ $color })=>$color
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Dynamic_m7uBBu", 2, ({ $color: __yak_$color }, __yak_style)=>"input_Dynamic_m7uBBu" + (__yak_style["--input_Dynamic__color_m7uBBu"] = String(__yak_$color), "")), {
     "displayName": "Dynamic"
 });
 // bails: attrs

@@ -169,8 +169,9 @@ export type RuntimeStyleProcessor<T> = ((
  * __yak_button("yB", 0, ({ $on: __yak_$on }) => "yB" + (__yak_$on ? " yB1" : ""))
  * ```
  *
- * `theme` is the yak theme. The fold render function passes it only when the
- * flags ask for it. The function does not use the second parameter.
+ * `style` is the style object the function may write CSS variables into and
+ * `theme` is the yak theme. The fold render function passes each only when
+ * the flags ask for it.
  */
 export type FoldFunction = (props: any, style: any, theme: any) => string;
 

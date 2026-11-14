@@ -12,12 +12,6 @@ export const Box = /*YAK EXPORTED STYLED:Box:input_Box_m7uBBu*//*YAK Extracted C
     content: "a -var(--input_Box__grid-area_m7uBBu)";
   }
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Box_m7uBBu", {
-    "style": {
-        "--input_Box__grid-area_m7uBBu": ({ $z })=>$z,
-        "--input_Box__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>$x, "px", true),
-        "--input_Box__z-index_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $z })=>$z, "", true)
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Box_m7uBBu", 2, ({ $z: __yak_$z, $x: __yak_$x }, __yak_style)=>"input_Box_m7uBBu" + (__yak_style["--input_Box__grid-area_m7uBBu"] = String(__yak_$z), __yak_style["--input_Box__left_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$x, "px", true)), __yak_style["--input_Box__z-index_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$z, "", true)), "")), {
     "displayName": "Box"
 });

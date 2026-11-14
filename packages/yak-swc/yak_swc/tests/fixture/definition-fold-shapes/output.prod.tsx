@@ -1,4 +1,4 @@
-import { styled, css } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
@@ -57,3 +57,25 @@ export const Wrapped = /*YAK EXPORTED STYLED:Wrapped:ym7uBBuH*//*YAK Extracted C
 */ /*#__PURE__*/ ((styled(Ident)).attrs({
     role: "note"
 }))("ym7uBBuH", 0, ({ $x: __yak_$x })=>"ym7uBBuH" + (__yak_$x ? " ym7uBBuI" : ""));
+// a dynamic value inside a property is a CSS variable, which the fold
+// function writes into the style object
+export const CssVariable = /*YAK EXPORTED STYLED:CssVariable:ym7uBBuJ*//*YAK Extracted CSS:
+.ym7uBBuK {
+  color: red;
+}
+.ym7uBBuJ {
+  left: var(--ym7uBBuL);
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuJ", 2, ({ $x: __yak_$x }, __yak_style)=>"ym7uBBuJ" + (__yak_$x > 1 ? " ym7uBBuK" : "") + (__yak_style["--ym7uBBuL"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$x, "px")), ""));
+export const ThemeVariable = /*YAK EXPORTED STYLED:ThemeVariable:ym7uBBuM*//*YAK Extracted CSS:
+.ym7uBBuM {
+  color: var(--ym7uBBuN);
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuM", 3, ({}, __yak_style, __yak_theme)=>"ym7uBBuM" + (__yak_style["--ym7uBBuN"] = String(__yak_theme.color), ""));
+// a variable in a nested css is written only when its branch runs
+export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:ym7uBBuO*//*YAK Extracted CSS:
+.ym7uBBuP {
+  left: var(--ym7uBBuQ);
+  top: var(--ym7uBBuR);
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuO", 2, ({ $on: __yak_$on, $x: __yak_$x, $big: __yak_$big }, __yak_style)=>"ym7uBBuO" + (__yak_$on ? " ym7uBBuP" + (__yak_style["--ym7uBBuQ"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$x * 2, "px")), __yak_style["--ym7uBBuR"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$big ? 8 : 4, "px")), "") : ""));

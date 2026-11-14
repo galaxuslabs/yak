@@ -148,11 +148,7 @@ const NestedCssVariable = /*YAK Extracted CSS:
 .ym7uBBuY {
   width: var(--ym7uBBuZ);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuX", ({ $active, $size })=>$active && /*#__PURE__*/ css("ym7uBBuY", {
-        "style": {
-            "--ym7uBBuZ": /*#__PURE__*/ __yak_cssValue(()=>$size, "px")
-        }
-    }));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuX", 2, ({ $active: __yak_$active, $size: __yak_$size }, __yak_style)=>"ym7uBBuX" + (__yak_$active ? " ym7uBBuY" + (__yak_style["--ym7uBBuZ"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$size, "px")), "") : ""));
 // usages bail: the $prop forwarding semantics depend on the wrapped component
 const DynamicExtended = /*YAK Extracted CSS:
 .ym7uBBub {
