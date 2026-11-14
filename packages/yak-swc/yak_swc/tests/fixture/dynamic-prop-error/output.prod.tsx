@@ -7,4 +7,9 @@ export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:ym7uBBu*//*YAK 
   z-index: var(--ym7uBBu1);
   margin-bottom: var(--ym7uBBu2);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", 2, ({}, __yak_style)=>"ym7uBBu" + (__yak_style["--ym7uBBu1"] = String(getZIndex()), __yak_style["--ym7uBBu2"] = String(/*#__PURE__*/ __yak_cssValue(spacing[40].toString(), "px")), ""));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", {
+    "style": {
+        "--ym7uBBu1": getZIndex(),
+        "--ym7uBBu2": /*#__PURE__*/ __yak_cssValue(spacing[40].toString(), "px")
+    }
+});
