@@ -104,17 +104,12 @@ const yakStyled: StyledInternal = (Component, attrs) => {
       // cloning entirely (this is NOT against the rule of hooks — the condition
       // is constant for the lifetime of the component)
       if ((!mergedAttrsFn || staticAttrs) && !runtimeStyleProcessor.$dynamic) {
-        // props that already went through a yak wrapper keep their processed
-        // className, and `source` then aliases `props` — so the class names are
+        // without attrs `source` aliases `props`, so the class names are
         // written to the fresh, filtered object rather than back into props
         const source = (
-          staticAttrs && !(INTERNAL.ATTRS_MERGED in props)
+          staticAttrs
             ? combineProps(
-                {
-                  ...(props as { className?: string; style?: React.CSSProperties }),
-                  // mark the props as processed
-                  [INTERNAL.ATTRS_MERGED]: true,
-                },
+                { ...(props as { className?: string; style?: React.CSSProperties }) },
                 staticAttrs,
               )
             : props
@@ -122,11 +117,9 @@ const yakStyled: StyledInternal = (Component, attrs) => {
         const filteredProps = removeNonDomProperties(source) as {
           className?: string;
         };
-        if (!(INTERNAL.RUNTIME_STYLES_DONE in source)) {
-          const classNames = new ClassNames(source.className);
-          runtimeStyleProcessor(source, classNames, undefined as unknown as React.CSSProperties);
-          filteredProps.className = classNames.value || undefined;
-        }
+        const classNames = new ClassNames(source.className);
+        runtimeStyleProcessor(source, classNames, undefined as unknown as React.CSSProperties);
+        filteredProps.className = classNames.value || undefined;
         const Target = targetComponent as React.ElementType;
         return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
       }
@@ -136,52 +129,37 @@ const yakStyled: StyledInternal = (Component, attrs) => {
       // theme context
       const theme = useTheme();
 
-      // The first components which is not wrapped in a yak component will execute all attrs functions
-      // starting from the innermost yak component to the outermost yak component (itself)
-      const combinedProps =
-        INTERNAL.ATTRS_MERGED in props
-          ? ({
-              theme,
-              ...props,
-            } as {
-              theme: YakTheme;
-              className?: string;
-              style?: React.CSSProperties;
-            })
-          : // overwrite and merge the current props with the processed attrs
-            combineProps(
-              {
-                theme,
-                ...(props as {
-                  className?: string;
-                  style?: React.CSSProperties;
-                }),
-                // mark the props as processed
-                [INTERNAL.ATTRS_MERGED]: true,
-              },
-              mergedAttrsFn?.({ theme, ...(props as any) }),
-            );
+      // overwrite and merge the current props with the processed attrs, the
+      // merged attrs function runs the attrs of every level of the chain
+      // from the innermost to the outermost
+      const combinedProps = combineProps(
+        {
+          theme,
+          ...(props as {
+            className?: string;
+            style?: React.CSSProperties;
+          }),
+        } as {
+          theme: YakTheme;
+          className?: string;
+          style?: React.CSSProperties;
+        },
+        mergedAttrsFn?.({ theme, ...(props as any) }),
+      );
 
-      // execute all functions inside the style literal if not already executed
+      // execute all functions inside the style literal
       // e.g. styled.button`color: ${props => props.color};`
-      //
-      // inner levels of a styled(Component) chain receive already-processed
-      // props and skip this entirely — no collector, no style clone
-      if (!(INTERNAL.RUNTIME_STYLES_DONE in combinedProps)) {
-        const classNames = new ClassNames(combinedProps.className);
-        // static processors never write style values, so the incoming style
-        // object can be passed through without a defensive copy
-        const styles = runtimeStyleProcessor.$dynamic
-          ? { ...combinedProps.style }
-          : combinedProps.style;
-        runtimeStyleProcessor(combinedProps, classNames, styles as React.CSSProperties);
-        // @ts-expect-error this is not typed correctly
-        combinedProps[INTERNAL.RUNTIME_STYLES_DONE] = true;
+      const classNames = new ClassNames(combinedProps.className);
+      // static processors never write style values, so the incoming style
+      // object can be passed through without a defensive copy
+      const styles = runtimeStyleProcessor.$dynamic
+        ? { ...combinedProps.style }
+        : combinedProps.style;
+      runtimeStyleProcessor(combinedProps, classNames, styles as React.CSSProperties);
 
-        combinedProps.className = classNames.value || undefined;
-        if (styles !== combinedProps.style) {
-          combinedProps.style = styles;
-        }
+      combinedProps.className = classNames.value || undefined;
+      if (styles !== combinedProps.style) {
+        combinedProps.style = styles;
       }
 
       // delete the yak theme from the props
@@ -192,10 +170,7 @@ const yakStyled: StyledInternal = (Component, attrs) => {
         themeAfterAttr === theme ? combinedPropsWithoutTheme : combinedProps;
 
       // remove all props that start with a $ sign so they reach neither DOM
-      // elements nor custom components — this also strips the internal
-      // INTERNAL.ATTRS_MERGED/INTERNAL.RUNTIME_STYLES_DONE markers, which must not cross a
-      // custom component boundary (a custom component may render another yak
-      // component that has to process its own attrs/styles)
+      // elements nor custom components
       const filteredProps = removeNonDomProperties(propsBeforeFiltering);
 
       // render the chain's target directly — parent wrappers contribute only
