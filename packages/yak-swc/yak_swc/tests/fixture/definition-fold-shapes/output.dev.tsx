@@ -99,3 +99,18 @@ export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:input_NestedV
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedVariable_m7uBBu", 2, ({ $on: __yak_$on, $x: __yak_$x, $big: __yak_$big }, __yak_style)=>"input_NestedVariable_m7uBBu" + (__yak_$on ? " input_NestedVariable__$on_m7uBBu" + (__yak_style["--input_NestedVariable__left_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$x * 2, "px")), __yak_style["--input_NestedVariable__top_m7uBBu"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$big ? 8 : 4, "px")), "") : "")), {
     "displayName": "NestedVariable"
 });
+// `||` folds when its left side is always `true` or `false`
+export const OrComparison = /*YAK EXPORTED STYLED:OrComparison:input_OrComparison_m7uBBu*//*YAK Extracted CSS:
+.input_OrComparison___m7uBBu {
+  padding: 0;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrComparison_m7uBBu", 0, ({ $size: __yak_$size })=>"input_OrComparison_m7uBBu" + (__yak_$size !== "s" ? "" : " input_OrComparison___m7uBBu")), {
+    "displayName": "OrComparison"
+});
+export const OrChain = /*YAK EXPORTED STYLED:OrChain:input_OrChain_m7uBBu*//*YAK Extracted CSS:
+.input_OrChain___m7uBBu {
+  color: orange;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrChain_m7uBBu", 0, ({ $a: __yak_$a, $b: __yak_$b })=>"input_OrChain_m7uBBu" + (!__yak_$a || !__yak_$b ? "" : " input_OrChain___m7uBBu")), {
+    "displayName": "OrChain"
+});

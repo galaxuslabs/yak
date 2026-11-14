@@ -79,3 +79,14 @@ export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:ym7uBBuO*//*Y
   top: var(--ym7uBBuR);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuO", 2, ({ $on: __yak_$on, $x: __yak_$x, $big: __yak_$big }, __yak_style)=>"ym7uBBuO" + (__yak_$on ? " ym7uBBuP" + (__yak_style["--ym7uBBuQ"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$x * 2, "px")), __yak_style["--ym7uBBuR"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$big ? 8 : 4, "px")), "") : ""));
+// `||` folds when its left side is always `true` or `false`
+export const OrComparison = /*YAK EXPORTED STYLED:OrComparison:ym7uBBuS*//*YAK Extracted CSS:
+.ym7uBBuT {
+  padding: 0;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuS", 0, ({ $size: __yak_$size })=>"ym7uBBuS" + (__yak_$size !== "s" ? "" : " ym7uBBuT"));
+export const OrChain = /*YAK EXPORTED STYLED:OrChain:ym7uBBuU*//*YAK Extracted CSS:
+.ym7uBBuV {
+  color: orange;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuU", 0, ({ $a: __yak_$a, $b: __yak_$b })=>"ym7uBBuU" + (!__yak_$a || !__yak_$b ? "" : " ym7uBBuV"));

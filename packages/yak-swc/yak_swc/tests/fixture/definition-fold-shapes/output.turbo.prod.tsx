@@ -1,7 +1,7 @@
 import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVKIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1TCk7Cn0ueW03dUJCdU0gewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGxlZnQ6IHZhcigtLXltN3VCQnVRKTsKICB0b3A6IHZhcigtLXltN3VCQnVSKTsKfQ==";
+import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVKIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1TCk7Cn0ueW03dUJCdU0gewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGxlZnQ6IHZhcigtLXltN3VCQnVRKTsKICB0b3A6IHZhcigtLXltN3VCQnVSKTsKfS55bTd1QkJ1VCB7CiAgcGFkZGluZzogMDsKfS55bTd1QkJ1ViB7CiAgY29sb3I6IG9yYW5nZTsKfQ==";
 // identifier props parameter read through members
 export const Ident = /*YAK EXPORTED STYLED:Ident:ym7uBBu*//*YAK Extracted CSS:
 .ym7uBBu1 {
@@ -79,3 +79,14 @@ export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:ym7uBBuO*//*Y
   top: var(--ym7uBBuR);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuO", 2, ({ $on: __yak_$on, $x: __yak_$x, $big: __yak_$big }, __yak_style)=>"ym7uBBuO" + (__yak_$on ? " ym7uBBuP" + (__yak_style["--ym7uBBuQ"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$x * 2, "px")), __yak_style["--ym7uBBuR"] = String(/*#__PURE__*/ __yak_cssValue(__yak_$big ? 8 : 4, "px")), "") : ""));
+// `||` folds when its left side is always `true` or `false`
+export const OrComparison = /*YAK EXPORTED STYLED:OrComparison:ym7uBBuS*//*YAK Extracted CSS:
+.ym7uBBuT {
+  padding: 0;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuS", 0, ({ $size: __yak_$size })=>"ym7uBBuS" + (__yak_$size !== "s" ? "" : " ym7uBBuT"));
+export const OrChain = /*YAK EXPORTED STYLED:OrChain:ym7uBBuU*//*YAK Extracted CSS:
+.ym7uBBuV {
+  color: orange;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuU", 0, ({ $a: __yak_$a, $b: __yak_$b })=>"ym7uBBuU" + (!__yak_$a || !__yak_$b ? "" : " ym7uBBuV"));

@@ -65,7 +65,7 @@ use swc_core::{
     BinaryOp, BindingIdent, CallExpr, Callee, ComputedPropName, CondExpr, Expr, Id, Ident,
     IdentName, KeyValuePatProp, KeyValueProp, Lit, MemberExpr, MemberProp, Number, ObjectLit,
     ObjectPat, ObjectPatProp, ParenExpr, Pat, Prop, PropName, PropOrSpread, SeqExpr,
-    SimpleAssignTarget,
+    SimpleAssignTarget, UnaryOp,
   },
   ecma::visit::{VisitMut, VisitMutWith},
 };
@@ -316,7 +316,8 @@ impl DefinitionFolder<'_> {
   }
 
   /// Folds what a runtime expression returns: a `css(...)` call, a falsy
-  /// literal, `cond && <value>` or `cond ? <value> : <value>`
+  /// literal, `cond && <value>`, `boolean || <value>` or
+  /// `cond ? <value> : <value>`
   fn fold_value(&mut self, value: &Expr) -> Option<Box<Expr>> {
     let value = unwrap_type_casts(value);
     if is_falsy_literal(value) {
@@ -329,6 +330,14 @@ impl DefinitionFolder<'_> {
         let test = self.params.substitute(&bin.left)?;
         let cons = self.fold_value(&bin.right)?;
         Some(cond_piece(test, cons, empty_piece()))
+      }
+      // `!cond || css("x")` -> `(!cond ? "" : " x")`. The runtime adds
+      // nothing for `true`, but it adds the class name of a returned object
+      // and calls a returned function, so the left side must be a boolean
+      Expr::Bin(bin) if bin.op == BinaryOp::LogicalOr && is_boolean_expr(&bin.left) => {
+        let test = self.params.substitute(&bin.left)?;
+        let alt = self.fold_value(&bin.right)?;
+        Some(cond_piece(test, empty_piece(), alt))
       }
       // `cond ? css("x") : css("y")` -> `(cond ? " x" : " y")`
       Expr::Cond(cond) => {
@@ -582,6 +591,36 @@ fn write_piece(mut writes: Vec<Box<Expr>>) -> Box<Expr> {
       exprs: writes,
     })),
   }))
+}
+
+/// An expression that always evaluates to `true` or `false`, e.g. `!$on`,
+/// `$size === "s"` or `!$a || !$b`
+fn is_boolean_expr(expr: &Expr) -> bool {
+  match unwrap_type_casts(expr) {
+    Expr::Lit(Lit::Bool(_)) => true,
+    Expr::Unary(unary) => unary.op == UnaryOp::Bang,
+    Expr::Bin(bin) => {
+      matches!(
+        bin.op,
+        BinaryOp::EqEq
+          | BinaryOp::NotEq
+          | BinaryOp::EqEqEq
+          | BinaryOp::NotEqEq
+          | BinaryOp::Lt
+          | BinaryOp::LtEq
+          | BinaryOp::Gt
+          | BinaryOp::GtEq
+          | BinaryOp::In
+          | BinaryOp::InstanceOf
+      ) || (matches!(
+        bin.op,
+        BinaryOp::LogicalAnd | BinaryOp::LogicalOr | BinaryOp::NullishCoalescing
+      ) && is_boolean_expr(&bin.left)
+        && is_boolean_expr(&bin.right))
+    }
+    Expr::Cond(cond) => is_boolean_expr(&cond.cons) && is_boolean_expr(&cond.alt),
+    _ => false,
+  }
 }
 
 fn empty_piece() -> Box<Expr> {

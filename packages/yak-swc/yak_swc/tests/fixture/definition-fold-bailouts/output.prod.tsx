@@ -56,14 +56,31 @@ export const OrOperator = /*YAK EXPORTED STYLED:OrOperator:ym7uBBuG*//*YAK Extra
 .ym7uBBuH {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuG", ({ $on })=>!$on || /*#__PURE__*/ css("ym7uBBuH"));
-export const StyleRead = /*YAK EXPORTED STYLED:StyleRead:ym7uBBuI*//*YAK Extracted CSS:
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuG", 0, ({ $on: __yak_$on })=>"ym7uBBuG" + (!__yak_$on ? "" : " ym7uBBuH"));
+// `OrOperator` above folds because `!$on` is a boolean; here the left side
+// could be an object, whose class name the runtime would add
+export const OrUnprovable = /*YAK EXPORTED STYLED:OrUnprovable:ym7uBBuI*//*YAK Extracted CSS:
 .ym7uBBuJ {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuI", ({ style })=>style && /*#__PURE__*/ css("ym7uBBuJ"));
-export const MixinInterpolation = /*YAK EXPORTED STYLED:MixinInterpolation:ym7uBBuK*//*YAK Extracted CSS:
-.ym7uBBuK {
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuI", ({ $on })=>$on || /*#__PURE__*/ css("ym7uBBuJ"));
+export const OrChainUnprovable = /*YAK EXPORTED STYLED:OrChainUnprovable:ym7uBBuK*//*YAK Extracted CSS:
+.ym7uBBuL {
+  color: red;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuK", ({ $a, $b })=>!$a || $b || /*#__PURE__*/ css("ym7uBBuL"));
+export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:ym7uBBuM*//*YAK Extracted CSS:
+.ym7uBBuN {
+  color: red;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuM", ({ $on })=>$on ?? /*#__PURE__*/ css("ym7uBBuN"));
+export const StyleRead = /*YAK EXPORTED STYLED:StyleRead:ym7uBBuO*//*YAK Extracted CSS:
+.ym7uBBuP {
+  color: red;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuO", ({ style })=>style && /*#__PURE__*/ css("ym7uBBuP"));
+export const MixinInterpolation = /*YAK EXPORTED STYLED:MixinInterpolation:ym7uBBuQ*//*YAK Extracted CSS:
+.ym7uBBuQ {
   --yak-css-import: url("./helpers:mixin",mixin);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuK");
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuQ");
