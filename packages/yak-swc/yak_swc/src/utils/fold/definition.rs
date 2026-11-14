@@ -121,7 +121,7 @@ pub(crate) fn fold_definition(
     keys.sort();
     let mut writes = Vec::new();
     for key in keys {
-      writes.push(folder.fold_style_write(key, &css_variables[key])?);
+      writes.push(folder.fold_style_write(key, &css_variables[key], false)?);
     }
     class_name_expr = concat(class_name_expr, write_piece(writes));
   }
@@ -223,9 +223,12 @@ impl DefinitionFolder<'_> {
   ///
   /// The runtime stores `String(value)`, so the write does too. The runtime
   /// also calls a value again while it is a function; the fold function does
-  /// not, so a value that evaluates to a function is a known difference
-  fn fold_style_write(&mut self, key: &str, value: &Expr) -> Option<Box<Expr>> {
-    let value = self.fold_style_value(value)?;
+  /// not, so `fold_style_value` only takes values it knows are no functions.
+  /// The return value of an arrow is the exception: it is not called again
+  ///
+  /// `nested` says that the variable sits in a nested `css(...)` call
+  fn fold_style_write(&mut self, key: &str, value: &Expr, nested: bool) -> Option<Box<Expr>> {
+    let value = self.fold_style_value(value, nested)?;
     self.writes_style = true;
     Some(Box::new(Expr::Assign(AssignExpr {
       span: DUMMY_SP,
@@ -252,14 +255,21 @@ impl DefinitionFolder<'_> {
   /// becomes its return value and `__yak_cssValue(arrow, unit)` keeps the
   /// call around the return value.
   ///
-  /// Every other value sits in a nested `css(...)` call and is an expression
-  /// of the enclosing arrow, e.g. `$x` in `({ $x }) => css`left: ${$x}px;``.
-  /// It is only rewritten. Outside a nested `css` the compiler accepts only
-  /// arrows as property values
-  fn fold_style_value(&mut self, value: &Expr) -> Option<Box<Expr>> {
+  /// A value inside a nested `css(...)` call is an expression of the
+  /// enclosing arrow, e.g. `$x` in `({ $x }) => css`left: ${$x}px;``. It is
+  /// only rewritten, and only if it cannot be a function: the runtime calls
+  /// a function with the props, e.g. the result of `themeColor("primary")`.
+  ///
+  /// Outside a nested `css` the compiler accepts only arrows as property
+  /// values
+  fn fold_style_value(&mut self, value: &Expr, nested: bool) -> Option<Box<Expr>> {
     match unwrap_type_casts(value) {
       Expr::Arrow(_) => {
         let body = self.bind_arrow(value)?;
+        // `({ $x }) => () => $x`: the runtime calls the returned function
+        if matches!(unwrap_type_casts(body), Expr::Arrow(_) | Expr::Fn(_)) {
+          return None;
+        }
         self.params.substitute(body)
       }
       Expr::Call(call) if is_css_value_call(call) => {
@@ -268,7 +278,7 @@ impl DefinitionFolder<'_> {
         if first.spread.is_some() {
           return None;
         }
-        first.expr = self.fold_style_value(&first.expr)?;
+        first.expr = self.fold_style_value(&first.expr, nested)?;
         for arg in call.args.iter().skip(1) {
           if !matches!(&*arg.expr, Expr::Lit(_)) {
             return None;
@@ -276,14 +286,32 @@ impl DefinitionFolder<'_> {
         }
         Some(Box::new(Expr::Call(call)))
       }
-      // an identifier or member could hold a helper function, which the
-      // runtime would call with the props: only a destructured prop is safe
-      Expr::Ident(ident) if !self.params.locals.contains_key(&ident.to_id()) => None,
-      Expr::Member(member) if !matches!(&*member.obj, Expr::Ident(obj) if self.params.member_params.contains(&obj.to_id())) => {
-        None
+      other if nested && self.is_plain_value(other) => self.params.substitute(other),
+      _ => None,
+    }
+  }
+
+  /// A value that cannot be a helper function, which the runtime would call
+  /// with the props: a literal, a prop read like `$x` or `p.$x`, or an
+  /// operator on such values like `$x * 2` or `$big ? 8 : 4`. An identifier
+  /// from outside the arrow or a call like `themeColor("primary")` can
+  /// return a function
+  fn is_plain_value(&self, value: &Expr) -> bool {
+    match unwrap_type_casts(value) {
+      Expr::Lit(_) | Expr::Tpl(_) | Expr::Unary(_) => true,
+      Expr::Paren(paren) => self.is_plain_value(&paren.expr),
+      Expr::Ident(ident) => self.params.locals.contains_key(&ident.to_id()),
+      Expr::Member(member) => {
+        matches!(&*member.obj, Expr::Ident(obj) if self.params.member_params.contains(&obj.to_id()))
       }
-      Expr::Fn(_) => None,
-      other => self.params.substitute(other),
+      Expr::Bin(bin) => match bin.op {
+        BinaryOp::LogicalAnd | BinaryOp::LogicalOr | BinaryOp::NullishCoalescing => {
+          self.is_plain_value(&bin.left) && self.is_plain_value(&bin.right)
+        }
+        _ => true,
+      },
+      Expr::Cond(cond) => self.is_plain_value(&cond.cons) && self.is_plain_value(&cond.alt),
+      _ => false,
     }
   }
 
@@ -310,7 +338,7 @@ impl DefinitionFolder<'_> {
       let Prop::KeyValue(KeyValueProp { key, value }) = &**variable else {
         return None;
       };
-      writes.push(self.fold_style_write(&prop_name(key)?, value)?);
+      writes.push(self.fold_style_write(&prop_name(key)?, value, true)?);
     }
     Some(write_piece(writes))
   }

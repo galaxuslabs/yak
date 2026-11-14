@@ -59,6 +59,30 @@ export const AtomsReturn = /*YAK EXPORTED STYLED:AtomsReturn:input_AtomsReturn_m
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsReturn_m7uBBu", ({ $on })=>$on && atoms("flex")), {
     "displayName": "AtomsReturn"
 });
+// the runtime evaluates a value inside a nested css once per render and
+// calls the result with the props if it is a function
+export const NestedHelperValue = /*YAK EXPORTED STYLED:NestedHelperValue:input_NestedHelperValue_m7uBBu*//*YAK Extracted CSS:
+.input_NestedHelperValue__\$on_m7uBBu {
+  color: var(--input_NestedHelperValue__color_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedHelperValue_m7uBBu", ({ $on })=>$on && /*#__PURE__*/ css("input_NestedHelperValue__$on_m7uBBu", {
+        "style": {
+            "--input_NestedHelperValue__color_m7uBBu": calc("primary")
+        }
+    })), {
+    "displayName": "NestedHelperValue"
+});
+export const ValueReturnsFunction = /*YAK EXPORTED STYLED:ValueReturnsFunction:input_ValueReturnsFunction_m7uBBu*//*YAK Extracted CSS:
+.input_ValueReturnsFunction_m7uBBu {
+  left: var(--input_ValueReturnsFunction__left_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ValueReturnsFunction_m7uBBu", {
+    "style": {
+        "--input_ValueReturnsFunction__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>()=>$x, "px")
+    }
+}), {
+    "displayName": "ValueReturnsFunction"
+});
 export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:input_StyleReadInValue_m7uBBu*//*YAK Extracted CSS:
 .input_StyleReadInValue_m7uBBu {
   left: var(--input_StyleReadInValue__left_m7uBBu);

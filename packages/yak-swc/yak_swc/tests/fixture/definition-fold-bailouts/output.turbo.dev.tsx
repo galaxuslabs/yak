@@ -1,7 +1,7 @@
 import { styled, css, atoms, __yak_cssValue } from "@yak/react/internal";
 import { mixin, calc } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LmlucHV0X1Jlc3RfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0RlZmF1bHRfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0NvbXB1dGVkX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0VzY2FwaW5nX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X011bHRpU3RhdGVtZW50X19vbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfRnVuY3Rpb25FeHByZXNzaW9uX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9TdHlsZVJlYWRJblZhbHVlX203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfU3R5bGVSZWFkSW5WYWx1ZV9fbGVmdF9tN3VCQnUpOwp9LmlucHV0X09yT3BlcmF0b3JfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfT3JVbnByb3ZhYmxlX19ub3RfXCRvbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfT3JDaGFpblVucHJvdmFibGVfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfTnVsbGlzaE9wZXJhdG9yX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X1N0eWxlUmVhZF9fc3R5bGVfbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X01peGluSW50ZXJwb2xhdGlvbl9tN3VCQnUgewogIC0teWFrLWNzcy1pbXBvcnQ6IHVybCgiLi9oZWxwZXJzOm1peGluIixtaXhpbik7Cn0=";
+import "data:text/css;base64,LmlucHV0X1Jlc3RfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0RlZmF1bHRfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0NvbXB1dGVkX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0VzY2FwaW5nX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X011bHRpU3RhdGVtZW50X19vbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfRnVuY3Rpb25FeHByZXNzaW9uX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9OZXN0ZWRIZWxwZXJWYWx1ZV9fXCRvbl9tN3VCQnUgewogIGNvbG9yOiB2YXIoLS1pbnB1dF9OZXN0ZWRIZWxwZXJWYWx1ZV9fY29sb3JfbTd1QkJ1KTsKfS5pbnB1dF9WYWx1ZVJldHVybnNGdW5jdGlvbl9tN3VCQnUgewogIGxlZnQ6IHZhcigtLWlucHV0X1ZhbHVlUmV0dXJuc0Z1bmN0aW9uX19sZWZ0X203dUJCdSk7Cn0uaW5wdXRfU3R5bGVSZWFkSW5WYWx1ZV9tN3VCQnUgewogIGxlZnQ6IHZhcigtLWlucHV0X1N0eWxlUmVhZEluVmFsdWVfX2xlZnRfbTd1QkJ1KTsKfS5pbnB1dF9Pck9wZXJhdG9yX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X09yVW5wcm92YWJsZV9fbm90X1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X09yQ2hhaW5VbnByb3ZhYmxlX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X051bGxpc2hPcGVyYXRvcl9fX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9TdHlsZVJlYWRfX3N0eWxlX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9NaXhpbkludGVycG9sYXRpb25fbTd1QkJ1IHsKICAtLXlhay1jc3MtaW1wb3J0OiB1cmwoIi4vaGVscGVyczptaXhpbiIsbWl4aW4pOwp9";
 export const Rest = /*YAK EXPORTED STYLED:Rest:input_Rest_m7uBBu*//*YAK Extracted CSS:
 .input_Rest__\$on_m7uBBu {
   color: red;
@@ -58,6 +58,30 @@ export const AtomsReturn = /*YAK EXPORTED STYLED:AtomsReturn:input_AtomsReturn_m
 
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsReturn_m7uBBu", ({ $on })=>$on && atoms("flex")), {
     "displayName": "AtomsReturn"
+});
+// the runtime evaluates a value inside a nested css once per render and
+// calls the result with the props if it is a function
+export const NestedHelperValue = /*YAK EXPORTED STYLED:NestedHelperValue:input_NestedHelperValue_m7uBBu*//*YAK Extracted CSS:
+.input_NestedHelperValue__\$on_m7uBBu {
+  color: var(--input_NestedHelperValue__color_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedHelperValue_m7uBBu", ({ $on })=>$on && /*#__PURE__*/ css("input_NestedHelperValue__$on_m7uBBu", {
+        "style": {
+            "--input_NestedHelperValue__color_m7uBBu": calc("primary")
+        }
+    })), {
+    "displayName": "NestedHelperValue"
+});
+export const ValueReturnsFunction = /*YAK EXPORTED STYLED:ValueReturnsFunction:input_ValueReturnsFunction_m7uBBu*//*YAK Extracted CSS:
+.input_ValueReturnsFunction_m7uBBu {
+  left: var(--input_ValueReturnsFunction__left_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ValueReturnsFunction_m7uBBu", {
+    "style": {
+        "--input_ValueReturnsFunction__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>()=>$x, "px")
+    }
+}), {
+    "displayName": "ValueReturnsFunction"
 });
 export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:input_StyleReadInValue_m7uBBu*//*YAK Extracted CSS:
 .input_StyleReadInValue_m7uBBu {
