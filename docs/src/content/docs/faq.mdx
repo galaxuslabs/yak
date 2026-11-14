@@ -80,6 +80,13 @@ time. Only values that are known at runtime become CSS variables, and you write 
 
 Yes, yak is fully type safe.
 
+### How do I add light and dark mode without making my Next.js routes dynamic?
+
+Use static `light-dark()` tokens and `color-scheme` instead of reading the theme from
+`cookies()` in `yak.context.ts`.
+
+See [Light and dark mode on static routes](/docs/features#light-dark-static-routes).
+
 ### Can I contribute to yak?
 
 Yes.

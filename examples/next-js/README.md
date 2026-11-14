@@ -20,3 +20,7 @@ pnpm example
 ## Documentation
 
 See the full docs at [yak.style](https://yak.style/docs/getting-started).
+
+`yak.context.ts` in this example reads cookies, which makes the App Router route dynamic.
+For light and dark mode on a static route, see
+[Light and dark mode on static routes](https://yak.style/docs/features#light-dark-static-routes).

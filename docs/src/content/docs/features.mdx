@@ -1,7 +1,7 @@
 ---
 title: Features
 seoTitle: "yak features: styled, css prop, theming and more"
-description: "Everything yak can do: styled components, the css prop, keyframes, global styles, theming with context, mixins, atoms and build-time constants in .yak files."
+description: "Everything yak can do: styled components, the css prop, keyframes, global styles, theming with context, light and dark mode on static routes, mixins, atoms and build-time constants in .yak files."
 cardTitle: What yak | can do
 ---
 
@@ -652,6 +652,8 @@ const Button = styled.button`
 
 This approach has better performance because these values can be extracted and optimized during build time, whereas context values are resolved at runtime.
 
+Light and dark colors can stay in this static token style. To keep a Next.js route static while you do that, see [Light and dark mode on static routes](#light-dark-static-routes).
+
 ### Dynamic Theming with Context
 
 Use the context approach described below when you need dynamic theming that changes based on user preferences, server state, or runtime conditions. yak integrates it for both Server Components and Client Components, with no difference in usage. Wrap your root with `YakThemeProvider` and add a `yak.context.ts` file to your root directory.
@@ -737,6 +739,48 @@ const Button = styled.button`
 </Tabs>
 
 See [Theming](/docs/api#theming) in the API reference for `useTheme`, `YakThemeProvider` and `yak.context.ts`.
+
+### Light and dark mode on static routes [#light-dark-static-routes]
+
+In styled-components you switch light and dark mode with two theme objects in a
+`ThemeProvider`. In yak the natural translation is `${({ theme }) => …}` with
+`yak.context.ts`. Those values are resolved at render time, and reading
+`cookies()` there makes the route dynamic.
+
+Use static `light-dark()` tokens instead of `theme`:
+
+```ts
+export const colors = {
+  background: "light-dark(#fff, #111)",
+  text: "light-dark(#111, #eee)",
+};
+```
+
+```tsx
+import { globalStyle } from "@yak/react";
+
+globalStyle`
+  :root {
+    color-scheme: light dark;
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+  }
+`;
+```
+
+```tsx
+const Page = styled.main`
+  background: ${colors.background};
+  color: ${colors.text};
+`;
+```
+
+Other approaches exist too, such as CSS variables or following the operating
+system preference only.
 
 ## CSS Prop
 

@@ -500,7 +500,7 @@ export const YakThemeProvider = ({ children }: { children: ReactNode }) => {
 ```
 
 The `getYakThemeContext` function is imported from the user's `yak.context.ts` file. This file is a regular typescript file that exports a function that returns the theme context. You can use any API that works with server components, like [headers](https://nextjs.org/docs/app/api-reference/functions/headers) or [cookies](https://nextjs.org/docs/app/api-reference/functions/cookies),
-to determine your theme values.
+to determine your theme values. In the Next.js App Router, those APIs make the route dynamic. For light and dark mode on a static route, see [Light and dark mode on static routes](/docs/features#light-dark-static-routes).
 
 ```tsx title="yak.context.ts"
 import { cookies } from "next/headers";
