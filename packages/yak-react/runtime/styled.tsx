@@ -109,7 +109,7 @@ const yakStyled: StyledInternal = (Component, attrs) => {
         const source = (
           staticAttrs
             ? combineProps(
-                { ...(props as { className?: string; style?: React.CSSProperties }) },
+                props as { className?: string; style?: React.CSSProperties },
                 staticAttrs,
               )
             : props
