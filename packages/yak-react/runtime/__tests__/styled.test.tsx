@@ -653,6 +653,49 @@ describe("dynamic runtime function processing", () => {
 });
 
 describe("render path", () => {
+  // records the props a custom component receives
+  const recordProps = () => {
+    const received: Array<Record<string, unknown>> = [];
+    const Custom = (props: Record<string, unknown>) => {
+      received.push(props);
+      return null;
+    };
+    return { Custom, received };
+  };
+
+  it("should use a key returned by attrs as the React key", () => {
+    const { Custom, received } = recordProps();
+    const Keyed = styledFn(Custom).attrs({ key: "fixed" })("keyed");
+    const errors: unknown[][] = [];
+    const originalError = console.error;
+    console.error = (...args) => errors.push(args);
+    try {
+      render(<Keyed id="a" />);
+    } finally {
+      console.error = originalError;
+    }
+
+    expect(received).toEqual([{ id: "a", className: "keyed" }]);
+    expect(errors).toEqual([]);
+  });
+
+  it("should remount the target when the key returned by attrs changes", () => {
+    let mounts = 0;
+    const Counter = () => {
+      React.useEffect(() => {
+        mounts++;
+      }, []);
+      return null;
+    };
+    const Remount = styledFn(Counter).attrs((props) => ({ key: props.$id }))("keyed");
+
+    const { rerender } = render(<Remount $id="a" />);
+    rerender(<Remount $id="a" />);
+    expect(mounts).toBe(1);
+    rerender(<Remount $id="b" />);
+    expect(mounts).toBe(2);
+  });
+
   it("should keep the class name of a child whose static parent has none", () => {
     const Leaf = styled(styled.div())("leaf");
 
