@@ -162,16 +162,9 @@ const yakStyled: StyledInternal = (Component, attrs) => {
         combinedProps.style = styles;
       }
 
-      // delete the yak theme from the props
-      // this must happen after the runtimeStyles are calculated
-      // prevents passing the theme prop to the DOM element of a styled component
-      const { theme: themeAfterAttr, ...combinedPropsWithoutTheme } = combinedProps;
-      const propsBeforeFiltering =
-        themeAfterAttr === theme ? combinedPropsWithoutTheme : combinedProps;
-
-      // remove all props that start with a $ sign so they reach neither DOM
-      // elements nor custom components
-      const filteredProps = removeNonDomProperties(propsBeforeFiltering);
+      // removes the yak theme (after the runtime styles read it) together with
+      // all $-props, so they reach neither DOM elements nor custom components
+      const filteredProps = removeNonDomProperties(combinedProps, theme);
 
       // render the chain's target directly — parent wrappers contribute only
       // their (already merged) attrs and style processors
@@ -193,12 +186,20 @@ const yakStyled: StyledInternal = (Component, attrs) => {
  *
  * This allows to have props that are used for internal styling purposes
  * but are not be passed to the DOM element
+ *
+ * A `theme` entry is removed only if it is the same object as the injected
+ * yak theme. A `theme` from the caller or from attrs reaches the target, like
+ * `<Link theme={{ dark: true }} />`
  */
-const removeNonDomProperties = <T extends Record<string, unknown>>(obj: T): T => {
+const removeNonDomProperties = <T extends Record<string, unknown>>(obj: T, theme?: unknown): T => {
   const result = {} as T;
   for (const key in obj) {
-    if (!key.startsWith("$") && obj[key] !== undefined) {
-      result[key] = obj[key];
+    if (key.startsWith("$")) {
+      continue;
+    }
+    const value = obj[key];
+    if (value !== undefined && (key !== "theme" || value !== theme)) {
+      result[key] = value;
     }
   }
   return result;
