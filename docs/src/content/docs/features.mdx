@@ -654,6 +654,8 @@ This approach has better performance because these values can be extracted and o
 
 ### Dynamic Theming with Context
 
+For light and dark mode you do not need a context. See [Light and Dark Mode on Static Routes](#light-dark-static-routes).
+
 Use the context approach described below when you need dynamic theming that changes based on user preferences, server state, or runtime conditions. yak integrates it for both Server Components and Client Components, with no difference in usage. Wrap your root with `YakThemeProvider` and add a `yak.context.ts` file to your root directory.
 
 ```tsx title="yak.context.ts"
@@ -737,6 +739,54 @@ const Button = styled.button`
 </Tabs>
 
 See [Theming](/docs/api#theming) in the API reference for `useTheme`, `YakThemeProvider` and `yak.context.ts`.
+
+### Light and Dark Mode on Static Routes [#light-dark-static-routes]
+
+In styled-components you switch light and dark mode with two theme objects in a
+`ThemeProvider`. In yak the natural translation is `${({ theme }) => …}` with
+`yak.context.ts`. Those values are resolved at render time, and reading
+`cookies()` there makes the route dynamic.
+
+Use static `light-dark()` tokens instead of `theme`:
+
+```ts title="token.ts"
+export const colors = {
+  background: "light-dark(#fff, #111)",
+  text: "light-dark(#111, #eee)",
+};
+```
+
+```tsx title="globals.tsx"
+import { globalStyle } from "@yak/react";
+
+globalStyle`
+  :root {
+    color-scheme: light dark;
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+  }
+`;
+```
+
+```tsx title="page.tsx"
+import { styled } from "@yak/react";
+import { colors } from "./token";
+
+const Page = styled.main`
+  background: ${colors.background};
+  color: ${colors.text};
+`;
+```
+
+Import `globals.tsx` from your root layout, as shown in [Global styles](#globalstyle).
+
+The switch happens in CSS, not in JavaScript, so anything that works in a plain stylesheet works here too. Examples are CSS variables under `:root[data-theme="dark"]` or `@media (prefers-color-scheme: dark)`.
+
+For more on `light-dark()` and `color-scheme`, see [Modern CSS theming](https://una.im/modern-css-theming) by Una Kravets.
 
 ## CSS Prop
 
