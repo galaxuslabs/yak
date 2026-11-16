@@ -1,5 +1,5 @@
 import { ClassNames, ComponentStyles, css } from "./cssLiteral.js";
-import { RuntimeStyleProcessor } from "./publicStyledApi.js";
+import { StyleFunction } from "./publicStyledApi.js";
 
 /**
  * Allows to use atomic CSS classes in a styled or css block
@@ -15,11 +15,9 @@ import { RuntimeStyleProcessor } from "./publicStyledApi.js";
  * `;
  * ```
  */
-export const atoms = <T,>(
-  ...atoms: (string | RuntimeStyleProcessor<T> | false)[]
-): ComponentStyles<T> => {
+export const atoms = <T,>(...atoms: (string | StyleFunction<T> | false)[]): ComponentStyles<T> => {
   const staticClasses = new ClassNames();
-  const dynamicFunctions: RuntimeStyleProcessor<T>[] = [];
+  const dynamicFunctions: StyleFunction<T>[] = [];
 
   for (const atom of atoms) {
     if (typeof atom === "string") {

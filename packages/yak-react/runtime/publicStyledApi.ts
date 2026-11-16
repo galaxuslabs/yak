@@ -138,17 +138,46 @@ export type ClassNameCollector = {
 };
 
 /**
- * Type of all functions that can be passed to manipulate styles
+ * A function that adds the class names and style values of one render
  *
- * `$dynamic` marks processors that execute user functions or write style
- * values at render time; purely static processors (class names only) can
- * skip theme lookup and style-object allocation.
+ * User code passes one to `atoms()`. The functions that `css()` returns
+ * carry a flag on top, see `RuntimeStyleProcessor`
  */
-export type RuntimeStyleProcessor<T> = ((
+export type StyleFunction<T> = (
   props: T,
   classNames: ClassNameCollector,
   style: React.CSSProperties,
-) => void) & { $dynamic?: boolean };
+) => void;
+
+/**
+ * A static processor adds the same class names on every render
+ *
+ * Static means that the result does not depend on the props or the theme.
+ * A static processor does
+ * - NOT run a function from the template like `${(props) => ...}`
+ * - NOT write CSS variables into the style prop
+ *
+ * `$className` holds its class names as one string, e.g. "yA yB". It is empty
+ * if the processor adds no class name
+ * e.g. styled.div`color: red;` -> css("yA") -> { $dynamic: false, $className: "yA" }
+ */
+type StaticStyleProcessor<T> = StyleFunction<T> & {
+  $dynamic: false;
+  $className: string;
+};
+
+/**
+ * A processor that runs user functions or writes style values at render
+ * time, so its class names are only known after it ran
+ * e.g. styled.div`${({ $on }) => $on && css`color: red;`}`
+ */
+type DynamicStyleProcessor<T> = StyleFunction<T> & { $dynamic: true };
+
+/**
+ * What `css()` returns after compilation. Check `$dynamic` to tell which of
+ * the two kinds a processor is: only the static kind has a `$className`
+ */
+export type RuntimeStyleProcessor<T> = StaticStyleProcessor<T> | DynamicStyleProcessor<T>;
 
 /**
  * Utility type to keep the generic API of a component while still being able to use it in a selector
