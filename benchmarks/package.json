@@ -25,6 +25,7 @@
     "generate:bench:tree-wide": "node ./bench/tree-wide/gen.ts",
     "generate:bench:idiomatic-tree": "node ./bench/idiomatic-tree/gen.ts",
     "generate:bench:idiomatic-dynamic-props": "node ./bench/idiomatic-dynamic-props/gen.ts",
+    "generate:bench:runtime-paths": "node ./bench/runtime-paths/gen.ts",
     "bench": "pnpm generate && pnpm bench:build && pnpm bench:run",
     "bench:build": "tsdown ./bench/index.bench.tsx --no-config --sourcemap --minify --env.NODE_ENV=production --format esm --target node20 --out-dir ./bench/dist --deps.neverBundle benchmark --deps.neverBundle styled-components --deps.neverBundle react --deps.neverBundle react-dom",
     "bench:run": "NODE_ENV=production node --enable-source-maps ./bench/dist/index.bench.mjs"
