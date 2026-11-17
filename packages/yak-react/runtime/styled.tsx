@@ -1,6 +1,8 @@
 import { css, CSSInterpolation, ClassNames, yakComponentSymbol } from "./cssLiteral.js";
 import * as INTERNAL from "./internals/propMarkers.js";
 import React from "react";
+// the automatic runtime reuses the filtered props object instead of copying it
+import { jsx } from "react/jsx-runtime";
 import type {
   Attrs,
   AttrsMerged,
@@ -142,7 +144,7 @@ const yakStyled: StyledInternal = (Component, attrs) => {
               ? incoming + " " + staticClassName
               : staticClassName
             : incoming || undefined;
-          return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
+          return createElement(Target, filteredProps);
         }
       : /**
          * The dynamic render function is slightly slower but allows
@@ -194,7 +196,7 @@ const yakStyled: StyledInternal = (Component, attrs) => {
 
           // render the chain's target directly: parent wrappers contribute only
           // their (already merged) attrs and style processors
-          return <Target {...(filteredProps as React.ComponentProps<typeof Target>)} />;
+          return createElement(Target, filteredProps);
         };
 
     // Direct write instead of Object.assign (faster & smaller)
@@ -204,6 +206,27 @@ const yakStyled: StyledInternal = (Component, attrs) => {
     taggedYak[yakComponentSymbol] = [Yak, mergedAttrsFn, runtimeStyleProcessor, targetComponent];
     return taggedYak;
   };
+};
+
+/**
+ * A faster `React.createElement` for the render functions of `styled()`
+ *
+ * `React.createElement(Target, props)` copies every prop into a new object,
+ * `jsx(Target, props)` keeps the object it gets. So `props` must be built
+ * for this render and never be an object the caller passed in
+ *
+ * JSX syntax would copy too: `<Target {...props} />` compiles to
+ * `jsx(Target, { ...props })`
+ *
+ * A `key` goes in as the third argument, like in compiled JSX:
+ * `.attrs({ key: "a" })` renders `jsx(Target, { className: "x" }, "a")`
+ */
+const createElement = (Target: React.ElementType, props: Record<string, unknown>) => {
+  if ("key" in props) {
+    const { key, ...rest } = props;
+    return jsx(Target, rest, key as React.Key);
+  }
+  return jsx(Target, props);
 };
 
 /**
