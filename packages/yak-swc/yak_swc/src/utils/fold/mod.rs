@@ -50,6 +50,7 @@ use crate::utils::native_elements::VALID_ELEMENTS;
 use crate::variable_visitor::ScopedVariableReference;
 use crate::yak_imports::YakImports;
 
+pub(crate) mod class_name_function;
 mod css_expr;
 pub(crate) mod css_prop;
 mod purity;

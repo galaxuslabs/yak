@@ -14,6 +14,8 @@ import type {
   Substitute,
   StyledLiteral,
   RuntimeStyleProcessor,
+  FoldFunction,
+  ClassNameCollector,
 } from "./publicStyledApi.js";
 
 // the following export is not relative as "@yak/react/context"
@@ -88,12 +90,20 @@ const yakStyled: StyledInternal = (Component, attrs) => {
   const staticAttrs = (mergedAttrsFn as StaticAttrsCarrier | undefined)?.[INTERNAL.STATIC_ATTRS];
 
   return (styles, ...values) => {
-    // combine all interpolated logic into a single function
-    // e.g. styled.button`color: ${props => props.color}; margin: ${props => props.margin};`
-    const runtimeStylesFn = css(
-      styles,
-      ...(values as CSSInterpolation<unknown>[]),
-    ) as unknown as RuntimeStyleProcessor<unknown>;
+    /**
+     * combine all interpolated logic into a single function
+     * e.g. styled.button`color: ${props => props.color}; margin: ${props => props.margin};`
+     *
+     * A number as the first value marks the folded shape: the compiler
+     * turned every runtime expression into one fold function
+     * e.g. `__yak_button("yB", 0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`
+     */
+    const runtimeStylesFn = (typeof values[0] === "number"
+      ? foldedProcessor(values[0], values[1] as unknown as FoldFunction)
+      : css(
+          styles,
+          ...(values as CSSInterpolation<unknown>[]),
+        )) as unknown as RuntimeStyleProcessor<unknown>;
     const runtimeStyleProcessor = buildRuntimeStylesProcessor(
       runtimeStylesFn,
       parentRuntimeStylesFn,
@@ -110,6 +120,17 @@ const yakStyled: StyledInternal = (Component, attrs) => {
      */
     const isStatic = (!mergedAttrsFn || staticAttrs) && !runtimeStyleProcessor.$dynamic;
     const staticClassName = isStatic ? runtimeStyleProcessor.$className : undefined;
+    /**
+     * The fold function of a component without an attrs function. An attrs
+     * function receives the theme and the merged props, so a component with
+     * one keeps the dynamic render function, which calls the fold function
+     * through the processor
+     */
+    const fold =
+      (!mergedAttrsFn || staticAttrs) && runtimeStyleProcessor.$dynamic
+        ? runtimeStyleProcessor.$fold
+        : undefined;
+    const foldFlags = foldFlagsOf(runtimeStyleProcessor);
 
     const Yak: React.FunctionComponent = isStatic
       ? /**
@@ -146,58 +167,102 @@ const yakStyled: StyledInternal = (Component, attrs) => {
             : incoming || undefined;
           return createElement(Target, filteredProps);
         }
-      : /**
-         * The dynamic render function is slightly slower but allows
-         * - reading the theme
-         * - attrs functions like `.attrs((props) => ({...}))`
-         * - style functions like `${(props) => props.$active && css`...`}`
-         * - CSS variables in the style prop like `color: ${(props) => props.$color}`
-         */
-        (props) => {
-          // attrs functions and dynamic style functions receive the theme
-          const theme = useTheme();
+      : fold
+        ? /**
+           * The folded render function calls the one function the compiler made
+           * of all style functions,
+           * e.g. `({ $on }) => "yB" + ($on ? " yB1" : "")`
+           *
+           * Folded render functions do
+           * - read the theme only if the fold function asks for it
+           * - NOT run an attrs function like `.attrs((props) => ({...}))`
+           * - NOT create a style object
+           * - NOT write CSS variables into the style prop
+           */
+          (props) => {
+            // the flags are fixed per component, so the hook order is stable
+            const contextTheme = foldFlags & FOLD_THEME ? useTheme() : undefined;
+            const source = (
+              staticAttrs
+                ? combineProps(
+                    props as { className?: string; style?: React.CSSProperties },
+                    staticAttrs,
+                  )
+                : props
+            ) as { className?: string; style?: React.CSSProperties; theme?: YakTheme };
+            // a `theme` prop passed by the caller wins over the context theme,
+            // like `{ theme, ...props }` on the generic path
+            const className = fold(
+              source,
+              undefined,
+              foldFlags & FOLD_THEME
+                ? "theme" in source
+                  ? source.theme
+                  : contextTheme
+                : undefined,
+            );
+            const incoming = source.className;
+            return createElement(
+              Target,
+              foldedDomProperties(
+                source,
+                contextTheme,
+                incoming ? incoming + " " + className : className,
+              ),
+            );
+          }
+        : /**
+           * The dynamic render function is slightly slower but allows
+           * - reading the theme
+           * - attrs functions like `.attrs((props) => ({...}))`
+           * - style functions like `${(props) => props.$active && css`...`}`
+           * - CSS variables in the style prop like `color: ${(props) => props.$color}`
+           */
+          (props) => {
+            // attrs functions and dynamic style functions receive the theme
+            const theme = useTheme();
 
-          // overwrite and merge the current props with the processed attrs, the
-          // merged attrs function runs the attrs of every level of the chain
-          // from the innermost to the outermost
-          const combinedProps = combineProps(
-            {
-              theme,
-              ...(props as {
+            // overwrite and merge the current props with the processed attrs, the
+            // merged attrs function runs the attrs of every level of the chain
+            // from the innermost to the outermost
+            const combinedProps = combineProps(
+              {
+                theme,
+                ...(props as {
+                  className?: string;
+                  style?: React.CSSProperties;
+                }),
+              } as {
+                theme: YakTheme;
                 className?: string;
                 style?: React.CSSProperties;
-              }),
-            } as {
-              theme: YakTheme;
-              className?: string;
-              style?: React.CSSProperties;
-            },
-            mergedAttrsFn?.({ theme, ...(props as any) }),
-          );
+              },
+              mergedAttrsFn?.({ theme, ...(props as any) }),
+            );
 
-          // execute all functions inside the style literal
-          // e.g. styled.button`color: ${props => props.color};`
-          const classNames = new ClassNames(combinedProps.className);
-          // static processors never write style values, so the incoming style
-          // object can be passed through without a defensive copy
-          const styles = runtimeStyleProcessor.$dynamic
-            ? { ...combinedProps.style }
-            : combinedProps.style;
-          runtimeStyleProcessor(combinedProps, classNames, styles as React.CSSProperties);
+            // execute all functions inside the style literal
+            // e.g. styled.button`color: ${props => props.color};`
+            const classNames = new ClassNames(combinedProps.className);
+            // static processors never write style values, so the incoming style
+            // object can be passed through without a defensive copy
+            const styles = runtimeStyleProcessor.$dynamic
+              ? { ...combinedProps.style }
+              : combinedProps.style;
+            runtimeStyleProcessor(combinedProps, classNames, styles as React.CSSProperties);
 
-          combinedProps.className = classNames.value || undefined;
-          if (styles !== combinedProps.style) {
-            combinedProps.style = styles;
-          }
+            combinedProps.className = classNames.value || undefined;
+            if (styles !== combinedProps.style) {
+              combinedProps.style = styles;
+            }
 
-          // removes the yak theme (after the runtime styles read it) together with
-          // all $-props, so they reach neither DOM elements nor custom components
-          const filteredProps = removeNonDomProperties(combinedProps, theme);
+            // removes the yak theme (after the runtime styles read it) together with
+            // all $-props, so they reach neither DOM elements nor custom components
+            const filteredProps = removeNonDomProperties(combinedProps, theme);
 
-          // render the chain's target directly: parent wrappers contribute only
-          // their (already merged) attrs and style processors
-          return createElement(Target, filteredProps);
-        };
+            // render the chain's target directly: parent wrappers contribute only
+            // their (already merged) attrs and style processors
+            return createElement(Target, filteredProps);
+          };
 
     // Direct write instead of Object.assign (faster & smaller)
     const taggedYak = Yak as React.FunctionComponent & {
@@ -249,6 +314,39 @@ const removeNonDomProperties = <T extends Record<string, unknown>>(obj: T, theme
     if (value !== undefined && (key !== "theme" || value !== theme)) {
       result[key] = value;
     }
+  }
+  return result;
+};
+
+/**
+ * `removeNonDomProperties` for the fold path, which also sets the class
+ * string
+ *
+ * A `className` key keeps its position, even with an undefined value, so the
+ * attribute order matches the generic path, which assigns it onto the merged
+ * props
+ *
+ * `theme` is the context theme, or undefined when the fold function does not
+ * read the theme. In that case no `theme` entry is removed, like for a static
+ * component
+ */
+const foldedDomProperties = (obj: Record<string, unknown>, theme: unknown, className: string) => {
+  const result: Record<string, unknown> = {};
+  for (const key in obj) {
+    if (key.startsWith("$")) {
+      continue;
+    }
+    if (key === "className") {
+      result.className = className;
+      continue;
+    }
+    const value = obj[key];
+    if (value !== undefined && (key !== "theme" || value !== theme)) {
+      result[key] = value;
+    }
+  }
+  if (!("className" in result)) {
+    result.className = className;
   }
   return result;
 };
@@ -361,6 +459,15 @@ const buildRuntimeStylesProcessor = <T,>(
   parentRuntimeStylesFn?: RuntimeStyleProcessor<T>,
 ): RuntimeStyleProcessor<T> => {
   if (runtimeStylesFn && parentRuntimeStylesFn) {
+    // a chain of folded and static levels stays folded: one function returns
+    // the class string of every level, parent first
+    const chainFold = joinFoldFunctions(parentRuntimeStylesFn, runtimeStylesFn);
+    if (chainFold) {
+      return foldedProcessor(
+        foldFlagsOf(parentRuntimeStylesFn) | foldFlagsOf(runtimeStylesFn),
+        chainFold,
+      ) as RuntimeStyleProcessor<T>;
+    }
     const combined = (
       props: T,
       classNames: Parameters<RuntimeStyleProcessor<T>>[1],
@@ -381,6 +488,64 @@ const buildRuntimeStylesProcessor = <T,>(
         });
   }
   return runtimeStylesFn || parentRuntimeStylesFn;
+};
+
+/** Fold flag: the fold function reads the theme, its third argument */
+const FOLD_THEME = 1;
+
+/**
+ * Wraps a compiled fold function into a style processor
+ *
+ * The processor itself serves the generic path (attrs functions, chains with
+ * an unfolded level): it adds the class string the fold function returns and
+ * reads the theme from the props, where the generic path puts it. The short
+ * path calls `$fold` directly
+ */
+const foldedProcessor = (flags: number, fold: FoldFunction) =>
+  Object.assign(
+    (props: { theme?: YakTheme }, classNames: ClassNameCollector, style: React.CSSProperties) => {
+      classNames.add(fold(props, style, props.theme));
+    },
+    { $dynamic: true as const, $fold: fold, $flags: flags },
+  );
+
+/** The flags of a folded processor, 0 for every other processor */
+const foldFlagsOf = (processor: RuntimeStyleProcessor<any>) =>
+  (processor.$dynamic && processor.$flags) || 0;
+
+/**
+ * Combines the levels of a `styled(styled(...))` chain into one fold
+ * function if every level is folded or static, e.g. a static parent `"yA"`
+ * and a folded child `f` give `(p, s, t) => "yA " + f(p, s, t)`
+ *
+ * Returns undefined if one level is neither, so the chain keeps the generic
+ * path
+ */
+const joinFoldFunctions = (
+  parent: RuntimeStyleProcessor<any>,
+  own: RuntimeStyleProcessor<any>,
+): FoldFunction | undefined => {
+  const parentFold = parent.$dynamic ? parent.$fold : undefined;
+  const ownFold = own.$dynamic ? own.$fold : undefined;
+  if (!parentFold && !ownFold) {
+    return undefined;
+  }
+  if (parentFold && ownFold) {
+    return (props, style, theme) =>
+      parentFold(props, style, theme) + " " + ownFold(props, style, theme);
+  }
+  // one level is folded: the other one must be static
+  const other = parentFold ? own : parent;
+  if (other.$dynamic) {
+    return undefined;
+  }
+  const className = other.$className;
+  if (!className) {
+    return parentFold || ownFold;
+  }
+  return parentFold
+    ? (props, style, theme) => parentFold(props, style, theme) + " " + className
+    : (props, style, theme) => className + " " + ownFold!(props, style, theme);
 };
 
 /**

@@ -13,3 +13,4 @@ target
 cross-file-tests/__tests__/.tmp/
 *.tgz
 .claude
+*.tsbuildinfo

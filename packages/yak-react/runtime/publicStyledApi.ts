@@ -170,14 +170,37 @@ type StaticStyleProcessor<T> = StyleFunction<T> & {
  * A processor that runs user functions or writes style values at render
  * time, so its class names are only known after it ran
  * e.g. styled.div`${({ $on }) => $on && css`color: red;`}`
+ *
+ * A processor built from a compiled fold function carries it as `$fold`,
+ * together with its `$flags` (see `FoldFunction` below)
  */
-type DynamicStyleProcessor<T> = StyleFunction<T> & { $dynamic: true };
+type DynamicStyleProcessor<T> = StyleFunction<T> & {
+  $dynamic: true;
+  $fold?: FoldFunction;
+  $flags?: number;
+};
 
 /**
  * What `css()` returns after compilation. Check `$dynamic` to tell which of
- * the two kinds a processor is: only the static kind has a `$className`
+ * the two kinds a processor is: only the static kind has a `$className`, only
+ * the dynamic kind can have a `$fold`
  */
 export type RuntimeStyleProcessor<T> = StaticStyleProcessor<T> | DynamicStyleProcessor<T>;
+
+/**
+ * The function the compiler emits for a styled component whose runtime
+ * expressions only toggle class names. It returns the complete class string:
+ *
+ * ```js
+ * styled.button`${({ $on }) => $on && css`color: red;`}`
+ * // compiled
+ * __yak_button("yB", 0, ({ $on }) => "yB" + ($on ? " yB1" : ""))
+ * ```
+ *
+ * `theme` is the yak theme. The fold render function passes it only when the
+ * flags ask for it. The function does not use the second parameter.
+ */
+export type FoldFunction = (props: any, style: any, theme: any) => string;
 
 /**
  * Utility type to keep the generic API of a component while still being able to use it in a selector
