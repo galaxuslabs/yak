@@ -63,7 +63,6 @@ catalogs:
     "@testing-library/dom": 10.4.2
     "@testing-library/react": 16.3.3
     "@types/babel__standalone": 7.1.9
-    "@types/benchmark": 2.1.5
     "@types/jest": 30.0.0
     "@types/node": 26.6.5
     "@types/subset-font": 2.3.0
@@ -75,7 +74,6 @@ catalogs:
     "@vitejs/plugin-react": 6.1.2
     "@vitejs/plugin-react-swc": 4.3.3
     "@vitejs/plugin-rsc": 0.5.38
-    benchmark: 2.1.4
     eslint: 10.13.0
     eslint-config-next: 16.4.2
     eslint-doc-generator: 3.7.1
@@ -102,6 +100,7 @@ catalogs:
     styled-components: 6.6.0
     subset-font: 2.9.0
     svjeez: 0.5.0
+    tinybench: 6.2.3
     tsdown: 0.23.1
     tsx: 4.23.15
     # TypeScript 7 (the native compiler) ships no stable programmatic API yet.

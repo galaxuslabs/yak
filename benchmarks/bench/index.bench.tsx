@@ -1,6 +1,6 @@
-import Benchmark from "benchmark";
-import { readFileSync, writeFileSync } from "node:fs";
+import { GCProfiler, getHeapStatistics } from "node:v8";
 import { renderToString } from "react-dom/server";
+import { Bench } from "tinybench";
 import { ServerStyleSheet } from "styled-components";
 import { KanjiLetterComponentYak } from "./generated/KanjiLetterComponent.yak.compiled";
 import React from "react";
@@ -51,175 +51,30 @@ import { IdiomaticDynamicPropsComponentsYak } from "./generated/IdiomaticDynamic
 import { IdiomaticDynamicPropsComponentsStyled } from "./generated/IdiomaticDynamicProps.styled-components";
 import * as RuntimePathsYak from "./generated/RuntimePaths.yak.compiled";
 import * as RuntimePathsStyled from "./generated/RuntimePaths.styled-components";
+import { RUNTIME_PATHS } from "./rows.ts";
 
-// One row per render path of the yak styled runtime (see bench/runtime-paths).
-// The other workloads mostly declare and render their components in one
-// module, where the compiler folds them into plain elements, so without these
-// rows a change to the runtime would barely show up
-const RUNTIME_PATHS: Array<[label: string, name: string]> = [
-  ["Static", "Static"],
-  ["Static with className", "StaticClassName"],
-  ["Static .attrs({...})", "StaticAttrs"],
-  ["Static styled(Custom)", "StaticCustom"],
-  ["Static styled(styled)", "StaticChain"],
-  ["Class toggles", "ClassToggle"],
-  ["CSS variable", "CssVariable"],
-  ["Theme function", "Theme"],
-  [".attrs(fn)", "AttrsFunction"],
-  ["Dynamic styled(styled)", "DynamicChain"],
-];
+// Usage:
+//   node index.bench.mjs                 measures all cases
+//   node index.bench.mjs --list          prints the name of each case, one per line
+//   node index.bench.mjs --case <name>   measures only this case
+//
+// For each case it prints one "<name> x <ops> ops/sec (median) ±<mad>% MAD (<n> samples)" line
+// and one "<name> allocates <bytes> bytes/op (<n> ops)" line.
 
-// Each row pairs the styled-components and yak variants of one workload.
-// Order here is the order rendered in the output table.
-const ROWS: Array<{ label: string; styled: string; yak: string }> = [
-  {
-    label: "Kanji letter",
-    styled: "render KanjiLetterComponentStyled",
-    yak: "render KanjiLetterComponentYak",
-  },
-  {
-    label: "Pure component",
-    styled: "render PureComponentsStyled",
-    yak: "render PureComponentsYak",
-  },
-  {
-    label: "Attrs",
-    styled: "render AttrsComponentsStyled",
-    yak: "render AttrsComponentsYak",
-  },
-  {
-    label: "CSS prop",
-    styled: "render CssPropComponentsStyled",
-    yak: "render CssPropComponentsYak",
-  },
-  {
-    label: "Dynamic props",
-    styled: "render DynamicPropsComponentsStyled",
-    yak: "render DynamicPropsComponentsYak",
-  },
-  {
-    label: "Dynamic props (idiomatic)",
-    styled: "render IdiomaticDynamicPropsStyled",
-    yak: "render IdiomaticDynamicPropsYak",
-  },
-  {
-    label: "Nested components",
-    styled: "render NestedComponentsStyled",
-    yak: "render NestedComponentsYak",
-  },
-  { label: "Tree", styled: "render TreeStyled", yak: "render TreeYak" },
-  {
-    label: "Tree (idiomatic)",
-    styled: "render IdiomaticTreeStyled",
-    yak: "render IdiomaticTreeYak",
-  },
-  {
-    label: "Tree deep",
-    styled: "render TreeDeepStyled",
-    yak: "render TreeDeepYak",
-  },
-  {
-    label: "Tree wide",
-    styled: "render TreeWideStyled",
-    yak: "render TreeWideYak",
-  },
-  {
-    label: "Sierpinski",
-    styled: "render SierpinskiStyled",
-    yak: "render SierpinskiYak",
-  },
-  {
-    label: "Cross request cache",
-    styled: "render CrossRequestCacheStyled",
-    yak: "render CrossRequestCacheYak",
-  },
-  {
-    label: "SSR extraction",
-    styled: "render SsrExtractionStyled",
-    yak: "render SsrExtractionYak",
-  },
-  ...RUNTIME_PATHS.map(([label, name]) => ({
-    label: `Runtime path: ${label}`,
-    styled: `render RuntimePath${name}Styled`,
-    yak: `render RuntimePath${name}Yak`,
-  })),
-];
-
-const results = new Map<string, number>();
-
-function loadBaseline(): Map<string, number> | undefined {
-  const file = process.env.BENCH_BASELINE_FILE;
-  if (!file) return undefined;
-  try {
-    const parsed = JSON.parse(readFileSync(file, "utf8")) as Record<string, number>;
-    const entries = Object.entries(parsed).filter(
-      ([, v]) => typeof v === "number" && Number.isFinite(v) && v > 0,
-    );
-    if (entries.length === 0) return undefined;
-    return new Map(entries);
-  } catch (e) {
-    console.warn(`Failed to read baseline file ${file}: ${(e as Error).message}`);
-    return undefined;
-  }
-}
-
-function renderTable(baseline: Map<string, number> | undefined): string {
-  const lines = [
-    "<table>",
-    "<tr>",
-    " <td>Benchmark",
-    " <td>styled-components (ops/sec)",
-    " <td>yak (ops/sec)",
-    " <td>yak is",
-  ];
-  if (baseline) lines.push(" <td>Δ yak vs main");
-
-  for (const row of ROWS) {
-    const styled = results.get(row.styled);
-    const yak = results.get(row.yak);
-    lines.push("<tr>");
-    lines.push(` <td>${row.label}`);
-    lines.push(` <td> ${styled === undefined ? "n/a" : Math.round(styled)}`);
-    lines.push(` <td> ${yak === undefined ? "n/a" : Math.round(yak)}`);
-
-    let comparison = "n/a";
-    if (styled !== undefined && yak !== undefined && styled > 0 && yak > 0) {
-      if (yak >= styled) {
-        const pct = parseFloat((((yak - styled) / styled) * 100).toFixed(2));
-        comparison = `${pct}% faster`;
-      } else {
-        const pct = parseFloat((((styled - yak) / yak) * 100).toFixed(2));
-        comparison = `${pct}% slower`;
-      }
-    }
-    lines.push(` <td> ${comparison}`);
-
-    if (baseline) {
-      let delta = "—";
-      const baseYak = baseline.get(row.yak);
-      if (yak !== undefined && baseYak !== undefined && baseYak > 0 && yak > 0) {
-        if (yak >= baseYak) {
-          const pct = parseFloat((((yak - baseYak) / baseYak) * 100).toFixed(2));
-          delta = `${pct}% faster`;
-        } else {
-          const pct = parseFloat((((baseYak - yak) / yak) * 100).toFixed(2));
-          delta = `${pct}% slower`;
-        }
-      } else if (yak !== undefined && baseYak === undefined) {
-        delta = "new";
-      }
-      lines.push(` <td> ${delta}`);
-    }
-  }
-
-  lines.push("</table>");
-  return lines.join("\n");
-}
+// Time budget of each case. The median of the samples ignores single stalled samples
+const BENCH_TIME_MS = 5000;
+const BENCH_WARMUP_TIME_MS = 1000;
 
 (async () => {
-  const suite = new Benchmark.Suite(undefined, { minSamples: 50 });
+  const cases = new Map<string, () => void>();
+  const bench = {
+    add(name: string, fn: () => void) {
+      cases.set(name, fn);
+      return bench;
+    },
+  };
 
-  suite
+  bench
     // Original Kanji Letter Components
     .add("render KanjiLetterComponentStyled", () => {
       renderToString(<KanjiLetterComponentStyled />).length;
@@ -351,7 +206,7 @@ function renderTable(baseline: Map<string, number> | undefined): string {
     const Yak = RuntimePathsYak[
       `RuntimePath${name}Yak` as keyof typeof RuntimePathsYak
     ] as React.FunctionComponent;
-    suite
+    bench
       .add(`render RuntimePath${name}Styled`, () => {
         renderToString(<Styled />).length;
       })
@@ -360,30 +215,64 @@ function renderTable(baseline: Map<string, number> | undefined): string {
       });
   }
 
-  suite
+  const args = process.argv.slice(2);
+  if (args[0] === "--list") {
+    console.log([...cases.keys()].join("\n"));
+    return;
+  }
+  const selected = args[0] === "--case" ? [args[1]] : [...cases.keys()];
+  for (const name of selected) {
+    if (!cases.has(name)) throw new Error(`Unknown benchmark case: ${name}`);
+  }
 
-    .on("cycle", function (event: Benchmark.Event) {
-      const target = event.target as Benchmark.Target & {
-        name: string;
-        hz: number;
-      };
-      results.set(target.name, target.hz);
-      console.log(String(target));
-    });
+  const runner = new Bench({ time: BENCH_TIME_MS, warmupTime: BENCH_WARMUP_TIME_MS, throws: true });
+  for (const name of selected) runner.add(name, cases.get(name)!);
+  for (const task of runner.runSync()) {
+    const { result } = task;
+    if (result.state !== "completed") throw new Error(`${task.name} ended as ${result.state}`);
+    const { p50, mad } = result.throughput;
+    console.log(
+      `${task.name} x ${p50.toFixed(2)} ops/sec (median) ±${((mad / p50) * 100).toFixed(2)}% MAD ` +
+        `(${result.latency.samplesCount} samples)`,
+    );
+  }
 
-  // Benchmark.Suite.run() does not return a Promise even with `async: true`,
-  // so we wait on the `complete` event explicitly.
-  await new Promise<void>((resolve) => {
-    suite.on("complete", () => resolve());
-    suite.run({ async: true });
-  });
-
-  const baseline = loadBaseline();
-  const table = renderTable(baseline);
-  console.log("\n" + table);
-
-  const outFile = process.env.BENCH_OUTPUT_FILE;
-  if (outFile) {
-    writeFileSync(outFile, table + "\n");
+  // The bytes a case allocates depend on the code and not on the load of the machine,
+  // so they show a change that the noise of the timings hides
+  for (const name of selected) {
+    const { bytes, ops } = measureAllocations(cases.get(name)!);
+    console.log(`${name} allocates ${Math.round(bytes)} bytes/op (${ops} ops)`);
   }
 })();
+
+// Runs `fn` for about ALLOCATION_TIME_MS and returns the bytes it allocates per call.
+// The heap only grows by allocation and only shrinks by garbage collection, so the
+// allocated bytes are the growth of the used heap plus the bytes that each GC frees.
+// The used heap grows in allocation buffers and not per object, so one measurement can
+// be off by one buffer. More calls make this error smaller per call, so a fast machine
+// gets a more exact average. The bytes per call do not depend on the machine speed.
+const ALLOCATION_TIME_MS = 250;
+const ALLOCATION_MIN_OPS = 5;
+
+function measureAllocations(fn: () => void): { bytes: number; ops: number } {
+  // Warm up again, the optimized code of this case can be gone after the other cases
+  const warmupEnd = performance.now() + 50;
+  while (performance.now() < warmupEnd) fn();
+
+  const profiler = new GCProfiler();
+  profiler.start();
+  const usedBefore = getHeapStatistics().used_heap_size;
+  const end = performance.now() + ALLOCATION_TIME_MS;
+  let ops = 0;
+  while (ops < ALLOCATION_MIN_OPS || performance.now() < end) {
+    fn();
+    ops++;
+  }
+  const usedAfter = getHeapStatistics().used_heap_size;
+  const freed = (profiler.stop()?.statistics ?? []).reduce(
+    (sum, gc) =>
+      sum + gc.beforeGC.heapStatistics.usedHeapSize - gc.afterGC.heapStatistics.usedHeapSize,
+    0,
+  );
+  return { bytes: (usedAfter - usedBefore + freed) / ops, ops };
+}

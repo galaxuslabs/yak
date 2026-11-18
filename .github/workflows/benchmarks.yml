@@ -17,9 +17,20 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  approve-fork:
+    name: Approve benchmarks for a fork PR
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-slim
+    environment: benchmarks-fork
+    permissions: {}
+    steps:
+      - run: echo "Benchmarks approved"
+
   benchmarks:
     name: Run benchmarks and post results
-    runs-on: ubuntu-latest
+    needs: approve-fork
+    if: ${{ !cancelled() && (needs.approve-fork.result == 'success' || needs.approve-fork.result == 'skipped') }}
+    runs-on: yak-benchmark-runner
     permissions:
       contents: read
       pull-requests: write
@@ -62,11 +73,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      # ----- Pass 1: baseline run from the PR's target branch -----
-      # Each baseline step uses `continue-on-error` so that if the baseline ref
-      # doesn't yet have a working `bench:*` script (e.g. before this lands on main),
-      # the workflow skips baseline silently and the PR pass falls back to a
-      # 4-column table.
+      # ----- Pass 1: build the benchmark suite of the PR's target branch -----
+      # Each baseline step uses `continue-on-error`, so a broken target branch
+      # only leaves the main columns out of the results.
       - name: Switch to baseline ref
         continue-on-error: true
         env:
@@ -95,31 +104,11 @@ jobs:
         working-directory: benchmarks
         run: pnpm run bench:build
 
-      - name: Run baseline benchmark
+      # The bundle holds the yak runtime of the target branch, so it still runs after the PR checkout
+      - name: Keep baseline benchmark suite
         continue-on-error: true
         working-directory: benchmarks
-        run: |
-          set -o pipefail
-          pnpm run bench:run 2>&1 | tee /tmp/baseline.log
-
-      - name: Parse baseline into JSON
-        continue-on-error: true
-        run: |
-          node <<'EOF'
-          const fs = require("node:fs");
-          if (!fs.existsSync("/tmp/baseline.log")) {
-            console.log("No baseline log present; skipping baseline.");
-            process.exit(0);
-          }
-          const text = fs.readFileSync("/tmp/baseline.log", "utf8");
-          const result = {};
-          for (const line of text.split("\n")) {
-            const m = line.match(/^(.+) x ([\d,]+(?:\.\d+)?) ops\/sec/);
-            if (m) result[m[1]] = Number(m[2].replace(/,/g, ""));
-          }
-          fs.writeFileSync("/tmp/baseline.json", JSON.stringify(result, null, 2));
-          console.log("Parsed", Object.keys(result).length, "baseline benches");
-          EOF
+        run: rm -rf bench/dist-base && mv bench/dist bench/dist-base
 
       # ----- Pass 2: PR head -----
       - name: Switch to PR head
@@ -144,15 +133,21 @@ jobs:
         working-directory: benchmarks
         run: pnpm run bench:build
 
-      - name: Run PR benchmark
+      # Runs each case for main and PR in turns, see bench/rounds.ts
+      - name: Run benchmarks
         working-directory: benchmarks
-        env:
-          BENCH_OUTPUT_FILE: ${{ github.workspace }}/benchmarks/bench-table.html
-          BENCH_BASELINE_FILE: /tmp/baseline.json
-        run: pnpm run bench:run
+        run: pnpm --silent run bench:rounds --rounds 3
+
+      - name: Write results table
+        working-directory: benchmarks
+        run: pnpm --silent run bench:report bench/runs > bench-table.html
+
+      # The token of a fork PR is read-only and cannot comment, so the job summary shows the results.
+      - name: Write job summary
+        run: cat benchmarks/bench-table.html >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upsert PR comment
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
