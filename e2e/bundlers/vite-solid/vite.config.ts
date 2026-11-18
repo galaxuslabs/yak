@@ -24,10 +24,11 @@ const yakOptions = process.env.YAK_E2E_FOLD_STATIC === "false" ? { foldStatic: f
 export default defineConfig(({ isSsrBuild }) => ({
   // yak first: it must see the source before the JSX is compiled
   plugins: [yak(yakOptions), solid({ ssr: true })],
-  // one copy of Solid on the server, or its hydration keys drift apart
+  // one copy of Solid on the server, or its hydration keys drift apart. dedupe
+  // alone is not enough: the exports map of @solidjs/web points the "development"
+  // condition at dist/server.dev.js when Vite bundles it and at dist/server.js
+  // when Node loads it externalized, so Solid is bundled too
   resolve: { dedupe: ["solid-js", "@solidjs/web", "@solidjs/signals"] },
-  // one copy of Solid on the server: rc.8 resolves the "development" condition to
-  // dist/server.dev.js when bundled and to dist/server.js when externalized
   ssr: { noExternal: ["@yak/solid", "solid-js", "@solidjs/web", "@solidjs/signals"] },
   build: isSsrBuild
     ? { ssr: true, outDir: "dist/server", rollupOptions: { input: serverEntries } }
