@@ -34,8 +34,14 @@ export const MixinReturn = styled.div<{ $on: boolean }>`
   ${({ $on }) => $on && mixin}
 `;
 
-export const AtomsReturn = styled.div<{ $on: boolean }>`
-  ${({ $on }) => $on && atoms("flex")}
+// the function runs with the class names of the render
+export const AtomsFunction = styled.div<{ $on: boolean }>`
+  ${({ $on }) => $on && atoms("flex", (_, classNames) => classNames.delete("flex"))}
+`;
+
+// no condition: the runtime joins these class names once at definition
+export const AtomsOnly = styled.div`
+  ${atoms("flex", "gap-2")}
 `;
 
 export const StyleReadInValue = styled.div`
@@ -170,4 +176,14 @@ export const FunctionAfterSwitchDefault = styled.div<{ $size: number }>`
       return size > 2;
     }
   }}
+`;
+
+// the argument can hold a function
+export const AtomsValue = styled.div<{ $on: boolean; $extra: string }>`
+  ${({ $on, $extra }) => $on && atoms("flex", $extra)}
+`;
+
+// a truthy left side can be a function
+export const AtomsOr = styled.div<{ $on: boolean; $extra?: string }>`
+  ${({ $on, $extra }) => $on && atoms($extra || "flex")}
 `;

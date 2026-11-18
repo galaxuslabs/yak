@@ -54,10 +54,17 @@ export const MixinReturn = /*YAK EXPORTED STYLED:MixinReturn:input_MixinReturn_m
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_MixinReturn_m7uBBu", ({ $on })=>$on && mixin), {
     "displayName": "MixinReturn"
 });
-export const AtomsReturn = /*YAK EXPORTED STYLED:AtomsReturn:input_AtomsReturn_m7uBBu*//*YAK Extracted CSS:
+// the function runs with the class names of the render
+export const AtomsFunction = /*YAK EXPORTED STYLED:AtomsFunction:input_AtomsFunction_m7uBBu*//*YAK Extracted CSS:
 
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsReturn_m7uBBu", ({ $on })=>$on && atoms("flex")), {
-    "displayName": "AtomsReturn"
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsFunction_m7uBBu", ({ $on })=>$on && atoms("flex", (_, classNames)=>classNames.delete("flex"))), {
+    "displayName": "AtomsFunction"
+});
+// no condition: the runtime joins these class names once at definition
+export const AtomsOnly = /*YAK EXPORTED STYLED:AtomsOnly:input_AtomsOnly_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsOnly_m7uBBu", atoms("flex", "gap-2")), {
+    "displayName": "AtomsOnly"
 });
 export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:input_StyleReadInValue_m7uBBu*//*YAK Extracted CSS:
 .input_StyleReadInValue_m7uBBu {
@@ -263,4 +270,16 @@ export const FunctionAfterSwitchDefault = /*YAK EXPORTED STYLED:FunctionAfterSwi
     }
 }), {
     "displayName": "FunctionAfterSwitchDefault"
+});
+// the argument can hold a function
+export const AtomsValue = /*YAK EXPORTED STYLED:AtomsValue:input_AtomsValue_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsValue_m7uBBu", ({ $on, $extra })=>$on && atoms("flex", $extra)), {
+    "displayName": "AtomsValue"
+});
+// a truthy left side can be a function
+export const AtomsOr = /*YAK EXPORTED STYLED:AtomsOr:input_AtomsOr_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsOr_m7uBBu", ({ $on, $extra })=>$on && atoms($extra || "flex")), {
+    "displayName": "AtomsOr"
 });

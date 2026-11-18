@@ -218,9 +218,11 @@ pub(super) fn is_yak_css_callee(callee: &Callee, yak_imports: &YakImports) -> bo
 /// Matches a callee that resolves to a yak style function: `css`, which an
 /// inline template compiles to, or `atoms`
 pub(super) fn is_yak_style_callee(callee: &Callee, yak_imports: &YakImports) -> bool {
-  if is_yak_css_callee(callee, yak_imports) {
-    return true;
-  }
+  is_yak_css_callee(callee, yak_imports) || is_yak_atoms_callee(callee, yak_imports)
+}
+
+/// Matches a callee that resolves to the yak `atoms` import
+pub(super) fn is_yak_atoms_callee(callee: &Callee, yak_imports: &YakImports) -> bool {
   match callee {
     Callee::Expr(expr) => match unwrap_type_casts(expr) {
       Expr::Ident(ident) => {

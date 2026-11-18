@@ -16,7 +16,7 @@ import { RuntimeStyleProcessor } from "./publicStyledApi.js";
  * ```
  */
 export const atoms = <T>(
-  ...atoms: (string | RuntimeStyleProcessor<T> | false)[]
+  ...atoms: (string | RuntimeStyleProcessor<T> | false | null | undefined)[]
 ): ComponentStyles<T> => {
   const staticClasses: string[] = [];
   const dynamicFunctions: RuntimeStyleProcessor<T>[] = [];

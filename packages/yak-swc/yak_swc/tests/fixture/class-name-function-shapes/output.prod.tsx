@@ -1,4 +1,4 @@
-import { styled, css, __yak_cssValue } from "@yak/react/internal";
+import { styled, css, atoms, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
@@ -95,3 +95,12 @@ export const OrChain = /*YAK EXPORTED STYLED:OrChain:ym7uBBuW*//*YAK Extracted C
   color: orange;
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuW", 0, ({ $a, $b })=>"ym7uBBuW" + (!$a || !$b ? "" : " ym7uBBuX"));
+export const AtomsCondition = /*YAK EXPORTED STYLED:AtomsCondition:ym7uBBuY*//*YAK Extracted CSS:
+.ym7uBBuZ {
+  color: black;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuY", 0, ({ $on })=>"ym7uBBuY" + " flex gap-2" + ($on ? " shadow-md rounded" : "") + ($on ? " text-white" : " ym7uBBuZ"));
+// conditions inside atoms(): any condition folds, the class name is a string
+export const AtomsNestedCondition = /*YAK EXPORTED STYLED:AtomsNestedCondition:ym7uBBua*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBua", 0, ({ $on, $off })=>"ym7uBBua" + ($on ? " shadow-md" + ($off ? " ring" : "") + " rounded p-2" + ($off ? " text-white" : " text-black") + ($off ? " border" : "") + (true === false ? " never" : "") + (isLarge ? " large" : "") : ""));
