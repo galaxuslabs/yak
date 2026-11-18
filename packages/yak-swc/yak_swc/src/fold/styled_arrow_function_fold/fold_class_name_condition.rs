@@ -159,7 +159,7 @@ impl ClassNameFolder<'_> {
           class_name = Some(value.value.clone())
         }
         Expr::Arrow(_) => folded_arguments.push(self.fold_arrow(&arg.expr)?),
-        // css variables: `css("x", { style: { "--yX": value } })`
+        // css variables: `css("x", { "--yX": value })`
         Expr::Object(object) => folded_arguments.push(self.fold_style_object(object)?),
         // mixin references and anything else
         _ => return None,

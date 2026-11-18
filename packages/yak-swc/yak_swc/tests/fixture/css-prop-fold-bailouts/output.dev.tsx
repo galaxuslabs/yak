@@ -47,8 +47,6 @@ const LogicalAndDynamic = ({ on, color }: {
   color: var(--input_LogicalAndDynamic__color_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--input_LogicalAndDynamic__color_m7uBBu": ()=>color
-        }
+        "--input_LogicalAndDynamic__color_m7uBBu": ()=>color
     }, "input_LogicalAndDynamic_m7uBBu"))}/>; // mixin references (`css={mixin}`, `css={on && mixin}`) are rejected with a
  // compile error - see the css-prop-style-reference fixture

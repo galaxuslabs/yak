@@ -71,10 +71,8 @@ const DefaultReferencesSibling = /*YAK Extracted CSS:
   min-height: var(--input_DefaultReferencesSibling__min-height_m7uBBu);
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultReferencesSibling_m7uBBu", {
-    "style": {
-        "--input_DefaultReferencesSibling__min-height_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $b = 1, $a })=>$a * $b, "px"),
-        "--input_DefaultReferencesSibling__min-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b = $a })=>$a * $b, "px")
-    }
+    "--input_DefaultReferencesSibling__min-height_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $b = 1, $a })=>$a * $b, "px"),
+    "--input_DefaultReferencesSibling__min-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b = $a })=>$a * $b, "px")
 }), {
     "displayName": "DefaultReferencesSibling"
 });

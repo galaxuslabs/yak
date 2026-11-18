@@ -125,13 +125,7 @@ impl YakTransform for TransformNestedCss {
     }
     arguments.extend(runtime_expressions.into_iter().map(ExprOrSpread::from));
     if !runtime_css_variables.is_empty() {
-      arguments.push(
-        expr_hash_map_to_object(FxHashMap::from_iter([(
-          "style".to_string(),
-          expr_hash_map_to_object(runtime_css_variables),
-        )]))
-        .into(),
-      );
+      arguments.push(expr_hash_map_to_object(runtime_css_variables).into());
     }
     YakTransformResult {
       css: YakCss {
@@ -216,13 +210,7 @@ impl YakTransform for TransformCssMixin {
     let mut arguments: Vec<ExprOrSpread> = vec![];
     arguments.extend(runtime_expressions.into_iter().map(ExprOrSpread::from));
     if !runtime_css_variables.is_empty() {
-      arguments.push(
-        expr_hash_map_to_object(FxHashMap::from_iter([(
-          "style".to_string(),
-          expr_hash_map_to_object(runtime_css_variables),
-        )]))
-        .into(),
-      );
+      arguments.push(expr_hash_map_to_object(runtime_css_variables).into());
     }
     let is_empty_css_prop =
       self.is_within_jsx_attribute && declarations.is_empty() && !has_dynamic_content;
@@ -495,13 +483,7 @@ impl YakTransform for TransformStyled {
     );
     arguments.extend(runtime_expressions.into_iter().map(ExprOrSpread::from));
     if !runtime_css_variables.is_empty() {
-      arguments.push(
-        expr_hash_map_to_object(FxHashMap::from_iter([(
-          "style".to_string(),
-          expr_hash_map_to_object(runtime_css_variables),
-        )]))
-        .into(),
-      );
+      arguments.push(expr_hash_map_to_object(runtime_css_variables).into());
     }
     let tag_expression = transform_styled_usages(expression.tag.clone(), yak_imports);
     let result_expr = Box::new(Expr::Call(CallExpr {
@@ -656,13 +638,7 @@ impl YakTransform for TransformKeyframes {
       );
     }
     if !runtime_css_variables.is_empty() {
-      arguments.push(
-        expr_hash_map_to_object(FxHashMap::from_iter([(
-          "style".to_string(),
-          expr_hash_map_to_object(runtime_css_variables),
-        )]))
-        .into(),
-      );
+      arguments.push(expr_hash_map_to_object(runtime_css_variables).into());
     }
     YakTransformResult {
       css: YakCss {

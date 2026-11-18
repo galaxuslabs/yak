@@ -265,9 +265,7 @@ it("pass attrs to style block", () => {
     "data-active-class-name": "--is-active",
     // @ts-expect-error
   }))("c1", {
-    style: {
-      "--testVar": (props: any) => props["data-active-class-name"] && "c2",
-    },
+    "--testVar": (props: any) => props["data-active-class-name"] && "c2",
   });
   expect(getSnapshot(<Comp />)).toMatchInlineSnapshot(`
     <a

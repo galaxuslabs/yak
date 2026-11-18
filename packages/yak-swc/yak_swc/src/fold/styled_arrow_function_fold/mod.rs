@@ -107,7 +107,7 @@ pub(crate) fn fold_class_names(
     return None;
   }
   // the runtime writes the CSS variables of the component after it ran the
-  // runtime expressions, in the key order of the compiled `{ style: {...} }`
+  // runtime expressions, in the key order of the compiled `{ "--yX": value }` object
   if !css_variables.is_empty() {
     let mut keys: Vec<&String> = css_variables.keys().collect();
     keys.sort();

@@ -81,23 +81,11 @@ impl ClassNameFolder<'_> {
     }
   }
 
-  /// Folds the `{ style: { "--yX": value } }` argument of a nested css call
-  /// into CSS variable definitions: `(style["--yX"] = value, "")`
+  /// Folds the `{ "--yX": value }` argument of a nested css call into CSS
+  /// variable definitions: `(style["--yX"] = value, "")`
   pub(super) fn fold_style_object(&mut self, object: &ObjectLit) -> Option<Box<Expr>> {
-    let [PropOrSpread::Prop(prop)] = object.props.as_slice() else {
-      return None;
-    };
-    let Prop::KeyValue(KeyValueProp { key, value }) = &**prop else {
-      return None;
-    };
-    if prop_name(key)? != "style" {
-      return None;
-    }
-    let Expr::Object(variables) = &**value else {
-      return None;
-    };
     let mut definitions = Vec::new();
-    for variable in &variables.props {
+    for variable in &object.props {
       let PropOrSpread::Prop(variable) = variable else {
         return None;
       };

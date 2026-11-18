@@ -53,9 +53,7 @@ export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:ym7uBBuF*
   left: var(--ym7uBBuG);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuF", {
-    "style": {
-        "--ym7uBBuG": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
-    }
+    "--ym7uBBuG": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
 });
 export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:ym7uBBuH*//*YAK Extracted CSS:
 .ym7uBBuI {
@@ -185,14 +183,12 @@ export const FunctionAfterReturnedValue = /*YAK EXPORTED STYLED:FunctionAfterRet
   left: var(--ym7uBBui);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuh", {
-    "style": {
-        "--ym7uBBui": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
-            return toPx($x);
-            function toPx(value: number) {
-                return value * 2;
-            }
-        }, "px")
-    }
+    "--ym7uBBui": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
+        return toPx($x);
+        function toPx(value: number) {
+            return value * 2;
+        }
+    }, "px")
 });
 export const FunctionAfterIfElse = /*YAK EXPORTED STYLED:FunctionAfterIfElse:ym7uBBuj*//*YAK Extracted CSS:
 .ym7uBBuk {

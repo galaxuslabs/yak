@@ -2,13 +2,9 @@ import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 const buttonStyles = /*#__PURE__*/ css(({ $active })=>$active && /*#__PURE__*/ css("ym7uBBu1", {
-        "style": {
-            "--ym7uBBu2": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 15, "px")
-        }
+        "--ym7uBBu2": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 15, "px")
     }), {
-    "style": {
-        "--ym7uBBu3": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 10, "px")
-    }
+    "--ym7uBBu3": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 10, "px")
 });
 export const ThemedButton = /*YAK EXPORTED STYLED:ThemedButton:ym7uBBu4*//*YAK Extracted CSS:
 .ym7uBBu4 {
