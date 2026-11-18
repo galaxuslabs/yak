@@ -112,7 +112,7 @@ See the [Rsbuild guide](https://yak.style/docs/rsbuild).
 
 ### Solid
 
-`@yak/solid` brings the same API to Solid 2. It is experimental while Solid 2 is in release candidate.
+`@yak/solid` brings the same API to Solid 2. It is experimental.
 
 ```bash
 npm install @yak/solid
@@ -170,7 +170,7 @@ Versions before 10 are published as `next-yak`:
 | 3.x      | 15.x      | -               | 18.x / 19.x | 3.0.2    |
 | 2.x      | 14.x      | -               | 18.x / 19.x | 0.279.0  |
 
-`@yak/solid` needs `solid-js` and `@solidjs/web` 2.0.0-rc.15 or newer.
+`@yak/solid` needs `solid-js` and `@solidjs/web` 2.0.0 or newer.
 
 ## More Examples
 

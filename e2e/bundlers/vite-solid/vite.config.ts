@@ -28,12 +28,13 @@ export default defineConfig(({ isSsrBuild }) => ({
     include: ["e2e-installed-tokens"],
     exclude: ["e2e-installed-tokens-excluded"],
   },
-  // one copy of Solid on the server, or its hydration keys drift apart
+  // one copy of Solid on the server, or its hydration keys drift apart. dedupe
+  // alone is not enough: the exports map of @solidjs/web points the "development"
+  // condition at dist/server.dev.js when Vite bundles it and at dist/server.js
+  // when Node loads it externalized, so Solid is bundled too
   resolve: { dedupe: ["solid-js", "@solidjs/web", "@solidjs/signals"] },
   ssr: {
     noExternal: [
-      // one copy of Solid on the server: rc.8 resolves the "development" condition to
-      // dist/server.dev.js when bundled and to dist/server.js when externalized
       "@yak/solid",
       "solid-js",
       "@solidjs/web",
