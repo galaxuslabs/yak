@@ -4,13 +4,6 @@ import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { createRequire } from "module";
 
-// Shared helpers for the per-benchmark `gen.ts` files. Each `gen.ts` builds
-// a TSX source string for both libraries and hands it to writeBenchmarkSource;
-// this module owns the actual file writes plus the SWC pre-compile step
-// that mirrors what the yak loader does at app build time (the bench
-// harness imports the .compiled.tsx files directly because tsdown doesn't
-// run our loader).
-
 const require = createRequire(import.meta.url);
 
 const generatedDir = join(dirname(fileURLToPath(import.meta.url)), "generated");
@@ -20,33 +13,17 @@ export type Lib = "yak" | "styled-components";
 
 export const libs = ["yak", "styled-components"] as const;
 
-/** Identifier used as the `styled` import alias inside generated source. */
 export const styledIdentFor = (lib: Lib) => (lib === "yak" ? "styledYak" : "styled");
 
-/**
- * Standard idiomatic-conditional helper used across benchmarks:
- *   - yak: `${(p) => predicate && css`...`}` (toggleable class).
- *   - styled-components: `${(p) => predicate && '...'}` (raw CSS string).
- *
- * Both forms produce equivalent rendered output; each is the native
- * pattern that the respective library's build tooling optimizes for.
- */
+// Each library gets its own idiomatic form of a conditional declaration:
+// a `css` block (a class toggle) for yak and a CSS string for styled-components
 export const conditionalDecl = (lib: Lib) => (predicate: string, decls: string) =>
   lib === "yak"
     ? `\${(p) => ${predicate} && css\`${decls}\`}`
     : `\${(p) => ${predicate} && '${decls.replace(/\n\s*/g, " ")}'}`;
 
-/**
- * Multi-branch sibling of `conditionalDecl`: collapses N mutually-exclusive
- * predicates over the same prop into ONE dynamic interpolation - one
- * function call evaluating a single ternary chain, instead of N independent
- * function calls each running their own predicate. Branches fall through
- * top-to-bottom; if none matches the function returns false (no class).
- *
- * Example: `branch(lib)([{ when: \`p.$x === 'a'\`, decls: 'color: red;' },
- *                        { when: \`p.$x === 'b'\`, decls: 'color: blue;' }])`
- * emits `${(p) => p.$x === 'a' ? css`color: red;` : p.$x === 'b' ? css`color: blue;` : false}`.
- */
+// One interpolation with a ternary chain instead of one interpolation per branch,
+// so the runtime calls one function
 export const branch = (lib: Lib) => (branches: ReadonlyArray<{ when: string; decls: string }>) => {
   const formatValue = (decls: string) =>
     lib === "yak" ? `css\`${decls}\`` : `'${decls.replace(/\n\s*/g, " ")}'`;
@@ -57,11 +34,6 @@ export const branch = (lib: Lib) => (branches: ReadonlyArray<{ when: string; dec
   return `\${(p) => ${chain}}`;
 };
 
-/**
- * Standard import header for a generated TSX file. Optionally pulls in
- * `css` (some benchmarks use it for inline `css={css\`...\`}`, others
- * just need `styled`).
- */
 export const importHeader = (lib: Lib, withCss = true) => {
   const styled = styledIdentFor(lib);
   if (lib === "yak") {
@@ -70,14 +42,9 @@ export const importHeader = (lib: Lib, withCss = true) => {
   return `import ${withCss ? `{ ${styled}, css }` : `{ ${styled} }`} from 'styled-components';`;
 };
 
-/**
- * Run a TSX source through the yak SWC plugin, mirroring what the
- * webpack/vite/turbo loader does for app code at build time. Strips the
- * generated `*.yak.css` import (the bench harness has no CSS
- * pipeline), inlines `__styleYak.foo` -> `"foo"` so class refs are
- * literal strings the runtime will pass straight through, and points
- * imports of sibling `./X.yak` modules at their `.compiled` variant.
- */
+// tsdown does not run the yak loader, so the yak source is compiled here.
+// The benchmarks have no CSS pipeline, so the CSS import goes away and the
+// class names become string literals.
 function compileYak(source: string): string {
   return (
     "// @ts-nocheck\n" +
@@ -98,17 +65,10 @@ function compileYak(source: string): string {
       })
       .code.replace(/import[^;\n]+yak.css";/, "")
       .replace(/__styleYak.(\w+)/g, `"$1"`)
-      // a generated module that imports a sibling yak module has to load
-      // its compiled variant too
       .replace(/(from\s+["']\.\/[\w-]+\.yak)(["'])/g, "$1.compiled$2")
   );
 }
 
-/**
- * Write the generated TSX source for a benchmark. For `yak` also emit
- * the precompiled `.compiled.tsx` variant that the bench harness imports
- * directly.
- */
 export function writeBenchmarkSource(benchmarkName: string, lib: Lib, source: string): void {
   const sourcePath = join(generatedDir, `${benchmarkName}.${lib}.tsx`);
   writeFileSync(sourcePath, source);

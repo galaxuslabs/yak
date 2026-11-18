@@ -1,17 +1,3 @@
-// Prints the HTML results table and a measurement quality section from benchmark logs.
-//
-// Usage: node bench/report.ts <dir>
-//
-// Files in <dir> (a missing file leaves its part out of the report):
-//   base.<n>.log    one run of the base branch, <n> = 1, 2, ...
-//   pr.<n>.log      one run of the PR
-//   cpu.stat-start  `date +%s` and the first line of /proc/stat before the first run
-//   cpu.stat-end    the same after the last run
-//
-// Each log has one time line per case and can have one "<name> allocates <bytes> bytes/op (<n> ops)"
-// line per case. A time line is "<name> x <ops> ops/sec (median) ±<mad>% MAD (<n> samples)".
-// The report uses the median of all runs of one side.
-
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { cpus, release, totalmem } from "node:os";
 import { join } from "node:path";
@@ -25,14 +11,15 @@ type Summary = {
   bytes?: number;
   range?: number;
   runs: number;
-  // The value of each run, for the overlap check of a change
+  // For the overlap check of a change
   hzRuns: number[];
   bytesRuns: number[];
 };
 
 const dir = process.argv[2];
+const raw = process.argv.includes("--raw");
 if (!dir || !existsSync(dir)) {
-  console.error("Usage: node bench/report.ts <dir with the run logs>");
+  console.error("Usage: node bench/report.ts <dir with the run logs> [--raw]");
   process.exit(1);
 }
 
@@ -149,10 +136,8 @@ function isReal(from: number[], to: number[], floor: number | undefined): boolea
   return delta > floor && apart;
 }
 
-// Bold for a real change, "~" for a change inside the noise
-const mark = (text: string, real: boolean) => (real ? `<b>${text}</b>` : `~${text}`);
+const mark = (text: string, real: boolean) => (real ? text : `~${text}`);
 
-// Results
 const prRuns = Math.max(0, ...[...pr.values()].map((s) => s.runs));
 const baseRuns = Math.max(0, ...[...base.values()].map((s) => s.runs));
 if (prRuns > 1 || baseRuns > 1) {
@@ -162,60 +147,75 @@ if (prRuns > 1 || baseRuns > 1) {
   );
 }
 
-lines.push(
-  "<table>",
-  "<tr>",
-  " <td>Benchmark",
-  " <td>styled-components (ops/sec)",
-  " <td>yak (ops/sec)",
-  " <td>yak is",
-);
-if (hasBase) lines.push(" <td>Δ yak vs main");
-lines.push(" <td>yak allocates");
-if (hasBase) lines.push(" <td>Δ allocated vs main");
+const repository = process.env.GITHUB_REPOSITORY;
+const commit = process.env.COMMIT_SHA ?? process.env.GITHUB_SHA;
+function link(row: (typeof ROWS)[number]): string {
+  if (!repository || !commit) return row.label;
+  let anchor = "";
+  if (!row.source.endsWith("gen.ts")) {
+    const sourcePath = join(import.meta.dirname, row.source);
+    const index = existsSync(sourcePath)
+      ? readFileSync(sourcePath, "utf8")
+          .split("\n")
+          .findIndex((line) => line.includes(`"${row.yak}"`))
+      : -1;
+    if (index >= 0) anchor = `#L${index + 1}`;
+  }
+  const url = `https://github.com/${repository}/blob/${commit}/benchmarks/bench/${row.source}${anchor}`;
+  return `<a href="${url}">${row.label}</a>`;
+}
 
-for (const row of ROWS) {
-  const styled = pr.get(row.styled);
+type Result = { cells: string[]; real: boolean };
+function result(row: (typeof ROWS)[number]): Result {
   const yak = pr.get(row.yak);
   const baseYak = base.get(row.yak);
-  lines.push(
-    "<tr>",
-    ` <td>${row.label}`,
-    ` <td> ${styled ? Math.round(styled.hz) : "n/a"}`,
-    ` <td> ${yak ? Math.round(yak.hz) : "n/a"}`,
-    ` <td> ${styled && yak ? speed(styled.hz, yak.hz) : "n/a"}`,
-  );
-  if (hasBase) {
-    const time =
-      yak && baseYak
-        ? mark(speed(baseYak.hz, yak.hz), isReal(baseYak.hzRuns, yak.hzRuns, timeFloor))
-        : yak
-          ? "new"
-          : "—";
-    lines.push(` <td> ${time}`);
+  if (!hasBase) {
+    return { cells: [yak ? `${Math.round(yak.hz)}` : "n/a", kb(yak?.bytes)], real: false };
   }
-  lines.push(` <td> ${kb(yak?.bytes)}`);
-  if (hasBase) {
-    const allocated =
-      yak?.bytes !== undefined && baseYak?.bytes
-        ? mark(
-            signed(change(baseYak.bytes, yak.bytes)),
-            isReal(baseYak.bytesRuns, yak.bytesRuns, allocationFloor),
-          )
-        : "—";
-    lines.push(` <td> ${allocated}`);
-  }
-}
-lines.push("</table>", "");
-if (timeFloor !== undefined || allocationFloor !== undefined) {
-  lines.push(
-    "<p><b>Bold</b>: a real change. ~: a change inside the noise. A real change is larger than " +
-      "the largest styled-components change, and the main and PR runs do not overlap.</p>",
-    "",
-  );
+  if (!yak) return { cells: ["removed", "—"], real: true };
+  if (!baseYak) return { cells: ["new", "—"], real: true };
+  const timeReal = isReal(baseYak.hzRuns, yak.hzRuns, timeFloor);
+  const time = mark(speed(baseYak.hz, yak.hz), timeReal);
+  const bytesReal =
+    yak.bytes !== undefined && !!baseYak.bytes
+      ? isReal(baseYak.bytesRuns, yak.bytesRuns, allocationFloor)
+      : false;
+  const allocated =
+    yak.bytes !== undefined && baseYak.bytes
+      ? mark(signed(change(baseYak.bytes, yak.bytes)), bytesReal)
+      : "—";
+  return { cells: [time, allocated], real: timeReal || bytesReal };
 }
 
-// Measurement quality
+function table(rows: Array<{ row: (typeof ROWS)[number]; result: Result }>) {
+  lines.push("<table>", "<tr>", " <td>Benchmark");
+  if (hasBase) lines.push(" <td>yak ops/sec vs main", " <td>yak allocates vs main");
+  else lines.push(" <td>yak ops/sec", " <td>yak allocates");
+  for (const { row, result } of rows) {
+    lines.push("<tr>", ` <td>${link(row)}`, ...result.cells.map((cell) => ` <td>${cell}`));
+  }
+  lines.push("</table>", "");
+}
+
+const results = ROWS.map((row) => ({ row, result: result(row) }));
+if (!hasBase) {
+  table(results);
+} else {
+  const changed = results.filter(({ result }) => result.real);
+  const unchanged = results.filter(({ result }) => !result.real);
+  if (changed.length > 0) table(changed);
+  else lines.push("<p>No real change against main.</p>", "");
+  if (unchanged.length > 0) {
+    lines.push(
+      "<details>",
+      `<summary>${unchanged.length} benchmarks without a real change</summary>`,
+      "",
+    );
+    table(unchanged);
+    lines.push("</details>", "");
+  }
+}
+
 const all = [...base.values(), ...pr.values()];
 const ranges = all.flatMap((s) => (s.range === undefined ? [] : [s.range]));
 const spreads = all.map((s) => s.spread);
@@ -229,6 +229,12 @@ lines.push(
     `${Math.round(totalmem() / 2 ** 30)} GB RAM, kernel ${release()}</p>`,
   "<ul>",
 );
+if (timeFloor !== undefined || allocationFloor !== undefined) {
+  lines.push(
+    "<li>A real change is larger than the noise floor, and the main and PR runs do not overlap. " +
+      "~ marks a change inside the noise.</li>",
+  );
+}
 if (timeDrift.length > 0) {
   lines.push(
     `<li>Noise floor of ops/sec: styled-components changes by ${stats(timeDrift)} between main and PR. ` +
@@ -252,6 +258,13 @@ if (usage) {
   );
 }
 lines.push("</ul>", "");
+
+if (!raw) {
+  lines.push("<p>The job summary of the workflow run has the raw values of each case.</p>", "");
+  lines.push("</details>");
+  console.log(lines.join("\n"));
+  process.exit(0);
+}
 
 lines.push(
   "<table>",
