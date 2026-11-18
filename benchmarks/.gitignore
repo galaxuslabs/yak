@@ -35,5 +35,7 @@ yarn-error.log*
 
 lighthouse/results
 bench/dist
+bench/dist-base
+bench/runs
 bench-table.html
 *.tsbuildinfo

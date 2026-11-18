@@ -258,9 +258,6 @@ catalogs:
     '@types/babel__standalone':
       specifier: 7.1.9
       version: 7.1.9
-    '@types/benchmark':
-      specifier: 2.1.5
-      version: 2.1.5
     '@types/jest':
       specifier: 30.0.0
       version: 30.0.0
@@ -294,9 +291,6 @@ catalogs:
     '@vitejs/plugin-rsc':
       specifier: 0.5.38
       version: 0.5.38
-    benchmark:
-      specifier: 2.1.4
-      version: 2.1.4
     eslint:
       specifier: 10.13.0
       version: 10.13.0
@@ -372,6 +366,9 @@ catalogs:
     svjeez:
       specifier: 0.5.0
       version: 0.5.0
+    tinybench:
+      specifier: 6.2.3
+      version: 6.2.3
     tsdown:
       specifier: 0.23.1
       version: 0.23.1
@@ -451,19 +448,16 @@ importers:
       styled-components:
         specifier: catalog:dev
         version: 6.6.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-    devDependencies:
-      '@types/benchmark':
+      tinybench:
         specifier: catalog:dev
-        version: 2.1.5
+        version: 6.2.3
+    devDependencies:
       '@types/react':
         specifier: catalog:dev
         version: 19.3.0
       '@types/react-dom':
         specifier: catalog:dev
         version: 19.3.0(@types/react@19.3.0)
-      benchmark:
-        specifier: catalog:dev
-        version: 2.1.4
       tsdown:
         specifier: catalog:dev
         version: 0.23.1(oxc-resolver@11.24.2)(tsx@4.23.15)(typescript@6.0.3)
@@ -4531,9 +4525,6 @@ packages:
   '@types/babel__traverse@7.28.0':
     resolution: {integrity: sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q==}
 
-  '@types/benchmark@2.1.5':
-    resolution: {integrity: sha512-cKio2eFB3v7qmKcvIHLUMw/dIx/8bhWPuzpzRT4unCPRTD8VdA9Zb0afxpcxOqR4PixRS7yT42FqGS8BYL8g1w==}
-
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
@@ -5412,9 +5403,6 @@ packages:
     resolution: {integrity: sha512-YeesxhUmR4h5y5V8KF8iBCqJb8YFrBJ++XBTeGcWIaQOYXGN19JM0FoiOjAhwuDoln8owMgXcWBmgHtYSkky2w==}
     engines: {node: '>=6.0.0'}
     hasBin: true
-
-  benchmark@2.1.4:
-    resolution: {integrity: sha512-l9MlfN4M1K/H2fbhfMy3B7vJd6AGKJVQn2h6Sg/Yx+KckoUA7ewS5Vv6TjSq18ooE1kS9hhAlQRH3AkXIh/aOQ==}
 
   bidi-js@1.1.0:
     resolution: {integrity: sha512-fX1Onk0tdVPC7obPWB5EbJ1z7NVhLq4m2xZLq2YXBkxzMXIGRpNMU88n0EPgWseKl12J7zXs7qrDxPK4sRs2fg==}
@@ -7961,9 +7949,6 @@ packages:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
     engines: {node: '>=8'}
 
-  platform@1.3.6:
-    resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
-
   playwright-core@1.64.1:
     resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
     engines: {node: '>=20'}
@@ -8745,6 +8730,10 @@ packages:
 
   tinybench@6.2.2:
     resolution: {integrity: sha512-nIZ2N2dFpjBsg2hgitKu7mA+FvsIJuGJOwysRngmVRRmWgR/UyPjwJj8c/fT/dhm8EkHnF5EOogRf+0Z2qrimA==}
+    engines: {node: '>=20.0.0'}
+
+  tinybench@6.2.3:
+    resolution: {integrity: sha512-Al01C2JIBnO2CXCAPbpAl6sUiOZHeThGtHYNTa51JRw9PyWOCdr+9Ong05R4qg/Sk3+H645E8ov1h2c58ityNw==}
     engines: {node: '>=20.0.0'}
 
   tinyexec@1.3.1:
@@ -12528,8 +12517,6 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.8
 
-  '@types/benchmark@2.1.5': {}
-
   '@types/chai@5.2.3':
     dependencies:
       '@types/deep-eql': 4.0.2
@@ -13362,11 +13349,6 @@ snapshots:
   base64-js@0.0.8: {}
 
   baseline-browser-mapping@2.11.29: {}
-
-  benchmark@2.1.4:
-    dependencies:
-      lodash: 4.18.1
-      platform: 1.3.6
 
   bidi-js@1.1.0:
     dependencies:
@@ -16675,8 +16657,6 @@ snapshots:
     dependencies:
       find-up: 4.1.0
 
-  platform@1.3.6: {}
-
   playwright-core@1.64.1: {}
 
   playwright@1.64.1:
@@ -17560,6 +17540,8 @@ snapshots:
   tiny-invariant@1.3.3: {}
 
   tinybench@6.2.2: {}
+
+  tinybench@6.2.3: {}
 
   tinyexec@1.3.1: {}
 
