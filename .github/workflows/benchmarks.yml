@@ -5,6 +5,7 @@ on:
     branches: ["main"]
     paths:
       - "packages/yak-react/runtime/**"
+      - "packages/yak-swc/**"
       - "benchmarks/**"
       - ".github/workflows/benchmarks.yml"
   workflow_dispatch:
@@ -79,7 +80,8 @@ jobs:
       - name: Switch to baseline ref
         continue-on-error: true
         env:
-          BASE_REF: ${{ github.base_ref }}
+          # a manual run has no base branch and compares with main
+          BASE_REF: ${{ github.base_ref || 'main' }}
         run: git checkout "origin/${BASE_REF}"
 
       - name: Install dependencies (baseline)
@@ -113,7 +115,8 @@ jobs:
       # ----- Pass 2: PR head -----
       - name: Switch to PR head
         env:
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          # a manual run has no pull request and measures the commit it started on
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: git checkout "${PR_HEAD_SHA}"
 
       - name: Install dependencies (PR)
