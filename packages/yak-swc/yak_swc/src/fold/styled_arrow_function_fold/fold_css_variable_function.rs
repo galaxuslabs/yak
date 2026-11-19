@@ -54,7 +54,7 @@ impl ClassNameFolder<'_> {
     match unwrap_type_casts(value) {
       Expr::Arrow(_) => {
         let body = self.bind_arrow(value)?;
-        self.params.substitute(body)
+        self.params.substitute(&body)
       }
       Expr::Call(call) if is_css_value_call(call) => {
         let mut call = call.clone();

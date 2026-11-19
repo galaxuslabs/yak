@@ -33,6 +33,46 @@ const Sized = styled.div<{ $size: number; $on: boolean }>`
     `}
 `;
 
+// Conditions written as statements: a `switch` picks the color, an `if` with
+// early returns picks the padding and the margin
+const Tag = styled.span<{ $variant: "primary" | "danger" | "ghost"; $size?: "s" | "l" }>`
+  display: inline-block;
+  ${({ $variant }) => {
+    switch ($variant) {
+      case "primary":
+        return css`
+          color: blue;
+        `;
+      case "danger":
+        return css`
+          color: red;
+        `;
+      default:
+        return css`
+          color: gray;
+        `;
+    }
+  }}
+  ${({ $size }) => {
+    if ($size === "s") {
+      return css`
+        padding: 1px;
+      `;
+    }
+    if ($size === "l") {
+      return css`
+        padding: 3px;
+      `;
+    }
+  }}
+  margin-left: ${({ $size }) => {
+    if ($size === "l") {
+      return 8;
+    }
+    return 4;
+  }}px;
+`;
+
 // One style object for a styled component and a plain element. The styled
 // component adds its CSS variable for `width` to its own style only
 const sharedStyle = { opacity: 0.5 };
@@ -45,6 +85,9 @@ export default function App() {
       <Sized data-testid="sized" $size={3} $on={true} />
       <Bar data-testid="bar-shared-style" style={sharedStyle} $width={50} $active={false} />
       <span data-testid="shared-style" style={sharedStyle} />
+      <Tag data-testid="tag-primary" $variant="primary" $size="s" />
+      <Tag data-testid="tag-danger" $variant="danger" $size="l" />
+      <Tag data-testid="tag-ghost" $variant="ghost" />
     </>
   );
 }
