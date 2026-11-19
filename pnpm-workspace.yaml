@@ -37,7 +37,7 @@ catalogs:
     "@solidjs/web": ^2.0.0-rc.15
     # qwik 2 release candidates: pinned, a new one ships every one to three weeks
     "@qwik.dev/core": 2.0.0-rc.5
-    "@qwik.dev/router": 2.0.0-beta.47
+    "@qwik.dev/router": 2.0.0-rc.5
     # Keep in sync with swc_core in packages/yak-swc/Cargo.toml and next.js version of bundled SWC
     "@swc/core": ~1.16.18
     "@swc/counter": ^0.1.3
