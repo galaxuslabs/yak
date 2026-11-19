@@ -43,21 +43,22 @@ use swc_core::{
   atoms::{Atom, Wtf8Atom},
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
-    ArrowExpr, ArrowFunctionBody, AssignPatProp, BinExpr, BinaryOp, Bool, CallExpr, Callee, Expr,
-    ExprOrSpread, FunctionBody, Id, Ident, IdentName, Invalid, JSXAttr, JSXAttrName,
-    JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementChild, JSXElementName, JSXEmptyExpr,
-    JSXExpr, JSXExprContainer, KeyValueProp, Lit, MemberProp, Module, Number, ObjectPatProp, Pat,
-    Prop, PropName, Stmt, UnaryExpr, UnaryOp,
+    ArrowExpr, ArrowFunctionBody, AssignPatProp, BinaryOp, Bool, CallExpr, Callee, Expr,
+    ExprOrSpread, Id, Ident, IdentName, Invalid, JSXAttr, JSXAttrName, JSXAttrOrSpread,
+    JSXAttrValue, JSXElement, JSXElementChild, JSXElementName, JSXEmptyExpr, JSXExpr,
+    JSXExprContainer, KeyValueProp, Lit, MemberProp, Module, Number, ObjectPatProp, Pat, Prop,
+    PropName, UnaryExpr, UnaryOp,
   },
   ecma::visit::{VisitMut, VisitMutWith},
 };
 
+use super::can_inline_prop_value::{purity, Purity};
 use super::{FoldTarget, FoldableComponent};
-use crate::utils::fold::css_expr::{
+use crate::fold::css_call_to_class_name::{
   append_condition_segment, class_name_attr, expr_attr_value, fold_condition_body,
-  merge_class_names, str_expr, str_lit, with_leading_space, ConditionSegment,
+  merge_class_names, with_leading_space, ConditionSegment,
 };
-use crate::utils::fold::purity::{purity, Purity};
+use crate::utils::ast_helper::{binary, single_return_expr, str_expr, str_lit};
 use crate::yak_imports::{YakImports, YakRuntime};
 
 /// Rewrites every foldable JSX usage of the registered components in the module
@@ -1028,14 +1029,6 @@ impl VisitMut for BakeParams<'_> {
   }
 }
 
-/// Matches a function body holding a single `return <expr>;`
-pub(super) fn single_return_expr(block: &FunctionBody) -> Option<&Expr> {
-  let [Stmt::Return(return_stmt)] = block.stmts.as_slice() else {
-    return None;
-  };
-  return_stmt.arg.as_deref()
-}
-
 /// `undefined` for absent attributes
 fn undefined_expr() -> Expr {
   Expr::Unary(UnaryExpr {
@@ -1056,15 +1049,14 @@ fn append_class_name_str(
   user_class_name: &Wtf8Atom,
   span: swc_core::common::Span,
 ) -> Box<Expr> {
-  Box::new(Expr::Bin(BinExpr {
-    span: DUMMY_SP,
-    op: BinaryOp::Add,
-    left: class_name_expr,
-    right: Box::new(Expr::Lit(Lit::Str(str_lit(
+  binary(
+    BinaryOp::Add,
+    class_name_expr,
+    Box::new(Expr::Lit(Lit::Str(str_lit(
       with_leading_space(user_class_name),
       span,
     )))),
-  }))
+  )
 }
 
 #[cfg(test)]

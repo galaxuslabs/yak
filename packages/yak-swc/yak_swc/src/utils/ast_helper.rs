@@ -2,9 +2,59 @@ use itertools::Itertools;
 use rustc_hash::{FxHashMap, FxHashSet};
 
 use swc_core::atoms::Wtf8Atom;
-use swc_core::{common::errors::HANDLER, common::DUMMY_SP, ecma::ast::*};
+use swc_core::{common::errors::HANDLER, common::Span, common::DUMMY_SP, ecma::ast::*};
 
 use crate::variable_visitor::ScopedVariableReference;
+
+/// Builds a string literal
+pub fn str_lit(value: Wtf8Atom, span: Span) -> Str {
+  Str {
+    span,
+    value,
+    raw: None,
+  }
+}
+
+/// Builds a string literal expression with a dummy span
+pub fn str_expr(value: Wtf8Atom) -> Box<Expr> {
+  Box::new(Expr::Lit(Lit::Str(str_lit(value, DUMMY_SP))))
+}
+
+/// `test ? cons : alt`
+pub fn condition(test: Box<Expr>, cons: Box<Expr>, alt: Box<Expr>) -> Box<Expr> {
+  Box::new(Expr::Cond(CondExpr {
+    span: DUMMY_SP,
+    test,
+    cons,
+    alt,
+  }))
+}
+
+/// `left <op> right`
+pub fn binary(op: BinaryOp, left: Box<Expr>, right: Box<Expr>) -> Box<Expr> {
+  Box::new(Expr::Bin(BinExpr {
+    span: DUMMY_SP,
+    op,
+    left,
+    right,
+  }))
+}
+
+/// `(expr)`
+pub fn paren(expr: Box<Expr>) -> Box<Expr> {
+  Box::new(Expr::Paren(ParenExpr {
+    span: DUMMY_SP,
+    expr,
+  }))
+}
+
+/// Matches a function body holding a single `return <expr>;`
+pub fn single_return_expr(block: &FunctionBody) -> Option<&Expr> {
+  let [Stmt::Return(return_stmt)] = block.stmts.as_slice() else {
+    return None;
+  };
+  return_stmt.arg.as_deref()
+}
 
 /// Convert a HashMap to an Object expression
 pub fn expr_hash_map_to_object(values: FxHashMap<String, Expr>) -> Expr {
