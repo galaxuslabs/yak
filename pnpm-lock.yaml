@@ -171,8 +171,8 @@ catalogs:
       specifier: ^1.88.0
       version: 1.88.0
     '@qwik.dev/core':
-      specifier: 2.0.0-beta.47
-      version: 2.0.0-beta.47
+      specifier: 2.0.0-rc.5
+      version: 2.0.0-rc.5
     '@solidjs/web':
       specifier: ^2.0.0-rc.15
       version: 2.0.0-rc.15
@@ -1153,7 +1153,7 @@ importers:
     devDependencies:
       '@qwik.dev/core':
         specifier: catalog:core
-        version: 2.0.0-beta.47(@oxc-project/types@0.154.0)(@rsbuild/core@2.3.2)(@rspack/core@2.3.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(prettier@3.9.10)(rolldown@1.2.14)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.16.18(@swc/helpers@0.5.23))(clean-css@5.3.3)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.30)(sharp@0.35.5(@types/node@26.6.5)))
+        version: 2.0.0-rc.5(@oxc-project/types@0.154.0)(@rsbuild/core@2.3.2)(@rspack/core@2.3.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(prettier@3.9.10)(rolldown@1.2.14)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.16.18(@swc/helpers@0.5.23))(clean-css@5.3.3)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.30)(sharp@0.35.5(@types/node@26.6.5)))
       '@types/node':
         specifier: catalog:dev
         version: 26.6.5
@@ -3663,8 +3663,8 @@ packages:
   '@quansync/fs@1.1.0':
     resolution: {integrity: sha512-qAPG/t3HqML1TlN7sY/pTbEjzFVAKsMjNNMGheyDosro+kT4iw2KCUoHcVdmliwWjorm4elZbgNQyU2eD97eDg==}
 
-  '@qwik.dev/core@2.0.0-beta.47':
-    resolution: {integrity: sha512-aS/MkZD/A4CbAJFEk0TGq2FDLuVNT/bQK2MXRFxmlsnCD85rKBXm3isvm7Mfu5wpPYkKunk/ev+0PFvtAumpug==}
+  '@qwik.dev/core@2.0.0-rc.5':
+    resolution: {integrity: sha512-Gr6LS2fcXM6Yazh3rUzd+efB82eEkDZ2c/lqWmx3h5rqH8mgu0g6b8BnJALuc3Hxs+zU3QkQEfAdFMXVRTWjZQ==}
     engines: {node: ^20.3.0 || >=21.0.0}
     hasBin: true
     peerDependencies:
@@ -3677,8 +3677,8 @@ packages:
       vitest:
         optional: true
 
-  '@qwik.dev/optimizer@2.1.0-beta.9':
-    resolution: {integrity: sha512-PKZedb4+/Goi5KS7HCiJXZO9g3prbmI7lTi+yhy0GBPHUFlmRWVCXhllGrgRBHbvuPxfLTOAfZ5d/sG2QufTXQ==}
+  '@qwik.dev/optimizer@2.1.0-rc.11':
+    resolution: {integrity: sha512-8djnR+6zgLPSTpR7jcwb3V6DtfmgDgpQ5cndPNrLq0VRhsWD5ySX4uAySOIeTo90Ye3NT8MpC9R1VppandB79Q==}
     engines: {node: ^20.3.0 || >=21.0.0}
 
   '@radix-ui/number@1.1.3':
@@ -11685,11 +11685,11 @@ snapshots:
     dependencies:
       quansync: 1.0.0
 
-  '@qwik.dev/core@2.0.0-beta.47(@oxc-project/types@0.154.0)(@rsbuild/core@2.3.2)(@rspack/core@2.3.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(prettier@3.9.10)(rolldown@1.2.14)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.16.18(@swc/helpers@0.5.23))(clean-css@5.3.3)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.30)(sharp@0.35.5(@types/node@26.6.5)))':
+  '@qwik.dev/core@2.0.0-rc.5(@oxc-project/types@0.154.0)(@rsbuild/core@2.3.2)(@rspack/core@2.3.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(prettier@3.9.10)(rolldown@1.2.14)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.16.18(@swc/helpers@0.5.23))(clean-css@5.3.3)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.30)(sharp@0.35.5(@types/node@26.6.5)))':
     dependencies:
       '@emnapi/core': 1.11.3
       '@emnapi/runtime': 1.11.3
-      '@qwik.dev/optimizer': 2.1.0-beta.9
+      '@qwik.dev/optimizer': 2.1.0-rc.11
       csstype: 3.2.3
       launch-editor: 2.14.2
       magic-regexp: 0.11.2(@rsbuild/core@2.3.2)(@rspack/core@2.3.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(rolldown@1.2.14)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.0(@swc/core@1.16.18(@swc/helpers@0.5.23))(clean-css@5.3.3)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.30)(sharp@0.35.5(@types/node@26.6.5)))
@@ -11714,7 +11714,7 @@ snapshots:
       - unloader
       - webpack
 
-  '@qwik.dev/optimizer@2.1.0-beta.9': {}
+  '@qwik.dev/optimizer@2.1.0-rc.11': {}
 
   '@radix-ui/number@1.1.3': {}
 
