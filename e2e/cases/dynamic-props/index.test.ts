@@ -26,5 +26,19 @@ test(
     const sharedStyle = page.getByTestId("shared-style");
     await expect(sharedStyle).toHaveCSS("opacity", "0.5");
     expect(await sharedStyle.evaluate((element) => (element as HTMLElement).style.length)).toBe(1);
+
+    // conditions written with `switch`, `if` and `return`
+    const tagPrimary = page.getByTestId("tag-primary");
+    await expect(tagPrimary).toHaveCSS("color", "rgb(0, 0, 255)");
+    await expect(tagPrimary).toHaveCSS("padding-top", "1px");
+    await expect(tagPrimary).toHaveCSS("margin-left", "4px");
+    const tagDanger = page.getByTestId("tag-danger");
+    await expect(tagDanger).toHaveCSS("color", "rgb(255, 0, 0)");
+    await expect(tagDanger).toHaveCSS("padding-top", "3px");
+    await expect(tagDanger).toHaveCSS("margin-left", "8px");
+    const tagGhost = page.getByTestId("tag-ghost");
+    await expect(tagGhost).toHaveCSS("color", "rgb(128, 128, 128)");
+    await expect(tagGhost).toHaveCSS("padding-top", "0px");
+    await expect(tagGhost).toHaveCSS("margin-left", "4px");
   }),
 );
