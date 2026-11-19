@@ -13,7 +13,8 @@
     "typescript/no-empty-object-type": "off",
     "@yak/css-nesting-operator": "error",
     "@yak/enforce-semicolon": "error",
-    "@yak/style-conditions": "warn"
+    "@yak/style-conditions": "warn",
+    "@yak/styled-arrow-function-statements": "error"
   },
   "overrides": [
     {
@@ -27,7 +28,8 @@
         "oxc/number-arg-out-of-range": "off",
         "react/purity": "off",
         "@yak/enforce-semicolon": "off",
-        "@yak/style-conditions": "off"
+        "@yak/style-conditions": "off",
+        "@yak/styled-arrow-function-statements": "off"
       }
     },
     {

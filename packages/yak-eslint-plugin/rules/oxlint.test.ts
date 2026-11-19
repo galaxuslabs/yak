@@ -60,3 +60,17 @@ ruleTester.run("@yak/style-conditions", yakPlugin.rules["style-conditions"], {
     },
   ],
 });
+
+ruleTester.run(
+  "@yak/styled-arrow-function-statements",
+  yakPlugin.rules["styled-arrow-function-statements"],
+  {
+    valid: [],
+    invalid: [
+      {
+        code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => { console.log($on); return $on && css`color: red;`; }}`;",
+        errors: [{ messageId: "statement" }],
+      },
+    ],
+  },
+);
