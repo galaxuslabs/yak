@@ -8,6 +8,9 @@ use std::ops::Deref;
 use std::vec;
 use swc_core::atoms::Wtf8Atom;
 
+use fold::css_jsx_prop_fold::HasCSSProp;
+use fold::styled_arrow_function_fold::fold_class_names;
+use fold::styled_jsx_fold::StyledFold;
 use swc_core::common::comments::Comment;
 use swc_core::common::comments::CommentKind;
 use swc_core::common::comments::Comments;
@@ -21,9 +24,6 @@ use utils::ast_helper::{
 use utils::cross_file_selectors::ImportType;
 use utils::css_value_call::css_value_call;
 use utils::css_variable_dedup::CssVariableDedup;
-use utils::fold::class_name_function::fold_class_names;
-use utils::fold::css_prop::HasCSSProp;
-use utils::fold::StyledFold;
 use utils::parse_quasi::{css_error_span, parse_quasi, source_position};
 
 mod variable_visitor;
@@ -37,13 +37,13 @@ pub mod yak_file;
 
 use math_evaluate::{format_number, try_evaluate, try_evaluate_string};
 
+mod fold;
 mod utils {
   pub(crate) mod ast_helper;
   pub(crate) mod cross_file_selectors;
   pub(crate) mod css_hash;
   pub(crate) mod css_value_call;
   pub(crate) mod css_variable_dedup;
-  pub(crate) mod fold;
   pub(crate) mod native_elements;
   pub(crate) mod parse_quasi;
 }
@@ -1563,7 +1563,7 @@ where
       }
     }
 
-    // A dynamic React styled component whose runtime expressions only toggle
+    // A dynamic styled component whose runtime expressions only toggle
     // class names compiles to one function that returns the class string, e.g.
     // `__yak_button("yB", ({ $on }) => $on && css("yB1"))` ->
     // `__yak_button("yB", 0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`.
@@ -1573,8 +1573,7 @@ where
       Some(class_name)
         if is_top_level
           && yak_library_function_name.deref() == "styled"
-          && runtime_css_variables.is_empty()
-          && matches!(self.yak_imports().runtime(), YakRuntime::React) =>
+          && runtime_css_variables.is_empty() =>
       {
         fold_class_names(
           class_name,

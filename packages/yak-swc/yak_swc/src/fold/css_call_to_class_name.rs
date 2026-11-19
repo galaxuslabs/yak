@@ -2,18 +2,19 @@
 //! into the static `className` value it stands for, e.g.
 //! `css(() => on && css("b"), "a")` into `"a" + (on ? " b" : "")`
 //!
-//! Both fold paths - the [`css` prop](super::css_prop) and the
-//! [styled component usage](super::usage) - build on it, together with the
-//! small string and JSX attribute builders at the bottom of the module
+//! The [`css` prop fold](super::css_jsx_prop_fold), the
+//! [styled JSX fold](super::styled_jsx_fold) and the
+//! [styled arrow function fold](super::styled_arrow_function_fold) build on
+//! it, together with the JSX attribute builders at the bottom of the module
 
-use crate::utils::ast_helper::unwrap_type_casts;
+use crate::utils::ast_helper::{binary, condition, str_expr, unwrap_type_casts};
 use crate::yak_imports::{YakImports, YakRuntime};
 use swc_core::{
   atoms::{wtf8::Wtf8Buf, Wtf8Atom},
   common::{Span, Spanned, DUMMY_SP},
   ecma::ast::{
-    ArrowExpr, ArrowFunctionBody, BinExpr, BinaryOp, CallExpr, Callee, CondExpr, Expr, IdentName,
-    JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXExpr, JSXExprContainer, Lit, Str,
+    ArrowExpr, ArrowFunctionBody, BinaryOp, CallExpr, Callee, CondExpr, Expr, IdentName, JSXAttr,
+    JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXExpr, JSXExprContainer, Lit,
   },
 };
 
@@ -130,23 +131,17 @@ fn fold_css_call(call: &CallExpr, yak_imports: &YakImports) -> Option<(Box<Expr>
 /// `<expr> + (cond ? " a" : "")` or `<expr> + (cond ? " b" : " c")`
 pub(super) fn append_condition_segment(
   class_name_expr: Box<Expr>,
-  (condition, cons_class, alt_class): ConditionSegment,
+  (test, cons_class, alt_class): ConditionSegment,
 ) -> Box<Expr> {
   let alt = match alt_class {
     Some(class_name) => str_expr(with_leading_space(&class_name)),
     None => str_expr("".into()),
   };
-  Box::new(Expr::Bin(BinExpr {
-    span: DUMMY_SP,
-    op: BinaryOp::Add,
-    left: class_name_expr,
-    right: Box::new(Expr::Cond(CondExpr {
-      span: DUMMY_SP,
-      test: condition,
-      cons: str_expr(with_leading_space(&cons_class)),
-      alt,
-    })),
-  }))
+  binary(
+    BinaryOp::Add,
+    class_name_expr,
+    condition(test, str_expr(with_leading_space(&cons_class)), alt),
+  )
 }
 
 /// Matches the compiled condition shapes `() => cond && css("x")` and
@@ -261,20 +256,6 @@ pub(super) fn with_leading_space(class_name: &Wtf8Atom) -> Wtf8Atom {
   buf.push_str(" ");
   buf.push_wtf8(class_name);
   buf.into()
-}
-
-/// Builds a string literal
-pub(super) fn str_lit(value: Wtf8Atom, span: Span) -> Str {
-  Str {
-    span,
-    value,
-    raw: None,
-  }
-}
-
-/// Builds a string literal expression with a dummy span
-pub(super) fn str_expr(value: Wtf8Atom) -> Box<Expr> {
-  Box::new(Expr::Lit(Lit::Str(str_lit(value, DUMMY_SP))))
 }
 
 /// Wraps an expression into a `{...}` JSX attribute value
