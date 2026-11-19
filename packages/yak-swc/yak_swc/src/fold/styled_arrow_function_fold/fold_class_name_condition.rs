@@ -7,8 +7,10 @@ impl ClassNameFolder<'_> {
   /// Folds what a runtime expression returns: a `css(...)` call, a falsy
   /// literal, `cond && <value>` or `cond ? <value> : <value>`
   ///
-  /// The result is a piece: the class names the value adds, as a string
-  /// expression that is empty or starts with a space, e.g. `(on ? " yB1" : "")`
+  /// The result is a folded class name expression: the class names the value
+  /// adds, as a string that is empty or starts with a space, e.g.
+  /// `(on ? " yB1" : "")`. Every `fold_` method returns one, and the
+  /// `create_folded_` helpers build one
   ///
   /// Every condition stays where the user wrote it, so it runs as often and in
   /// the same order as without the folded function: a nested condition only
@@ -16,7 +18,7 @@ impl ClassNameFolder<'_> {
   pub(super) fn fold_value(&mut self, value: &Expr) -> Option<Box<Expr>> {
     let value = unwrap_type_casts(value);
     if is_falsy_literal(value) {
-      return Some(empty_piece());
+      return Some(create_folded_empty_class_name());
     }
     match value {
       Expr::Call(call) => self.fold_css_call(call),
@@ -24,14 +26,18 @@ impl ClassNameFolder<'_> {
       Expr::Bin(bin) if bin.op == BinaryOp::LogicalAnd => {
         let test = self.params.substitute(&bin.left)?;
         let cons = self.fold_value(&bin.right)?;
-        Some(cond_piece(test, cons, empty_piece()))
+        Some(create_folded_class_name_condition(
+          test,
+          cons,
+          create_folded_empty_class_name(),
+        ))
       }
       // `cond ? css("x") : css("y")` -> `(cond ? " x" : " y")`
       Expr::Cond(cond) => {
         let test = self.params.substitute(&cond.test)?;
         let cons = self.fold_value(&cond.cons)?;
         let alt = self.fold_value(&cond.alt)?;
-        Some(cond_piece(test, cons, alt))
+        Some(create_folded_class_name_condition(test, cons, alt))
       }
       _ => None,
     }
@@ -46,7 +52,7 @@ impl ClassNameFolder<'_> {
       return None;
     }
     let mut class_name = None;
-    let mut pieces = Vec::new();
+    let mut folded_arguments = Vec::new();
     for arg in &call.args {
       if arg.spread.is_some() {
         return None;
@@ -55,16 +61,18 @@ impl ClassNameFolder<'_> {
         Expr::Lit(Lit::Str(value)) if class_name.is_none() => {
           class_name = Some(value.value.clone())
         }
-        Expr::Arrow(_) => pieces.push(self.fold_arrow(&arg.expr)?),
-        // css variables (`{ style: {...} }`), mixin references and anything else
+        Expr::Arrow(_) => folded_arguments.push(self.fold_arrow(&arg.expr)?),
+        // css variables: `css("x", { style: { "--yX": value } })`
+        Expr::Object(object) => folded_arguments.push(self.fold_style_object(object)?),
+        // mixin references and anything else
         _ => return None,
       }
     }
     let mut result = class_name
       .map(|class_name| str_expr(with_leading_space(&class_name)))
-      .unwrap_or_else(empty_piece);
-    for piece in pieces {
-      result = concat(result, piece);
+      .unwrap_or_else(create_folded_empty_class_name);
+    for folded_class_names in folded_arguments {
+      result = join_folded_class_names(result, folded_class_names);
     }
     Some(result)
   }
@@ -82,25 +90,29 @@ pub(super) fn is_falsy_literal(expr: &Expr) -> bool {
   }
 }
 
-pub(super) fn empty_piece() -> Box<Expr> {
+pub(super) fn create_folded_empty_class_name() -> Box<Expr> {
   str_expr("".into())
 }
 
-pub(super) fn is_empty_piece(expr: &Expr) -> bool {
+pub(super) fn is_folded_empty_class_name(expr: &Expr) -> bool {
   matches!(expr, Expr::Lit(Lit::Str(value)) if value.value.is_empty())
 }
 
 /// `(test ? cons : alt)`
-pub(super) fn cond_piece(test: Box<Expr>, cons: Box<Expr>, alt: Box<Expr>) -> Box<Expr> {
+pub(super) fn create_folded_class_name_condition(
+  test: Box<Expr>,
+  cons: Box<Expr>,
+  alt: Box<Expr>,
+) -> Box<Expr> {
   paren(condition(test, cons, alt))
 }
 
-/// `left + right`, skipping an empty piece on either side
-pub(super) fn concat(left: Box<Expr>, right: Box<Expr>) -> Box<Expr> {
-  if is_empty_piece(&right) {
+/// `left + right`, skipping an empty string on either side
+pub(super) fn join_folded_class_names(left: Box<Expr>, right: Box<Expr>) -> Box<Expr> {
+  if is_folded_empty_class_name(&right) {
     return left;
   }
-  if is_empty_piece(&left) {
+  if is_folded_empty_class_name(&left) {
     return right;
   }
   let right = match *right {

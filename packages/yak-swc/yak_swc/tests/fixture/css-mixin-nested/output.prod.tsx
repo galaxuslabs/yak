@@ -26,15 +26,7 @@ export const ThemedButton = /*YAK EXPORTED STYLED:ThemedButton:ym7uBBu4*//*YAK E
 .ym7uBBu4 {
   width: var(--ym7uBBu7);
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu4", ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBu5", {
-        "style": {
-            "--ym7uBBu6": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 15, "px")
-        }
-    }), {
-    "style": {
-        "--ym7uBBu7": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 10, "px")
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu4", 2, ({ $active, $letters }, style)=>"ym7uBBu4" + ($active ? " ym7uBBu5" + (style["--ym7uBBu6"] = /*#__PURE__*/ __yak_cssValue($letters * 15, "px"), "") : "") + (style["--ym7uBBu7"] = /*#__PURE__*/ __yak_cssValue($letters * 10, "px"), ""));
 export const CustomThemedButton = /*YAK EXPORTED STYLED:CustomThemedButton:ym7uBBu8*//*YAK Extracted CSS:
 .ym7uBBu8 {
   color: red;
@@ -58,12 +50,4 @@ export const CustomThemedButton = /*YAK EXPORTED STYLED:CustomThemedButton:ym7uB
     width: var(--ym7uBBuB);
   }
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu8", ({ $active })=>$active && /*#__PURE__*/ css("ym7uBBu9", {
-        "style": {
-            "--ym7uBBuA": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 15, "px")
-        }
-    }), {
-    "style": {
-        "--ym7uBBuB": /*#__PURE__*/ __yak_cssValue(({ $letters })=>$letters * 10, "px")
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu8", 2, ({ $active, $letters }, style)=>"ym7uBBu8" + ($active ? " ym7uBBu9" + (style["--ym7uBBuA"] = /*#__PURE__*/ __yak_cssValue($letters * 15, "px"), "") : "") + (style["--ym7uBBuB"] = /*#__PURE__*/ __yak_cssValue($letters * 10, "px"), ""));

@@ -1,7 +1,7 @@
-import { styled, css } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0=";
+import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVKIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1TCk7Cn0ueW03dUJCdU0gewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGxlZnQ6IHZhcigtLXltN3VCQnVRKTsKICB0b3A6IHZhcigtLXltN3VCQnVSKTsKfQ==";
 // identifier props parameter read through members
 export const Ident = /*YAK EXPORTED STYLED:Ident:ym7uBBu*//*YAK Extracted CSS:
 .ym7uBBu1 {
@@ -57,3 +57,25 @@ export const Wrapped = /*YAK EXPORTED STYLED:Wrapped:ym7uBBuH*//*YAK Extracted C
 */ /*#__PURE__*/ ((styled(Ident)).attrs({
     role: "note"
 }))("ym7uBBuH", 0, ({ $x })=>"ym7uBBuH" + ($x ? " ym7uBBuI" : ""));
+// a dynamic value inside a property is a CSS variable, which the fold
+// function writes into the style object
+export const CssVariable = /*YAK EXPORTED STYLED:CssVariable:ym7uBBuJ*//*YAK Extracted CSS:
+.ym7uBBuK {
+  color: red;
+}
+.ym7uBBuJ {
+  left: var(--ym7uBBuL);
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuJ", 2, ({ $x }, style)=>"ym7uBBuJ" + ($x > 1 ? " ym7uBBuK" : "") + (style["--ym7uBBuL"] = /*#__PURE__*/ __yak_cssValue($x, "px"), ""));
+export const ThemeVariable = /*YAK EXPORTED STYLED:ThemeVariable:ym7uBBuM*//*YAK Extracted CSS:
+.ym7uBBuM {
+  color: var(--ym7uBBuN);
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuM", 3, ({}, style, theme)=>"ym7uBBuM" + (style["--ym7uBBuN"] = theme.color, ""));
+// a variable in a nested css is written only when its branch runs
+export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:ym7uBBuO*//*YAK Extracted CSS:
+.ym7uBBuP {
+  left: var(--ym7uBBuQ);
+  top: var(--ym7uBBuR);
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuO", 2, ({ $on, $x, $big }, style)=>"ym7uBBuO" + ($on ? " ym7uBBuP" + (style["--ym7uBBuQ"] = /*#__PURE__*/ __yak_cssValue($x * 2, "px"), style["--ym7uBBuR"] = /*#__PURE__*/ __yak_cssValue($big ? 8 : 4, "px"), "") : ""));

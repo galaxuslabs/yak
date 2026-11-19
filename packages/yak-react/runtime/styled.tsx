@@ -175,9 +175,8 @@ const yakStyled: StyledInternal = (Component, attrs) => {
            *
            * Folded render functions do
            * - read the theme only if the fold function asks for it
+           * - copy the style prop only if the fold function writes CSS variables
            * - NOT run an attrs function like `.attrs((props) => ({...}))`
-           * - NOT create a style object
-           * - NOT write CSS variables into the style prop
            */
           (props) => {
             // the flags are fixed per component, so the hook order is stable
@@ -192,9 +191,12 @@ const yakStyled: StyledInternal = (Component, attrs) => {
             ) as { className?: string; style?: React.CSSProperties; theme?: YakTheme };
             // a `theme` prop passed by the caller wins over the context theme,
             // like `{ theme, ...props }` on the generic path
+            // CSS variables go into a copy of the style prop, which the target
+            // receives in its place
+            const style = foldFlags & FOLD_STYLE ? { ...source.style } : undefined;
             const className = fold(
               source,
-              undefined,
+              style,
               foldFlags & FOLD_THEME
                 ? "theme" in source
                   ? source.theme
@@ -208,6 +210,7 @@ const yakStyled: StyledInternal = (Component, attrs) => {
                 source,
                 contextTheme,
                 incoming ? incoming + " " + className : className,
+                style,
               ),
             );
           }
@@ -320,17 +323,22 @@ const removeNonDomProperties = <T extends Record<string, unknown>>(obj: T, theme
 
 /**
  * `removeNonDomProperties` for the fold path, which also sets the class
- * string
+ * string and, if the fold function wrote CSS variables, the style copy
  *
- * A `className` key keeps its position, even with an undefined value, so the
- * attribute order matches the generic path, which assigns it onto the merged
- * props
+ * A `className` or `style` key keeps its position, even with an undefined
+ * value, so the attribute order matches the generic path, which assigns both
+ * onto the merged props
  *
  * `theme` is the context theme, or undefined when the fold function does not
  * read the theme. In that case no `theme` entry is removed, like for a static
  * component
  */
-const foldedDomProperties = (obj: Record<string, unknown>, theme: unknown, className: string) => {
+const foldedDomProperties = (
+  obj: Record<string, unknown>,
+  theme: unknown,
+  className: string,
+  style: React.CSSProperties | undefined,
+) => {
   const result: Record<string, unknown> = {};
   for (const key in obj) {
     if (key.startsWith("$")) {
@@ -340,13 +348,16 @@ const foldedDomProperties = (obj: Record<string, unknown>, theme: unknown, class
       result.className = className;
       continue;
     }
-    const value = obj[key];
+    const value = key === "style" && style ? style : obj[key];
     if (value !== undefined && (key !== "theme" || value !== theme)) {
       result[key] = value;
     }
   }
   if (!("className" in result)) {
     result.className = className;
+  }
+  if (style && !("style" in result)) {
+    result.style = style;
   }
   return result;
 };
@@ -492,6 +503,8 @@ const buildRuntimeStylesProcessor = <T,>(
 
 /** Fold flag: the fold function reads the theme, its third argument */
 const FOLD_THEME = 1;
+/** Fold flag: the fold function writes CSS variables into its second argument */
+const FOLD_STYLE = 2;
 
 /**
  * Wraps a compiled fold function into a style processor

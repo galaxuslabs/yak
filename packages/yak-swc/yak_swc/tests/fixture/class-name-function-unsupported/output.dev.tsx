@@ -59,19 +59,16 @@ export const AtomsReturn = /*YAK EXPORTED STYLED:AtomsReturn:input_AtomsReturn_m
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsReturn_m7uBBu", ({ $on })=>$on && atoms("flex")), {
     "displayName": "AtomsReturn"
 });
-export const CssVariable = /*YAK EXPORTED STYLED:CssVariable:input_CssVariable_m7uBBu*//*YAK Extracted CSS:
-.input_CssVariable___m7uBBu {
-  color: red;
+export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:input_StyleReadInValue_m7uBBu*//*YAK Extracted CSS:
+.input_StyleReadInValue_m7uBBu {
+  left: var(--input_StyleReadInValue__left_m7uBBu);
 }
-.input_CssVariable_m7uBBu {
-  left: var(--input_CssVariable__left_m7uBBu);
-}
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_CssVariable_m7uBBu", ({ $x })=>$x > 1 && /*#__PURE__*/ css("input_CssVariable___m7uBBu"), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_StyleReadInValue_m7uBBu", {
     "style": {
-        "--input_CssVariable__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>$x, "px")
+        "--input_StyleReadInValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
     }
 }), {
-    "displayName": "CssVariable"
+    "displayName": "StyleReadInValue"
 });
 export const OrOperator = /*YAK EXPORTED STYLED:OrOperator:input_OrOperator_m7uBBu*//*YAK Extracted CSS:
 .input_OrOperator___m7uBBu {

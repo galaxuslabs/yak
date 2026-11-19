@@ -31,11 +31,7 @@ const Dynamic = /*YAK Extracted CSS:
 .ym7uBBu4 {
   color: var(--ym7uBBu5);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu4", {
-    "style": {
-        "--ym7uBBu5": ({ $color })=>$color
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu4", 2, ({ $color }, style)=>"ym7uBBu4" + (style["--ym7uBBu5"] = $color, ""));
 // bails: attrs
 const WithAttrs = /*YAK Extracted CSS:
 .ym7uBBu6 {
