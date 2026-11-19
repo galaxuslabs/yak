@@ -58,7 +58,7 @@ The yak/style-conditions rule in our linting tools can help identify unnecessary
 
 ## Rule details
 
-This rule triggers a warning when an arrow function inside a CSS declaration returns a static value that would create an unnecessary CSS variable. Arrow functions outside declarations are runtime class expressions, so they may return local or imported css mixins.
+This rule triggers a warning when an arrow function inside a CSS declaration returns a static value that would create an unnecessary CSS variable. Arrow functions outside declarations are runtime class expressions, so they may return local css mixins, or imported ones wrapped in a `css` literal.
 
 The following patterns are considered errors:
 

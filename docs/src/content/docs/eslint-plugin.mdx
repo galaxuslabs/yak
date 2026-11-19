@@ -141,7 +141,7 @@ styled.div`
 
 Warns if runtime performance could be improved by using css literals.
 
-The rule checks arrow functions used as CSS declaration values, where yak creates runtime CSS variables. Arrow functions outside declarations are runtime class expressions and may return local or imported css mixins.
+The rule checks arrow functions used as CSS declaration values, where yak creates runtime CSS variables. Arrow functions outside declarations are runtime class expressions and may return local css mixins, or imported ones wrapped in a `css` literal.
 
 Example:
 
