@@ -1,9 +1,11 @@
+use self::block_body_to_expr::block_body_to_expr;
 use self::fold_class_name_condition::join_folded_class_names;
 use self::fold_css_variable_function::create_folded_css_variable_definition;
 use self::merge_arrow_parameters::FoldParams;
-use crate::utils::ast_helper::{single_return_expr, str_expr, unwrap_type_casts};
+use crate::utils::ast_helper::{str_expr, unwrap_type_casts};
 use crate::yak_imports::{YakImports, YakRuntime};
 use rustc_hash::FxHashMap;
+use std::borrow::Cow;
 use swc_core::{
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
@@ -12,6 +14,7 @@ use swc_core::{
   },
 };
 
+mod block_body_to_expr;
 mod fold_class_name_condition;
 mod fold_css_variable_function;
 mod merge_arrow_parameters;
@@ -142,24 +145,25 @@ impl ClassNameFolder<'_> {
   ///
   /// The arrow takes no parameter, a destructuring with plain keys, or one
   /// identifier which is only read through members (`p => p.$on`). The body is
-  /// an expression or a block with a single `return`
+  /// an expression or a block of `if`, `switch` and `return` statements
   fn fold_arrow(&mut self, expression: &Expr) -> Option<Box<Expr>> {
     let body = self.bind_arrow(expression)?;
-    self.fold_value(body)
+    self.fold_value(&body)
   }
 
   /// Registers the props parameter of a runtime expression and returns the
   /// expression the arrow returns
-  fn bind_arrow<'e>(&mut self, expression: &'e Expr) -> Option<&'e Expr> {
+  fn bind_arrow<'e>(&mut self, expression: &'e Expr) -> Option<Cow<'e, Expr>> {
     let Expr::Arrow(arrow) = unwrap_type_casts(expression) else {
       return None;
     };
     if arrow.is_async || arrow.is_generator {
       return None;
     }
-    let body: &Expr = match &*arrow.body {
-      ArrowFunctionBody::Expr(expr) => expr,
-      ArrowFunctionBody::FunctionBody(block) => single_return_expr(block)?,
+    let body = match &*arrow.body {
+      ArrowFunctionBody::Expr(expr) => Cow::Borrowed(&**expr),
+      // `{ if ($on) { return css("yB1"); } }` -> `$on ? css("yB1") : undefined`
+      ArrowFunctionBody::FunctionBody(block) => Cow::Owned(*block_body_to_expr(&block.stmts)?),
       #[cfg(swc_ast_unknown)]
       _ => return None,
     };

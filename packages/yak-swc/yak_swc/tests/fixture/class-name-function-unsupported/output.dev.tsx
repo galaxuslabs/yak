@@ -91,3 +91,176 @@ export const MixinInterpolation = /*YAK EXPORTED STYLED:MixinInterpolation:input
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_MixinInterpolation_m7uBBu"), {
     "displayName": "MixinInterpolation"
 });
+// a statement next to the `if` and `return` has no place in an expression
+export const BlockWithLog = /*YAK EXPORTED STYLED:BlockWithLog:input_BlockWithLog_m7uBBu*//*YAK Extracted CSS:
+.input_BlockWithLog___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_BlockWithLog_m7uBBu", ({ $on })=>{
+    console.log($on);
+    if ($on) {
+        return /*#__PURE__*/ css("input_BlockWithLog___m7uBBu");
+    }
+}), {
+    "displayName": "BlockWithLog"
+});
+export const BlockWithDebugger = /*YAK EXPORTED STYLED:BlockWithDebugger:input_BlockWithDebugger_m7uBBu*//*YAK Extracted CSS:
+.input_BlockWithDebugger___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_BlockWithDebugger_m7uBBu", ({ $on })=>{
+    if ($on) {
+        debugger;
+        return /*#__PURE__*/ css("input_BlockWithDebugger___m7uBBu");
+    }
+}), {
+    "displayName": "BlockWithDebugger"
+});
+// the expression would hold the statements after the first `if` twice
+export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutReturnThenStatements:input_IfWithoutReturnThenStatements_m7uBBu*//*YAK Extracted CSS:
+.input_IfWithoutReturnThenStatements___m7uBBu {
+  color: red;
+}
+.input_IfWithoutReturnThenStatements___m7uBBu-01 {
+  color: green;
+}
+.input_IfWithoutReturnThenStatements___m7uBBu-02 {
+  color: blue;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_IfWithoutReturnThenStatements_m7uBBu", ({ $on, $big })=>{
+    if ($on) {
+        if ($big) return /*#__PURE__*/ css("input_IfWithoutReturnThenStatements___m7uBBu");
+    }
+    if ($big) return /*#__PURE__*/ css("input_IfWithoutReturnThenStatements___m7uBBu-01");
+    return /*#__PURE__*/ css("input_IfWithoutReturnThenStatements___m7uBBu-02");
+}), {
+    "displayName": "IfWithoutReturnThenStatements"
+});
+// the expression would call the helper once per case
+export const SwitchOnCall = /*YAK EXPORTED STYLED:SwitchOnCall:input_SwitchOnCall_m7uBBu*//*YAK Extracted CSS:
+.input_SwitchOnCall___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchOnCall_m7uBBu", ({ $on })=>{
+    switch(String($on)){
+        case "true":
+            return /*#__PURE__*/ css("input_SwitchOnCall___m7uBBu");
+    }
+}), {
+    "displayName": "SwitchOnCall"
+});
+export const SwitchWithBreak = /*YAK EXPORTED STYLED:SwitchWithBreak:input_SwitchWithBreak_m7uBBu*//*YAK Extracted CSS:
+.input_SwitchWithBreak___m7uBBu {
+  color: red;
+}
+.input_SwitchWithBreak___m7uBBu-01 {
+  color: blue;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchWithBreak_m7uBBu", ({ $size })=>{
+    switch($size){
+        case "s":
+            break;
+        case "m":
+            return /*#__PURE__*/ css("input_SwitchWithBreak___m7uBBu");
+    }
+    return /*#__PURE__*/ css("input_SwitchWithBreak___m7uBBu-01");
+}), {
+    "displayName": "SwitchWithBreak"
+});
+export const SwitchFallThrough = /*YAK EXPORTED STYLED:SwitchFallThrough:input_SwitchFallThrough_m7uBBu*//*YAK Extracted CSS:
+.input_SwitchFallThrough___m7uBBu {
+  color: red;
+}
+.input_SwitchFallThrough___m7uBBu-01 {
+  color: blue;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchFallThrough_m7uBBu", ({ $size, $on })=>{
+    switch($size){
+        case "s":
+            if ($on) return /*#__PURE__*/ css("input_SwitchFallThrough___m7uBBu");
+        case "m":
+            return /*#__PURE__*/ css("input_SwitchFallThrough___m7uBBu-01");
+    }
+}), {
+    "displayName": "SwitchFallThrough"
+});
+export const SwitchDefaultFirst = /*YAK EXPORTED STYLED:SwitchDefaultFirst:input_SwitchDefaultFirst_m7uBBu*//*YAK Extracted CSS:
+.input_SwitchDefaultFirst___m7uBBu {
+  color: red;
+}
+.input_SwitchDefaultFirst___m7uBBu-01 {
+  color: blue;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchDefaultFirst_m7uBBu", ({ $size })=>{
+    switch($size){
+        default:
+            return /*#__PURE__*/ css("input_SwitchDefaultFirst___m7uBBu");
+        case "m":
+            return /*#__PURE__*/ css("input_SwitchDefaultFirst___m7uBBu-01");
+    }
+}), {
+    "displayName": "SwitchDefaultFirst"
+});
+// a function declaration after a return still exists in the whole body
+export const FunctionAfterReturn = /*YAK EXPORTED STYLED:FunctionAfterReturn:input_FunctionAfterReturn_m7uBBu*//*YAK Extracted CSS:
+.input_FunctionAfterReturn___m7uBBu {
+  padding: 8px;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FunctionAfterReturn_m7uBBu", ({ $size })=>{
+    if (isBig($size)) return /*#__PURE__*/ css("input_FunctionAfterReturn___m7uBBu");
+    return null;
+    function isBig(size: number) {
+        return size > 2;
+    }
+}), {
+    "displayName": "FunctionAfterReturn"
+});
+export const FunctionAfterReturnedValue = /*YAK EXPORTED STYLED:FunctionAfterReturnedValue:input_FunctionAfterReturnedValue_m7uBBu*//*YAK Extracted CSS:
+.input_FunctionAfterReturnedValue_m7uBBu {
+  left: var(--input_FunctionAfterReturnedValue__left_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FunctionAfterReturnedValue_m7uBBu", {
+    "style": {
+        "--input_FunctionAfterReturnedValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
+            return toPx($x);
+            function toPx(value: number) {
+                return value * 2;
+            }
+        }, "px")
+    }
+}), {
+    "displayName": "FunctionAfterReturnedValue"
+});
+export const FunctionAfterIfElse = /*YAK EXPORTED STYLED:FunctionAfterIfElse:input_FunctionAfterIfElse_m7uBBu*//*YAK Extracted CSS:
+.input_FunctionAfterIfElse___m7uBBu {
+  padding: 8px;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FunctionAfterIfElse_m7uBBu", ({ $size })=>{
+    if (isBig($size)) return /*#__PURE__*/ css("input_FunctionAfterIfElse___m7uBBu");
+    else return null;
+    function isBig(size: number) {
+        return size > 2;
+    }
+}), {
+    "displayName": "FunctionAfterIfElse"
+});
+export const FunctionAfterSwitchDefault = /*YAK EXPORTED STYLED:FunctionAfterSwitchDefault:input_FunctionAfterSwitchDefault_m7uBBu*//*YAK Extracted CSS:
+.input_FunctionAfterSwitchDefault___m7uBBu {
+  padding: 8px;
+}
+.input_FunctionAfterSwitchDefault___m7uBBu-01 {
+  padding: 16px;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FunctionAfterSwitchDefault_m7uBBu", ({ $size })=>{
+    switch($size){
+        case 1:
+            return /*#__PURE__*/ css("input_FunctionAfterSwitchDefault___m7uBBu");
+        default:
+            return isBig($size) ? /*#__PURE__*/ css("input_FunctionAfterSwitchDefault___m7uBBu-01") : null;
+    }
+    function isBig(size: number) {
+        return size > 2;
+    }
+}), {
+    "displayName": "FunctionAfterSwitchDefault"
+});
