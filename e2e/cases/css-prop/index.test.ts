@@ -20,6 +20,9 @@ test(
     const child = page.getByTestId("child");
     await expect(child).toHaveCSS("color", "rgb(0, 128, 0)");
 
+    // css prop inside a destructuring declaration
+    await expect(page.getByTestId("destructured")).toHaveCSS("color", "rgb(0, 0, 255)");
+
     // Entity className is decoded, not left as the JSX-encoded "Food &amp; Drink"
     const entity = page.getByTestId("entity-classname");
     await expect(entity).toHaveClass(/(^|\s)Food & Drink($|\s)/);
