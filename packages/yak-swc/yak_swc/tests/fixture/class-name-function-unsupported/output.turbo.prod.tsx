@@ -1,17 +1,18 @@
 import { styled, css, atoms, __yak_cssValue } from "@yak/react/internal";
 import { mixin, calc } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnU1IHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnU3IHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnU5IHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVGIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1Ryk7Cn0ueW03dUJCdUkgewogIGNvbG9yOiByZWQ7Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0ueW03dUJCdUwgewogIC0teWFrLWNzcy1pbXBvcnQ6IHVybCgiLi9oZWxwZXJzOm1peGluIixtaXhpbik7Cn0ueW03dUJCdU4gewogIGNvbG9yOiByZWQ7Cn0ueW03dUJCdVAgewogIGNvbG9yOiByZWQ7Cn0ueW03dUJCdVIgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVTIHsKICBjb2xvcjogZ3JlZW47Cn0KLnltN3VCQnVUIHsKICBjb2xvcjogYmx1ZTsKfS55bTd1QkJ1ViB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1WCB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdVkgewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVhIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1YiB7CiAgY29sb3I6IGJsdWU7Cn0ueW03dUJCdWQgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVlIHsKICBjb2xvcjogYmx1ZTsKfS55bTd1QkJ1ZyB7CiAgcGFkZGluZzogOHB4Owp9LnltN3VCQnVoIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1aSk7Cn0ueW03dUJCdWsgewogIHBhZGRpbmc6IDhweDsKfS55bTd1QkJ1bSB7CiAgcGFkZGluZzogOHB4Owp9Ci55bTd1QkJ1biB7CiAgcGFkZGluZzogMTZweDsKfQ==";
+import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnU1IHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnU3IHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnU5IHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVGIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1Ryk7Cn0ueW03dUJCdUkgewogIGNvbG9yOiByZWQ7Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0ueW03dUJCdUwgewogIC0teWFrLWNzcy1pbXBvcnQ6IHVybCgiLi9oZWxwZXJzOm1peGluIixtaXhpbik7Cn0ueW03dUJCdU4gewogIGNvbG9yOiByZWQ7Cn0ueW03dUJCdVAgewogIGNvbG9yOiByZWQ7Cn0ueW03dUJCdVIgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVTIHsKICBjb2xvcjogZ3JlZW47Cn0KLnltN3VCQnVUIHsKICBjb2xvcjogYmx1ZTsKfS55bTd1QkJ1ViB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1WCB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdVkgewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVhIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1YiB7CiAgY29sb3I6IGJsdWU7Cn0ueW03dUJCdWQgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVlIHsKICBjb2xvcjogYmx1ZTsKfS55bTd1QkJ1ZyB7CiAgcGFkZGluZzogOHB4Owp9LnltN3VCQnVoIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1aSk7Cn0ueW03dUJCdWsgewogIHBhZGRpbmc6IDhweDsKfS55bTd1QkJ1bSB7CiAgcGFkZGluZzogOHB4Owp9Ci55bTd1QkJ1biB7CiAgcGFkZGluZzogMTZweDsKfS55bTd1QkJ1ciB7CiAgY29sb3I6IHJlZDsKfQ==";
 export const Rest = /*YAK EXPORTED STYLED:Rest:ym7uBBu*//*YAK Extracted CSS:
 .ym7uBBu1 {
   color: red;
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", ({ $on, ...rest })=>$on && /*#__PURE__*/ css("ym7uBBu1"));
-export const Default = /*YAK EXPORTED STYLED:Default:ym7uBBu2*//*YAK Extracted CSS:
+// a call as default value would run once per read of the prop
+export const DefaultCall = /*YAK EXPORTED STYLED:DefaultCall:ym7uBBu2*//*YAK Extracted CSS:
 .ym7uBBu3 {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu2", ({ $on = true })=>$on && /*#__PURE__*/ css("ym7uBBu3"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu2", ({ $on = calc(1) })=>$on && /*#__PURE__*/ css("ym7uBBu3"));
 export const Computed = /*YAK EXPORTED STYLED:Computed:ym7uBBu4*//*YAK Extracted CSS:
 .ym7uBBu5 {
   color: red;
@@ -53,9 +54,7 @@ export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:ym7uBBuF*
   left: var(--ym7uBBuG);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuF", {
-    "style": {
-        "--ym7uBBuG": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
-    }
+    "--ym7uBBuG": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
 });
 export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:ym7uBBuH*//*YAK Extracted CSS:
 .ym7uBBuI {
@@ -185,14 +184,12 @@ export const FunctionAfterReturnedValue = /*YAK EXPORTED STYLED:FunctionAfterRet
   left: var(--ym7uBBui);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuh", {
-    "style": {
-        "--ym7uBBui": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
-            return toPx($x);
-            function toPx(value: number) {
-                return value * 2;
-            }
-        }, "px")
-    }
+    "--ym7uBBui": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
+        return toPx($x);
+        function toPx(value: number) {
+            return value * 2;
+        }
+    }, "px")
 });
 export const FunctionAfterIfElse = /*YAK EXPORTED STYLED:FunctionAfterIfElse:ym7uBBuj*//*YAK Extracted CSS:
 .ym7uBBuk {
@@ -231,3 +228,14 @@ export const AtomsValue = /*YAK EXPORTED STYLED:AtomsValue:ym7uBBuo*//*YAK Extra
 export const AtomsOr = /*YAK EXPORTED STYLED:AtomsOr:ym7uBBup*//*YAK Extracted CSS:
 
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBup", ({ $on, $extra })=>$on && atoms($extra || "flex"));
+// a call as case value can change the switched value
+export const SwitchCaseCall = /*YAK EXPORTED STYLED:SwitchCaseCall:ym7uBBuq*//*YAK Extracted CSS:
+.ym7uBBur {
+  color: red;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuq", ({ $size })=>{
+    switch($size){
+        case String(1):
+            return /*#__PURE__*/ css("ym7uBBur");
+    }
+});

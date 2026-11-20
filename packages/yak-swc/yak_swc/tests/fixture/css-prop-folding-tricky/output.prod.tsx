@@ -74,7 +74,5 @@ const MixedDynamic = ({ color }: {
   color: var(--ym7uBBuB);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--ym7uBBuB": ()=>color
-        }
+        "--ym7uBBuB": ()=>color
     }, "ym7uBBuA"))}/>;

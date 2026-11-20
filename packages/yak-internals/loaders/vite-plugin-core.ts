@@ -2,7 +2,13 @@ import { type JscConfig, Options, transform as swcTransform } from "@swc/core";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { basename, dirname, extname, resolve } from "node:path";
-import { isFileLoadingAllowed, normalizePath, type Plugin, type ResolvedConfig } from "vite";
+import {
+  createIdResolver,
+  isFileLoadingAllowed,
+  normalizePath,
+  type Plugin,
+  type ResolvedConfig,
+} from "vite";
 import { parseModule } from "../cross-file-resolver/parseModule.js";
 import { resolveCrossFileConstant } from "../cross-file-resolver/resolveCrossFileConstant.js";
 import { createEvaluator, type Evaluator } from "yak-internals/isolated-source-eval";
@@ -119,6 +125,7 @@ async function viteYakImpl(
   const yakCssRegex = /\.yak\.css(?:\?|$)/;
   const yakSwcPath = await findYakSwcPlugin();
   const evaluator: Evaluator = await createEvaluator();
+  let resolveSourceFile: ReturnType<typeof createIdResolver>;
 
   function checkFileAccess(filePath: string, config: ResolvedConfig): string {
     if (config.command !== "serve") return filePath;
@@ -156,6 +163,7 @@ async function viteYakImpl(
       }
     },
     configResolved(config) {
+      resolveSourceFile = createIdResolver(config, { noExternal: true });
       basePath = basePath ? resolve(config.root, basePath) : config.root;
       debugLog = createDebugLogger(yakOptions.debug, basePath);
       isServe = config.command === "serve";
@@ -195,7 +203,9 @@ async function viteYakImpl(
         // as "/@fs/" plus the absolute path: "/@fs/home/me/ui/a.tsx.yak.css".
         // this.resolve turns both back into the file path.
         const resolved = await this.resolve(path, importer, { skipSelf: true });
-        return resolved && !resolved.external ? resolved.id + ".yak.css" + query : null;
+        return resolved && !resolved.external
+          ? resolved.id.split("?")[0] + ".yak.css" + query
+          : null;
       },
     },
     load: {
@@ -257,6 +267,14 @@ async function viteYakImpl(
 
               if (!resolved) {
                 throw new Error(`Could not resolve ${moduleSpecifier} from ${context}`);
+              }
+              // Get the real file path for vites pre-bundled copies or bare external specifiers
+              if (resolved.external || resolved.id.includes("/node_modules/")) {
+                const file = await resolveSourceFile(this.environment, moduleSpecifier, importer);
+                if (!file) {
+                  throw new Error(`Could not resolve ${moduleSpecifier} from ${context}`);
+                }
+                return file;
               }
               return resolved.id;
             },

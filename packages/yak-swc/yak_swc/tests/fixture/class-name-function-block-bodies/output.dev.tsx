@@ -112,3 +112,30 @@ export const IfElseWithoutReturnThenReturn = /*YAK EXPORTED STYLED:IfElseWithout
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_IfElseWithoutReturnThenReturn_m7uBBu", 0, ({ $on, $big })=>"input_IfElseWithoutReturnThenReturn_m7uBBu" + ($on ? $big ? " input_IfElseWithoutReturnThenReturn___m7uBBu" : " input_IfElseWithoutReturnThenReturn___m7uBBu-02" : " input_IfElseWithoutReturnThenReturn___m7uBBu-01")), {
     "displayName": "IfElseWithoutReturnThenReturn"
 });
+enum Animation {
+    In = "in",
+    Out = "out",
+    None = "none"
+}
+const LARGE = "l";
+// enum members and constants as case values
+export const SwitchEnum = /*YAK EXPORTED STYLED:SwitchEnum:input_SwitchEnum_m7uBBu*//*YAK Extracted CSS:
+.input_SwitchEnum___m7uBBu {
+  opacity: 1;
+}
+.input_SwitchEnum___m7uBBu-01 {
+  opacity: 0;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchEnum_m7uBBu", 0, ({ $animation })=>"input_SwitchEnum_m7uBBu" + ($animation === Animation.In ? " input_SwitchEnum___m7uBBu" : $animation === Animation.Out ? " input_SwitchEnum___m7uBBu-01" : "")), {
+    "displayName": "SwitchEnum"
+});
+export const SwitchConstant = /*YAK EXPORTED STYLED:SwitchConstant:input_SwitchConstant_m7uBBu*//*YAK Extracted CSS:
+.input_SwitchConstant___m7uBBu {
+  padding: 8px;
+}
+.input_SwitchConstant___m7uBBu-01 {
+  padding: 4px;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchConstant_m7uBBu", 0, ({ $size, $other })=>"input_SwitchConstant_m7uBBu" + ($size === LARGE ? " input_SwitchConstant___m7uBBu" : $size === $other ? " input_SwitchConstant___m7uBBu-01" : "")), {
+    "displayName": "SwitchConstant"
+});

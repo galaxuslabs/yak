@@ -106,7 +106,7 @@ const Defaulted = /*YAK Extracted CSS:
 .ym7uBBuO {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_mark("ym7uBBuN", ({ $size = "big" })=>$size === "big" && /*#__PURE__*/ css("ym7uBBuO"));
+*/ /*#__PURE__*/ __yak.__yak_mark("ym7uBBuN", 0, ({ $size })=>"ym7uBBuN" + (($size === void 0 ? "big" : $size) === "big" ? " ym7uBBuO" : ""));
 const Rested = /*YAK Extracted CSS:
 .ym7uBBuQ {
   padding: 8px;

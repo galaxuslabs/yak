@@ -5,8 +5,9 @@ export const Rest = styled.div<{ $on: boolean }>`
   ${({ $on, ...rest }) => $on && css`color: red;`}
 `;
 
-export const Default = styled.div<{ $on?: boolean }>`
-  ${({ $on = true }) => $on && css`color: red;`}
+// a call as default value would run once per read of the prop
+export const DefaultCall = styled.div<{ $on?: boolean }>`
+  ${({ $on = calc(1) }) => $on && css`color: red;`}
 `;
 
 export const Computed = styled.div<{ $on: boolean }>`
@@ -186,4 +187,14 @@ export const AtomsValue = styled.div<{ $on: boolean; $extra: string }>`
 // a truthy left side can be a function
 export const AtomsOr = styled.div<{ $on: boolean; $extra?: string }>`
   ${({ $on, $extra }) => $on && atoms($extra || "flex")}
+`;
+
+// a call as case value can change the switched value
+export const SwitchCaseCall = styled.div<{ $size: string }>`
+  ${({ $size }) => {
+    switch ($size) {
+      case String(1):
+        return css`color: red;`;
+    }
+  }}
 `;

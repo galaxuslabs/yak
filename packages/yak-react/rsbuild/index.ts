@@ -55,7 +55,7 @@ export function pluginYak(yakOptions: YakConfigOptions = {}): RsbuildPlugin {
         config.module.rules.push(
           {
             test: /\.(c|m)?[jt]sx?$/,
-            exclude: /[\\/]node_modules[\\/]/,
+            exclude: /[\\/](?:@yak[\\/]react|packages[\\/]yak-react)[\\/]/,
             enforce: "pre",
             use: [
               {

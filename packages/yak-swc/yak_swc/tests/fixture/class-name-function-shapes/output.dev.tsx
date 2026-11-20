@@ -134,3 +134,55 @@ export const AtomsNestedCondition = /*YAK EXPORTED STYLED:AtomsNestedCondition:i
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsNestedCondition_m7uBBu", 0, ({ $on, $off })=>"input_AtomsNestedCondition_m7uBBu" + ($on ? " shadow-md" + ($off ? " ring" : "") + " rounded p-2" + ($off ? " text-white" : " text-black") + ($off ? " border" : "") + (true === false ? " never" : "") + (isLarge ? " large" : "") : "")), {
     "displayName": "AtomsNestedCondition"
 });
+const paddingSmall = /*#__PURE__*/ css();
+const paddingLarge = /*#__PURE__*/ css();
+const SIZES = {
+    small: 16
+};
+// a condition inside a nested css literal, without an arrow of its own
+export const NestedCondition = /*YAK EXPORTED STYLED:NestedCondition:input_NestedCondition_m7uBBu*//*YAK Extracted CSS:
+.input_NestedCondition__\$on_m7uBBu {
+  color: red;
+}
+.input_NestedCondition__\$on_m7uBBu-01 {
+  font-size: 2em;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedCondition_m7uBBu", 0, ({ $on, $big })=>"input_NestedCondition_m7uBBu" + ($on ? " input_NestedCondition__$on_m7uBBu" + ($big ? " input_NestedCondition__$on_m7uBBu-01" : "") : "")), {
+    "displayName": "NestedCondition"
+});
+// a nested value that picks between two css constants
+export const NestedConstants = /*YAK EXPORTED STYLED:NestedConstants:input_NestedConstants_m7uBBu*//*YAK Extracted CSS:
+.input_NestedConstants___m7uBBu-01 {
+  padding: 2px;
+}
+.input_NestedConstants___m7uBBu-02 {
+  padding: 1px;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NestedConstants_m7uBBu", 0, ({ $big })=>"input_NestedConstants_m7uBBu" + (" input_NestedConstants___m7uBBu" + ($big ? " input_NestedConstants___m7uBBu-01" : " input_NestedConstants___m7uBBu-02"))), {
+    "displayName": "NestedConstants"
+});
+// default values in the destructuring
+export const DefaultCondition = /*YAK EXPORTED STYLED:DefaultCondition:input_DefaultCondition_m7uBBu*//*YAK Extracted CSS:
+.input_DefaultCondition___m7uBBu {
+  text-align: start;
+}
+.input_DefaultCondition___m7uBBu-01 {
+  text-align: end;
+}
+.input_DefaultCondition__on_m7uBBu {
+  color: red;
+}
+.input_DefaultCondition__\$on_m7uBBu {
+  color: blue;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultCondition_m7uBBu", 0, ({ $align, $on })=>"input_DefaultCondition_m7uBBu" + (($align === void 0 ? "start" : $align) === "start" ? " input_DefaultCondition___m7uBBu" : " input_DefaultCondition___m7uBBu-01") + (($on === void 0 ? true : $on) ? " input_DefaultCondition__on_m7uBBu" : "") + ($on ? " input_DefaultCondition__$on_m7uBBu" : "")), {
+    "displayName": "DefaultCondition"
+});
+export const DefaultValue = /*YAK EXPORTED STYLED:DefaultValue:input_DefaultValue_m7uBBu*//*YAK Extracted CSS:
+.input_DefaultValue_m7uBBu {
+  height: var(--input_DefaultValue__height_m7uBBu);
+  width: var(--input_DefaultValue__width_m7uBBu);
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultValue_m7uBBu", 2, ({ $size, $width }, style)=>"input_DefaultValue_m7uBBu" + (style["--input_DefaultValue__height_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($size === void 0 ? 32 : $size, "px"), style["--input_DefaultValue__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($width === void 0 ? $size === void 0 ? SIZES.small : $size : $width, "px"), "")), {
+    "displayName": "DefaultValue"
+});

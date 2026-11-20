@@ -7,11 +7,12 @@ export const Rest = /*YAK EXPORTED STYLED:Rest:ym7uBBu*//*YAK Extracted CSS:
   color: red;
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", ({ $on, ...rest })=>$on && /*#__PURE__*/ css("ym7uBBu1"));
-export const Default = /*YAK EXPORTED STYLED:Default:ym7uBBu2*//*YAK Extracted CSS:
+// a call as default value would run once per read of the prop
+export const DefaultCall = /*YAK EXPORTED STYLED:DefaultCall:ym7uBBu2*//*YAK Extracted CSS:
 .ym7uBBu3 {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu2", ({ $on = true })=>$on && /*#__PURE__*/ css("ym7uBBu3"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu2", ({ $on = calc(1) })=>$on && /*#__PURE__*/ css("ym7uBBu3"));
 export const Computed = /*YAK EXPORTED STYLED:Computed:ym7uBBu4*//*YAK Extracted CSS:
 .ym7uBBu5 {
   color: red;
@@ -53,9 +54,7 @@ export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:ym7uBBuF*
   left: var(--ym7uBBuG);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuF", {
-    "style": {
-        "--ym7uBBuG": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
-    }
+    "--ym7uBBuG": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
 });
 export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:ym7uBBuH*//*YAK Extracted CSS:
 .ym7uBBuI {
@@ -185,14 +184,12 @@ export const FunctionAfterReturnedValue = /*YAK EXPORTED STYLED:FunctionAfterRet
   left: var(--ym7uBBui);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuh", {
-    "style": {
-        "--ym7uBBui": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
-            return toPx($x);
-            function toPx(value: number) {
-                return value * 2;
-            }
-        }, "px")
-    }
+    "--ym7uBBui": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
+        return toPx($x);
+        function toPx(value: number) {
+            return value * 2;
+        }
+    }, "px")
 });
 export const FunctionAfterIfElse = /*YAK EXPORTED STYLED:FunctionAfterIfElse:ym7uBBuj*//*YAK Extracted CSS:
 .ym7uBBuk {
@@ -231,3 +228,14 @@ export const AtomsValue = /*YAK EXPORTED STYLED:AtomsValue:ym7uBBuo*//*YAK Extra
 export const AtomsOr = /*YAK EXPORTED STYLED:AtomsOr:ym7uBBup*//*YAK Extracted CSS:
 
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBup", ({ $on, $extra })=>$on && atoms($extra || "flex"));
+// a call as case value can change the switched value
+export const SwitchCaseCall = /*YAK EXPORTED STYLED:SwitchCaseCall:ym7uBBuq*//*YAK Extracted CSS:
+.ym7uBBur {
+  color: red;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuq", ({ $size })=>{
+    switch($size){
+        case String(1):
+            return /*#__PURE__*/ css("ym7uBBur");
+    }
+});

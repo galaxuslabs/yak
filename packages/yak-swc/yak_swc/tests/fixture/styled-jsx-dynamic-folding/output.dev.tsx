@@ -126,7 +126,7 @@ const Defaulted = /*YAK Extracted CSS:
 .input_Defaulted___m7uBBu {
   padding: 8px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_mark("input_Defaulted_m7uBBu", ({ $size = "big" })=>$size === "big" && /*#__PURE__*/ css("input_Defaulted___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_mark("input_Defaulted_m7uBBu", 0, ({ $size })=>"input_Defaulted_m7uBBu" + (($size === void 0 ? "big" : $size) === "big" ? " input_Defaulted___m7uBBu" : "")), {
     "displayName": "Defaulted"
 });
 const Rested = /*YAK Extracted CSS:
