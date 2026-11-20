@@ -279,3 +279,16 @@ export const AtomsOr = /*YAK EXPORTED STYLED:AtomsOr:input_AtomsOr_m7uBBu*//*YAK
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsOr_m7uBBu", ({ $on, $extra })=>$on && atoms($extra || "flex")), {
     "displayName": "AtomsOr"
 });
+// a call as case value can change the switched value
+export const SwitchCaseCall = /*YAK EXPORTED STYLED:SwitchCaseCall:input_SwitchCaseCall_m7uBBu*//*YAK Extracted CSS:
+.input_SwitchCaseCall___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchCaseCall_m7uBBu", ({ $size })=>{
+    switch($size){
+        case String(1):
+            return /*#__PURE__*/ css("input_SwitchCaseCall___m7uBBu");
+    }
+}), {
+    "displayName": "SwitchCaseCall"
+});

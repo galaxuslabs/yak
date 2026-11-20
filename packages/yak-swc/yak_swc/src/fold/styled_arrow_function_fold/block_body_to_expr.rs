@@ -86,10 +86,11 @@ fn branch_to_expr(branch: &[Stmt], rest: &[Stmt]) -> Option<Box<Expr>> {
 ///
 /// The expression reads the switched value once per `case`, so it has to be a
 /// plain read like `$size` or `props.$size`. A `case` compares with `===`,
-/// and so does the expression: the case values are literals to keep that
-/// comparison free of side effects. Every `case` returns: a `break` or a
-/// `case` that runs into the next one would need the statements after the
-/// `switch` a second time
+/// and so does the expression. A case value is a literal or a plain read
+/// like `Size.Small`: it can not change the switched value between two
+/// comparisons, which a call like `case next():` could. Every `case`
+/// returns: a `break` or a `case` that runs into the next one would need the
+/// statements after the `switch` a second time
 fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
   let discriminant = unwrap_type_casts(&switch.discriminant);
   if !is_plain_read(discriminant) {
@@ -107,9 +108,7 @@ fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
     }
     match &case.test {
       Some(test) => {
-        if default_label_seen
-          || !matches!(unwrap_type_casts(test), Expr::Lit(lit) if is_case_literal(lit))
-        {
+        if default_label_seen || !is_case_value(unwrap_type_casts(test)) {
           return None;
         }
         tests.push(test);
@@ -207,8 +206,12 @@ fn is_plain_read(expr: &Expr) -> bool {
   }
 }
 
-fn is_case_literal(lit: &Lit) -> bool {
-  matches!(lit, Lit::Str(_) | Lit::Num(_) | Lit::Bool(_) | Lit::Null(_))
+/// `"s"`, `1`, `Size.Small` or `SMALL`
+fn is_case_value(expr: &Expr) -> bool {
+  match expr {
+    Expr::Lit(lit) => matches!(lit, Lit::Str(_) | Lit::Num(_) | Lit::Bool(_) | Lit::Null(_)),
+    _ => is_plain_read(expr),
+  }
 }
 
 /// A returned value keeps its meaning as a branch of `a ? b : c`: e.g.
