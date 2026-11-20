@@ -1,0 +1,27 @@
+{
+  "name": "e2e-installed-tokens-excluded",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./colors": "./colors.js",
+    "./radius": "./radius.ts",
+    "./box-react": "./box.react.js",
+    "./box-solid": "./box.solid.js",
+    "./card-react": "./card.react.tsx",
+    "./card-solid": "./card.solid.tsx"
+  },
+  "peerDependencies": {
+    "@yak/react": "*",
+    "@yak/solid": "*"
+  },
+  "peerDependenciesMeta": {
+    "@yak/react": {
+      "optional": true
+    },
+    "@yak/solid": {
+      "optional": true
+    }
+  }
+}

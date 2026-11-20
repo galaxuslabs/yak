@@ -12,4 +12,8 @@ const yakOptions = process.env.YAK_E2E_FOLD_STATIC === "false" ? { foldStatic: f
 
 export default defineConfig({
   plugins: [viteYak(yakOptions), vinext()],
+  optimizeDeps: {
+    include: ["e2e-installed-tokens"],
+    exclude: ["e2e-installed-tokens-excluded"],
+  },
 });

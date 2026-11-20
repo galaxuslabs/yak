@@ -67,10 +67,14 @@ const config: KnipConfig = {
     e2e: {
       // Copied into each bundler's `.tmp/` next to its playwright.config.ts
       entry: ["playwright-base.ts"],
-      // Mounted into the bundler scaffolds at runtime
-      ignore: ["cases/**"],
-      // Type-check the cases (tsconfig.json), not imported by the runner
-      ignoreDependencies: ["@yak/react", "@types/react"],
+      // Mounted into the bundler scaffolds at runtime, and packages the cases install
+      ignore: ["cases/**", "fixtures/**"],
+      ignoreDependencies: [
+        "@yak/react",
+        "@types/react",
+        "@yak/solid",
+        "e2e-installed-tokens-excluded",
+      ],
     },
     "e2e/bundlers/next-app-turbopack": bundler({ ignoreDependencies: yakSwc }),
     "e2e/bundlers/next-app-webpack": bundler({ ignoreDependencies: yakSwc }),
