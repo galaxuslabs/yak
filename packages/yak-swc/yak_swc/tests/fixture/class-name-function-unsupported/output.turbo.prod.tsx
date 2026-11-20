@@ -7,11 +7,12 @@ export const Rest = /*YAK EXPORTED STYLED:Rest:ym7uBBu*//*YAK Extracted CSS:
   color: red;
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", ({ $on, ...rest })=>$on && /*#__PURE__*/ css("ym7uBBu1"));
-export const Default = /*YAK EXPORTED STYLED:Default:ym7uBBu2*//*YAK Extracted CSS:
+// a call as default value would run once per read of the prop
+export const DefaultCall = /*YAK EXPORTED STYLED:DefaultCall:ym7uBBu2*//*YAK Extracted CSS:
 .ym7uBBu3 {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu2", ({ $on = true })=>$on && /*#__PURE__*/ css("ym7uBBu3"));
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu2", ({ $on = calc(1) })=>$on && /*#__PURE__*/ css("ym7uBBu3"));
 export const Computed = /*YAK EXPORTED STYLED:Computed:ym7uBBu4*//*YAK Extracted CSS:
 .ym7uBBu5 {
   color: red;

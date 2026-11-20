@@ -161,8 +161,10 @@ impl ClassNameFolder<'_> {
         Expr::Arrow(_) => folded_arguments.push(self.fold_arrow(&arg.expr)?),
         // css variables: `css("x", { "--yX": value })`
         Expr::Object(object) => folded_arguments.push(self.fold_style_object(object)?),
-        // mixin references and anything else
-        _ => return None,
+        // a value inside the function of the user, e.g.
+        // `({ $on, $big }) => $on && css("x", $big && css("y"))`. A mixin
+        // reference and anything else `fold_value` can not fold stops here
+        value => folded_arguments.push(self.fold_value(value)?),
       }
     }
     let mut result = class_name
