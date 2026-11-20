@@ -9,11 +9,16 @@
     "test": "node runDevTests.ts",
     "test:build": "node runBuildTests.ts"
   },
+  "dependencies": {
+    "e2e-installed-tokens": "file:./fixtures/installed-tokens",
+    "e2e-installed-tokens-excluded": "file:./fixtures/installed-tokens-excluded"
+  },
   "devDependencies": {
     "@playwright/test": "catalog:dev",
     "@types/node": "catalog:dev",
     "@types/react": "catalog:dev",
     "@yak/react": "workspace:*",
+    "@yak/solid": "workspace:*",
     "typescript": "catalog:dev",
     "yaml": "catalog:dev"
   }

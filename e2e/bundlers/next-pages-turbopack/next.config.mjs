@@ -1,7 +1,9 @@
 import { withYak } from "@yak/react/withYak";
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  transpilePackages: ["e2e-installed-tokens-excluded"],
+};
 
 // Two-mode e2e: opt out of static folding only when YAK_E2E_FOLD_STATIC is
 // "false". Otherwise pass no foldStatic key so the config stays inert.

@@ -1,0 +1,11 @@
+{
+  "name": "e2e-installed-tokens",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./colors": "./colors.js",
+    "./tokens.yak.js": "./tokens.yak.js"
+  }
+}
