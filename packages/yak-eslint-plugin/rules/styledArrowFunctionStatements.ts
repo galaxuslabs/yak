@@ -32,6 +32,10 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
       functionExpression:
         "A `function` expression inside a styled/css literal moves the component to the slower render path. Use an arrow function, e.g. `({ $active }) => $active && css`...``.",
       branchWithoutReturn: `This {{statement}} can end without a \`return\` and more than a single \`return\` follows it, which moves the component to the slower render path. Return in every branch or move the code after it into the branches. ${hint}`,
+      propsObject:
+        "`{{name}}` is used as a whole object here, which moves the component to the slower render path. The fast render path only has the props a function reads by name, like `{{name}}.$active`. Read the props by name and pass those on, e.g. `({ $a, $b }) => helper({ $a, $b })`.",
+      restParameter:
+        "`...{{name}}` collects the other props into a new object, which moves the component to the slower render path. Destructure the props by name and pass those on, e.g. `({ $a, $b }) => helper({ $a, $b })`.",
       switchDiscriminant:
         "A `switch` inside a styled/css literal has to switch on a prop like `$variant` or `props.$variant`. A call or a calculation moves the component to the slower render path. Use `if` and `return` for it.",
       switchCaseTest:
@@ -129,6 +133,32 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
       });
     };
 
+    /**
+     * The compiled function gets the props it reads by name and no props
+     * object, so `(props) => helper(props)` and `({ $on, ...rest }) => ...`
+     * keep the component on the slower render path
+     */
+    const checkParameter = (arrow: ESTree.ArrowFunctionExpression) => {
+      const [parameter] = arrow.params;
+      if (parameter?.type === "Identifier") {
+        for (const node of findObjectUses(arrow.body, parameter.name)) {
+          context.report({ node, messageId: "propsObject", data: { name: parameter.name } });
+        }
+      } else if (parameter?.type === "ObjectPattern") {
+        for (const property of parameter.properties) {
+          if (property.type === "RestElement") {
+            context.report({
+              node: property,
+              messageId: "restParameter",
+              data: {
+                name: property.argument.type === "Identifier" ? property.argument.name : "rest",
+              },
+            });
+          }
+        }
+      }
+    };
+
     return {
       before,
       ImportDeclaration,
@@ -142,11 +172,11 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
         for (const expression of node.quasi.expressions) {
           if (expression.type === "FunctionExpression") {
             context.report({ node: expression, messageId: "functionExpression" });
-          } else if (
-            expression.type === "ArrowFunctionExpression" &&
-            expression.body.type === "BlockStatement"
-          ) {
-            checkStatements(expression.body.body);
+          } else if (expression.type === "ArrowFunctionExpression") {
+            checkParameter(expression);
+            if (expression.body.type === "BlockStatement") {
+              checkStatements(expression.body.body);
+            }
           }
         }
       },
@@ -169,6 +199,59 @@ const statementNames: Partial<Record<ESTree.Statement["type"], string>> = {
   BreakStatement: "`break` statement",
   LabeledStatement: "label",
 };
+
+/**
+ * Every use of the props parameter that is no read by name: `helper(props)`
+ * or `props[key]`, but not `props.$on`
+ */
+function findObjectUses(root: unknown, name: string): ESTree.Node[] {
+  const uses: ESTree.Node[] = [];
+  const visit = (value: unknown) => {
+    if (Array.isArray(value)) {
+      value.forEach(visit);
+      return;
+    }
+    if (typeof value !== "object" || value === null || !("type" in value)) {
+      return;
+    }
+    const node = value as ESTree.Node;
+    if (node.type === "Identifier") {
+      if (node.name === name) {
+        uses.push(node);
+      }
+      return;
+    }
+    if (node.type === "MemberExpression") {
+      const isNamedRead =
+        !node.computed && node.object.type === "Identifier" && node.object.name === name;
+      if (!isNamedRead) {
+        visit(node.object);
+      }
+      if (node.computed) {
+        visit(node.property);
+      }
+      return;
+    }
+    if (node.type === "Property" && !node.computed) {
+      visit(node.value);
+      return;
+    }
+    // a nested function with a parameter of the same name reads its own value
+    if (
+      (node.type === "ArrowFunctionExpression" || node.type === "FunctionExpression") &&
+      node.params.some((param) => param.type === "Identifier" && param.name === name)
+    ) {
+      return;
+    }
+    for (const [key, child] of Object.entries(node)) {
+      if (key !== "parent" && key !== "typeAnnotation" && key !== "typeArguments") {
+        visit(child);
+      }
+    }
+  };
+  visit(root);
+  return uses;
+}
 
 /** True if no path through the statements ends without a `return` */
 function alwaysReturns(statements: readonly ESTree.Statement[]): boolean {

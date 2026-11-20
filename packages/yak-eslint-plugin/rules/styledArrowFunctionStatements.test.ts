@@ -19,6 +19,15 @@ const code = (...lines: string[]) => [react, ...lines].join("\n");
 ruleTester.run("yak-styled-arrow-function-statements", rule, {
   valid: [
     {
+      name: "props read by name",
+      code: code(
+        "styled.div`",
+        "  ${(props) => props.$on && props.theme.dark && css`color: red;`}",
+        "  width: ${({ $a, $b }) => getFactor({ $a, $b, props: 1 })}px;",
+        "`;",
+      ),
+    },
+    {
       name: "an expression",
       code: code("styled.div`", "  ${({ $on }) => $on && css`color: red;`}", "`;"),
     },
@@ -200,6 +209,29 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
     },
   ],
   invalid: [
+    {
+      name: "a props object that is passed on",
+      code: code("styled.div`", "  padding: calc(${($props) => getFactor($props)} * 32px);", "`;"),
+      errors: [{ messageId: "propsObject", data: { name: "$props" }, line: 3 }],
+    },
+    {
+      name: "a props object read with a computed key",
+      code: code("styled.div`", "  ${(props) => props[key] && css`color: red;`}", "`;"),
+      errors: [{ messageId: "propsObject", data: { name: "props" }, line: 3 }],
+    },
+    {
+      name: "a rest parameter",
+      code: code(
+        "styled.div`",
+        "  ${({ $brand, ...rest }) => {",
+        "    if (hasActiveStyling(rest)) {",
+        "      return css`color: red;`;",
+        "    }",
+        "  }}",
+        "`;",
+      ),
+      errors: [{ messageId: "restParameter", data: { name: "rest" }, line: 3 }],
+    },
     {
       name: "a function call",
       code: code(

@@ -96,6 +96,15 @@ styled.button`
     }
   }}
 `;
+
+// the compiled function has the props it reads by name and no props object
+styled.button`
+  padding: ${(props) => getPadding(props)}px;
+`;
+
+styled.button`
+  ${({ $brand, ...rest }) => isActive(rest) && css`color: red;`}
+`;
 ```
 
 The following patterns are not considered errors:
