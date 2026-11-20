@@ -1,5 +1,29 @@
 # @yak/react
 
+## 10.2.0
+
+### Minor Changes
+
+- `styled(Component)` no longer applies the `defaultProps` of a function component, which React 19 already ignores in JSX. Use default parameters like `const Price = ({ currency = "CHF" }) => <b>{currency}</b>` ([#759](https://github.com/galaxuslabs/yak/pull/759))
+
+- Rsbuild now compiles yak components that come from an installed package in `node_modules` ([#787](https://github.com/galaxuslabs/yak/pull/787))
+
+### Patch Changes
+
+- Fixes a bug where a `css` prop inside a destructuring declaration rendered without styles, like ``const { getByText } = render(<div css={css`color: red;`} />)`` ([#783](https://github.com/galaxuslabs/yak/pull/783)) Thanks @drewbitt!
+
+- Styled components with dynamic values like ``${({ $active }) => $active && css`color: red;`}``, constant `.attrs({...})` or a chain like `styled(styled(Button))` render faster ([#754](https://github.com/galaxuslabs/yak/pull/754))
+
+- A component with a dynamic value like `width: ${({ $width }) => $width}px` now compiles to less JavaScript ([#772](https://github.com/galaxuslabs/yak/pull/772))
+
+- `atoms()` accepts `null` and `undefined`, so an optional prop works as a condition: `atoms("flex", $wide && "w-full")` ([#768](https://github.com/galaxuslabs/yak/pull/768))
+
+- Fixes a bug where `vite dev` failed with an `ENOENT` on the CSS of a yak component in a file of an installed package ([#787](https://github.com/galaxuslabs/yak/pull/787))
+
+- Fixes a bug where a constant from an installed package, like `${layout.reading}` from `import { layout } from "my-ui"`, failed in Vite with "Error while resolving cross-file selectors" ([#787](https://github.com/galaxuslabs/yak/pull/787))
+- Updated dependencies:
+  - @yak/swc@10.2.0
+
 ## 10.1.0
 
 ### Minor Changes

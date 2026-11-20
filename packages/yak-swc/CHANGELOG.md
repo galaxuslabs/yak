@@ -1,5 +1,13 @@
 # @yak/swc
 
+## 10.2.0
+
+### Patch Changes
+
+- Fixes a bug where a `css` prop inside a destructuring declaration rendered without styles, like ``const { getByText } = render(<div css={css`color: red;`} />)`` ([#783](https://github.com/galaxuslabs/yak/pull/783)) Thanks @drewbitt!
+
+- Styled components with dynamic values like ``${({ $active }) => $active && css`color: red;`}``, constant `.attrs({...})` or a chain like `styled(styled(Button))` render faster ([#754](https://github.com/galaxuslabs/yak/pull/754))
+
 ## 10.1.0
 
 ### Minor Changes
