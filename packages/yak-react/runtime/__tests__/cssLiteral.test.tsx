@@ -78,10 +78,8 @@ describe("cssLiteral css function", () => {
       const props = { theme: {} };
 
       const styleObj = {
-        style: {
-          "--css-var": "static-value",
-          "--another-var": "42px",
-        },
+        "--css-var": "static-value",
+        "--another-var": "42px",
       };
 
       const processor = css("class-name", styleObj);
@@ -102,10 +100,8 @@ describe("cssLiteral css function", () => {
       };
 
       const styleObj = {
-        style: {
-          "--width": (props) => (props.$responsiveWidth ? "100%" : `${props.$width}px`),
-          "--static-var": "static-value",
-        },
+        "--width": (props) => (props.$responsiveWidth ? "100%" : `${props.$width}px`),
+        "--static-var": "static-value",
       };
 
       const processor = css("class-name", styleObj);
@@ -127,11 +123,9 @@ describe("cssLiteral css function", () => {
       };
 
       const styleObj = {
-        style: {
-          "--page_StyledImageWithRatioInternal__width_zWYXKE": (props) =>
-            props.$responsiveWidth ? "100%" : `${props.$width}px`,
-          "--page_StyledImageWithRatioInternal__aspect-ratio_zWYXKE": (props) => props.$aspectRatio,
-        },
+        "--page_StyledImageWithRatioInternal__width_zWYXKE": (props) =>
+          props.$responsiveWidth ? "100%" : `${props.$width}px`,
+        "--page_StyledImageWithRatioInternal__aspect-ratio_zWYXKE": (props) => props.$aspectRatio,
       };
 
       const processor = css("page_StyledImageWithRatioInternal_zWYXKE", styleObj);
@@ -152,17 +146,13 @@ describe("cssLiteral css function", () => {
       };
 
       const styleObj1 = {
-        style: {
-          "--var1": "value1",
-          "--var2": (props) => (props.$width ? `${props.$width}px` : "0"),
-        },
+        "--var1": "value1",
+        "--var2": (props) => (props.$width ? `${props.$width}px` : "0"),
       };
 
       const styleObj2 = {
-        style: {
-          "--var3": "value3",
-          "--var4": (props) => props.$aspectRatio || "auto",
-        },
+        "--var3": "value3",
+        "--var4": (props) => props.$aspectRatio || "auto",
       };
 
       const processor = css("base-class", styleObj1, styleObj2);
@@ -194,10 +184,8 @@ describe("cssLiteral css function", () => {
       };
 
       const styleObj = {
-        style: {
-          "--width": (props) => (props.$responsiveWidth ? "100%" : `${props.$width}px`),
-          "--static-height": "200px",
-        },
+        "--width": (props) => (props.$responsiveWidth ? "100%" : `${props.$width}px`),
+        "--static-height": "200px",
       };
 
       const processor = css("base-class", dynamicFn, styleObj);
@@ -251,10 +239,8 @@ describe("cssLiteral css function", () => {
       };
 
       const styleObj = {
-        style: {
-          "--number-var": (props) => props.$width || 0,
-          "--boolean-var": (props) => props.$responsiveWidth || false,
-        },
+        "--number-var": (props) => props.$width || 0,
+        "--boolean-var": (props) => props.$responsiveWidth || false,
       };
 
       const processor = css("class", styleObj);
@@ -270,11 +256,9 @@ describe("cssLiteral css function", () => {
       const props = { theme: {} };
 
       const styleObj = {
-        style: {
-          "--null-var": () => null,
-          "--undefined-var": () => undefined,
-          "--empty-var": () => "",
-        },
+        "--null-var": () => null,
+        "--undefined-var": () => undefined,
+        "--empty-var": () => "",
       };
 
       const processor = css("class", styleObj);
@@ -336,9 +320,7 @@ describe("cssLiteral css function", () => {
       };
 
       const aspectRatioStyle = {
-        style: {
-          "--page_StyledImageWithRatioInternal__aspect-ratio_zWYXKE": (props) => props.$aspectRatio,
-        },
+        "--page_StyledImageWithRatioInternal__aspect-ratio_zWYXKE": (props) => props.$aspectRatio,
       };
 
       const processor = css(
@@ -373,9 +355,7 @@ describe("cssLiteral css function", () => {
       };
 
       const aspectRatioStyle = {
-        style: {
-          "--page_StyledImageWithRatioInternal__aspect-ratio_zWYXKE": (props) => props.$aspectRatio,
-        },
+        "--page_StyledImageWithRatioInternal__aspect-ratio_zWYXKE": (props) => props.$aspectRatio,
       };
 
       const processor = css(
@@ -402,12 +382,10 @@ describe("cssLiteral css function", () => {
       };
 
       const styleObj = {
-        style: {
-          "--dynamic": (props) => `${props.$width}px`,
-          "--static": "static-value",
-          "--another-dynamic": (props) => props.$aspectRatio,
-          "--another-static": "100%",
-        },
+        "--dynamic": (props) => `${props.$width}px`,
+        "--static": "static-value",
+        "--another-dynamic": (props) => props.$aspectRatio,
+        "--another-static": "100%",
       };
 
       const processor = css("test-class", styleObj);
@@ -424,7 +402,7 @@ describe("cssLiteral css function", () => {
       const style: React.CSSProperties = {};
       const props = { theme: {} };
 
-      const emptyStyleObj = { style: {} };
+      const emptyStyleObj = {};
 
       const processor = css("test-class", emptyStyleObj);
       processor(props, classNames, style);
@@ -439,10 +417,8 @@ describe("cssLiteral css function", () => {
       const props = { theme: {} };
 
       const styleObj = {
-        style: {
-          "--static1": "value1",
-          "--static2": "value2",
-        },
+        "--static1": "value1",
+        "--static2": "value2",
       };
 
       const processor = css("test-class", styleObj);
@@ -462,10 +438,8 @@ describe("cssLiteral css function", () => {
       };
 
       const styleObj = {
-        style: {
-          "--dynamic1": (props) => props.$value1,
-          "--dynamic2": (props) => props.$value2,
-        },
+        "--dynamic1": (props) => props.$value1,
+        "--dynamic2": (props) => props.$value2,
       };
 
       const processor = css("test-class", styleObj);

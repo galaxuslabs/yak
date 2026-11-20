@@ -143,10 +143,8 @@ const ⟦2:Button⟧ = ⟦1:styled.button⟧`
 import * as __yak from "@yak/react/internal";
 
 const Button = ⟦1:__yak.__yak_button⟧(⟦2:"input_Button_m7uBBu"⟧, {
-  style: {
-    ⟦4:"--input_Button__color_m7uBBu"⟧: ⟦3:(props) =>
-      props.$primary ? "white" : "blue"⟧,
-  },
+  ⟦4:"--input_Button__color_m7uBBu"⟧: ⟦3:(props) =>
+    props.$primary ? "white" : "blue"⟧,
 });
 ```
 
@@ -393,10 +391,10 @@ function __yak_button(className, ...dynamicParts) {
         // adds "Button_primary" to the class names
         const result = part(props);
         if (result) result(props, classNames, style);
-      } else if (part?.style) {
+      } else if (part) {
         // css variable values, e.g.:
-        // { style: { "--color": (props) => props.$color } }
-        for (const [key, value] of Object.entries(part.style)) {
+        // { "--color": (props) => props.$color }
+        for (const [key, value] of Object.entries(part)) {
           style[key] = typeof value === "function" ? value(props) : value;
         }
       }

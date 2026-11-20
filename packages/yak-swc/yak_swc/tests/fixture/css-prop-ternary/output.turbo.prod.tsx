@@ -42,9 +42,7 @@ const Elem3 = ({ active, width }: {
   width: var(--ym7uBBu6);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--ym7uBBu6": /*#__PURE__*/ __yak_cssValue(()=>width, "px")
-        }
+        "--ym7uBBu6": /*#__PURE__*/ __yak_cssValue(()=>width, "px")
     }, "ym7uBBu5") : /*YAK Extracted CSS:
 .ym7uBBu7 {
   color: blue;

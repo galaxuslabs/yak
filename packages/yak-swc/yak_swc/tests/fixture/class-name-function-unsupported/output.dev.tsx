@@ -71,9 +71,7 @@ export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:input_Sty
   left: var(--input_StyleReadInValue__left_m7uBBu);
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_StyleReadInValue_m7uBBu", {
-    "style": {
-        "--input_StyleReadInValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
-    }
+    "--input_StyleReadInValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
 }), {
     "displayName": "StyleReadInValue"
 });
@@ -227,14 +225,12 @@ export const FunctionAfterReturnedValue = /*YAK EXPORTED STYLED:FunctionAfterRet
   left: var(--input_FunctionAfterReturnedValue__left_m7uBBu);
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FunctionAfterReturnedValue_m7uBBu", {
-    "style": {
-        "--input_FunctionAfterReturnedValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
-            return toPx($x);
-            function toPx(value: number) {
-                return value * 2;
-            }
-        }, "px")
-    }
+    "--input_FunctionAfterReturnedValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
+        return toPx($x);
+        function toPx(value: number) {
+            return value * 2;
+        }
+    }, "px")
 }), {
     "displayName": "FunctionAfterReturnedValue"
 });

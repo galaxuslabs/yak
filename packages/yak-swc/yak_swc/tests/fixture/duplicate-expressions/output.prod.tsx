@@ -57,10 +57,8 @@ const DefaultReferencesSibling = /*YAK Extracted CSS:
   min-height: var(--ym7uBBuI);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuG", {
-    "style": {
-        "--ym7uBBuH": /*#__PURE__*/ __yak_cssValue(({ $a, $b = $a })=>$a * $b, "px"),
-        "--ym7uBBuI": /*#__PURE__*/ __yak_cssValue(({ $b = 1, $a })=>$a * $b, "px")
-    }
+    "--ym7uBBuH": /*#__PURE__*/ __yak_cssValue(({ $a, $b = $a })=>$a * $b, "px"),
+    "--ym7uBBuI": /*#__PURE__*/ __yak_cssValue(({ $b = 1, $a })=>$a * $b, "px")
 });
 // Repeated interpolations inside a single declaration value
 const Dot = /*YAK Extracted CSS:
