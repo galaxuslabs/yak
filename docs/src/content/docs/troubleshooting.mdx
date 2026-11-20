@@ -42,6 +42,31 @@ update the remaining imports, or search the project for `next-yak` and follow th
 If you wrap a styled-components component with a yak component while both libraries run side by side, add `&&` to
 raise the specificity. The [migration guide](/docs/migration-from-styled-components#styles-from-styled-components-win) explains why.
 
+### A mixin returned from a function
+
+yak resolves an imported mixin at build time, but only where the template uses it directly. An arrow function that
+returns the mixin hands it over at runtime, when it no longer holds any styles, so the component silently gets none of
+them. A helper function that returns a mixin has the same problem, even with local mixins, because yak can't tell which
+one the call returns:
+
+```tsx title="button.tsx"
+import { css, styled } from "@yak/react";
+import { outlined } from "./mixins";
+
+const large = css`font-size: 24px;`;
+const small = css`font-size: 12px;`;
+const size = (big?: boolean) => (big ? large : small);
+
+const Button = styled.button<{ $active?: boolean; $big?: boolean }>`
+  ${({ $active }) => $active && outlined}; // [!code --]
+  ${({ $active }) => $active && css`${outlined}`}; // [!code ++]
+  ${({ $big }) => size($big)}; // [!code --]
+  ${({ $big }) => ($big ? large : small)}; // [!code ++]
+`;
+```
+
+Wrap an imported mixin in a `css` literal, and return mixins from the arrow function itself rather than from a helper.
+
 ## Build errors
 
 ### :global() is not supported
