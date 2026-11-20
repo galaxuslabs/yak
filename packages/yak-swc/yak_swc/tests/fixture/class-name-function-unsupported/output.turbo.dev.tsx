@@ -1,7 +1,7 @@
 import { styled, css, atoms, __yak_cssValue } from "@yak/react/internal";
 import { mixin, calc } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LmlucHV0X1Jlc3RfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0RlZmF1bHRfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0NvbXB1dGVkX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0VzY2FwaW5nX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X011bHRpU3RhdGVtZW50X19vbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfRnVuY3Rpb25FeHByZXNzaW9uX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9TdHlsZVJlYWRJblZhbHVlX203dUJCdSB7CiAgbGVmdDogdmFyKC0taW5wdXRfU3R5bGVSZWFkSW5WYWx1ZV9fbGVmdF9tN3VCQnUpOwp9LmlucHV0X09yT3BlcmF0b3JfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfU3R5bGVSZWFkX19zdHlsZV9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfTWl4aW5JbnRlcnBvbGF0aW9uX203dUJCdSB7CiAgLS15YWstY3NzLWltcG9ydDogdXJsKCIuL2hlbHBlcnM6bWl4aW4iLG1peGluKTsKfS5pbnB1dF9CbG9ja1dpdGhMb2dfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfQmxvY2tXaXRoRGVidWdnZXJfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfSWZXaXRob3V0UmV0dXJuVGhlblN0YXRlbWVudHNfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0KLmlucHV0X0lmV2l0aG91dFJldHVyblRoZW5TdGF0ZW1lbnRzX19fbTd1QkJ1LTAxIHsKICBjb2xvcjogZ3JlZW47Cn0KLmlucHV0X0lmV2l0aG91dFJldHVyblRoZW5TdGF0ZW1lbnRzX19fbTd1QkJ1LTAyIHsKICBjb2xvcjogYmx1ZTsKfS5pbnB1dF9Td2l0Y2hPbkNhbGxfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfU3dpdGNoV2l0aEJyZWFrX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9Ci5pbnB1dF9Td2l0Y2hXaXRoQnJlYWtfX19tN3VCQnUtMDEgewogIGNvbG9yOiBibHVlOwp9LmlucHV0X1N3aXRjaEZhbGxUaHJvdWdoX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9Ci5pbnB1dF9Td2l0Y2hGYWxsVGhyb3VnaF9fX203dUJCdS0wMSB7CiAgY29sb3I6IGJsdWU7Cn0uaW5wdXRfU3dpdGNoRGVmYXVsdEZpcnN0X19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9Ci5pbnB1dF9Td2l0Y2hEZWZhdWx0Rmlyc3RfX19tN3VCQnUtMDEgewogIGNvbG9yOiBibHVlOwp9LmlucHV0X0Z1bmN0aW9uQWZ0ZXJSZXR1cm5fX19tN3VCQnUgewogIHBhZGRpbmc6IDhweDsKfS5pbnB1dF9GdW5jdGlvbkFmdGVyUmV0dXJuZWRWYWx1ZV9tN3VCQnUgewogIGxlZnQ6IHZhcigtLWlucHV0X0Z1bmN0aW9uQWZ0ZXJSZXR1cm5lZFZhbHVlX19sZWZ0X203dUJCdSk7Cn0uaW5wdXRfRnVuY3Rpb25BZnRlcklmRWxzZV9fX203dUJCdSB7CiAgcGFkZGluZzogOHB4Owp9LmlucHV0X0Z1bmN0aW9uQWZ0ZXJTd2l0Y2hEZWZhdWx0X19fbTd1QkJ1IHsKICBwYWRkaW5nOiA4cHg7Cn0KLmlucHV0X0Z1bmN0aW9uQWZ0ZXJTd2l0Y2hEZWZhdWx0X19fbTd1QkJ1LTAxIHsKICBwYWRkaW5nOiAxNnB4Owp9";
+import "data:text/css;base64,LmlucHV0X1Jlc3RfX1wkb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0RlZmF1bHRDYWxsX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9Db21wdXRlZF9fX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9Fc2NhcGluZ19fX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9NdWx0aVN0YXRlbWVudF9fb25fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0Z1bmN0aW9uRXhwcmVzc2lvbl9fXCRvbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfU3R5bGVSZWFkSW5WYWx1ZV9tN3VCQnUgewogIGxlZnQ6IHZhcigtLWlucHV0X1N0eWxlUmVhZEluVmFsdWVfX2xlZnRfbTd1QkJ1KTsKfS5pbnB1dF9OdWxsaXNoT3BlcmF0b3JfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfU3R5bGVSZWFkX19zdHlsZV9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfTWl4aW5JbnRlcnBvbGF0aW9uX203dUJCdSB7CiAgLS15YWstY3NzLWltcG9ydDogdXJsKCIuL2hlbHBlcnM6bWl4aW4iLG1peGluKTsKfS5pbnB1dF9CbG9ja1dpdGhMb2dfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfQmxvY2tXaXRoRGVidWdnZXJfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfSWZXaXRob3V0UmV0dXJuVGhlblN0YXRlbWVudHNfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0KLmlucHV0X0lmV2l0aG91dFJldHVyblRoZW5TdGF0ZW1lbnRzX19fbTd1QkJ1LTAxIHsKICBjb2xvcjogZ3JlZW47Cn0KLmlucHV0X0lmV2l0aG91dFJldHVyblRoZW5TdGF0ZW1lbnRzX19fbTd1QkJ1LTAyIHsKICBjb2xvcjogYmx1ZTsKfS5pbnB1dF9Td2l0Y2hPbkNhbGxfX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfU3dpdGNoV2l0aEJyZWFrX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9Ci5pbnB1dF9Td2l0Y2hXaXRoQnJlYWtfX19tN3VCQnUtMDEgewogIGNvbG9yOiBibHVlOwp9LmlucHV0X1N3aXRjaEZhbGxUaHJvdWdoX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9Ci5pbnB1dF9Td2l0Y2hGYWxsVGhyb3VnaF9fX203dUJCdS0wMSB7CiAgY29sb3I6IGJsdWU7Cn0uaW5wdXRfU3dpdGNoRGVmYXVsdEZpcnN0X19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9Ci5pbnB1dF9Td2l0Y2hEZWZhdWx0Rmlyc3RfX19tN3VCQnUtMDEgewogIGNvbG9yOiBibHVlOwp9LmlucHV0X0Z1bmN0aW9uQWZ0ZXJSZXR1cm5fX19tN3VCQnUgewogIHBhZGRpbmc6IDhweDsKfS5pbnB1dF9GdW5jdGlvbkFmdGVyUmV0dXJuZWRWYWx1ZV9tN3VCQnUgewogIGxlZnQ6IHZhcigtLWlucHV0X0Z1bmN0aW9uQWZ0ZXJSZXR1cm5lZFZhbHVlX19sZWZ0X203dUJCdSk7Cn0uaW5wdXRfRnVuY3Rpb25BZnRlcklmRWxzZV9fX203dUJCdSB7CiAgcGFkZGluZzogOHB4Owp9LmlucHV0X0Z1bmN0aW9uQWZ0ZXJTd2l0Y2hEZWZhdWx0X19fbTd1QkJ1IHsKICBwYWRkaW5nOiA4cHg7Cn0KLmlucHV0X0Z1bmN0aW9uQWZ0ZXJTd2l0Y2hEZWZhdWx0X19fbTd1QkJ1LTAxIHsKICBwYWRkaW5nOiAxNnB4Owp9LmlucHV0X1N3aXRjaENhc2VDYWxsX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9";
 export const Rest = /*YAK EXPORTED STYLED:Rest:input_Rest_m7uBBu*//*YAK Extracted CSS:
 .input_Rest__\$on_m7uBBu {
   color: red;
@@ -9,12 +9,13 @@ export const Rest = /*YAK EXPORTED STYLED:Rest:input_Rest_m7uBBu*//*YAK Extracte
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Rest_m7uBBu", ({ $on, ...rest })=>$on && /*#__PURE__*/ css("input_Rest__$on_m7uBBu")), {
     "displayName": "Rest"
 });
-export const Default = /*YAK EXPORTED STYLED:Default:input_Default_m7uBBu*//*YAK Extracted CSS:
-.input_Default__\$on_m7uBBu {
+// a call as default value would run once per read of the prop
+export const DefaultCall = /*YAK EXPORTED STYLED:DefaultCall:input_DefaultCall_m7uBBu*//*YAK Extracted CSS:
+.input_DefaultCall__\$on_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Default_m7uBBu", ({ $on = true })=>$on && /*#__PURE__*/ css("input_Default__$on_m7uBBu")), {
-    "displayName": "Default"
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultCall_m7uBBu", ({ $on = calc(1) })=>$on && /*#__PURE__*/ css("input_DefaultCall__$on_m7uBBu")), {
+    "displayName": "DefaultCall"
 });
 export const Computed = /*YAK EXPORTED STYLED:Computed:input_Computed_m7uBBu*//*YAK Extracted CSS:
 .input_Computed___m7uBBu {
@@ -54,28 +55,33 @@ export const MixinReturn = /*YAK EXPORTED STYLED:MixinReturn:input_MixinReturn_m
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_MixinReturn_m7uBBu", ({ $on })=>$on && mixin), {
     "displayName": "MixinReturn"
 });
-export const AtomsReturn = /*YAK EXPORTED STYLED:AtomsReturn:input_AtomsReturn_m7uBBu*//*YAK Extracted CSS:
+// the function runs with the class names of the render
+export const AtomsFunction = /*YAK EXPORTED STYLED:AtomsFunction:input_AtomsFunction_m7uBBu*//*YAK Extracted CSS:
 
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsReturn_m7uBBu", ({ $on })=>$on && atoms("flex")), {
-    "displayName": "AtomsReturn"
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsFunction_m7uBBu", ({ $on })=>$on && atoms("flex", (_, classNames)=>classNames.delete("flex"))), {
+    "displayName": "AtomsFunction"
+});
+// no condition: the runtime joins these class names once at definition
+export const AtomsOnly = /*YAK EXPORTED STYLED:AtomsOnly:input_AtomsOnly_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsOnly_m7uBBu", atoms("flex", "gap-2")), {
+    "displayName": "AtomsOnly"
 });
 export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:input_StyleReadInValue_m7uBBu*//*YAK Extracted CSS:
 .input_StyleReadInValue_m7uBBu {
   left: var(--input_StyleReadInValue__left_m7uBBu);
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_StyleReadInValue_m7uBBu", {
-    "style": {
-        "--input_StyleReadInValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
-    }
+    "--input_StyleReadInValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
 }), {
     "displayName": "StyleReadInValue"
 });
-export const OrOperator = /*YAK EXPORTED STYLED:OrOperator:input_OrOperator_m7uBBu*//*YAK Extracted CSS:
-.input_OrOperator___m7uBBu {
+export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:input_NullishOperator_m7uBBu*//*YAK Extracted CSS:
+.input_NullishOperator___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrOperator_m7uBBu", ({ $on })=>!$on || /*#__PURE__*/ css("input_OrOperator___m7uBBu")), {
-    "displayName": "OrOperator"
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NullishOperator_m7uBBu", ({ $on })=>$on ?? /*#__PURE__*/ css("input_NullishOperator___m7uBBu")), {
+    "displayName": "NullishOperator"
 });
 export const StyleRead = /*YAK EXPORTED STYLED:StyleRead:input_StyleRead_m7uBBu*//*YAK Extracted CSS:
 .input_StyleRead__style_m7uBBu {
@@ -220,14 +226,12 @@ export const FunctionAfterReturnedValue = /*YAK EXPORTED STYLED:FunctionAfterRet
   left: var(--input_FunctionAfterReturnedValue__left_m7uBBu);
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FunctionAfterReturnedValue_m7uBBu", {
-    "style": {
-        "--input_FunctionAfterReturnedValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
-            return toPx($x);
-            function toPx(value: number) {
-                return value * 2;
-            }
-        }, "px")
-    }
+    "--input_FunctionAfterReturnedValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
+        return toPx($x);
+        function toPx(value: number) {
+            return value * 2;
+        }
+    }, "px")
 }), {
     "displayName": "FunctionAfterReturnedValue"
 });
@@ -263,4 +267,29 @@ export const FunctionAfterSwitchDefault = /*YAK EXPORTED STYLED:FunctionAfterSwi
     }
 }), {
     "displayName": "FunctionAfterSwitchDefault"
+});
+// the argument can hold a function
+export const AtomsValue = /*YAK EXPORTED STYLED:AtomsValue:input_AtomsValue_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsValue_m7uBBu", ({ $on, $extra })=>$on && atoms("flex", $extra)), {
+    "displayName": "AtomsValue"
+});
+// a truthy left side can be a function
+export const AtomsOr = /*YAK EXPORTED STYLED:AtomsOr:input_AtomsOr_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsOr_m7uBBu", ({ $on, $extra })=>$on && atoms($extra || "flex")), {
+    "displayName": "AtomsOr"
+});
+// a call as case value can change the switched value
+export const SwitchCaseCall = /*YAK EXPORTED STYLED:SwitchCaseCall:input_SwitchCaseCall_m7uBBu*//*YAK Extracted CSS:
+.input_SwitchCaseCall___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchCaseCall_m7uBBu", ({ $size })=>{
+    switch($size){
+        case String(1):
+            return /*#__PURE__*/ css("input_SwitchCaseCall___m7uBBu");
+    }
+}), {
+    "displayName": "SwitchCaseCall"
 });

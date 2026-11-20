@@ -9,12 +9,13 @@ export const Rest = /*YAK EXPORTED STYLED:Rest:input_Rest_m7uBBu*//*YAK Extracte
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Rest_m7uBBu", ({ $on, ...rest })=>$on && /*#__PURE__*/ css("input_Rest__$on_m7uBBu")), {
     "displayName": "Rest"
 });
-export const Default = /*YAK EXPORTED STYLED:Default:input_Default_m7uBBu*//*YAK Extracted CSS:
-.input_Default__\$on_m7uBBu {
+// a call as default value would run once per read of the prop
+export const DefaultCall = /*YAK EXPORTED STYLED:DefaultCall:input_DefaultCall_m7uBBu*//*YAK Extracted CSS:
+.input_DefaultCall__\$on_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Default_m7uBBu", ({ $on = true })=>$on && /*#__PURE__*/ css("input_Default__$on_m7uBBu")), {
-    "displayName": "Default"
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultCall_m7uBBu", ({ $on = calc(1) })=>$on && /*#__PURE__*/ css("input_DefaultCall__$on_m7uBBu")), {
+    "displayName": "DefaultCall"
 });
 export const Computed = /*YAK EXPORTED STYLED:Computed:input_Computed_m7uBBu*//*YAK Extracted CSS:
 .input_Computed___m7uBBu {
@@ -54,28 +55,33 @@ export const MixinReturn = /*YAK EXPORTED STYLED:MixinReturn:input_MixinReturn_m
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_MixinReturn_m7uBBu", ({ $on })=>$on && mixin), {
     "displayName": "MixinReturn"
 });
-export const AtomsReturn = /*YAK EXPORTED STYLED:AtomsReturn:input_AtomsReturn_m7uBBu*//*YAK Extracted CSS:
+// the function runs with the class names of the render
+export const AtomsFunction = /*YAK EXPORTED STYLED:AtomsFunction:input_AtomsFunction_m7uBBu*//*YAK Extracted CSS:
 
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsReturn_m7uBBu", ({ $on })=>$on && atoms("flex")), {
-    "displayName": "AtomsReturn"
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsFunction_m7uBBu", ({ $on })=>$on && atoms("flex", (_, classNames)=>classNames.delete("flex"))), {
+    "displayName": "AtomsFunction"
+});
+// no condition: the runtime joins these class names once at definition
+export const AtomsOnly = /*YAK EXPORTED STYLED:AtomsOnly:input_AtomsOnly_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsOnly_m7uBBu", atoms("flex", "gap-2")), {
+    "displayName": "AtomsOnly"
 });
 export const StyleReadInValue = /*YAK EXPORTED STYLED:StyleReadInValue:input_StyleReadInValue_m7uBBu*//*YAK Extracted CSS:
 .input_StyleReadInValue_m7uBBu {
   left: var(--input_StyleReadInValue__left_m7uBBu);
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_StyleReadInValue_m7uBBu", {
-    "style": {
-        "--input_StyleReadInValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
-    }
+    "--input_StyleReadInValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ style })=>style.left, "px")
 }), {
     "displayName": "StyleReadInValue"
 });
-export const OrOperator = /*YAK EXPORTED STYLED:OrOperator:input_OrOperator_m7uBBu*//*YAK Extracted CSS:
-.input_OrOperator___m7uBBu {
+export const NullishOperator = /*YAK EXPORTED STYLED:NullishOperator:input_NullishOperator_m7uBBu*//*YAK Extracted CSS:
+.input_NullishOperator___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrOperator_m7uBBu", ({ $on })=>!$on || /*#__PURE__*/ css("input_OrOperator___m7uBBu")), {
-    "displayName": "OrOperator"
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_NullishOperator_m7uBBu", ({ $on })=>$on ?? /*#__PURE__*/ css("input_NullishOperator___m7uBBu")), {
+    "displayName": "NullishOperator"
 });
 export const StyleRead = /*YAK EXPORTED STYLED:StyleRead:input_StyleRead_m7uBBu*//*YAK Extracted CSS:
 .input_StyleRead__style_m7uBBu {
@@ -220,14 +226,12 @@ export const FunctionAfterReturnedValue = /*YAK EXPORTED STYLED:FunctionAfterRet
   left: var(--input_FunctionAfterReturnedValue__left_m7uBBu);
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FunctionAfterReturnedValue_m7uBBu", {
-    "style": {
-        "--input_FunctionAfterReturnedValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
-            return toPx($x);
-            function toPx(value: number) {
-                return value * 2;
-            }
-        }, "px")
-    }
+    "--input_FunctionAfterReturnedValue__left_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $x })=>{
+        return toPx($x);
+        function toPx(value: number) {
+            return value * 2;
+        }
+    }, "px")
 }), {
     "displayName": "FunctionAfterReturnedValue"
 });
@@ -263,4 +267,29 @@ export const FunctionAfterSwitchDefault = /*YAK EXPORTED STYLED:FunctionAfterSwi
     }
 }), {
     "displayName": "FunctionAfterSwitchDefault"
+});
+// the argument can hold a function
+export const AtomsValue = /*YAK EXPORTED STYLED:AtomsValue:input_AtomsValue_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsValue_m7uBBu", ({ $on, $extra })=>$on && atoms("flex", $extra)), {
+    "displayName": "AtomsValue"
+});
+// a truthy left side can be a function
+export const AtomsOr = /*YAK EXPORTED STYLED:AtomsOr:input_AtomsOr_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsOr_m7uBBu", ({ $on, $extra })=>$on && atoms($extra || "flex")), {
+    "displayName": "AtomsOr"
+});
+// a call as case value can change the switched value
+export const SwitchCaseCall = /*YAK EXPORTED STYLED:SwitchCaseCall:input_SwitchCaseCall_m7uBBu*//*YAK Extracted CSS:
+.input_SwitchCaseCall___m7uBBu {
+  color: red;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchCaseCall_m7uBBu", ({ $size })=>{
+    switch($size){
+        case String(1):
+            return /*#__PURE__*/ css("input_SwitchCaseCall___m7uBBu");
+    }
+}), {
+    "displayName": "SwitchCaseCall"
 });

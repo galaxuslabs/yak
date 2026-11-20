@@ -1274,6 +1274,11 @@ where
         decl.init.visit_mut_with(self);
         self.current_variable_name = previous_variable_name;
         self.current_declarator_init_span = previous_init_span;
+      } else {
+        // A destructuring pattern has no variable name, but its initializer
+        // and default values can still hold css props and literals, like
+        // const { getByText } = render(<div css={css`color: red;`} />);
+        decl.visit_mut_children_with(self);
       }
     }
   }

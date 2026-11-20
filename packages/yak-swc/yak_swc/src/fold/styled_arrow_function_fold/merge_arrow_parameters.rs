@@ -1,10 +1,12 @@
+use crate::utils::ast_helper::{binary, condition, paren};
 use rustc_hash::{FxHashMap, FxHashSet};
 use swc_core::{
   atoms::Atom,
   common::{Mark, SyntaxContext, DUMMY_SP},
   ecma::ast::{
-    AssignPatProp, BindingIdent, EsReserved, Expr, Id, Ident, IdentName, KeyValuePatProp,
-    KeyValueProp, MemberProp, ObjectPat, ObjectPatProp, Pat, Prop, PropName,
+    AssignPatProp, BinaryOp, BindingIdent, EsReserved, Expr, Id, Ident, IdentName, KeyValuePatProp,
+    KeyValueProp, Lit, MemberProp, Number, ObjectPat, ObjectPatProp, Pat, Prop, PropName,
+    UnaryExpr, UnaryOp,
   },
   ecma::visit::{VisitMut, VisitMutWith},
 };
@@ -22,6 +24,9 @@ pub(super) struct FoldParams {
   /// the prop name of each local binding of a destructured props parameter,
   /// e.g. `on` is `$on` for `({ $on: on })`
   pub(super) locals: FxHashMap<Id, Atom>,
+  /// the default value of a local binding, e.g. `"start"` for
+  /// `({ $align = "start" })`
+  pub(super) defaults: FxHashMap<Id, Box<Expr>>,
   /// identifier props parameters, e.g. `p` in `(p) => p.$on`
   pub(super) member_params: FxHashSet<Id>,
   pub(super) reads_theme: bool,
@@ -176,6 +181,36 @@ impl SubstituteReads<'_> {
     }
     param
   }
+
+  /// The read of a local binding, e.g. `$on` for `({ $on: on })`
+  ///
+  /// A default value moves from the parameter to the read, because other
+  /// runtime expressions share the parameter and may read the prop without
+  /// that default: `({ $align = "start" }) => $align` ->
+  /// `($align === void 0 ? "start" : $align)`
+  fn local_read(&mut self, local: &Id) -> Option<Expr> {
+    let name = self.params.locals.get(local)?.clone();
+    let param = self.param_for(&name)?;
+    let Some(mut default) = self.params.defaults.get(local).cloned() else {
+      return Some(Expr::Ident(param));
+    };
+    // `({ $a, $b = $a })`
+    self.visit_mut_expr(&mut default);
+    let is_undefined = binary(
+      BinaryOp::EqEqEq,
+      Box::new(Expr::Ident(param.clone())),
+      Box::new(Expr::Unary(UnaryExpr {
+        span: DUMMY_SP,
+        op: UnaryOp::Void,
+        arg: Box::new(Expr::Lit(Lit::Num(Number::from(0.0)))),
+      })),
+    );
+    Some(*paren(condition(
+      is_undefined,
+      default,
+      Box::new(Expr::Ident(param)),
+    )))
+  }
 }
 
 impl VisitMut for SubstituteReads<'_> {
@@ -185,9 +220,10 @@ impl VisitMut for SubstituteReads<'_> {
     }
     match expr {
       Expr::Ident(ident) => {
-        if let Some(name) = self.params.locals.get(&ident.to_id()).cloned() {
-          if let Some(param) = self.param_for(&name) {
-            *expr = Expr::Ident(param);
+        let id = ident.to_id();
+        if self.params.locals.contains_key(&id) {
+          if let Some(read) = self.local_read(&id) {
+            *expr = read;
           }
           return;
         }
@@ -215,11 +251,12 @@ impl VisitMut for SubstituteReads<'_> {
   /// Expands a shorthand `{ on }` to `{ on: $on }` for `({ $on: on })`
   fn visit_mut_prop(&mut self, prop: &mut Prop) {
     if let Prop::Shorthand(ident) = prop {
-      if let Some(name) = self.params.locals.get(&ident.to_id()).cloned() {
-        if let Some(param) = self.param_for(&name) {
+      let id = ident.to_id();
+      if self.params.locals.contains_key(&id) {
+        if let Some(read) = self.local_read(&id) {
           *prop = Prop::KeyValue(KeyValueProp {
             key: PropName::Ident(IdentName::new(ident.sym.clone(), ident.span)),
-            value: Box::new(Expr::Ident(param)),
+            value: Box::new(read),
           });
         }
         return;

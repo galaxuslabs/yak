@@ -68,8 +68,8 @@ export type CSSInterpolation<TProps> =
     }
   | ((props: TProps) => CSSInterpolation<TProps>);
 
-type CSSStyles<TProps = {}> = {
-  style: { [key: string]: string | ((props: TProps) => string) };
+type CSSVariables<TProps = {}> = {
+  [key: string]: string | ((props: TProps) => string);
 };
 
 export type CSSFunction = <TProps>(
@@ -108,7 +108,7 @@ export type NestedRuntimeStyleProcessor = (
 export function css<TProps>(...args: Array<any>): CompiledStyleProcessor<TProps> {
   let staticClass: string | undefined;
   const dynamicCssFunctions: NestedRuntimeStyleProcessor[] = [];
-  for (const arg of args as Array<string | NestedRuntimeStyleProcessor | CSSStyles<any>>) {
+  for (const arg of args as Array<string | NestedRuntimeStyleProcessor | CSSVariables<any>>) {
     // static css became a css-module class name at build time:
     //   css`color: red;`  ->  css("yak31e4")
     if (typeof arg === "string") {
@@ -122,11 +122,13 @@ export function css<TProps>(...args: Array<any>): CompiledStyleProcessor<TProps>
     }
     // a css value became a variable the callback fills at render time:
     //   css`transform: translate(${props => props.x});`
-    //   ->  css("yak31e4", { style: { "--yakVarX": props => props.x } })
-    else if (typeof arg === "object" && "style" in arg) {
+    //   ->  css("yak31e4", { "--yakVarX": props => props.x })
+    // an array is the template strings of a call the compiler did not transform,
+    // e.g. in a unit test: it holds no css variables
+    else if (typeof arg === "object" && !Array.isArray(arg)) {
       dynamicCssFunctions.push((props, _, style) => {
-        for (const key in arg.style) {
-          const value = arg.style[key];
+        for (const key in arg) {
+          const value = arg[key];
           if (typeof value === "function") {
             style[key as keyof StyleObject] = String(
               // a callback may return another callback before it yields the

@@ -70,12 +70,7 @@ const DefaultReferencesSibling = /*YAK Extracted CSS:
   min-width: var(--input_DefaultReferencesSibling__min-width_m7uBBu);
   min-height: var(--input_DefaultReferencesSibling__min-height_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultReferencesSibling_m7uBBu", {
-    "style": {
-        "--input_DefaultReferencesSibling__min-height_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $b = 1, $a })=>$a * $b, "px"),
-        "--input_DefaultReferencesSibling__min-width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b = $a })=>$a * $b, "px")
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultReferencesSibling_m7uBBu", 2, ({ $a, $b }, style)=>"input_DefaultReferencesSibling_m7uBBu" + (style["--input_DefaultReferencesSibling__min-height_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($a * ($b === void 0 ? 1 : $b), "px"), style["--input_DefaultReferencesSibling__min-width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($a * ($b === void 0 ? $a : $b), "px"), "")), {
     "displayName": "DefaultReferencesSibling"
 });
 // Repeated interpolations inside a single declaration value

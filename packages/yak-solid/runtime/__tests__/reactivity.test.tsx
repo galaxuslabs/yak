@@ -15,9 +15,7 @@ const styled = Object.assign(styledFn, {
 }) as typeof styledFn;
 
 it("should update css variables when a signal-driven prop changes without re-creating the element", () => {
-  const Component = styled.div("box", {
-    style: { "--rotation": (props) => `${props.$rotation}deg` },
-  });
+  const Component = styled.div("box", { "--rotation": (props) => `${props.$rotation}deg` });
   const [rotation, setRotation] = createSignal(0);
   const container = renderInto(() => <Component $rotation={rotation()} />);
 
@@ -52,7 +50,7 @@ it("should toggle conditional classes when a signal-driven prop changes", () => 
 
 it("should only re-run the style memo for props used by the css", () => {
   const styleFn = vi.fn((props) => `${props.$used}px`);
-  const Component = styled.div("box", { style: { "--used": styleFn } });
+  const Component = styled.div("box", { "--used": styleFn });
   const [used, setUsed] = createSignal(1);
   const [unused, setUnused] = createSignal(1);
   renderInto(() => <Component $used={used()} data-unused={unused()} />);
@@ -69,9 +67,7 @@ it("should only re-run the style memo for props used by the css", () => {
 });
 
 it("should update styles when the theme changes", () => {
-  const Component = styled.div("box", {
-    style: { "--color": (props) => props.theme().color },
-  });
+  const Component = styled.div("box", { "--color": (props) => props.theme().color });
   const [theme, setTheme] = createSignal({ color: "red" });
   const container = renderInto(() => (
     <YakThemeProvider theme={theme()}>
@@ -135,9 +131,7 @@ it("should react to incoming class changes on static components", () => {
 });
 
 it("should support subtree overrides through YakThemeContext", () => {
-  const Box = styled.div("box", {
-    style: { "--color": (props: any) => props.theme().color },
-  });
+  const Box = styled.div("box", { "--color": (props: any) => props.theme().color });
   const [color, setColor] = createSignal("red");
   const container = renderInto(() => {
     const override = createMemo(() => ({ color: color() }));

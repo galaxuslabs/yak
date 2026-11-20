@@ -56,12 +56,7 @@ const DefaultReferencesSibling = /*YAK Extracted CSS:
   min-width: var(--ym7uBBuH);
   min-height: var(--ym7uBBuI);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuG", {
-    "style": {
-        "--ym7uBBuH": /*#__PURE__*/ __yak_cssValue(({ $a, $b = $a })=>$a * $b, "px"),
-        "--ym7uBBuI": /*#__PURE__*/ __yak_cssValue(({ $b = 1, $a })=>$a * $b, "px")
-    }
-});
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuG", 2, ({ $a, $b }, style)=>"ym7uBBuG" + (style["--ym7uBBuH"] = /*#__PURE__*/ __yak_cssValue($a * ($b === void 0 ? $a : $b), "px"), style["--ym7uBBuI"] = /*#__PURE__*/ __yak_cssValue($a * ($b === void 0 ? 1 : $b), "px"), ""));
 // Repeated interpolations inside a single declaration value
 const Dot = /*YAK Extracted CSS:
 .ym7uBBuJ {

@@ -53,8 +53,8 @@ export type CSSInterpolation<TProps> =
     }
   | ((props: TProps) => CSSInterpolation<TProps>);
 
-type CSSStyles<TProps = {}> = {
-  style: { [key: string]: string | ((props: TProps) => string) };
+type CSSVariables<TProps = {}> = {
+  [key: string]: string | ((props: TProps) => string);
 };
 
 type CSSFunction = <TProps = {}>(
@@ -99,7 +99,7 @@ export function css<TProps>(...args: Array<any>): StyleFunction<TProps> {
   // and ensure that only the first argument is a string (class name of the non-dynamic styles)
   let className: string | undefined;
   const dynamicCssFunctions: NestedRuntimeStyleProcessor[] = [];
-  for (const arg of args as Array<string | CSSFunction | CSSStyles<any>>) {
+  for (const arg of args as Array<string | CSSFunction | CSSVariables<any>>) {
     // A CSS-module class name which got auto generated during build from static css
     // e.g. css`color: red;`
     // compiled -> css("yak31e4")
@@ -114,11 +114,13 @@ export function css<TProps>(...args: Array<any>): StyleFunction<TProps> {
     }
     // Dynamic CSS with css variables e.g.
     // css`transform: translate(${props => props.x}, ${props => props.y});`
-    // compiled -> css("yak31e4", { style: { "--yakVarX": props => props.x }, "--yakVarY": props => props.y }})
-    else if (typeof arg === "object" && "style" in arg) {
+    // compiled -> css("yak31e4", { "--yakVarX": props => props.x, "--yakVarY": props => props.y })
+    // An array is the template strings of a call the compiler did not transform,
+    // e.g. in a unit test: it holds no CSS variables
+    else if (typeof arg === "object" && !Array.isArray(arg)) {
       dynamicCssFunctions.push((props, _, style) => {
-        for (const key in arg.style) {
-          const value = arg.style[key];
+        for (const key in arg) {
+          const value = arg[key];
           if (typeof value === "function") {
             // @ts-expect-error CSSProperties don't allow css variables
             style[key] = String(

@@ -1,6 +1,6 @@
 import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1NCB7CiAgY29sb3I6IGJsdWU7Cn0ueW03dUJCdTYgewogIHBhZGRpbmc6IDFweDsKfQoueW03dUJCdTcgewogIHBhZGRpbmc6IDJweDsKfQoueW03dUJCdTggewogIHBhZGRpbmc6IDNweDsKfS55bTd1QkJ1QSB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdUIgewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVEIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdUUgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVGIHsKICBjb2xvcjogZ3JheTsKfS55bTd1QkJ1SCB7CiAgcGFkZGluZzogMXB4Owp9Ci55bTd1QkJ1SSB7CiAgcGFkZGluZzogMnB4Owp9LnltN3VCQnVLIHsKICBvcGFjaXR5OiAwLjU7Cn0KLnltN3VCQnVMIHsKICBvcGFjaXR5OiAxOwp9LnltN3VCQnVNIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1USk7Cn0ueW03dUJCdVMgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVUIHsKICBjb2xvcjogYmx1ZTsKfS55bTd1QkJ1ViB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdVcgewogIGNvbG9yOiBncmVlbjsKfQoueW03dUJCdVggewogIGNvbG9yOiBibHVlOwp9";
+import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1NCB7CiAgY29sb3I6IGJsdWU7Cn0ueW03dUJCdTYgewogIHBhZGRpbmc6IDFweDsKfQoueW03dUJCdTcgewogIHBhZGRpbmc6IDJweDsKfQoueW03dUJCdTggewogIHBhZGRpbmc6IDNweDsKfS55bTd1QkJ1QSB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdUIgewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVEIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdUUgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVGIHsKICBjb2xvcjogZ3JheTsKfS55bTd1QkJ1SCB7CiAgcGFkZGluZzogMXB4Owp9Ci55bTd1QkJ1SSB7CiAgcGFkZGluZzogMnB4Owp9LnltN3VCQnVLIHsKICBvcGFjaXR5OiAwLjU7Cn0KLnltN3VCQnVMIHsKICBvcGFjaXR5OiAxOwp9LnltN3VCQnVNIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1USk7Cn0ueW03dUJCdVMgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVUIHsKICBjb2xvcjogYmx1ZTsKfS55bTd1QkJ1ViB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdVcgewogIGNvbG9yOiBncmVlbjsKfQoueW03dUJCdVggewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVaIHsKICBvcGFjaXR5OiAxOwp9Ci55bTd1QkJ1YSB7CiAgb3BhY2l0eTogMDsKfS55bTd1QkJ1YyB7CiAgcGFkZGluZzogOHB4Owp9Ci55bTd1QkJ1ZCB7CiAgcGFkZGluZzogNHB4Owp9";
 export const IfReturn = /*YAK EXPORTED STYLED:IfReturn:ym7uBBu*//*YAK Extracted CSS:
 .ym7uBBu1 {
   color: red;
@@ -90,3 +90,26 @@ export const IfElseWithoutReturnThenReturn = /*YAK EXPORTED STYLED:IfElseWithout
   color: blue;
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuU", 0, ({ $on, $big })=>"ym7uBBuU" + ($on ? $big ? " ym7uBBuV" : " ym7uBBuX" : " ym7uBBuW"));
+enum Animation {
+    In = "in",
+    Out = "out",
+    None = "none"
+}
+const LARGE = "l";
+// enum members and constants as case values
+export const SwitchEnum = /*YAK EXPORTED STYLED:SwitchEnum:ym7uBBuY*//*YAK Extracted CSS:
+.ym7uBBuZ {
+  opacity: 1;
+}
+.ym7uBBua {
+  opacity: 0;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuY", 0, ({ $animation })=>"ym7uBBuY" + ($animation === Animation.In ? " ym7uBBuZ" : $animation === Animation.Out ? " ym7uBBua" : ""));
+export const SwitchConstant = /*YAK EXPORTED STYLED:SwitchConstant:ym7uBBub*//*YAK Extracted CSS:
+.ym7uBBuc {
+  padding: 8px;
+}
+.ym7uBBud {
+  padding: 4px;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBub", 0, ({ $size, $other })=>"ym7uBBub" + ($size === LARGE ? " ym7uBBuc" : $size === $other ? " ym7uBBud" : ""));
