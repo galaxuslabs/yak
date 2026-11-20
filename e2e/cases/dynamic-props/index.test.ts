@@ -18,6 +18,9 @@ test(
     await expect(sized).toHaveCSS("width", "30px");
     await expect(sized).toHaveCSS("height", "10px");
 
+    await expect(page.getByTestId("fallback")).toHaveCSS("height", "30px");
+    await expect(page.getByTestId("fallback-label")).toHaveCSS("height", "10px");
+
     // the styled component keeps the caller's style and adds its CSS variable
     const barSharedStyle = page.getByTestId("bar-shared-style");
     await expect(barSharedStyle).toHaveCSS("width", "50px");

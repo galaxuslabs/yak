@@ -5,7 +5,8 @@ use swc_core::ecma::ast::{BinaryOp, CallExpr, Expr, Lit};
 
 impl ClassNameFolder<'_> {
   /// Folds what a runtime expression returns: a `css(...)` call, a falsy
-  /// literal, `cond && <value>` or `cond ? <value> : <value>`
+  /// literal, `cond && <value>`, `cond || <value>` or
+  /// `cond ? <value> : <value>`
   ///
   /// The result is a folded class name expression: the class names the value
   /// adds, as a string that is empty or starts with a space, e.g.
@@ -30,6 +31,18 @@ impl ClassNameFolder<'_> {
           test,
           cons,
           create_folded_empty_class_name(),
+        ))
+      }
+      // `cond || css("x")` -> `(cond ? "" : " x")`. A truthy left side adds
+      // nothing, so a function or a `{ className }` object in `cond` is not
+      // applied, e.g. `<Box $extra={atoms("flex")} />` for `$extra || css("x")`
+      Expr::Bin(bin) if bin.op == BinaryOp::LogicalOr => {
+        let test = self.params.substitute(&bin.left)?;
+        let alt = self.fold_value(&bin.right)?;
+        Some(create_folded_class_name_condition(
+          test,
+          create_folded_empty_class_name(),
+          alt,
         ))
       }
       // `cond ? css("x") : css("y")` -> `(cond ? " x" : " y")`
