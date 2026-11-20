@@ -102,3 +102,40 @@ export const AtomsNestedCondition = styled.div<{ $on: boolean; $off: boolean }>`
       isLarge && "large",
     )}
 `;
+
+const paddingSmall = css`padding: 1px;`;
+const paddingLarge = css`padding: 2px;`;
+const SIZES = { small: 16 };
+
+// a condition inside a nested css literal, without an arrow of its own
+export const NestedCondition = styled.div<{ $on: boolean; $big: boolean }>`
+  ${({ $on, $big }) =>
+    $on &&
+    css`
+      color: red;
+      ${$big &&
+      css`
+        font-size: 2em;
+      `}
+    `}
+`;
+
+// a nested value that picks between two css constants
+export const NestedConstants = styled.div<{ $big: boolean }>`
+  ${({ $big }) => css`
+    ${$big ? paddingLarge : paddingSmall}
+  `}
+`;
+
+// default values in the destructuring
+export const DefaultCondition = styled.div<{ $align?: "start" | "end"; $on?: boolean }>`
+  ${({ $align = "start" }) =>
+    $align === "start" ? css`text-align: start;` : css`text-align: end;`}
+  ${({ $on: on = true }) => on && css`color: red;`}
+  ${({ $on }) => $on && css`color: blue;`}
+`;
+
+export const DefaultValue = styled.div<{ $size?: number; $width?: number }>`
+  height: ${({ $size = 32 }) => $size}px;
+  width: ${({ $size = SIZES.small, $width = $size }) => $width}px;
+`;

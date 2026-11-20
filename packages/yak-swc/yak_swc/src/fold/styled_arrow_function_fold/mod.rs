@@ -9,8 +9,8 @@ use std::borrow::Cow;
 use swc_core::{
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
-    ArrowExpr, ArrowFunctionBody, AssignPatProp, Expr, KeyValuePatProp, Lit, Number, ObjectPatProp,
-    Pat, PropName,
+    ArrowExpr, ArrowFunctionBody, AssignPat, AssignPatProp, Expr, Id, KeyValuePatProp, Lit,
+    MemberProp, Number, ObjectPatProp, Pat, PropName,
   },
 };
 
@@ -192,14 +192,35 @@ impl ClassNameFolder<'_> {
             }) => {
               self.params.locals.insert(key.to_id(), key.sym.clone());
             }
-            // `({ $on: on })`
+            // `({ $align = "start" })`
+            ObjectPatProp::Assign(AssignPatProp {
+              key,
+              value: Some(default),
+              ..
+            }) => {
+              self.bind_default(key.to_id(), default)?;
+              self.params.locals.insert(key.to_id(), key.sym.clone());
+            }
             ObjectPatProp::KeyValue(KeyValuePatProp { key, value }) => {
-              let (PropName::Ident(key), Pat::Ident(local)) = (key, &**value) else {
+              let PropName::Ident(key) = key else {
                 return None;
+              };
+              let local = match &**value {
+                // `({ $on: on })`
+                Pat::Ident(local) => local,
+                // `({ $align: align = "start" })`
+                Pat::Assign(AssignPat { left, right, .. }) => {
+                  let Pat::Ident(local) = &**left else {
+                    return None;
+                  };
+                  self.bind_default(local.to_id(), right)?;
+                  local
+                }
+                _ => return None,
               };
               self.params.locals.insert(local.to_id(), key.sym.clone());
             }
-            // defaults and rest patterns
+            // rest patterns
             _ => return None,
           }
         }
@@ -211,5 +232,33 @@ impl ClassNameFolder<'_> {
       _ => return None,
     }
     Some(body)
+  }
+
+  /// Registers the default value of a destructured prop, e.g. `"start"` for
+  /// `({ $align = "start" })`
+  ///
+  /// The folded function writes the default at every read of the prop, so it
+  /// is a literal or a plain read like `SIZES.small`: a call would run once
+  /// per read instead of once per render
+  fn bind_default(&mut self, local: Id, default: &Expr) -> Option<()> {
+    if !is_literal_or_plain_read(unwrap_type_casts(default)) {
+      return None;
+    }
+    self
+      .params
+      .defaults
+      .insert(local, Box::new(default.clone()));
+    Some(())
+  }
+}
+
+fn is_literal_or_plain_read(expr: &Expr) -> bool {
+  match expr {
+    Expr::Lit(Lit::Str(_) | Lit::Num(_) | Lit::Bool(_) | Lit::Null(_)) | Expr::Ident(_) => true,
+    Expr::Member(member) => {
+      matches!(member.prop, MemberProp::Ident(_))
+        && is_literal_or_plain_read(unwrap_type_casts(&member.obj))
+    }
+    _ => false,
   }
 }

@@ -1,7 +1,7 @@
 import { styled, css, atoms, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVKIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1TCk7Cn0ueW03dUJCdU0gewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGxlZnQ6IHZhcigtLXltN3VCQnVRKTsKICB0b3A6IHZhcigtLXltN3VCQnVSKTsKfS55bTd1QkJ1VCB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1ViB7CiAgcGFkZGluZzogMDsKfS55bTd1QkJ1WCB7CiAgY29sb3I6IG9yYW5nZTsKfS55bTd1QkJ1WiB7CiAgY29sb3I6IGJsYWNrOwp9";
+import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVKIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1TCk7Cn0ueW03dUJCdU0gewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGxlZnQ6IHZhcigtLXltN3VCQnVRKTsKICB0b3A6IHZhcigtLXltN3VCQnVSKTsKfS55bTd1QkJ1VCB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1ViB7CiAgcGFkZGluZzogMDsKfS55bTd1QkJ1WCB7CiAgY29sb3I6IG9yYW5nZTsKfS55bTd1QkJ1WiB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVlIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1ZiB7CiAgZm9udC1zaXplOiAyZW07Cn0ueW03dUJCdWkgewogIHBhZGRpbmc6IDJweDsKfQoueW03dUJCdWogewogIHBhZGRpbmc6IDFweDsKfS55bTd1QkJ1bCB7CiAgdGV4dC1hbGlnbjogc3RhcnQ7Cn0KLnltN3VCQnVtIHsKICB0ZXh0LWFsaWduOiBlbmQ7Cn0KLnltN3VCQnVuIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1byB7CiAgY29sb3I6IGJsdWU7Cn0ueW03dUJCdXAgewogIGhlaWdodDogdmFyKC0teW03dUJCdXEpOwogIHdpZHRoOiB2YXIoLS15bTd1QkJ1cik7Cn0=";
 // identifier props parameter read through members
 export const Ident = /*YAK EXPORTED STYLED:Ident:ym7uBBu*//*YAK Extracted CSS:
 .ym7uBBu1 {
@@ -104,3 +104,47 @@ export const AtomsCondition = /*YAK EXPORTED STYLED:AtomsCondition:ym7uBBuY*//*Y
 export const AtomsNestedCondition = /*YAK EXPORTED STYLED:AtomsNestedCondition:ym7uBBua*//*YAK Extracted CSS:
 
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBua", 0, ({ $on, $off })=>"ym7uBBua" + ($on ? " shadow-md" + ($off ? " ring" : "") + " rounded p-2" + ($off ? " text-white" : " text-black") + ($off ? " border" : "") + (true === false ? " never" : "") + (isLarge ? " large" : "") : ""));
+const paddingSmall = /*#__PURE__*/ css();
+const paddingLarge = /*#__PURE__*/ css();
+const SIZES = {
+    small: 16
+};
+// a condition inside a nested css literal, without an arrow of its own
+export const NestedCondition = /*YAK EXPORTED STYLED:NestedCondition:ym7uBBud*//*YAK Extracted CSS:
+.ym7uBBue {
+  color: red;
+}
+.ym7uBBuf {
+  font-size: 2em;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBud", 0, ({ $on, $big })=>"ym7uBBud" + ($on ? " ym7uBBue" + ($big ? " ym7uBBuf" : "") : ""));
+// a nested value that picks between two css constants
+export const NestedConstants = /*YAK EXPORTED STYLED:NestedConstants:ym7uBBug*//*YAK Extracted CSS:
+.ym7uBBui {
+  padding: 2px;
+}
+.ym7uBBuj {
+  padding: 1px;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBug", 0, ({ $big })=>"ym7uBBug" + (" ym7uBBuh" + ($big ? " ym7uBBui" : " ym7uBBuj")));
+// default values in the destructuring
+export const DefaultCondition = /*YAK EXPORTED STYLED:DefaultCondition:ym7uBBuk*//*YAK Extracted CSS:
+.ym7uBBul {
+  text-align: start;
+}
+.ym7uBBum {
+  text-align: end;
+}
+.ym7uBBun {
+  color: red;
+}
+.ym7uBBuo {
+  color: blue;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuk", 0, ({ $align, $on })=>"ym7uBBuk" + (($align === void 0 ? "start" : $align) === "start" ? " ym7uBBul" : " ym7uBBum") + (($on === void 0 ? true : $on) ? " ym7uBBun" : "") + ($on ? " ym7uBBuo" : ""));
+export const DefaultValue = /*YAK EXPORTED STYLED:DefaultValue:ym7uBBup*//*YAK Extracted CSS:
+.ym7uBBup {
+  height: var(--ym7uBBuq);
+  width: var(--ym7uBBur);
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBup", 2, ({ $size, $width }, style)=>"ym7uBBup" + (style["--ym7uBBuq"] = /*#__PURE__*/ __yak_cssValue($size === void 0 ? 32 : $size, "px"), style["--ym7uBBur"] = /*#__PURE__*/ __yak_cssValue($width === void 0 ? $size === void 0 ? SIZES.small : $size : $width, "px"), ""));

@@ -104,3 +104,47 @@ export const AtomsCondition = /*YAK EXPORTED STYLED:AtomsCondition:ym7uBBuY*//*Y
 export const AtomsNestedCondition = /*YAK EXPORTED STYLED:AtomsNestedCondition:ym7uBBua*//*YAK Extracted CSS:
 
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBua", 0, ({ $on, $off })=>"ym7uBBua" + ($on ? " shadow-md" + ($off ? " ring" : "") + " rounded p-2" + ($off ? " text-white" : " text-black") + ($off ? " border" : "") + (true === false ? " never" : "") + (isLarge ? " large" : "") : ""));
+const paddingSmall = /*#__PURE__*/ css();
+const paddingLarge = /*#__PURE__*/ css();
+const SIZES = {
+    small: 16
+};
+// a condition inside a nested css literal, without an arrow of its own
+export const NestedCondition = /*YAK EXPORTED STYLED:NestedCondition:ym7uBBud*//*YAK Extracted CSS:
+.ym7uBBue {
+  color: red;
+}
+.ym7uBBuf {
+  font-size: 2em;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBud", 0, ({ $on, $big })=>"ym7uBBud" + ($on ? " ym7uBBue" + ($big ? " ym7uBBuf" : "") : ""));
+// a nested value that picks between two css constants
+export const NestedConstants = /*YAK EXPORTED STYLED:NestedConstants:ym7uBBug*//*YAK Extracted CSS:
+.ym7uBBui {
+  padding: 2px;
+}
+.ym7uBBuj {
+  padding: 1px;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBug", 0, ({ $big })=>"ym7uBBug" + (" ym7uBBuh" + ($big ? " ym7uBBui" : " ym7uBBuj")));
+// default values in the destructuring
+export const DefaultCondition = /*YAK EXPORTED STYLED:DefaultCondition:ym7uBBuk*//*YAK Extracted CSS:
+.ym7uBBul {
+  text-align: start;
+}
+.ym7uBBum {
+  text-align: end;
+}
+.ym7uBBun {
+  color: red;
+}
+.ym7uBBuo {
+  color: blue;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuk", 0, ({ $align, $on })=>"ym7uBBuk" + (($align === void 0 ? "start" : $align) === "start" ? " ym7uBBul" : " ym7uBBum") + (($on === void 0 ? true : $on) ? " ym7uBBun" : "") + ($on ? " ym7uBBuo" : ""));
+export const DefaultValue = /*YAK EXPORTED STYLED:DefaultValue:ym7uBBup*//*YAK Extracted CSS:
+.ym7uBBup {
+  height: var(--ym7uBBuq);
+  width: var(--ym7uBBur);
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBup", 2, ({ $size, $width }, style)=>"ym7uBBup" + (style["--ym7uBBuq"] = /*#__PURE__*/ __yak_cssValue($size === void 0 ? 32 : $size, "px"), style["--ym7uBBur"] = /*#__PURE__*/ __yak_cssValue($width === void 0 ? $size === void 0 ? SIZES.small : $size : $width, "px"), ""));

@@ -9,12 +9,13 @@ export const Rest = /*YAK EXPORTED STYLED:Rest:input_Rest_m7uBBu*//*YAK Extracte
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Rest_m7uBBu", ({ $on, ...rest })=>$on && /*#__PURE__*/ css("input_Rest__$on_m7uBBu")), {
     "displayName": "Rest"
 });
-export const Default = /*YAK EXPORTED STYLED:Default:input_Default_m7uBBu*//*YAK Extracted CSS:
-.input_Default__\$on_m7uBBu {
+// a call as default value would run once per read of the prop
+export const DefaultCall = /*YAK EXPORTED STYLED:DefaultCall:input_DefaultCall_m7uBBu*//*YAK Extracted CSS:
+.input_DefaultCall__\$on_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Default_m7uBBu", ({ $on = true })=>$on && /*#__PURE__*/ css("input_Default__$on_m7uBBu")), {
-    "displayName": "Default"
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultCall_m7uBBu", ({ $on = calc(1) })=>$on && /*#__PURE__*/ css("input_DefaultCall__$on_m7uBBu")), {
+    "displayName": "DefaultCall"
 });
 export const Computed = /*YAK EXPORTED STYLED:Computed:input_Computed_m7uBBu*//*YAK Extracted CSS:
 .input_Computed___m7uBBu {

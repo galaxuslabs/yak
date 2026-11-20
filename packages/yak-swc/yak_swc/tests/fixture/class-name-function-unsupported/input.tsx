@@ -5,8 +5,9 @@ export const Rest = styled.div<{ $on: boolean }>`
   ${({ $on, ...rest }) => $on && css`color: red;`}
 `;
 
-export const Default = styled.div<{ $on?: boolean }>`
-  ${({ $on = true }) => $on && css`color: red;`}
+// a call as default value would run once per read of the prop
+export const DefaultCall = styled.div<{ $on?: boolean }>`
+  ${({ $on = calc(1) }) => $on && css`color: red;`}
 `;
 
 export const Computed = styled.div<{ $on: boolean }>`
