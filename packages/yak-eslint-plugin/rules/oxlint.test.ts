@@ -74,3 +74,17 @@ ruleTester.run(
     ],
   },
 );
+
+ruleTester.run(
+  "@yak/styled-arrow-function-returns",
+  yakPlugin.rules["styled-arrow-function-returns"],
+  {
+    valid: [],
+    invalid: [
+      {
+        code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && 'color: red;'}`;",
+        errors: [{ messageId: "invalidReturn" }],
+      },
+    ],
+  },
+);

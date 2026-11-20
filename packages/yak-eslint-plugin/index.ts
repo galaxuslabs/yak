@@ -3,6 +3,7 @@ import { eslintCompatPlugin } from "@oxlint/plugins";
 import { cssNestingOperator } from "./rules/cssNestingOperator.js";
 import { enforceSemicolons } from "./rules/enforceSemicolon.js";
 import { styleConditions } from "./rules/styleConditions.js";
+import { styledArrowFunctionReturns } from "./rules/styledArrowFunctionReturns.js";
 import { styledArrowFunctionStatements } from "./rules/styledArrowFunctionStatements.js";
 
 const compatPlugin = eslintCompatPlugin({
@@ -13,6 +14,7 @@ const compatPlugin = eslintCompatPlugin({
     "css-nesting-operator": cssNestingOperator,
     "enforce-semicolon": enforceSemicolons,
     "style-conditions": styleConditions,
+    "styled-arrow-function-returns": styledArrowFunctionReturns,
     "styled-arrow-function-statements": styledArrowFunctionStatements,
   },
 });

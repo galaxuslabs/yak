@@ -294,6 +294,40 @@ styled.button<{ $variant: "primary" | "danger" }>`
 
 A function that needs another statement can turn the rule off for its line with `// eslint-disable-next-line @yak/styled-arrow-function-statements`. The component still works and only renders a little slower.
 
+### styled-arrow-function-returns
+
+Reports a function that adds class names but returns something else than a `css` literal. The rule is off by default.
+
+A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names, when it stands on its own. At the second place a string or a number adds no styles, and yak can not tell what a call to another function returns.
+
+Example:
+
+```tsx
+// ❌ A string adds no styles here
+const Button = styled.button<{ $active: boolean }>`
+  ${({ $active }) => $active && "font-weight: bold;"}
+`;
+
+// ❌ yak can not tell what the call returns
+const Box = styled.div<{ $size: "s" | "m" }>`
+  ${({ $size }) => {
+    switch ($size) {
+      case "s":
+        return css`padding: 2px;`;
+      default:
+        return assertNever($size);
+    }
+  }}
+`;
+
+// ✅ A css literal, or nothing
+const Button = styled.button<{ $active: boolean }>`
+  ${({ $active }) => $active && css`font-weight: bold;`}
+`;
+```
+
+A helper that returns a `css` literal is valid code and the rule reports it too, so turn the rule on when your code base returns `css` literals directly.
+
 ## Next steps
 
 - [Migration from styled-components](/docs/migration-from-styled-components): the plugin's main use case
