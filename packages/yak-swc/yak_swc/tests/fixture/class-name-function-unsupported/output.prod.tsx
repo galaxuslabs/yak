@@ -227,3 +227,14 @@ export const AtomsValue = /*YAK EXPORTED STYLED:AtomsValue:ym7uBBuo*//*YAK Extra
 export const AtomsOr = /*YAK EXPORTED STYLED:AtomsOr:ym7uBBup*//*YAK Extracted CSS:
 
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBup", ({ $on, $extra })=>$on && atoms($extra || "flex"));
+// a call as case value can change the switched value
+export const SwitchCaseCall = /*YAK EXPORTED STYLED:SwitchCaseCall:ym7uBBuq*//*YAK Extracted CSS:
+.ym7uBBur {
+  color: red;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuq", ({ $size })=>{
+    switch($size){
+        case String(1):
+            return /*#__PURE__*/ css("ym7uBBur");
+    }
+});

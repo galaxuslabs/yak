@@ -187,3 +187,13 @@ export const AtomsValue = styled.div<{ $on: boolean; $extra: string }>`
 export const AtomsOr = styled.div<{ $on: boolean; $extra?: string }>`
   ${({ $on, $extra }) => $on && atoms($extra || "flex")}
 `;
+
+// a call as case value can change the switched value
+export const SwitchCaseCall = styled.div<{ $size: string }>`
+  ${({ $size }) => {
+    switch ($size) {
+      case String(1):
+        return css`color: red;`;
+    }
+  }}
+`;

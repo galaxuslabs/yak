@@ -90,3 +90,26 @@ export const IfElseWithoutReturnThenReturn = /*YAK EXPORTED STYLED:IfElseWithout
   color: blue;
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuU", 0, ({ $on, $big })=>"ym7uBBuU" + ($on ? $big ? " ym7uBBuV" : " ym7uBBuX" : " ym7uBBuW"));
+enum Animation {
+    In = "in",
+    Out = "out",
+    None = "none"
+}
+const LARGE = "l";
+// enum members and constants as case values
+export const SwitchEnum = /*YAK EXPORTED STYLED:SwitchEnum:ym7uBBuY*//*YAK Extracted CSS:
+.ym7uBBuZ {
+  opacity: 1;
+}
+.ym7uBBua {
+  opacity: 0;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuY", 0, ({ $animation })=>"ym7uBBuY" + ($animation === Animation.In ? " ym7uBBuZ" : $animation === Animation.Out ? " ym7uBBua" : ""));
+export const SwitchConstant = /*YAK EXPORTED STYLED:SwitchConstant:ym7uBBub*//*YAK Extracted CSS:
+.ym7uBBuc {
+  padding: 8px;
+}
+.ym7uBBud {
+  padding: 4px;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBub", 0, ({ $size, $other })=>"ym7uBBub" + ($size === LARGE ? " ym7uBBuc" : $size === $other ? " ym7uBBud" : ""));

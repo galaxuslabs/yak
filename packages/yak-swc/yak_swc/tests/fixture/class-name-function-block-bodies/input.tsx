@@ -116,3 +116,36 @@ export const IfElseWithoutReturnThenReturn = styled.div<{ $on: boolean; $big: bo
     return css`color: blue;`;
   }}
 `;
+
+enum Animation {
+  In = "in",
+  Out = "out",
+  None = "none",
+}
+const LARGE = "l";
+
+// enum members and constants as case values
+export const SwitchEnum = styled.div<{ $animation: Animation }>`
+  ${({ $animation }) => {
+    switch ($animation) {
+      case Animation.In:
+        return css`opacity: 1;`;
+      case Animation.Out:
+        return css`opacity: 0;`;
+      case Animation.None:
+      default:
+        return;
+    }
+  }}
+`;
+
+export const SwitchConstant = styled.div<{ $size: string; $other: string }>`
+  ${({ $size, $other }) => {
+    switch ($size) {
+      case LARGE:
+        return css`padding: 8px;`;
+      case $other:
+        return css`padding: 4px;`;
+    }
+  }}
+`;
