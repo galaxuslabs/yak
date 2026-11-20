@@ -1,7 +1,7 @@
-import { styled, css, __yak_cssValue } from "@yak/react/internal";
+import { styled, css, atoms, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVKIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1TCk7Cn0ueW03dUJCdU0gewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGxlZnQ6IHZhcigtLXltN3VCQnVRKTsKICB0b3A6IHZhcigtLXltN3VCQnVSKTsKfS55bTd1QkJ1VCB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1ViB7CiAgcGFkZGluZzogMDsKfS55bTd1QkJ1WCB7CiAgY29sb3I6IG9yYW5nZTsKfQ==";
+import "data:text/css;base64,LnltN3VCQnUxIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnUzIHsKICBwYWRkaW5nOiAwOwp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU2IHsKICBmb250LXNpemU6IDJlbTsKfS55bTd1QkJ1OCB7CiAgY29sb3I6IHdoaXRlOwp9Ci55bTd1QkJ1OSB7CiAgY29sb3I6IGJsYWNrOwp9LnltN3VCQnVCIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QyB7CiAgbWFyZ2luOiAwOwp9LnltN3VCQnVHIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVJIHsKICBjb2xvcjogZ3JlZW47Cn0ueW03dUJCdUsgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVKIHsKICBsZWZ0OiB2YXIoLS15bTd1QkJ1TCk7Cn0ueW03dUJCdU0gewogIGNvbG9yOiB2YXIoLS15bTd1QkJ1Tik7Cn0ueW03dUJCdVAgewogIGxlZnQ6IHZhcigtLXltN3VCQnVRKTsKICB0b3A6IHZhcigtLXltN3VCQnVSKTsKfS55bTd1QkJ1VCB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1ViB7CiAgcGFkZGluZzogMDsKfS55bTd1QkJ1WCB7CiAgY29sb3I6IG9yYW5nZTsKfS55bTd1QkJ1WiB7CiAgY29sb3I6IGJsYWNrOwp9";
 // identifier props parameter read through members
 export const Ident = /*YAK EXPORTED STYLED:Ident:ym7uBBu*//*YAK Extracted CSS:
 .ym7uBBu1 {
@@ -95,3 +95,12 @@ export const OrChain = /*YAK EXPORTED STYLED:OrChain:ym7uBBuW*//*YAK Extracted C
   color: orange;
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuW", 0, ({ $a, $b })=>"ym7uBBuW" + (!$a || !$b ? "" : " ym7uBBuX"));
+export const AtomsCondition = /*YAK EXPORTED STYLED:AtomsCondition:ym7uBBuY*//*YAK Extracted CSS:
+.ym7uBBuZ {
+  color: black;
+}
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuY", 0, ({ $on })=>"ym7uBBuY" + " flex gap-2" + ($on ? " shadow-md rounded" : "") + ($on ? " text-white" : " ym7uBBuZ"));
+// conditions inside atoms(): any condition folds, the class name is a string
+export const AtomsNestedCondition = /*YAK EXPORTED STYLED:AtomsNestedCondition:ym7uBBua*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBua", 0, ({ $on, $off })=>"ym7uBBua" + ($on ? " shadow-md" + ($off ? " ring" : "") + " rounded p-2" + ($off ? " text-white" : " text-black") + ($off ? " border" : "") + (true === false ? " never" : "") + (isLarge ? " large" : "") : ""));

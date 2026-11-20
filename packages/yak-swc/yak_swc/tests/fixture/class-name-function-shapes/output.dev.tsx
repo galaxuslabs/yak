@@ -1,4 +1,4 @@
-import { styled, css, __yak_cssValue } from "@yak/react/internal";
+import { styled, css, atoms, __yak_cssValue } from "@yak/react/internal";
 import { isLarge } from "./helpers";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
@@ -120,4 +120,17 @@ export const OrChain = /*YAK EXPORTED STYLED:OrChain:input_OrChain_m7uBBu*//*YAK
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_OrChain_m7uBBu", 0, ({ $a, $b })=>"input_OrChain_m7uBBu" + (!$a || !$b ? "" : " input_OrChain___m7uBBu")), {
     "displayName": "OrChain"
+});
+export const AtomsCondition = /*YAK EXPORTED STYLED:AtomsCondition:input_AtomsCondition_m7uBBu*//*YAK Extracted CSS:
+.input_AtomsCondition__not_\$on_m7uBBu {
+  color: black;
+}
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsCondition_m7uBBu", 0, ({ $on })=>"input_AtomsCondition_m7uBBu" + " flex gap-2" + ($on ? " shadow-md rounded" : "") + ($on ? " text-white" : " input_AtomsCondition__not_$on_m7uBBu")), {
+    "displayName": "AtomsCondition"
+});
+// conditions inside atoms(): any condition folds, the class name is a string
+export const AtomsNestedCondition = /*YAK EXPORTED STYLED:AtomsNestedCondition:input_AtomsNestedCondition_m7uBBu*//*YAK Extracted CSS:
+
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_AtomsNestedCondition_m7uBBu", 0, ({ $on, $off })=>"input_AtomsNestedCondition_m7uBBu" + ($on ? " shadow-md" + ($off ? " ring" : "") + " rounded p-2" + ($off ? " text-white" : " text-black") + ($off ? " border" : "") + (true === false ? " never" : "") + (isLarge ? " large" : "") : "")), {
+    "displayName": "AtomsNestedCondition"
 });
