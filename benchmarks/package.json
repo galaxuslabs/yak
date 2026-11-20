@@ -27,7 +27,7 @@
     "generate:bench:idiomatic-dynamic-props": "node ./bench/idiomatic-dynamic-props/gen.ts",
     "generate:bench:runtime-paths": "node ./bench/runtime-paths/gen.ts",
     "bench": "pnpm generate && pnpm bench:build && pnpm --silent bench:rounds --rounds 1 --no-base && pnpm --silent bench:report bench/runs",
-    "bench:build": "tsdown ./bench/index.bench.tsx --no-config --sourcemap --minify --env.NODE_ENV=production --format esm --target node20 --out-dir ./bench/dist --deps.neverBundle tinybench --deps.neverBundle styled-components --deps.neverBundle react --deps.neverBundle react-dom",
+    "bench:build": "tsdown ./bench/index.bench.tsx --no-config --sourcemap --minify --env.NODE_ENV=production --format esm --target node20 --out-dir ./bench/dist --deps.neverBundle tinybench --deps.neverBundle styled-components --deps.neverBundle react --deps.neverBundle react-dom --deps.alwaysBundle '@yak/react{,/**}'",
     "bench:report": "node ./bench/report.ts",
     "bench:rounds": "node ./bench/rounds.ts",
     "bench:run": "NODE_ENV=production node --enable-source-maps ./bench/dist/index.bench.mjs"
