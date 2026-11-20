@@ -156,11 +156,11 @@ it("should support subtree overrides through YakThemeContext", () => {
   expect(box.style.getPropertyValue("--color")).toBe("blue");
 });
 
-// solid 2.0.0-rc.10 compiles a props literal with getters into a hoisted
-// constructor whose getters read their captured values through `this`
-// (`hoistProps`): a descriptor copied onto another object reads nothing.
-// This is the compiler's output shape, built by hand because the test JSX
-// is compiled by the plugin version pinned here.
+// solid compiles a props literal with getters into a hoisted constructor
+// whose getters read their captured values through `this` (`hoistProps`):
+// a descriptor copied onto another object reads nothing. This builds the
+// compiler's output shape by hand, so the test does not depend on when the
+// compiler decides to hoist.
 const hoistedProps = <T,>(label: () => T, className: string) => {
   const slot = Symbol();
   const labelDescriptor = {
