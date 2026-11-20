@@ -64,7 +64,8 @@ const myDiv = styled.div`
   "rules": {
     "@yak/css-nesting-operator": "error",
     "@yak/enforce-semicolon": "error",
-    "@yak/style-conditions": "warn"
+    "@yak/style-conditions": "warn",
+    "@yak/styled-arrow-function-statements": "error"
   }
 }
 ```
@@ -250,6 +251,48 @@ In this example:
   - Values from external APIs
 
 The `@yak/style-conditions` rule flags unnecessary uses of CSS variables, which keeps your HTML smaller and faster.
+
+### styled-arrow-function-statements
+
+Reports a function in a `styled` or `css` literal that yak can not compile to the fast render path.
+
+`@yak/react` compiles the functions of a styled component into one function that returns the class names of a render. That works when a function is an expression, or when its body holds only `if`, `else`, `switch` and `return`. Every other statement, like a `const` or a `console.log`, moves the component to a slower render path.
+
+Example:
+
+```tsx title="example.tsx"
+styled.button<{ $size: number }>`
+  ${({ $size }) => {
+    //[!code --]
+    const big = $size > 2;
+    //[!code --]
+    return big && css`padding: 8px;`;
+    //[!code ++]
+    if ($size > 2) {
+      //[!code ++]
+      return css`padding: 8px;`;
+      //[!code ++]
+    }
+  }}
+`;
+```
+
+A `switch` works too, as long as it switches on a prop and every `case` ends with a `return`:
+
+```tsx title="example.tsx"
+styled.button<{ $variant: "primary" | "danger" }>`
+  ${({ $variant }) => {
+    switch ($variant) {
+      case "primary":
+        return css`color: blue;`;
+      case "danger":
+        return css`color: red;`;
+    }
+  }}
+`;
+```
+
+A function that needs another statement can turn the rule off for its line with `// eslint-disable-next-line @yak/styled-arrow-function-statements`. The component still works and only renders a little slower.
 
 ## Next steps
 
