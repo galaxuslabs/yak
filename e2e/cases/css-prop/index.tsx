@@ -15,8 +15,23 @@ function SpreadButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   );
 }
 
+function wrap<T>(node: T) {
+  return { node };
+}
+
 export default function App({ dummyBool = true }) {
   const [count, setCount] = useState(0);
+  // a css prop inside a destructuring declaration
+  const { node: destructured } = wrap(
+    <div
+      data-testid="destructured"
+      css={css`
+        color: blue;
+      `}
+    >
+      destructured
+    </div>,
+  );
   return (
     <>
       <div
@@ -73,6 +88,7 @@ export default function App({ dummyBool = true }) {
       >
         Backslash className
       </div>
+      {destructured}
       <SpreadButton data-testid="spread-button" onClick={() => setCount((c) => c + 1)}>
         clicks: {count}
       </SpreadButton>
