@@ -1,4 +1,4 @@
-import { styled, css } from "@yak/react";
+import { styled, css, atoms } from "@yak/react";
 import { isLarge } from "./helpers";
 
 // identifier props parameter read through members
@@ -65,4 +65,40 @@ export const NestedVariable = styled.div<{ $on: boolean; $x: number; $big: boole
       left: ${$x * 2}px;
       top: ${$big ? 8 : 4}px;
     `}
+`;
+
+// a truthy left side of `||` adds nothing
+export const OrProp = styled.div<{ $label?: string }>`
+  ${({ $label }) => $label || css`color: red;`}
+`;
+
+export const OrComparison = styled.div<{ $size: string }>`
+  ${({ $size }) => $size !== "s" || css`padding: 0;`}
+`;
+
+export const OrChain = styled.div<{ $a: boolean; $b: boolean }>`
+  ${({ $a, $b }) => !$a || !$b || css`color: orange;`}
+`;
+
+export const AtomsCondition = styled.div<{ $on: boolean }>`
+  ${atoms("flex", "gap-2")}
+  ${({ $on }) => $on && atoms("shadow-md", false, "rounded")}
+  ${({ $on }) => ($on ? atoms("text-white") : css`color: black;`)}
+`;
+
+// conditions inside atoms(): any condition folds, the class name is a string
+export const AtomsNestedCondition = styled.div<{ $on: boolean; $off: boolean }>`
+  ${({ $on, $off }) =>
+    $on &&
+    atoms(
+      "shadow-md",
+      $off && "ring",
+      "rounded",
+      "p-2",
+      $off ? "text-white" : "text-black",
+      $off ? "border" : null,
+      undefined,
+      true === false && "never",
+      isLarge && "large",
+    )}
 `;

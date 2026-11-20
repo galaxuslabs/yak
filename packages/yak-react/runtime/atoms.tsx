@@ -12,10 +12,13 @@ import { StyleFunction } from "./publicStyledApi.js";
  * const Button = styled.button<{ $primary?: boolean }>`
  *  ${atoms("text-teal-600", "text-base", "rounded-md")}
  *  ${props => props.$primary && atoms("shadow-md")}
+ *  ${({ $wide, $round }) => $wide && atoms("w-full", $round && "rounded-full")}
  * `;
  * ```
  */
-export const atoms = <T,>(...atoms: (string | StyleFunction<T> | false)[]): ComponentStyles<T> => {
+export const atoms = <T,>(
+  ...atoms: (string | StyleFunction<T> | false | null | undefined)[]
+): ComponentStyles<T> => {
   const staticClasses = new ClassNames();
   const dynamicFunctions: StyleFunction<T>[] = [];
 

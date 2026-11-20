@@ -88,9 +88,23 @@ pub(crate) fn fold_class_names(
     writes_style: false,
   };
   let mut class_name_expr = str_expr(class_name.into());
+  // a component with nothing but `atoms("flex")` calls has no condition. The
+  // runtime joins its class names once at definition, which a folded function
+  // would do on every render
+  let mut has_arrow = false;
   for expression in runtime_expressions {
-    let folded_class_names = folder.fold_arrow(expression)?;
+    let folded_class_names = match unwrap_type_casts(expression) {
+      // `${atoms("flex")}` next to the conditions
+      Expr::Call(call) => folder.fold_atoms_call(call)?,
+      _ => {
+        has_arrow = true;
+        folder.fold_arrow(expression)?
+      }
+    };
     class_name_expr = join_folded_class_names(class_name_expr, folded_class_names);
+  }
+  if !has_arrow && css_variables.is_empty() {
+    return None;
   }
   // the runtime writes the CSS variables of the component after it ran the
   // runtime expressions, in the key order of the compiled `{ style: {...} }`
