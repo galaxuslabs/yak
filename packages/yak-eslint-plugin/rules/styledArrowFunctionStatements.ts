@@ -1,5 +1,6 @@
 import type { ESTree } from "@oxlint/plugins";
 import { createRule } from "../utils.js";
+import { isInsideCssDeclarationValue } from "./styleConditions.js";
 import { importsYak, isStyledOrCssTag } from "./utils.js";
 
 const hint =
@@ -36,7 +37,7 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
         "`{{name}}` is a call or a calculation here, which moves the component to the slower render path. A `const` keeps the fast render path only if it names a prop read, like `const size = $layout.size;`. Write the calculation where the value is used, or move it into a function outside of the literal and call that function there.",
       functionExpression:
         "A `function` expression inside a styled/css literal moves the component to the slower render path. Use an arrow function, e.g. `({ $active }) => $active && css`...``.",
-      branchWithoutReturn: `This {{statement}} can end without a \`return\` and more than a single \`return\` follows it, which moves the component to the slower render path. Return in every branch or move the code after it into the branches. ${hint}`,
+      branchWithoutReturn: `This {{statement}} can end without a \`return\` and more than a single \`return\` follows it. For a function that sets a CSS value this moves the component to the slower render path. Return in every branch or move the code after it into the branches. ${hint}`,
       propsObject:
         "`{{name}}` is used as a whole object here, which moves the component to the slower render path. The fast render path only has the props a function reads by name, like `{{name}}.$active`. Read the props by name and pass those on, e.g. `({ $a, $b }) => helper({ $a, $b })`.",
       restParameter:
@@ -56,12 +57,25 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
   createOnce: (context) => {
     const { before, importedNames, ImportDeclaration } = importsYak(["@yak/react"]);
 
+    /**
+     * True while the checked function sets a CSS value, like the one in
+     * `width: ${fn}px;`. A function that adds class names can leave a branch
+     * without a `return`: the compiler goes on with the code after it
+     *
+     * { if ($on) { if ($big) return css`a`; } if ($big) return css`b`; return css`c`; }
+     * -> (($on ? ($big ? " a" : void 0) : void 0) ?? ($big ? " b" : " c"))
+     *
+     * `null` is a real CSS value, so that does not work for a CSS value
+     */
+    let setsCssValue = false;
+
     /** Reports every statement of a function body the compiler can not turn into an expression */
     const checkStatements = (statements: readonly ESTree.Statement[]) => {
       statements.forEach((statement, index) => {
         // the compiler copies a single `return` into a branch that ends without one
         const rest = statements.slice(index + 1);
         const hasCodeAfter =
+          setsCssValue &&
           rest.some((next) => next.type !== "EmptyStatement") &&
           !(rest.length === 1 && rest[0].type === "ReturnStatement");
         switch (statement.type) {
@@ -222,6 +236,7 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
           } else if (expression.type === "ArrowFunctionExpression") {
             checkParameter(expression);
             if (expression.body.type === "BlockStatement") {
+              setsCssValue = isInsideCssDeclarationValue(node, expression);
               checkStatements(expression.body.body);
             }
           }

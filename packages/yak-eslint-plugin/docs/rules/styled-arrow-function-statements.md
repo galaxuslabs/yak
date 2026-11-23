@@ -67,15 +67,16 @@ styled.button`
   }}
 `;
 
-// the compiler copies a single `return` into a branch, but no other statements
+// a function that sets a CSS value can not leave a branch without `return`
+// when more than a single `return` follows
 styled.button`
-  ${({ $active, $big }) => {
+  width: ${({ $active, $big }) => {
     if ($active) {
-      if ($big) return css`color: red;`;
+      if ($big) return 8;
     }
-    if ($big) return css`color: green;`;
-    return css`color: blue;`;
-  }}
+    if ($big) return 4;
+    return 2;
+  }}px;
 `;
 
 // a `switch` has to switch on a prop, with a `return` in every `case` before the last one
@@ -135,6 +136,17 @@ styled.button`
     const size = $layout.medium?.size;
     if (size === "s") return css`padding: 2px;`;
     return css`padding: 8px;`;
+  }}
+`;
+
+// a function that adds class names can leave a block and go on after it
+styled.button`
+  ${({ $active, $big }) => {
+    if ($active) {
+      if ($big) return css`color: red;`;
+    }
+    if ($big) return css`color: green;`;
+    return css`color: blue;`;
   }}
 `;
 
