@@ -31,7 +31,7 @@ const Button = styled.button<{ $active: boolean }>`
 `;
 ```
 
-A call to any other function is unclear: yak can not tell what it returns. With `@yak/react` such a call also moves the component to a slower render path.
+A call to any other function is unclear: yak can not tell what it returns. With `@yak/react` such a call also moves the component to a slower render path. An exhaustive check like `assertNever($size);` works as a statement without `return`.
 
 The rule is not part of the recommended config, because a helper that returns a `css` literal is valid code and the rule reports it too. Turn the rule on when your code base returns `css` literals directly.
 
@@ -83,6 +83,18 @@ styled.button`
         return css`padding: 2px;`;
       default:
         return;
+    }
+  }}
+`;
+
+// a check as a statement returns nothing
+styled.button`
+  ${({ $size }) => {
+    switch ($size) {
+      case "s":
+        return css`padding: 2px;`;
+      default:
+        assertNever($size);
     }
   }}
 `;

@@ -33,7 +33,7 @@ compiles to something like
 ({ $size }) => "Button" + ($size === "s" ? " Button_s" : " Button_m");
 ```
 
-That works when the function is an expression, or when its body holds only `if`, `else`, `switch` and `return`. Every other statement, like a `const`, a `console.log` or a loop, has no place in such an expression. The component still works, but it renders on a slower path.
+That works when the function is an expression, or when its body holds only `if`, `else`, `switch`, `return` and calls like `assertNever($size);`. Every other statement, like a `const`, an assignment or a loop, has no place in such an expression. The component still works, but it renders on a slower path.
 
 A function that needs such a statement can turn the rule off for that line:
 
@@ -54,13 +54,6 @@ The rule only checks files that import from `@yak/react`.
 The following patterns are considered errors:
 
 ```js
-styled.button`
-  ${({ $active }) => {
-    console.log($active);
-    return $active && css`color: red;`;
-  }}
-`;
-
 styled.button`
   ${({ $size }) => {
     const big = $size > 2;
@@ -85,7 +78,7 @@ styled.button`
   }}
 `;
 
-// a `switch` has to switch on a prop, with a `return` in every `case`
+// a `switch` has to switch on a prop, with a `return` in every `case` before the last one
 styled.button`
   ${({ $size }) => {
     switch (String($size)) {
@@ -132,6 +125,21 @@ styled.button`
         return css`color: red;`;
       default:
         return css`color: gray;`;
+    }
+  }}
+`;
+
+// a call stays at its place, so an exhaustive check or a `console.log` is fine
+styled.button`
+  ${({ $size }) => {
+    console.log($size);
+    switch ($size) {
+      case "s":
+        return css`padding: 2px;`;
+      case "m":
+        return css`padding: 4px;`;
+      default:
+        assertNever($size);
     }
   }}
 `;

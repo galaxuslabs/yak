@@ -30,7 +30,7 @@ export const styledArrowFunctionReturns = createRule("styled-arrow-function-retu
     },
     messages: {
       invalidReturn: `${expected} {{kind}} adds no styles. To set a CSS value, write the function after a property, e.g. \`color: \${({ $color }) => $color};\`.`,
-      unclearReturn: `${expected} yak can not tell what \`{{name}}(...)\` returns, and with \`@yak/react\` the call moves the component to the slower render path. Return the css\`...\` literal here, or return nothing with \`return;\`.`,
+      unclearReturn: `${expected} yak can not tell what \`{{name}}(...)\` returns, and with \`@yak/react\` the call moves the component to the slower render path. Return the css\`...\` literal here, or return nothing with \`return;\`. A check like \`assertNever($size);\` works as a statement without \`return\`.`,
     },
     schema: [],
     defaultOptions: [],

@@ -3,7 +3,7 @@ import { createRule } from "../utils.js";
 import { importsYak, isStyledOrCssTag } from "./utils.js";
 
 const hint =
-  "Write the logic with `if`, `else`, `switch` and `return` only, or as an expression like `({ $active }) => $active && css`...``.";
+  "Write the logic with `if`, `else`, `switch`, `return` and calls like `assertNever($size);` only, or as an expression like `({ $active }) => $active && css`...``.";
 
 /**
  * yak compiles the functions of a styled component into one function that
@@ -12,9 +12,10 @@ const hint =
  * ({ $size }) => { if ($size === "s") return css`...`; return css`...`; }
  * -> ($size === "s" ? " yB1" : " yB2")
  *
- * That works for a body of `if`, `else`, `switch` and `return`. Every other
- * statement has no place in an expression, so the component falls back to the
- * slower render path. This rule reports those statements
+ * That works for a body of `if`, `else`, `switch` and `return`. A call like
+ * `assertNever($size);` also works: the compiler keeps it at its place.
+ * Every other statement has no place in an expression, so the component falls
+ * back to the slower render path. This rule reports those statements
  *
  * Only `@yak/react` compiles this way
  */
@@ -41,7 +42,7 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
       switchCaseTest:
         'A `case` inside a styled/css literal has to be a value like `"small"`, `1`, `SMALL` or `Size.Small`. A call or a calculation moves the component to the slower render path. Use `if` and `return` for it.',
       switchCaseWithoutReturn:
-        "Every `case` inside a styled/css literal has to end with a `return`. A `break` or a `case` that runs into the next one moves the component to the slower render path.",
+        "Every `case` before the last one inside a styled/css literal has to end with a `return`. A `break` or a `case` that runs into the next one moves the component to the slower render path.",
       switchDefaultNotLast:
         "The `default` case inside a styled/css literal has to be the last one. Any other order moves the component to the slower render path.",
     },
@@ -97,7 +98,23 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
             }
             return;
           case "SwitchStatement":
+            if (hasCodeAfter && lastCaseCanEnd(statement)) {
+              context.report({
+                node: statement.cases[statement.cases.length - 1],
+                messageId: "branchWithoutReturn",
+                data: { statement: "last `case`" },
+              });
+            }
             checkSwitch(statement);
+            return;
+          case "ExpressionStatement":
+            if (!isDiscardedExpression(statement.expression)) {
+              context.report({
+                node: statement,
+                messageId: "statement",
+                data: { statement: statementNames.ExpressionStatement! },
+              });
+            }
             return;
           default:
             context.report({
@@ -126,7 +143,8 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
         if (switchCase.consequent.length === 0 && !isLast) {
           return;
         }
-        if (!alwaysReturns(switchCase.consequent)) {
+        // the last case can end the `switch`, e.g. `default: assertNever($size);`
+        if (!isLast && !alwaysReturns(switchCase.consequent)) {
           context.report({ node: switchCase, messageId: "switchCaseWithoutReturn" });
         }
         checkStatements(switchCase.consequent.filter((inner) => inner.type !== "BreakStatement"));
@@ -186,7 +204,7 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
 
 const statementNames: Partial<Record<ESTree.Statement["type"], string>> = {
   VariableDeclaration: "variable declaration",
-  ExpressionStatement: "statement like a function call or an assignment",
+  ExpressionStatement: "statement like an assignment or a call on the result of a call",
   DebuggerStatement: "`debugger` statement",
   ForStatement: "loop",
   ForInStatement: "loop",
@@ -280,6 +298,30 @@ function alwaysReturns(statements: readonly ESTree.Statement[]): boolean {
         return false;
     }
   });
+}
+
+/** True if the last `case` of the `switch` has statements and a path through them ends without a `return` */
+function lastCaseCanEnd(statement: ESTree.SwitchStatement): boolean {
+  const last = statement.cases[statement.cases.length - 1];
+  return last !== undefined && last.consequent.length > 0 && !alwaysReturns(last.consequent);
+}
+
+/**
+ * A statement the compiler keeps at its place, because its value adds no
+ * class name: a call like `assertNever($size);` or `console.log($size);`, or
+ * a plain read like `$size satisfies never;`
+ *
+ * { log($on); return css`...`; } -> (log($on), " yB1")
+ *
+ * The callee has to be a plain read. An assignment like `$size = "s"` could
+ * change a prop that a later condition reads
+ */
+function isDiscardedExpression(expression: ESTree.Expression): boolean {
+  const node = unwrapTypeCasts(expression);
+  if (node.type === "CallExpression") {
+    return node.callee.type !== "Super" && !node.optional && isPlainRead(node.callee);
+  }
+  return isPlainRead(node);
 }
 
 /** `$size`, `props.$size` or `props.theme.mode`, with or without a type cast */
