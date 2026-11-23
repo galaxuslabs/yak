@@ -15,10 +15,8 @@ export const FlexContainer = /*YAK EXPORTED STYLED:FlexContainer:input_FlexConta
   margin-bottom: var(--input_FlexContainer__margin-bottom_m7uBBu);
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_FlexContainer_m7uBBu", {
-    "style": {
-        "--input_FlexContainer__align-items_m7uBBu": ({ $align })=>$align || "stretch",
-        "--input_FlexContainer__margin-bottom_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $spacing })=>$spacing * 8, "px")
-    }
+    "--input_FlexContainer__align-items_m7uBBu": ({ $align })=>$align || "stretch",
+    "--input_FlexContainer__margin-bottom_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $spacing })=>$spacing * 8, "px")
 }), {
     "displayName": "FlexContainer"
 });
