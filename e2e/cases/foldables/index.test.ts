@@ -82,6 +82,12 @@ test(
     await expect(page.getByTestId("placed-small")).toHaveCSS("word-spacing", "2px");
     await expect(page.getByTestId("placed-missing")).toHaveCSS("word-spacing", "6px");
 
+    // a path that returns inside the guard block, one that goes on after it,
+    // and a `return;` inside it that adds nothing
+    await expect(page.getByTestId("guarded-return")).toHaveCSS("padding-left", "12px");
+    await expect(page.getByTestId("guarded-fall-through")).toHaveCSS("padding-left", "6px");
+    await expect(page.getByTestId("guarded-nothing")).toHaveCSS("padding-left", "0px");
+
     // entity-spelled attribute strings compare by decoded value, like the runtime path
     await expect(page.getByTestId("entity")).toHaveCSS("color", "rgb(220, 20, 60)");
     await expect(page.getByTestId("entity-runtime")).toHaveCSS("color", "rgb(220, 20, 60)");

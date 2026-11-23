@@ -1,7 +1,7 @@
 import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import { assertNever, log, getLogger } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LmlucHV0X1N3aXRjaEFzc2VydE5ldmVyX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X1N3aXRjaEFzc2VydE5ldmVyX19fbTd1QkJ1LTAxIHsKICBwYWRkaW5nOiA0cHg7Cn0uaW5wdXRfU3dpdGNoQXNzZXJ0TmV2ZXJCcmVha19fX203dUJCdSB7CiAgcGFkZGluZzogMnB4Owp9LmlucHV0X1N3aXRjaFNhdGlzZmllc05ldmVyX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X1N3aXRjaFNhdGlzZmllc05ldmVyX19fbTd1QkJ1LTAxIHsKICBwYWRkaW5nOiA0cHg7Cn0uaW5wdXRfU3dpdGNoUmVuYW1lZERlZmF1bHRfX19tN3VCQnUgewogIHBhZGRpbmc6IDJweDsKfQouaW5wdXRfU3dpdGNoUmVuYW1lZERlZmF1bHRfX19tN3VCQnUtMDEgewogIHBhZGRpbmc6IDRweDsKfS5pbnB1dF9Td2l0Y2hNZW1iZXJSZWFkX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X1N3aXRjaE1lbWJlclJlYWRfX19tN3VCQnUtMDEgewogIHBhZGRpbmc6IDRweDsKfS5pbnB1dF9DYXNlTG9nQmVmb3JlUmV0dXJuX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X0Nhc2VMb2dCZWZvcmVSZXR1cm5fX19tN3VCQnUtMDEgewogIHBhZGRpbmc6IDRweDsKfS5pbnB1dF9MYXN0Q2FzZVdpdGhvdXRSZXR1cm5fX19tN3VCQnUgewogIHBhZGRpbmc6IDJweDsKfQouaW5wdXRfTGFzdENhc2VXaXRob3V0UmV0dXJuX19fbTd1QkJ1LTAxIHsKICBwYWRkaW5nOiA4cHg7Cn0uaW5wdXRfRGVmYXVsdFdpdGhvdXRSZXR1cm5UaGVuUmV0dXJuX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X0RlZmF1bHRXaXRob3V0UmV0dXJuVGhlblJldHVybl9fX203dUJCdS0wMSB7CiAgcGFkZGluZzogOHB4Owp9LmlucHV0X0xvZ0JlZm9yZUlmX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X1N0YXRlbWVudHNCZWZvcmVSZXR1cm5fX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfSWZXaXRob3V0UmV0dXJuX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X1N0YXRlbWVudEF0RW5kX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0Nzc1ZhcmlhYmxlX203dUJCdSB7CiAgd2lkdGg6IHZhcigtLWlucHV0X0Nzc1ZhcmlhYmxlX193aWR0aF9tN3VCQnUpOwp9LmlucHV0X1JldHVybkFzc2VydE5ldmVyX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0uaW5wdXRfRmFsbFRocm91Z2hBZnRlclN0YXRlbWVudF9fX203dUJCdSB7CiAgcGFkZGluZzogNHB4Owp9LmlucHV0X0JyZWFrQmVmb3JlTGFzdENhc2VfX19tN3VCQnUgewogIHBhZGRpbmc6IDRweDsKfS5pbnB1dF9MYXN0Q2FzZVRoZW5TdGF0ZW1lbnRzX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X0xhc3RDYXNlVGhlblN0YXRlbWVudHNfX19tN3VCQnUtMDEgewogIHBhZGRpbmc6IDhweDsKfS5pbnB1dF9JZldpdGhvdXRSZXR1cm5UaGVuU3RhdGVtZW50c19fX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9TdGF0ZW1lbnRBZnRlclJldHVybl9fXCRvbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfQXNzaWduUHJvcF9fX203dUJCdSB7CiAgcGFkZGluZzogMnB4Owp9LmlucHV0X1VwZGF0ZVByb3BfX19tN3VCQnUgewogIHBhZGRpbmc6IDJweDsKfS5pbnB1dF9Bc3NpZ25JbkFyZ3VtZW50X19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0uaW5wdXRfTWV0aG9kT25Qcm9wc19fcF9cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9DYWxsT25DYWxsX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfQ==";
+import "data:text/css;base64,LmlucHV0X1N3aXRjaEFzc2VydE5ldmVyX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X1N3aXRjaEFzc2VydE5ldmVyX19fbTd1QkJ1LTAxIHsKICBwYWRkaW5nOiA0cHg7Cn0uaW5wdXRfU3dpdGNoQXNzZXJ0TmV2ZXJCcmVha19fX203dUJCdSB7CiAgcGFkZGluZzogMnB4Owp9LmlucHV0X1N3aXRjaFNhdGlzZmllc05ldmVyX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X1N3aXRjaFNhdGlzZmllc05ldmVyX19fbTd1QkJ1LTAxIHsKICBwYWRkaW5nOiA0cHg7Cn0uaW5wdXRfU3dpdGNoUmVuYW1lZERlZmF1bHRfX19tN3VCQnUgewogIHBhZGRpbmc6IDJweDsKfQouaW5wdXRfU3dpdGNoUmVuYW1lZERlZmF1bHRfX19tN3VCQnUtMDEgewogIHBhZGRpbmc6IDRweDsKfS5pbnB1dF9Td2l0Y2hNZW1iZXJSZWFkX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X1N3aXRjaE1lbWJlclJlYWRfX19tN3VCQnUtMDEgewogIHBhZGRpbmc6IDRweDsKfS5pbnB1dF9DYXNlTG9nQmVmb3JlUmV0dXJuX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X0Nhc2VMb2dCZWZvcmVSZXR1cm5fX19tN3VCQnUtMDEgewogIHBhZGRpbmc6IDRweDsKfS5pbnB1dF9MYXN0Q2FzZVdpdGhvdXRSZXR1cm5fX19tN3VCQnUgewogIHBhZGRpbmc6IDJweDsKfQouaW5wdXRfTGFzdENhc2VXaXRob3V0UmV0dXJuX19fbTd1QkJ1LTAxIHsKICBwYWRkaW5nOiA4cHg7Cn0uaW5wdXRfRGVmYXVsdFdpdGhvdXRSZXR1cm5UaGVuUmV0dXJuX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X0RlZmF1bHRXaXRob3V0UmV0dXJuVGhlblJldHVybl9fX203dUJCdS0wMSB7CiAgcGFkZGluZzogOHB4Owp9LmlucHV0X0xvZ0JlZm9yZUlmX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X1N0YXRlbWVudHNCZWZvcmVSZXR1cm5fX19tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfSWZXaXRob3V0UmV0dXJuX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X1N0YXRlbWVudEF0RW5kX19fbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0Nzc1ZhcmlhYmxlX203dUJCdSB7CiAgd2lkdGg6IHZhcigtLWlucHV0X0Nzc1ZhcmlhYmxlX193aWR0aF9tN3VCQnUpOwp9LmlucHV0X1JldHVybkFzc2VydE5ldmVyX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0uaW5wdXRfRmFsbFRocm91Z2hBZnRlclN0YXRlbWVudF9fX203dUJCdSB7CiAgcGFkZGluZzogNHB4Owp9LmlucHV0X0JyZWFrQmVmb3JlTGFzdENhc2VfX19tN3VCQnUgewogIHBhZGRpbmc6IDRweDsKfS5pbnB1dF9MYXN0Q2FzZVRoZW5TdGF0ZW1lbnRzX19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0KLmlucHV0X0xhc3RDYXNlVGhlblN0YXRlbWVudHNfbTd1QkJ1IHsKICB3aWR0aDogdmFyKC0taW5wdXRfTGFzdENhc2VUaGVuU3RhdGVtZW50c19fd2lkdGhfbTd1QkJ1KTsKfS5pbnB1dF9JZldpdGhvdXRSZXR1cm5UaGVuU3RhdGVtZW50c19tN3VCQnUgewogIHdpZHRoOiB2YXIoLS1pbnB1dF9JZldpdGhvdXRSZXR1cm5UaGVuU3RhdGVtZW50c19fd2lkdGhfbTd1QkJ1KTsKfS5pbnB1dF9TdGF0ZW1lbnRBZnRlclJldHVybl9fXCRvbl9tN3VCQnUgewogIGNvbG9yOiByZWQ7Cn0uaW5wdXRfQXNzaWduUHJvcF9fX203dUJCdSB7CiAgcGFkZGluZzogMnB4Owp9LmlucHV0X1VwZGF0ZVByb3BfX19tN3VCQnUgewogIHBhZGRpbmc6IDJweDsKfS5pbnB1dF9Bc3NpZ25JbkFyZ3VtZW50X19fbTd1QkJ1IHsKICBwYWRkaW5nOiAycHg7Cn0uaW5wdXRfTWV0aG9kT25Qcm9wc19fcF9cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9DYWxsT25DYWxsX19cJG9uX203dUJCdSB7CiAgY29sb3I6IHJlZDsKfQ==";
 type Size = "s" | "m";
 export const SwitchAssertNever = /*YAK EXPORTED STYLED:SwitchAssertNever:input_SwitchAssertNever_m7uBBu*//*YAK Extracted CSS:
 .input_SwitchAssertNever___m7uBBu {
@@ -162,37 +162,43 @@ export const BreakBeforeLastCase = /*YAK EXPORTED STYLED:BreakBeforeLastCase:inp
 }), {
     "displayName": "BreakBeforeLastCase"
 });
-// stays unfolded: the expression would hold the statements after the `switch` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `switch` twice, so the whole component stays unfolded
 export const LastCaseThenStatements = /*YAK EXPORTED STYLED:LastCaseThenStatements:input_LastCaseThenStatements_m7uBBu*//*YAK Extracted CSS:
 .input_LastCaseThenStatements___m7uBBu {
   padding: 2px;
 }
-.input_LastCaseThenStatements___m7uBBu-01 {
-  padding: 8px;
+.input_LastCaseThenStatements_m7uBBu {
+  width: var(--input_LastCaseThenStatements__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_LastCaseThenStatements_m7uBBu", ({ $size })=>{
-    switch($size){
-        case "s":
-            return /*#__PURE__*/ css("input_LastCaseThenStatements___m7uBBu");
-        default:
-            log($size);
-    }
-    log($size);
-    return /*#__PURE__*/ css("input_LastCaseThenStatements___m7uBBu-01");
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_LastCaseThenStatements_m7uBBu", ({ $size })=>$size === "s" && /*#__PURE__*/ css("input_LastCaseThenStatements___m7uBBu"), {
+    "--input_LastCaseThenStatements__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $size })=>{
+        switch($size){
+            case "s":
+                return 2;
+            default:
+                log($size);
+        }
+        log($size);
+        return 8;
+    }, "px")
 }), {
     "displayName": "LastCaseThenStatements"
 });
-// stays unfolded: the expression would hold the statements after the `if` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `if` twice
 export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutReturnThenStatements:input_IfWithoutReturnThenStatements_m7uBBu*//*YAK Extracted CSS:
-.input_IfWithoutReturnThenStatements___m7uBBu {
-  color: red;
+.input_IfWithoutReturnThenStatements_m7uBBu {
+  width: var(--input_IfWithoutReturnThenStatements__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_IfWithoutReturnThenStatements_m7uBBu", ({ $on })=>{
-    if ($on) {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_IfWithoutReturnThenStatements_m7uBBu", {
+    "--input_IfWithoutReturnThenStatements__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $on })=>{
+        if ($on) {
+            log($on);
+        }
         log($on);
-    }
-    log($on);
-    return /*#__PURE__*/ css("input_IfWithoutReturnThenStatements___m7uBBu");
+        return 8;
+    }, "px")
 }), {
     "displayName": "IfWithoutReturnThenStatements"
 });

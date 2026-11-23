@@ -122,7 +122,7 @@ export const BlockWithDebugger = /*YAK EXPORTED STYLED:BlockWithDebugger:input_B
 }), {
     "displayName": "BlockWithDebugger"
 });
-// the expression would hold the statements after the first `if` twice
+// a `let` after the guard block has no place in the expression
 export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutReturnThenStatements:input_IfWithoutReturnThenStatements_m7uBBu*//*YAK Extracted CSS:
 .input_IfWithoutReturnThenStatements___m7uBBu {
   color: red;
@@ -137,7 +137,8 @@ export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutRetu
     if ($on) {
         if ($big) return /*#__PURE__*/ css("input_IfWithoutReturnThenStatements___m7uBBu");
     }
-    if ($big) return /*#__PURE__*/ css("input_IfWithoutReturnThenStatements___m7uBBu-01");
+    let big = $big;
+    if (big) return /*#__PURE__*/ css("input_IfWithoutReturnThenStatements___m7uBBu-01");
     return /*#__PURE__*/ css("input_IfWithoutReturnThenStatements___m7uBBu-02");
 }), {
     "displayName": "IfWithoutReturnThenStatements"

@@ -162,37 +162,43 @@ export const BreakBeforeLastCase = /*YAK EXPORTED STYLED:BreakBeforeLastCase:inp
 }), {
     "displayName": "BreakBeforeLastCase"
 });
-// stays unfolded: the expression would hold the statements after the `switch` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `switch` twice, so the whole component stays unfolded
 export const LastCaseThenStatements = /*YAK EXPORTED STYLED:LastCaseThenStatements:input_LastCaseThenStatements_m7uBBu*//*YAK Extracted CSS:
 .input_LastCaseThenStatements___m7uBBu {
   padding: 2px;
 }
-.input_LastCaseThenStatements___m7uBBu-01 {
-  padding: 8px;
+.input_LastCaseThenStatements_m7uBBu {
+  width: var(--input_LastCaseThenStatements__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_LastCaseThenStatements_m7uBBu", ({ $size })=>{
-    switch($size){
-        case "s":
-            return /*#__PURE__*/ css("input_LastCaseThenStatements___m7uBBu");
-        default:
-            log($size);
-    }
-    log($size);
-    return /*#__PURE__*/ css("input_LastCaseThenStatements___m7uBBu-01");
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_LastCaseThenStatements_m7uBBu", ({ $size })=>$size === "s" && /*#__PURE__*/ css("input_LastCaseThenStatements___m7uBBu"), {
+    "--input_LastCaseThenStatements__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $size })=>{
+        switch($size){
+            case "s":
+                return 2;
+            default:
+                log($size);
+        }
+        log($size);
+        return 8;
+    }, "px")
 }), {
     "displayName": "LastCaseThenStatements"
 });
-// stays unfolded: the expression would hold the statements after the `if` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `if` twice
 export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutReturnThenStatements:input_IfWithoutReturnThenStatements_m7uBBu*//*YAK Extracted CSS:
-.input_IfWithoutReturnThenStatements___m7uBBu {
-  color: red;
+.input_IfWithoutReturnThenStatements_m7uBBu {
+  width: var(--input_IfWithoutReturnThenStatements__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_IfWithoutReturnThenStatements_m7uBBu", ({ $on })=>{
-    if ($on) {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_IfWithoutReturnThenStatements_m7uBBu", {
+    "--input_IfWithoutReturnThenStatements__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $on })=>{
+        if ($on) {
+            log($on);
+        }
         log($on);
-    }
-    log($on);
-    return /*#__PURE__*/ css("input_IfWithoutReturnThenStatements___m7uBBu");
+        return 8;
+    }, "px")
 }), {
     "displayName": "IfWithoutReturnThenStatements"
 });

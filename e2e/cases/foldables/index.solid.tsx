@@ -150,6 +150,28 @@ const Placed = styled.p<{ $placement: Placement }>`
   }}
 `;
 
+// a guard block whose paths return or go on with the next statement
+const Guarded = styled.p<{ $size: "s" | "l"; $n: number }>`
+  ${({ $size, $n }) => {
+    if ($size === "l") {
+      if ($n >= 12) {
+        return css`
+          padding-left: 12px;
+        `;
+      }
+      if ($n === 0) return;
+    }
+    if ($n >= 6) {
+      return css`
+        padding-left: 6px;
+      `;
+    }
+    return css`
+      padding-left: 1px;
+    `;
+  }}
+`;
+
 export default function App() {
   const [active, setActive] = createSignal(false);
   const spreadProps = { $active: true };
@@ -216,6 +238,15 @@ export default function App() {
       <Placed data-testid="placed-missing" $placement={{}}>
         placed missing
       </Placed>
+      <Guarded data-testid="guarded-return" $size="l" $n={12}>
+        guarded return
+      </Guarded>
+      <Guarded data-testid="guarded-fall-through" $size="l" $n={7}>
+        guarded fall through
+      </Guarded>
+      <Guarded data-testid="guarded-nothing" $size="l" $n={0}>
+        guarded nothing
+      </Guarded>
       {/* entity spelling decodes to "Food & Drink" - must match like the runtime twin below */}
       <Category data-testid="entity" $label="Food &amp; Drink">
         Food &amp; Drink

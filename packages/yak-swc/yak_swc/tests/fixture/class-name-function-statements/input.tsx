@@ -184,29 +184,32 @@ export const BreakBeforeLastCase = styled.div<{ $size: Size }>`
   }}
 `;
 
-// stays unfolded: the expression would hold the statements after the `switch` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `switch` twice, so the whole component stays unfolded
 export const LastCaseThenStatements = styled.div<{ $size: Size }>`
-  ${({ $size }) => {
+  ${({ $size }) => $size === "s" && css`padding: 2px;`}
+  width: ${({ $size }) => {
     switch ($size) {
       case "s":
-        return css`padding: 2px;`;
+        return 2;
       default:
         log($size);
     }
     log($size);
-    return css`padding: 8px;`;
-  }}
+    return 8;
+  }}px;
 `;
 
-// stays unfolded: the expression would hold the statements after the `if` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `if` twice
 export const IfWithoutReturnThenStatements = styled.div<{ $on: boolean }>`
-  ${({ $on }) => {
+  width: ${({ $on }) => {
     if ($on) {
       log($on);
     }
     log($on);
-    return css`color: red;`;
-  }}
+    return 8;
+  }}px;
 `;
 
 // stays unfolded: a statement after a `return`

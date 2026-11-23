@@ -1,7 +1,7 @@
 import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import { assertNever, log, getLogger } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LnltN3VCQnUxIHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnUyIHsKICBwYWRkaW5nOiA0cHg7Cn0ueW03dUJCdTQgewogIHBhZGRpbmc6IDJweDsKfS55bTd1QkJ1NiB7CiAgcGFkZGluZzogMnB4Owp9Ci55bTd1QkJ1NyB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU5IHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnVBIHsKICBwYWRkaW5nOiA0cHg7Cn0ueW03dUJCdUMgewogIHBhZGRpbmc6IDJweDsKfQoueW03dUJCdUQgewogIHBhZGRpbmc6IDRweDsKfS55bTd1QkJ1RiB7CiAgcGFkZGluZzogMnB4Owp9Ci55bTd1QkJ1RyB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnVJIHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnVKIHsKICBwYWRkaW5nOiA4cHg7Cn0ueW03dUJCdUwgewogIHBhZGRpbmc6IDJweDsKfQoueW03dUJCdU0gewogIHBhZGRpbmc6IDhweDsKfS55bTd1QkJ1TyB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1USB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1UyB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1VSB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1ViB7CiAgd2lkdGg6IHZhcigtLXltN3VCQnVXKTsKfS55bTd1QkJ1WSB7CiAgcGFkZGluZzogMnB4Owp9LnltN3VCQnVhIHsKICBwYWRkaW5nOiA0cHg7Cn0ueW03dUJCdWMgewogIHBhZGRpbmc6IDRweDsKfS55bTd1QkJ1ZSB7CiAgcGFkZGluZzogMnB4Owp9Ci55bTd1QkJ1ZiB7CiAgcGFkZGluZzogOHB4Owp9LnltN3VCQnVoIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVqIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnVsIHsKICBwYWRkaW5nOiAycHg7Cn0ueW03dUJCdW4gewogIHBhZGRpbmc6IDJweDsKfS55bTd1QkJ1cCB7CiAgcGFkZGluZzogMnB4Owp9LnltN3VCQnVyIHsKICBjb2xvcjogcmVkOwp9LnltN3VCQnV0IHsKICBjb2xvcjogcmVkOwp9";
+import "data:text/css;base64,LnltN3VCQnUxIHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnUyIHsKICBwYWRkaW5nOiA0cHg7Cn0ueW03dUJCdTQgewogIHBhZGRpbmc6IDJweDsKfS55bTd1QkJ1NiB7CiAgcGFkZGluZzogMnB4Owp9Ci55bTd1QkJ1NyB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnU5IHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnVBIHsKICBwYWRkaW5nOiA0cHg7Cn0ueW03dUJCdUMgewogIHBhZGRpbmc6IDJweDsKfQoueW03dUJCdUQgewogIHBhZGRpbmc6IDRweDsKfS55bTd1QkJ1RiB7CiAgcGFkZGluZzogMnB4Owp9Ci55bTd1QkJ1RyB7CiAgcGFkZGluZzogNHB4Owp9LnltN3VCQnVJIHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnVKIHsKICBwYWRkaW5nOiA4cHg7Cn0ueW03dUJCdUwgewogIHBhZGRpbmc6IDJweDsKfQoueW03dUJCdU0gewogIHBhZGRpbmc6IDhweDsKfS55bTd1QkJ1TyB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1USB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1UyB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1VSB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1ViB7CiAgd2lkdGg6IHZhcigtLXltN3VCQnVXKTsKfS55bTd1QkJ1WSB7CiAgcGFkZGluZzogMnB4Owp9LnltN3VCQnVhIHsKICBwYWRkaW5nOiA0cHg7Cn0ueW03dUJCdWMgewogIHBhZGRpbmc6IDRweDsKfS55bTd1QkJ1ZSB7CiAgcGFkZGluZzogMnB4Owp9Ci55bTd1QkJ1ZCB7CiAgd2lkdGg6IHZhcigtLXltN3VCQnVmKTsKfS55bTd1QkJ1ZyB7CiAgd2lkdGg6IHZhcigtLXltN3VCQnVoKTsKfS55bTd1QkJ1aiB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1bCB7CiAgcGFkZGluZzogMnB4Owp9LnltN3VCQnVuIHsKICBwYWRkaW5nOiAycHg7Cn0ueW03dUJCdXAgewogIHBhZGRpbmc6IDJweDsKfS55bTd1QkJ1ciB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1dCB7CiAgY29sb3I6IHJlZDsKfQ==";
 type Size = "s" | "m";
 export const SwitchAssertNever = /*YAK EXPORTED STYLED:SwitchAssertNever:ym7uBBu*//*YAK Extracted CSS:
 .ym7uBBu1 {
@@ -130,35 +130,41 @@ export const BreakBeforeLastCase = /*YAK EXPORTED STYLED:BreakBeforeLastCase:ym7
             return /*#__PURE__*/ css("ym7uBBuc");
     }
 });
-// stays unfolded: the expression would hold the statements after the `switch` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `switch` twice, so the whole component stays unfolded
 export const LastCaseThenStatements = /*YAK EXPORTED STYLED:LastCaseThenStatements:ym7uBBud*//*YAK Extracted CSS:
 .ym7uBBue {
   padding: 2px;
 }
-.ym7uBBuf {
-  padding: 8px;
+.ym7uBBud {
+  width: var(--ym7uBBuf);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBud", ({ $size })=>{
-    switch($size){
-        case "s":
-            return /*#__PURE__*/ css("ym7uBBue");
-        default:
-            log($size);
-    }
-    log($size);
-    return /*#__PURE__*/ css("ym7uBBuf");
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBud", ({ $size })=>$size === "s" && /*#__PURE__*/ css("ym7uBBue"), {
+    "--ym7uBBuf": /*#__PURE__*/ __yak_cssValue(({ $size })=>{
+        switch($size){
+            case "s":
+                return 2;
+            default:
+                log($size);
+        }
+        log($size);
+        return 8;
+    }, "px")
 });
-// stays unfolded: the expression would hold the statements after the `if` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `if` twice
 export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutReturnThenStatements:ym7uBBug*//*YAK Extracted CSS:
-.ym7uBBuh {
-  color: red;
+.ym7uBBug {
+  width: var(--ym7uBBuh);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBug", ({ $on })=>{
-    if ($on) {
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBug", {
+    "--ym7uBBuh": /*#__PURE__*/ __yak_cssValue(({ $on })=>{
+        if ($on) {
+            log($on);
+        }
         log($on);
-    }
-    log($on);
-    return /*#__PURE__*/ css("ym7uBBuh");
+        return 8;
+    }, "px")
 });
 // stays unfolded: a statement after a `return`
 export const StatementAfterReturn = /*YAK EXPORTED STYLED:StatementAfterReturn:ym7uBBui*//*YAK Extracted CSS:
