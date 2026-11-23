@@ -1,12 +1,12 @@
-# @yak/styled-arrow-function-statements
+# @yak/styled-function-fast-path
 
-📝 Enforces that functions in yak styled/css literals only use if, else, switch and return, so the component keeps the fast render path.
+📝 Reports code in functions of yak styled/css literals that makes the component render slower.
 
 💼 This rule is enabled in the ✅ `recommended` config.
 
 <!-- end auto-generated rule header -->
 
-Reports a function in a `styled` or `css` literal that yak can not compile to the fast render path.
+Reports code in a function of a `styled` or `css` literal that makes the component render slower.
 
 ## Reason why
 
@@ -33,14 +33,16 @@ compiles to something like
 ({ $size }) => "Button" + ($size === "s" ? " Button_s" : " Button_m");
 ```
 
-That works when the function is an expression, or when its body holds only `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` that names a prop read. Every other statement, like a `const` with a calculation, an assignment or a loop, has no place in such an expression. The component still works, but it renders on a slower path.
+That works when the function is an expression, or when its body holds only `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` that names a prop read. Every other statement, like a `const` with a calculation, an assignment or a loop, has no place in such an expression. The component still works, but it renders slower.
+
+A returned call like `return helper()` also makes the component render slower, and the rule [`styled-function-returned-calls`](./styled-function-returned-calls.md) reports it.
 
 A function that needs such a statement can turn the rule off for that line. The comment stands inside the function, above the reported statement:
 
 ```tsx
 const Button = styled.button<{ $size: number }>`
   ${({ $size }) => {
-    // eslint-disable-next-line @yak/styled-arrow-function-statements
+    // eslint-disable-next-line @yak/styled-function-fast-path
     const padding = Math.min($size, 8);
     return padding > 4 && css`...`;
   }}
@@ -54,9 +56,12 @@ The rule only checks files that import from `@yak/react`.
 The following patterns are considered errors:
 
 ```js
+// a `const` with a calculation, `let`, `var`, destructuring and loops
 styled.button`
-  ${({ $size }) => {
+  ${({ $size, $layout }) => {
     const big = $size > 2;
+    let { medium } = $layout;
+    for (const item of medium.items) log(item);
     return big && css`padding: 8px;`;
   }}
 `;
@@ -94,9 +99,6 @@ styled.button`
 // the compiled function has the props it reads by name and no props object
 styled.button`
   padding: ${(props) => getPadding(props)}px;
-`;
-
-styled.button`
   ${({ $brand, ...rest }) => isActive(rest) && css`color: red;`}
 `;
 ```
@@ -108,34 +110,18 @@ styled.button`
   ${({ $active }) => $active && css`color: red;`}
 `;
 
-styled.button`
-  ${({ $size }) => {
-    if ($size === "s") return css`padding: 2px;`;
-    if ($size === "m") return css`padding: 4px;`;
-    return css`padding: 8px;`;
-  }}
-`;
-
-styled.button`
-  ${({ $variant }) => {
-    switch ($variant) {
-      case "primary":
-        return css`color: blue;`;
-      case "danger":
-      case "warning":
-        return css`color: red;`;
-      default:
-        return css`color: gray;`;
-    }
-  }}
-`;
-
-// a `const` can give a prop read a short name
+// a `const` can give a prop read a short name, and a call stays at its place
 styled.button`
   ${({ $layout }) => {
     const size = $layout.medium?.size;
-    if (size === "s") return css`padding: 2px;`;
-    return css`padding: 8px;`;
+    console.log(size);
+    switch (size) {
+      case "s":
+      case "m":
+        return css`padding: 2px;`;
+      default:
+        assertNever(size);
+    }
   }}
 `;
 
@@ -148,27 +134,5 @@ styled.button`
     if ($big) return css`color: green;`;
     return css`color: blue;`;
   }}
-`;
-
-// a call stays at its place, so an exhaustive check or a `console.log` is fine
-styled.button`
-  ${({ $size }) => {
-    console.log($size);
-    switch ($size) {
-      case "s":
-        return css`padding: 2px;`;
-      case "m":
-        return css`padding: 4px;`;
-      default:
-        assertNever($size);
-    }
-  }}
-`;
-
-styled.button`
-  left: ${({ $x }) => {
-    if ($x === undefined) return 0;
-    return $x;
-  }}px;
 `;
 ```

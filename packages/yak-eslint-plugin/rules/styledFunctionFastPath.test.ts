@@ -9,14 +9,14 @@ RuleTester.itOnly = vitest.it.only;
 RuleTester.describe = vitest.describe;
 
 const ruleTester = new RuleTester({ languageOptions: { parser: tsParser } });
-const rule = yakPlugin.rules["styled-arrow-function-statements"] as unknown as Parameters<
+const rule = yakPlugin.rules["styled-function-fast-path"] as unknown as Parameters<
   typeof ruleTester.run
 >[1];
 
 const react = 'import { css, styled } from "@yak/react";';
 const code = (...lines: string[]) => [react, ...lines].join("\n");
 
-ruleTester.run("yak-styled-arrow-function-statements", rule, {
+ruleTester.run("yak-styled-function-fast-path", rule, {
   valid: [
     {
       name: "props read by name",
@@ -241,7 +241,7 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
       ),
     },
     {
-      name: "a function that is no part of a literal",
+      name: "a function that is not part of a literal",
       code: code("const helper = () => {", "  console.log(1);", "};"),
     },
     {
@@ -278,7 +278,7 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
     {
       name: "a props object read with a computed key",
       code: code("styled.div`", "  ${(props) => props[key] && css`color: red;`}", "`;"),
-      errors: [{ messageId: "propsObject", data: { name: "props" }, line: 3 }],
+      errors: [{ messageId: "propsComputedKey", data: { name: "props" }, line: 3 }],
     },
     {
       name: "a rest parameter",
@@ -305,9 +305,21 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
         "`;",
       ),
       errors: [
-        { messageId: "statement", line: 4 },
-        { messageId: "statement", line: 5 },
+        { messageId: "variable", data: { statement: "A `let`" }, line: 4 },
+        { messageId: "variable", data: { statement: "A destructuring" }, line: 5 },
       ],
+    },
+    {
+      name: "a var",
+      code: code(
+        "styled.div`",
+        "  ${({ $on }) => {",
+        "    var on = $on;",
+        "    return on && css`color: red;`;",
+        "  }}",
+        "`;",
+      ),
+      errors: [{ messageId: "variable", data: { statement: "A `var`" }, line: 4 }],
     },
     {
       name: "an assignment",
@@ -319,10 +331,38 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
         "  }}",
         "`;",
       ),
+      errors: [{ messageId: "statement", data: { statement: "An assignment" }, line: 4 }],
+    },
+    {
+      name: "an update and an assignment to a prop",
+      code: code(
+        "styled.div`",
+        "  ${({ $count, $a }) => {",
+        "    $count++;",
+        "    $a = 1;",
+        "    return $count && $a && css`color: red;`;",
+        "  }}",
+        "`;",
+      ),
+      errors: [
+        { messageId: "statement", data: { statement: "An assignment" }, line: 4 },
+        { messageId: "statement", data: { statement: "An assignment" }, line: 5 },
+      ],
+    },
+    {
+      name: "a call behind a condition",
+      code: code(
+        "styled.div`",
+        "  ${({ $on }) => {",
+        "    $on && log($on);",
+        "    return $on && css`color: red;`;",
+        "  }}",
+        "`;",
+      ),
       errors: [
         {
           messageId: "statement",
-          data: { statement: "statement like an assignment or a call on the result of a call" },
+          data: { statement: "This line" },
           line: 4,
         },
       ],
@@ -339,7 +379,7 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
         "  }}",
         "`;",
       ),
-      errors: [{ messageId: "statement", data: { statement: "`debugger` statement" }, line: 5 }],
+      errors: [{ messageId: "statement", data: { statement: "A `debugger` statement" }, line: 5 }],
     },
     {
       name: "a variable",
@@ -368,8 +408,8 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
         "`;",
       ),
       errors: [
-        { messageId: "statement", data: { statement: "loop" }, line: 4 },
-        { messageId: "statement", data: { statement: "`try` statement" }, line: 7 },
+        { messageId: "statement", data: { statement: "A loop" }, line: 4 },
+        { messageId: "statement", data: { statement: "A `try` statement" }, line: 7 },
       ],
     },
     {
@@ -382,7 +422,7 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
         "  }}px;",
         "`;",
       ),
-      errors: [{ messageId: "constInitializer", line: 4 }],
+      errors: [{ messageId: "constInitializer", data: { name: "x" }, line: 4 }],
     },
     {
       name: "a statement in a nested css literal",
@@ -398,7 +438,13 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
         "    `}",
         "`;",
       ),
-      errors: [{ messageId: "statement", line: 7 }],
+      errors: [
+        {
+          messageId: "statement",
+          data: { statement: "This line" },
+          line: 7,
+        },
+      ],
     },
     {
       name: "a function expression",
@@ -424,7 +470,29 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
         "  }}px;",
         "`;",
       ),
-      errors: [{ messageId: "branchWithoutReturn", data: { statement: "`if` branch" }, line: 4 }],
+      errors: [
+        {
+          messageId: "branchWithoutReturn",
+          data: { statement: "`if` branch" },
+          line: 4,
+          column: 14,
+        },
+      ],
+    },
+    {
+      name: "a block without return and statements after it in a CSS value",
+      code: code(
+        "styled.div`",
+        "  width: ${({ $on, $big }) => {",
+        "    {",
+        "      if ($big) return 1;",
+        "    }",
+        "    if ($on) return 2;",
+        "    return 3;",
+        "  }}px;",
+        "`;",
+      ),
+      errors: [{ messageId: "branchWithoutReturn", data: { statement: "block" }, line: 4 }],
     },
     {
       name: "an else branch without return and statements after it in a CSS value",

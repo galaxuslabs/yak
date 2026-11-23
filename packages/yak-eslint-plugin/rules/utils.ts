@@ -96,3 +96,18 @@ export function isStyledOrCssTag(
 
   return false;
 }
+
+/** `$size` for `$size as string`, `$size!`, `$size satisfies Size`, `<string>$size` or `($size)` */
+export function unwrapTypeCasts(expression: ESTree.Expression): ESTree.Expression {
+  let node = expression;
+  while (
+    node.type === "TSAsExpression" ||
+    node.type === "TSNonNullExpression" ||
+    node.type === "TSSatisfiesExpression" ||
+    node.type === "TSTypeAssertion" ||
+    node.type === "ParenthesizedExpression"
+  ) {
+    node = node.expression;
+  }
+  return node;
+}

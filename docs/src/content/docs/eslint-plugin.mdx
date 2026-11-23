@@ -65,7 +65,8 @@ const myDiv = styled.div`
     "@yak/css-nesting-operator": "error",
     "@yak/enforce-semicolon": "error",
     "@yak/style-conditions": "warn",
-    "@yak/styled-arrow-function-statements": "error"
+    "@yak/styled-function-fast-path": "error",
+    "@yak/styled-function-returns": "error"
   }
 }
 ```
@@ -252,11 +253,11 @@ In this example:
 
 The `@yak/style-conditions` rule flags unnecessary uses of CSS variables, which keeps your HTML smaller and faster.
 
-### styled-arrow-function-statements
+### styled-function-fast-path
 
-Reports a function in a `styled` or `css` literal that yak can not compile to the fast render path.
+Reports code in a function of a `styled` or `css` literal that makes the component render slower.
 
-`@yak/react` compiles the functions of a styled component into one function that returns the class names of a render. That works when a function is an expression, or when its body holds only `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` that names a prop read like `const size = $layout.size;`. Every other statement, like a `const` with a calculation or an assignment, moves the component to a slower render path.
+`@yak/react` compiles the functions of a styled component into one function that returns the class names of a render. That works when a function is an expression, or when its body holds only `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` that names a prop read like `const size = $layout.size;`. Every other statement, like a `const` with a calculation, an assignment or a loop, makes the component render slower.
 
 Example:
 
@@ -292,41 +293,44 @@ styled.button<{ $variant: "primary" | "danger" }>`
 `;
 ```
 
-A function that needs another statement can turn the rule off with `// eslint-disable-next-line @yak/styled-arrow-function-statements` inside the function, above the reported statement. The component still works and only renders a little slower.
+A function that needs another statement can turn the rule off with `// eslint-disable-next-line @yak/styled-function-fast-path` inside the function, above the reported statement. The component still works and only renders a little slower.
 
-### styled-arrow-function-returns
+### styled-function-returns
 
-Reports a function that adds class names but returns anything other than a `css` literal. The rule is off by default.
+Reports a function that stands on its own in a `styled` or `css` literal and returns a value without styles.
 
-A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names, when it stands on its own. At the second place a string or a number adds no styles, and yak can not tell what a call to another function returns.
+A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names, when it stands on its own. At the second place a string drops the styles without any sign. Wrap the CSS in a `css` literal. A number, `true`, a calculation, an object or an array adds no styles either.
 
 Example:
 
-```tsx
-// ❌ A string adds no styles here
-const Button = styled.button<{ $active: boolean }>`
-  ${({ $active }) => $active && "font-weight: bold;"}
+```tsx title="example.tsx"
+styled.button<{ $active: boolean }>`
+  ${({ $active }) => $active && "font-weight: bold;"} // [!code --]
+  ${({ $active }) => $active && css`font-weight: bold;`} // [!code ++]
 `;
+```
 
-// ❌ yak can not tell what the call returns
-const Box = styled.div<{ $size: "s" | "m" }>`
+### styled-function-returned-calls
+
+Reports a call that a function standing on its own returns, like `return helper()`, and a tagged template other than `css`. The rule is off by default and only checks files that import from `@yak/react`.
+
+yak can not see what a call returns, so the component renders slower. A helper that returns a `css` literal is valid code, so turn the rule on when render speed matters.
+
+Example:
+
+```tsx title="example.tsx"
+styled.div<{ $size: "s" | "m" }>`
   ${({ $size }) => {
     switch ($size) {
       case "s":
         return css`padding: 2px;`;
       default:
-        return assertNever($size);
+        return assertNever($size); // [!code --]
+        assertNever($size); // [!code ++]
     }
   }}
 `;
-
-// ✅ A css literal, or nothing
-const Button = styled.button<{ $active: boolean }>`
-  ${({ $active }) => $active && css`font-weight: bold;`}
-`;
 ```
-
-A helper that returns a `css` literal is valid code and the rule reports it too, so turn the rule on when your code base returns `css` literals directly.
 
 ## Next steps
 

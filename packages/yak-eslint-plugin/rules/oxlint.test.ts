@@ -61,29 +61,35 @@ ruleTester.run("@yak/style-conditions", yakPlugin.rules["style-conditions"], {
   ],
 });
 
-ruleTester.run(
-  "@yak/styled-arrow-function-statements",
-  yakPlugin.rules["styled-arrow-function-statements"],
-  {
-    valid: [],
-    invalid: [
-      {
-        code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => { const on = !$on; return on && css`color: red;`; }}`;",
-        errors: [{ messageId: "constInitializer" }],
-      },
-    ],
-  },
-);
+ruleTester.run("@yak/styled-function-fast-path", yakPlugin.rules["styled-function-fast-path"], {
+  valid: [],
+  invalid: [
+    {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => { const on = !$on; return on && css`color: red;`; }}`;",
+      errors: [{ messageId: "constInitializer" }],
+    },
+  ],
+});
+
+ruleTester.run("@yak/styled-function-returns", yakPlugin.rules["styled-function-returns"], {
+  valid: [],
+  invalid: [
+    {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && 'color: red;'}`;",
+      errors: [{ messageId: "stringReturn" }],
+    },
+  ],
+});
 
 ruleTester.run(
-  "@yak/styled-arrow-function-returns",
-  yakPlugin.rules["styled-arrow-function-returns"],
+  "@yak/styled-function-returned-calls",
+  yakPlugin.rules["styled-function-returned-calls"],
   {
     valid: [],
     invalid: [
       {
-        code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && 'color: red;'}`;",
-        errors: [{ messageId: "invalidReturn" }],
+        code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && helper()}`;",
+        errors: [{ messageId: "unclearReturn" }],
       },
     ],
   },

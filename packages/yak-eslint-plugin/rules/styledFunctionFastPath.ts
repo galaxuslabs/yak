@@ -1,10 +1,9 @@
 import type { ESTree } from "@oxlint/plugins";
 import { createRule } from "../utils.js";
 import { isInsideCssDeclarationValue } from "./styleConditions.js";
-import { importsYak, isStyledOrCssTag } from "./utils.js";
+import { importsYak, isStyledOrCssTag, unwrapTypeCasts } from "./utils.js";
 
-const hint =
-  "Write the logic with `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` for a prop read only, or as an expression like `({ $active }) => $active && css`...``.";
+const slower = "in a function of a styled/css literal makes the component render slower.";
 
 /**
  * yak compiles the functions of a styled component into one function that
@@ -17,39 +16,43 @@ const hint =
  * `assertNever($size);` also works: the compiler keeps it at its place. So
  * does a `const` that names a prop read: the compiler writes the read at
  * each use of the name.
- * Every other statement has no place in an expression, so the component falls
- * back to the slower render path. This rule reports those statements
+ * Every other statement has no place in an expression, so the component
+ * renders slower. This rule reports those statements
  *
  * Only `@yak/react` compiles this way
  */
-export const styledArrowFunctionStatements = createRule("styled-arrow-function-statements", {
+export const styledFunctionFastPath = createRule("styled-function-fast-path", {
   meta: {
     type: "problem",
     docs: {
       description:
-        "Enforces that functions in yak styled/css literals only use if, else, switch and return, so the component keeps the fast render path",
+        "Reports code in functions of yak styled/css literals that makes the component render slower",
       recommended: true,
       requiresTypeChecking: false,
     },
     messages: {
-      statement: `A {{statement}} inside a function of a styled/css literal moves the component to the slower render path. ${hint}`,
+      statement: `{{statement}} ${slower} Write the logic with \`if\`, \`switch\`, \`return\` and \`const\` only.`,
+      variable: `{{statement}} ${slower} Use a \`const\` that names one prop read, like \`const size = $layout.size;\`.`,
       constInitializer:
-        "`{{name}}` is a call or a calculation here, which moves the component to the slower render path. A `const` keeps the fast render path only if it names a prop read, like `const size = $layout.size;`. Write the calculation where the value is used, or move it into a function outside of the literal and call that function there.",
+        "`const {{name}}` holds more than a prop read, so the component renders slower. A `const` can name a prop read like `const size = $layout.size;`. Write the expression where you use `{{name}}`.",
       functionExpression:
-        "A `function` expression inside a styled/css literal moves the component to the slower render path. Use an arrow function, e.g. `({ $active }) => $active && css`...``.",
-      branchWithoutReturn: `This {{statement}} can end without a \`return\` and more than a single \`return\` follows it. For a function that sets a CSS value this moves the component to the slower render path. Return in every branch or move the code after it into the branches. ${hint}`,
+        "A `function` expression in a styled/css literal makes the component render slower. Use an arrow function like `({ $active }) => { if ($active) return css`...`; }`.",
+      branchWithoutReturn:
+        "In a CSS value like `width: ${...}px`, this {{statement}} can end without `return` while more code follows, so the component renders slower. Return in every branch.",
       propsObject:
-        "`{{name}}` is used as a whole object here, which moves the component to the slower render path. The fast render path only has the props a function reads by name, like `{{name}}.$active`. Read the props by name and pass those on, e.g. `({ $a, $b }) => helper({ $a, $b })`.",
+        "`{{name}}` is passed on as a whole object, so the component renders slower. Read the props by name and pass those, like `({ $a, $b }) => helper({ $a, $b })`.",
+      propsComputedKey:
+        "`{{name}}[...]` reads a prop by a computed key, so the component renders slower. Read the props by name, like `{{name}}.$active`.",
       restParameter:
-        "`...{{name}}` collects the other props into a new object, which moves the component to the slower render path. Destructure the props by name and pass those on, e.g. `({ $a, $b }) => helper({ $a, $b })`.",
+        "`...{{name}}` collects the other props into a new object, so the component renders slower. Destructure the props by name and pass those, like `({ $a, $b }) => helper({ $a, $b })`.",
       switchDiscriminant:
-        "A `switch` inside a styled/css literal has to switch on a prop like `$variant` or `props.$variant`. A call or a calculation moves the component to the slower render path. Use `if` and `return` for it.",
+        "A `switch` in a styled/css literal has to switch on a prop like `$variant` or `props.$variant`, or the component renders slower. Use `if` and `return` for anything else.",
       switchCaseTest:
-        'A `case` inside a styled/css literal has to be a value like `"small"`, `1`, `SMALL` or `Size.Small`. A call or a calculation moves the component to the slower render path. Use `if` and `return` for it.',
+        'A `case` in a styled/css literal has to be a value like `"small"`, `1` or `Size.Small`, or the component renders slower. Use `if` and `return` for anything else.',
       switchCaseWithoutReturn:
-        "Every `case` before the last one inside a styled/css literal has to end with a `return`. A `break` or a `case` that runs into the next one moves the component to the slower render path.",
+        "Every `case` before the last one has to end with `return`, or the component renders slower. Replace a `break` with `return;`, and add a `return` where the `case` runs into the next one.",
       switchDefaultNotLast:
-        "The `default` case inside a styled/css literal has to be the last one. Any other order moves the component to the slower render path.",
+        "Move `default` to the end of the `switch`. Any other order in a styled/css literal makes the component render slower.",
     },
     schema: [],
     defaultOptions: [],
@@ -65,7 +68,9 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
      * { if ($on) { if ($big) return css`a`; } if ($big) return css`b`; return css`c`; }
      * -> (($on ? ($big ? " a" : void 0) : void 0) ?? ($big ? " b" : " c"))
      *
-     * `null` is a real CSS value, so that does not work for a CSS value
+     * The compiled code goes on after a branch with `??`, which treats a
+     * returned `null` or `undefined` as "go on". A function that sets a CSS
+     * value can return those on purpose, so each of its branches has to return
      */
     let setsCssValue = false;
 
@@ -95,7 +100,7 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
           case "IfStatement":
             if (hasCodeAfter && !alwaysReturns([statement.consequent])) {
               context.report({
-                node: statement,
+                node: statement.consequent,
                 messageId: "branchWithoutReturn",
                 data: { statement: "`if` branch" },
               });
@@ -129,8 +134,10 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
             if (statement.kind !== "const") {
               context.report({
                 node: statement,
-                messageId: "statement",
-                data: { statement: statementNames.VariableDeclaration! },
+                messageId: "variable",
+                data: {
+                  statement: `${/^[aeiou]/.test(statement.kind) ? "An" : "A"} \`${statement.kind}\``,
+                },
               });
               return;
             }
@@ -138,8 +145,8 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
               if (declaration.id.type !== "Identifier") {
                 context.report({
                   node: declaration,
-                  messageId: "statement",
-                  data: { statement: statementNames.VariableDeclaration! },
+                  messageId: "variable",
+                  data: { statement: "A destructuring" },
                 });
               } else if (!isConstInitializer(declaration.init)) {
                 context.report({
@@ -155,7 +162,7 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
               context.report({
                 node: statement,
                 messageId: "statement",
-                data: { statement: statementNames.ExpressionStatement! },
+                data: { statement: expressionStatementName(statement.expression) },
               });
             }
             return;
@@ -163,7 +170,7 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
             context.report({
               node: statement,
               messageId: "statement",
-              data: { statement: statementNames[statement.type] ?? "statement" },
+              data: { statement: statementNames[statement.type] ?? "This line" },
             });
         }
       });
@@ -196,14 +203,22 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
 
     /**
      * The compiled function gets the props it reads by name and no props
-     * object, so `(props) => helper(props)` and `({ $on, ...rest }) => ...`
-     * keep the component on the slower render path
+     * object, so `(props) => helper(props)`, `(props) => props[key]` and
+     * `({ $on, ...rest }) => ...` make the component render slower
      */
     const checkParameter = (arrow: ESTree.ArrowFunctionExpression) => {
       const [parameter] = arrow.params;
       if (parameter?.type === "Identifier") {
         for (const node of findObjectUses(arrow.body, parameter.name)) {
-          context.report({ node, messageId: "propsObject", data: { name: parameter.name } });
+          const isComputedRead =
+            node.parent?.type === "MemberExpression" &&
+            node.parent.computed &&
+            node.parent.object === node;
+          context.report({
+            node,
+            messageId: isComputedRead ? "propsComputedKey" : "propsObject",
+            data: { name: parameter.name },
+          });
         }
       } else if (parameter?.type === "ObjectPattern") {
         for (const property of parameter.properties) {
@@ -247,23 +262,30 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
 });
 
 const statementNames: Partial<Record<ESTree.Statement["type"], string>> = {
-  VariableDeclaration: "`let`, `var` or destructuring",
-  ExpressionStatement: "statement like an assignment or a call on the result of a call",
-  DebuggerStatement: "`debugger` statement",
-  ForStatement: "loop",
-  ForInStatement: "loop",
-  ForOfStatement: "loop",
-  WhileStatement: "loop",
-  DoWhileStatement: "loop",
-  TryStatement: "`try` statement",
-  ThrowStatement: "`throw` statement",
-  FunctionDeclaration: "function declaration",
-  BreakStatement: "`break` statement",
-  LabeledStatement: "label",
+  DebuggerStatement: "A `debugger` statement",
+  ForStatement: "A loop",
+  ForInStatement: "A loop",
+  ForOfStatement: "A loop",
+  WhileStatement: "A loop",
+  DoWhileStatement: "A loop",
+  TryStatement: "A `try` statement",
+  ThrowStatement: "A `throw` statement",
+  FunctionDeclaration: "A function declaration",
+  ClassDeclaration: "A class declaration",
+  BreakStatement: "A `break` statement",
+  LabeledStatement: "A label",
 };
 
+/** "An assignment" for `$a = 1` or `$count++`, "This line" for anything else like `$on && log($on);` */
+function expressionStatementName(expression: ESTree.Expression): string {
+  const node = unwrapTypeCasts(expression);
+  return node.type === "AssignmentExpression" || node.type === "UpdateExpression"
+    ? "An assignment"
+    : "This line";
+}
+
 /**
- * Every use of the props parameter that is no read by name: `helper(props)`
+ * Every use of the props parameter that is not a read by name: `helper(props)`
  * or `props[key]`, but not `props.$on`
  */
 function findObjectUses(root: unknown, name: string): ESTree.Node[] {
@@ -426,18 +448,4 @@ function isCaseValue(expression: ESTree.Expression): boolean {
       typeof node.value === "boolean") &&
     !("regex" in node && node.regex)
   );
-}
-
-function unwrapTypeCasts(expression: ESTree.Expression): ESTree.Expression {
-  let node = expression;
-  while (
-    node.type === "TSAsExpression" ||
-    node.type === "TSNonNullExpression" ||
-    node.type === "TSSatisfiesExpression" ||
-    node.type === "TSTypeAssertion" ||
-    node.type === "ParenthesizedExpression"
-  ) {
-    node = node.expression;
-  }
-  return node;
 }

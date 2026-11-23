@@ -3,8 +3,9 @@ import { eslintCompatPlugin } from "@oxlint/plugins";
 import { cssNestingOperator } from "./rules/cssNestingOperator.js";
 import { enforceSemicolons } from "./rules/enforceSemicolon.js";
 import { styleConditions } from "./rules/styleConditions.js";
-import { styledArrowFunctionReturns } from "./rules/styledArrowFunctionReturns.js";
-import { styledArrowFunctionStatements } from "./rules/styledArrowFunctionStatements.js";
+import { styledFunctionFastPath } from "./rules/styledFunctionFastPath.js";
+import { styledFunctionReturnedCalls } from "./rules/styledFunctionReturnedCalls.js";
+import { styledFunctionReturns } from "./rules/styledFunctionReturns.js";
 
 const compatPlugin = eslintCompatPlugin({
   meta: {
@@ -14,8 +15,9 @@ const compatPlugin = eslintCompatPlugin({
     "css-nesting-operator": cssNestingOperator,
     "enforce-semicolon": enforceSemicolons,
     "style-conditions": styleConditions,
-    "styled-arrow-function-returns": styledArrowFunctionReturns,
-    "styled-arrow-function-statements": styledArrowFunctionStatements,
+    "styled-function-fast-path": styledFunctionFastPath,
+    "styled-function-returned-calls": styledFunctionReturnedCalls,
+    "styled-function-returns": styledFunctionReturns,
   },
 });
 
@@ -40,7 +42,8 @@ const configs = {
       [`${prefix}/css-nesting-operator`]: "error",
       [`${prefix}/enforce-semicolon`]: "error",
       [`${prefix}/style-conditions`]: "warn",
-      [`${prefix}/styled-arrow-function-statements`]: "error",
+      [`${prefix}/styled-function-fast-path`]: "error",
+      [`${prefix}/styled-function-returns`]: "error",
     },
   },
 };

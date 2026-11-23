@@ -9,14 +9,14 @@ RuleTester.itOnly = vitest.it.only;
 RuleTester.describe = vitest.describe;
 
 const ruleTester = new RuleTester({ languageOptions: { parser: tsParser } });
-const rule = yakPlugin.rules["styled-arrow-function-returns"] as unknown as Parameters<
+const rule = yakPlugin.rules["styled-function-returns"] as unknown as Parameters<
   typeof ruleTester.run
 >[1];
 
 const react = 'import { atoms, css, styled } from "@yak/react";';
 const code = (...lines: string[]) => [react, ...lines].join("\n");
 
-ruleTester.run("yak-styled-arrow-function-returns", rule, {
+ruleTester.run("yak-styled-function-returns", rule, {
   valid: [
     {
       name: "a css literal behind a condition",
@@ -70,6 +70,15 @@ ruleTester.run("yak-styled-arrow-function-returns", rule, {
       ),
     },
     {
+      name: "a returned call or tagged template",
+      code: code(
+        "styled.div`",
+        "  ${({ theme }) => theme.helpers.focus(1)}",
+        "  ${({ $on }) => $on && keyframes`from { opacity: 0; }`}",
+        "`;",
+      ),
+    },
+    {
       name: "a function inside a returned function is not checked",
       code: code("styled.div`", '  ${({ $on }) => $on && css`color: ${() => "red"};`}', "`;"),
     },
@@ -82,7 +91,7 @@ ruleTester.run("yak-styled-arrow-function-returns", rule, {
     {
       name: "a string",
       code: code("styled.div`", '  ${({ $on }) => $on && "color: red;"}', "`;"),
-      errors: [{ messageId: "invalidReturn", data: { kind: "A string" }, line: 3 }],
+      errors: [{ messageId: "stringReturn", line: 3 }],
     },
     {
       name: "a template string in a block body",
@@ -95,7 +104,7 @@ ruleTester.run("yak-styled-arrow-function-returns", rule, {
         "  }}",
         "`;",
       ),
-      errors: [{ messageId: "invalidReturn", data: { kind: "A string" }, line: 5 }],
+      errors: [{ messageId: "stringReturn", line: 5 }],
     },
     {
       name: "a number and true in a ternary",
@@ -119,33 +128,27 @@ ruleTester.run("yak-styled-arrow-function-returns", rule, {
       ],
     },
     {
-      name: "a call in the default case of a switch",
-      code: code(
-        "styled.div`",
-        "  ${({ $size }) => {",
-        "    switch ($size) {",
-        '      case "s":',
-        "        return css`padding: 1px;`;",
-        "      default:",
-        "        return assertNever($size);",
-        "    }",
-        "  }}",
-        "`;",
-      ),
-      errors: [{ messageId: "unclearReturn", data: { name: "assertNever" }, line: 8 }],
+      name: "an array",
+      code: code("styled.div`", "  ${({ $on }) => $on && [css`color: red;`]}", "`;"),
+      errors: [{ messageId: "invalidReturn", data: { kind: "An array" }, line: 3 }],
     },
     {
-      name: "a helper call in a nested css literal",
-      code: code(
+      name: "a string with @yak/solid",
+      code: [
+        'import { styled } from "@yak/solid";',
         "styled.div`",
-        "  ${({ $on }) =>",
-        "    $on &&",
-        "    css`",
-        "      ${({ theme }) => theme.helpers.focus(1)}",
-        "    `}",
+        '  ${({ $on }) => $on && "color: red;"}',
         "`;",
-      ),
-      errors: [{ messageId: "unclearReturn", data: { name: "theme.helpers.focus" }, line: 6 }],
+      ].join("\n"),
+      errors: [{ messageId: "stringReturn", line: 3 }],
     },
   ],
+});
+
+vitest.describe("styled-function-returns in the recommended config", () => {
+  vitest.it("is an error", () => {
+    vitest
+      .expect(yakPlugin.configs.recommended.rules["@yak/styled-function-returns"])
+      .toBe("error");
+  });
 });
