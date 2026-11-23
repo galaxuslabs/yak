@@ -130,35 +130,41 @@ export const BreakBeforeLastCase = /*YAK EXPORTED STYLED:BreakBeforeLastCase:ym7
             return /*#__PURE__*/ css("ym7uBBuc");
     }
 });
-// stays unfolded: the expression would hold the statements after the `switch` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `switch` twice, so the whole component stays unfolded
 export const LastCaseThenStatements = /*YAK EXPORTED STYLED:LastCaseThenStatements:ym7uBBud*//*YAK Extracted CSS:
 .ym7uBBue {
   padding: 2px;
 }
-.ym7uBBuf {
-  padding: 8px;
+.ym7uBBud {
+  width: var(--ym7uBBuf);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBud", ({ $size })=>{
-    switch($size){
-        case "s":
-            return /*#__PURE__*/ css("ym7uBBue");
-        default:
-            log($size);
-    }
-    log($size);
-    return /*#__PURE__*/ css("ym7uBBuf");
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBud", ({ $size })=>$size === "s" && /*#__PURE__*/ css("ym7uBBue"), {
+    "--ym7uBBuf": /*#__PURE__*/ __yak_cssValue(({ $size })=>{
+        switch($size){
+            case "s":
+                return 2;
+            default:
+                log($size);
+        }
+        log($size);
+        return 8;
+    }, "px")
 });
-// stays unfolded: the expression would hold the statements after the `if` twice
+// stays unfolded: at a CSS value position the expression would hold the
+// statements after the `if` twice
 export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutReturnThenStatements:ym7uBBug*//*YAK Extracted CSS:
-.ym7uBBuh {
-  color: red;
+.ym7uBBug {
+  width: var(--ym7uBBuh);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBug", ({ $on })=>{
-    if ($on) {
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBug", {
+    "--ym7uBBuh": /*#__PURE__*/ __yak_cssValue(({ $on })=>{
+        if ($on) {
+            log($on);
+        }
         log($on);
-    }
-    log($on);
-    return /*#__PURE__*/ css("ym7uBBuh");
+        return 8;
+    }, "px")
 });
 // stays unfolded: a statement after a `return`
 export const StatementAfterReturn = /*YAK EXPORTED STYLED:StatementAfterReturn:ym7uBBui*//*YAK Extracted CSS:

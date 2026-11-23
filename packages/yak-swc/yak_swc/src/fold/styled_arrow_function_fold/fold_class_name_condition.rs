@@ -7,13 +7,14 @@ use crate::utils::ast_helper::{binary, condition, paren, str_expr, unwrap_type_c
 use swc_core::{
   atoms::Wtf8Atom,
   common::DUMMY_SP,
-  ecma::ast::{BinaryOp, CallExpr, Expr, Lit, SeqExpr},
+  ecma::ast::{BinaryOp, CallExpr, Expr, Lit, Number, SeqExpr, UnaryExpr, UnaryOp},
 };
 
 impl ClassNameFolder<'_> {
   /// Folds what a runtime expression returns: a `css(...)` call, a falsy
   /// literal, `cond && <value>`, `cond || <value>`,
-  /// `cond ? <value> : <value>` or `(call, <value>)`
+  /// `cond ? <value> : <value>`, `(call, <value>)` or the `??` of a guard
+  /// block, see `fall_through_to_expr`
   ///
   /// The result is a folded class name expression: the class names the value
   /// adds, as a string that is empty or starts with a space, e.g.
@@ -79,6 +80,30 @@ impl ClassNameFolder<'_> {
           span: DUMMY_SP,
           exprs,
         }))))
+      }
+      // `(size === "l" ? ($n >= 12 ? css("yB1") : <marker>) : <marker>) ?? css("yB2")`
+      // -> `((size === "l" ? ($n >= 12 ? " yB1" : void 0) : void 0) ?? " yB2")`
+      //
+      // `block_body_to_expr` builds this `??` for a path that leaves a guard
+      // block, see `fall_through_to_expr`. A user-written `??` has no marker
+      // on its left side and stays unfolded
+      Expr::Bin(bin) if bin.op == BinaryOp::NullishCoalescing => {
+        let outer = self.fall_through.replace(false);
+        let branch = self.fold_value(&bin.left);
+        let has_marker = self.fall_through == Some(true);
+        self.fall_through = outer;
+        if !has_marker {
+          return None;
+        }
+        let rest = self.fold_value(&bin.right)?;
+        Some(paren(binary(BinaryOp::NullishCoalescing, branch?, rest)))
+      }
+      // `void 0` is nullish, so `??` goes on with the statements after the
+      // guard block. Outside the left side of its `??` the marker stops the
+      // fold, so `undefined` never becomes a class name
+      Expr::Invalid(_) => {
+        *self.fall_through.as_mut()? = true;
+        Some(void_zero())
       }
       _ => None,
     }
@@ -168,6 +193,10 @@ impl ClassNameFolder<'_> {
     if !is_yak_css_callee(&call.callee, self.yak_imports) {
       return None;
     }
+    // the arguments add class names to a concatenation, where a fall through
+    // marker of the enclosing function must not appear. A `None` stops the
+    // whole fold, so only the success path restores `fall_through`
+    let outer = self.fall_through.take();
     let mut class_name = None;
     let mut folded_arguments = Vec::new();
     for arg in &call.args {
@@ -193,6 +222,7 @@ impl ClassNameFolder<'_> {
     for folded_class_names in folded_arguments {
       result = join_folded_class_names(result, folded_class_names);
     }
+    self.fall_through = outer;
     Some(result)
   }
 }
@@ -207,6 +237,14 @@ pub(super) fn is_falsy_literal(expr: &Expr) -> bool {
     Expr::Ident(ident) => ident.sym == "undefined",
     _ => false,
   }
+}
+
+fn void_zero() -> Box<Expr> {
+  Box::new(Expr::Unary(UnaryExpr {
+    span: DUMMY_SP,
+    op: UnaryOp::Void,
+    arg: Box::new(Expr::Lit(Lit::Num(Number::from(0.0)))),
+  }))
 }
 
 pub(super) fn create_folded_empty_class_name() -> Box<Expr> {

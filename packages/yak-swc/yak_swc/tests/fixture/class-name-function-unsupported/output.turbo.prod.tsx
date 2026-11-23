@@ -92,7 +92,7 @@ export const BlockWithDebugger = /*YAK EXPORTED STYLED:BlockWithDebugger:ym7uBBu
         return /*#__PURE__*/ css("ym7uBBuP");
     }
 });
-// the expression would hold the statements after the first `if` twice
+// a `let` after the guard block has no place in the expression
 export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutReturnThenStatements:ym7uBBuQ*//*YAK Extracted CSS:
 .ym7uBBuR {
   color: red;
@@ -107,7 +107,8 @@ export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutRetu
     if ($on) {
         if ($big) return /*#__PURE__*/ css("ym7uBBuR");
     }
-    if ($big) return /*#__PURE__*/ css("ym7uBBuS");
+    let big = $big;
+    if (big) return /*#__PURE__*/ css("ym7uBBuS");
     return /*#__PURE__*/ css("ym7uBBuT");
 });
 // the expression would call the helper once per case

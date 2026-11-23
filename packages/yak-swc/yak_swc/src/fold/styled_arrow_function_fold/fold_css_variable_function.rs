@@ -1,3 +1,4 @@
+use super::block_body_to_expr::BodyEnd;
 use super::ClassNameFolder;
 use crate::utils::ast_helper::{paren, str_expr, unwrap_type_casts};
 use swc_core::{
@@ -53,7 +54,8 @@ impl ClassNameFolder<'_> {
   pub(super) fn fold_style_value(&mut self, value: &Expr) -> Option<Box<Expr>> {
     match unwrap_type_casts(value) {
       Expr::Arrow(_) => {
-        let body = self.bind_arrow(value)?;
+        // `null` is a value here, so no branch falls through, see `BodyEnd`
+        let body = self.bind_arrow(value, BodyEnd::CssValue)?;
         self.params.substitute(&body)
       }
       Expr::Call(call) if is_css_value_call(call) => {

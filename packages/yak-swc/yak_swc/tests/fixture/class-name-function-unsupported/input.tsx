@@ -80,13 +80,14 @@ export const BlockWithDebugger = styled.div<{ $on: boolean }>`
   }}
 `;
 
-// the expression would hold the statements after the first `if` twice
+// a `let` after the guard block has no place in the expression
 export const IfWithoutReturnThenStatements = styled.div<{ $on: boolean; $big: boolean }>`
   ${({ $on, $big }) => {
     if ($on) {
       if ($big) return css`color: red;`;
     }
-    if ($big) return css`color: green;`;
+    let big = $big;
+    if (big) return css`color: green;`;
     return css`color: blue;`;
   }}
 `;

@@ -1,4 +1,4 @@
-use self::block_body_to_expr::block_body_to_expr;
+use self::block_body_to_expr::{block_body_to_expr, BodyEnd};
 use self::fold_class_name_condition::join_folded_class_names;
 use self::fold_css_variable_function::create_folded_css_variable_definition;
 use self::merge_arrow_parameters::FoldParams;
@@ -86,6 +86,7 @@ pub(crate) fn fold_class_names(
     yak_imports,
     params: FoldParams::default(),
     writes_style: false,
+    fall_through: None,
   };
   let mut class_name_expr = str_expr(class_name.into());
   // a component with nothing but `atoms("flex")` calls has no condition. The
@@ -151,6 +152,10 @@ struct ClassNameFolder<'a> {
   yak_imports: &'a YakImports,
   params: FoldParams,
   writes_style: bool,
+  /// `Some` while `fold_value` folds the left side of a fall through `??`,
+  /// where the fall through marker may appear. It turns `true` once a marker
+  /// was folded, see `fall_through_to_expr`
+  fall_through: Option<bool>,
 }
 
 impl ClassNameFolder<'_> {
@@ -161,13 +166,14 @@ impl ClassNameFolder<'_> {
   /// identifier which is only read through members (`p => p.$on`). The body is
   /// an expression or a block of `if`, `switch` and `return` statements
   fn fold_arrow(&mut self, expression: &Expr) -> Option<Box<Expr>> {
-    let body = self.bind_arrow(expression)?;
+    let body = self.bind_arrow(expression, BodyEnd::ClassNames)?;
     self.fold_value(&body)
   }
 
   /// Registers the props parameter of a runtime expression and returns the
-  /// expression the arrow returns
-  fn bind_arrow<'e>(&mut self, expression: &'e Expr) -> Option<Cow<'e, Expr>> {
+  /// expression the arrow returns. `end` tells a function of class names from
+  /// one at a CSS value position, see `BodyEnd`
+  fn bind_arrow<'e>(&mut self, expression: &'e Expr, end: BodyEnd) -> Option<Cow<'e, Expr>> {
     let Expr::Arrow(arrow) = unwrap_type_casts(expression) else {
       return None;
     };
@@ -177,9 +183,11 @@ impl ClassNameFolder<'_> {
     let body = match &*arrow.body {
       ArrowFunctionBody::Expr(expr) => Cow::Borrowed(&**expr),
       // `{ if ($on) { return css("yB1"); } }` -> `$on ? css("yB1") : undefined`
-      ArrowFunctionBody::FunctionBody(block) => {
-        Cow::Owned(*block_body_to_expr(&block.stmts, &mut self.params.consts)?)
-      }
+      ArrowFunctionBody::FunctionBody(block) => Cow::Owned(*block_body_to_expr(
+        &block.stmts,
+        &mut self.params.consts,
+        end,
+      )?),
       #[cfg(swc_ast_unknown)]
       _ => return None,
     };
