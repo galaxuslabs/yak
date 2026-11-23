@@ -14,4 +14,9 @@ const yakOptions = process.env.YAK_E2E_FOLD_STATIC === "false" ? { foldStatic: f
 export default defineConfig({
   // yak first: it must see the source before qwik's optimizer splits it
   plugins: [yak(yakOptions), qwikRouter(), qwikVite()],
+  optimizeDeps: {
+    include: ["e2e-installed-tokens"],
+    exclude: ["e2e-installed-tokens-excluded"],
+  },
+  ssr: { noExternal: ["e2e-installed-tokens-excluded"] },
 });

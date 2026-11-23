@@ -83,6 +83,7 @@ const config: KnipConfig = {
         "@yak/react",
         "@types/react",
         "@yak/solid",
+        "@yak/qwik",
         "e2e-installed-tokens-excluded",
       ],
     },

@@ -15,6 +15,10 @@ const Conditional = styled.div<{ $active?: boolean }>`
   ${(props) => props.$active && atoms("text-white")}
 `;
 
+const ConditionalAtom = styled.div<{ $active?: boolean; $white?: boolean }>`
+  ${({ $active, $white }) => $active && atoms("bg-blue", $white && "text-white")}
+`;
+
 export default function App() {
   return (
     <>
@@ -28,6 +32,12 @@ export default function App() {
         active
       </Conditional>
       <Conditional data-testid="conditional-inactive">inactive</Conditional>
+      <ConditionalAtom data-testid="conditional-atom-white" $active $white>
+        white
+      </ConditionalAtom>
+      <ConditionalAtom data-testid="conditional-atom-plain" $active>
+        plain
+      </ConditionalAtom>
     </>
   );
 }

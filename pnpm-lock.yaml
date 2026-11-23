@@ -575,7 +575,7 @@ importers:
         version: file:e2e/fixtures/installed-tokens
       e2e-installed-tokens-excluded:
         specifier: file:./fixtures/installed-tokens-excluded
-        version: file:e2e/fixtures/installed-tokens-excluded(@yak/react@packages+yak-react)(@yak/solid@packages+yak-solid)
+        version: file:e2e/fixtures/installed-tokens-excluded(@yak/qwik@packages+yak-qwik)(@yak/react@packages+yak-react)(@yak/solid@packages+yak-solid)
     devDependencies:
       '@playwright/test':
         specifier: catalog:dev
@@ -586,6 +586,9 @@ importers:
       '@types/react':
         specifier: catalog:dev
         version: 19.3.0
+      '@yak/qwik':
+        specifier: workspace:*
+        version: link:../packages/yak-qwik
       '@yak/react':
         specifier: workspace:*
         version: link:../packages/yak-react
@@ -6429,9 +6432,12 @@ packages:
   e2e-installed-tokens-excluded@file:e2e/fixtures/installed-tokens-excluded:
     resolution: {directory: e2e/fixtures/installed-tokens-excluded, type: directory}
     peerDependencies:
+      '@yak/qwik': '*'
       '@yak/react': '*'
       '@yak/solid': '*'
     peerDependenciesMeta:
+      '@yak/qwik':
+        optional: true
       '@yak/react':
         optional: true
       '@yak/solid':
@@ -14822,8 +14828,9 @@ snapshots:
       es-errors: 1.3.0
       gopd: 1.2.0
 
-  e2e-installed-tokens-excluded@file:e2e/fixtures/installed-tokens-excluded(@yak/react@packages+yak-react)(@yak/solid@packages+yak-solid):
+  e2e-installed-tokens-excluded@file:e2e/fixtures/installed-tokens-excluded(@yak/qwik@packages+yak-qwik)(@yak/react@packages+yak-react)(@yak/solid@packages+yak-solid):
     optionalDependencies:
+      '@yak/qwik': link:packages/yak-qwik
       '@yak/react': link:packages/yak-react
       '@yak/solid': link:packages/yak-solid
 

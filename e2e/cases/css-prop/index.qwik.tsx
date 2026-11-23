@@ -14,8 +14,23 @@ function SpreadButton(props: PropsOf<"button">) {
   );
 }
 
+function wrap<T>(node: T) {
+  return { node };
+}
+
 export default component$(({ dummyBool = true }: { dummyBool?: boolean }) => {
   const count = useSignal(0);
+  // a css prop inside a destructuring declaration
+  const { node: destructured } = wrap(
+    <div
+      data-testid="destructured"
+      css={css`
+        color: blue;
+      `}
+    >
+      destructured
+    </div>,
+  );
   return (
     <>
       <div
@@ -72,6 +87,7 @@ export default component$(({ dummyBool = true }: { dummyBool?: boolean }) => {
       >
         Backslash className
       </div>
+      {destructured}
       <SpreadButton data-testid="spread-button" onClick$={() => count.value++}>
         clicks: {count.value}
       </SpreadButton>
