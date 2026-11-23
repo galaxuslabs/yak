@@ -33,7 +33,7 @@ compiles to something like
 ({ $size }) => "Button" + ($size === "s" ? " Button_s" : " Button_m");
 ```
 
-That works when the function is an expression, or when its body holds only `if`, `else`, `switch`, `return` and calls like `assertNever($size);`. Every other statement, like a `const`, an assignment or a loop, has no place in such an expression. The component still works, but it renders on a slower path.
+That works when the function is an expression, or when its body holds only `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` that names a prop read. Every other statement, like a `const` with a calculation, an assignment or a loop, has no place in such an expression. The component still works, but it renders on a slower path.
 
 A function that needs such a statement can turn the rule off for that line:
 
@@ -126,6 +126,15 @@ styled.button`
       default:
         return css`color: gray;`;
     }
+  }}
+`;
+
+// a `const` can give a prop read a short name
+styled.button`
+  ${({ $layout }) => {
+    const size = $layout.medium?.size;
+    if (size === "s") return css`padding: 2px;`;
+    return css`padding: 8px;`;
   }}
 `;
 

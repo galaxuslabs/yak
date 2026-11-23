@@ -3,7 +3,7 @@ import { createRule } from "../utils.js";
 import { importsYak, isStyledOrCssTag } from "./utils.js";
 
 const hint =
-  "Write the logic with `if`, `else`, `switch`, `return` and calls like `assertNever($size);` only, or as an expression like `({ $active }) => $active && css`...``.";
+  "Write the logic with `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` for a prop read only, or as an expression like `({ $active }) => $active && css`...``.";
 
 /**
  * yak compiles the functions of a styled component into one function that
@@ -13,7 +13,9 @@ const hint =
  * -> ($size === "s" ? " yB1" : " yB2")
  *
  * That works for a body of `if`, `else`, `switch` and `return`. A call like
- * `assertNever($size);` also works: the compiler keeps it at its place.
+ * `assertNever($size);` also works: the compiler keeps it at its place. So
+ * does a `const` that names a prop read: the compiler writes the read at
+ * each use of the name.
  * Every other statement has no place in an expression, so the component falls
  * back to the slower render path. This rule reports those statements
  *
@@ -30,6 +32,8 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
     },
     messages: {
       statement: `A {{statement}} inside a function of a styled/css literal moves the component to the slower render path. ${hint}`,
+      constInitializer:
+        "`{{name}}` is a call or a calculation here, which moves the component to the slower render path. A `const` keeps the fast render path only if it names a prop read, like `const size = $layout.size;`. Write the calculation where the value is used, or move it into a function outside of the literal and call that function there.",
       functionExpression:
         "A `function` expression inside a styled/css literal moves the component to the slower render path. Use an arrow function, e.g. `({ $active }) => $active && css`...``.",
       branchWithoutReturn: `This {{statement}} can end without a \`return\` and more than a single \`return\` follows it, which moves the component to the slower render path. Return in every branch or move the code after it into the branches. ${hint}`,
@@ -106,6 +110,31 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
               });
             }
             checkSwitch(statement);
+            return;
+          case "VariableDeclaration":
+            if (statement.kind !== "const") {
+              context.report({
+                node: statement,
+                messageId: "statement",
+                data: { statement: statementNames.VariableDeclaration! },
+              });
+              return;
+            }
+            for (const declaration of statement.declarations) {
+              if (declaration.id.type !== "Identifier") {
+                context.report({
+                  node: declaration,
+                  messageId: "statement",
+                  data: { statement: statementNames.VariableDeclaration! },
+                });
+              } else if (!isConstInitializer(declaration.init)) {
+                context.report({
+                  node: declaration,
+                  messageId: "constInitializer",
+                  data: { name: declaration.id.name },
+                });
+              }
+            }
             return;
           case "ExpressionStatement":
             if (!isDiscardedExpression(statement.expression)) {
@@ -203,7 +232,7 @@ export const styledArrowFunctionStatements = createRule("styled-arrow-function-s
 });
 
 const statementNames: Partial<Record<ESTree.Statement["type"], string>> = {
-  VariableDeclaration: "variable declaration",
+  VariableDeclaration: "`let`, `var` or destructuring",
   ExpressionStatement: "statement like an assignment or a call on the result of a call",
   DebuggerStatement: "`debugger` statement",
   ForStatement: "loop",
@@ -322,6 +351,37 @@ function isDiscardedExpression(expression: ESTree.Expression): boolean {
     return node.callee.type !== "Super" && !node.optional && isPlainRead(node.callee);
   }
   return isPlainRead(node);
+}
+
+/**
+ * A `const` that gives a prop read a short name. The compiler writes the
+ * initializer at each read of the name:
+ *
+ * { const size = $layout.medium?.size; return size === "s" && css`...`; }
+ * -> ($layout.medium?.size === "s" ? " yB1" : "")
+ *
+ * The initializer runs once per read, so it has to be a plain read with or
+ * without `?.`, or a literal. A call or a calculation would run several times
+ */
+function isConstInitializer(init: ESTree.Expression | null | undefined): boolean {
+  return init != null && (isReadChain(init) || isCaseValue(init));
+}
+
+/** `$a`, `props.$a.b`, `$a?.b` or `$a.b?.c`, with or without a type cast */
+function isReadChain(expression: ESTree.Expression): boolean {
+  let node = unwrapTypeCasts(expression);
+  if (node.type === "ChainExpression") {
+    node = unwrapTypeCasts(node.expression);
+  }
+  if (node.type === "Identifier") {
+    return true;
+  }
+  return (
+    node.type === "MemberExpression" &&
+    !node.computed &&
+    node.object.type !== "Super" &&
+    isReadChain(node.object)
+  );
 }
 
 /** `$size`, `props.$size` or `props.theme.mode`, with or without a type cast */

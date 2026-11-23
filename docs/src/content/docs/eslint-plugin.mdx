@@ -256,7 +256,7 @@ The `@yak/style-conditions` rule flags unnecessary uses of CSS variables, which 
 
 Reports a function in a `styled` or `css` literal that yak can not compile to the fast render path.
 
-`@yak/react` compiles the functions of a styled component into one function that returns the class names of a render. That works when a function is an expression, or when its body holds only `if`, `else`, `switch`, `return` and calls like `assertNever($size);`. Every other statement, like a `const` or an assignment, moves the component to a slower render path.
+`@yak/react` compiles the functions of a styled component into one function that returns the class names of a render. That works when a function is an expression, or when its body holds only `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` that names a prop read like `const size = $layout.size;`. Every other statement, like a `const` with a calculation or an assignment, moves the component to a slower render path.
 
 Example:
 

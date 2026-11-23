@@ -68,8 +68,8 @@ ruleTester.run(
     valid: [],
     invalid: [
       {
-        code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => { const on = $on; return on && css`color: red;`; }}`;",
-        errors: [{ messageId: "statement" }],
+        code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => { const on = !$on; return on && css`color: red;`; }}`;",
+        errors: [{ messageId: "constInitializer" }],
       },
     ],
   },

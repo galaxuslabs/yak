@@ -208,6 +208,19 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
       ),
     },
     {
+      name: "a const that names a prop read",
+      code: code(
+        "styled.div`",
+        "  ${({ $layout, $size }) => {",
+        "    const size = $layout.medium?.size, small = Size.Small;",
+        "    const current = $size as string;",
+        "    if (size === small) return css`color: red;`;",
+        "    return current && css`color: blue;`;",
+        "  }}",
+        "`;",
+      ),
+    },
+    {
       name: "a function that is no part of a literal",
       code: code("const helper = () => {", "  console.log(1);", "};"),
     },
@@ -261,6 +274,22 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
       errors: [{ messageId: "restParameter", data: { name: "rest" }, line: 3 }],
     },
     {
+      name: "a let and a destructuring",
+      code: code(
+        "styled.div`",
+        "  ${({ $layout }) => {",
+        "    let size = $layout.size;",
+        "    const { medium } = $layout;",
+        "    return size && medium && css`color: red;`;",
+        "  }}",
+        "`;",
+      ),
+      errors: [
+        { messageId: "statement", line: 4 },
+        { messageId: "statement", line: 5 },
+      ],
+    },
+    {
       name: "an assignment",
       code: code(
         "styled.div`",
@@ -302,7 +331,7 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
         "  }}",
         "`;",
       ),
-      errors: [{ messageId: "statement", data: { statement: "variable declaration" }, line: 4 }],
+      errors: [{ messageId: "constInitializer", data: { name: "big" }, line: 4 }],
     },
     {
       name: "a loop and a try statement",
@@ -333,7 +362,7 @@ ruleTester.run("yak-styled-arrow-function-statements", rule, {
         "  }}px;",
         "`;",
       ),
-      errors: [{ messageId: "statement", line: 4 }],
+      errors: [{ messageId: "constInitializer", line: 4 }],
     },
     {
       name: "a statement in a nested css literal",
