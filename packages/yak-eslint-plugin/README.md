@@ -43,7 +43,6 @@ export default defineConfig({
     "@yak/style-conditions": "off",
     "@yak/styled-function-fast-path": "error",
     "@yak/styled-function-returns": "error",
-    "@yak/styled-function-returned-calls": "warn",
   },
 });
 ```
@@ -76,13 +75,12 @@ Add the package to `jsPlugins` and enable the rules with their `@yak/` prefix:
 🔧 Automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/user-guide/command-line-interface#--fix).\
 💡 Manually fixable by [editor suggestions](https://eslint.org/docs/latest/use/core-concepts#rule-suggestions).
 
-| Name                                                                                                                                                   | Description                                                                                                  | 💼 | ⚠️ | 🔧 | 💡 |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- | :- | :- | :- | :- |
-| [css-nesting-operator](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/css-nesting-operator.md)                     | Enforces css selectors in yak to correctly use the nesting selector (&)                                      | ✅  |    |    | 💡 |
-| [enforce-semicolon](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/enforce-semicolon.md)                           | Enforces that expression in styled/css literals from yak use semicolons                                      | ✅  |    | 🔧 |    |
-| [style-conditions](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/style-conditions.md)                             | Warns when arrow functions in yak styled/css literals would create unnecessary or invalid CSS variables      |    | ✅  |    |    |
-| [styled-function-fast-path](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/styled-function-fast-path.md)           | Reports code in functions of yak styled/css literals that makes the component render slower                  | ✅  |    |    |    |
-| [styled-function-returned-calls](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/styled-function-returned-calls.md) | Disallows returning a function call from a function that stands on its own in a yak styled/css literal       |    |    |    |    |
-| [styled-function-returns](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/styled-function-returns.md)               | Enforces that a function that stands on its own in a yak styled/css literal returns a css literal or nothing | ✅  |    |    |    |
+| Name                                                                                                                                         | Description                                                                                                  | 💼 | ⚠️ | 🔧 | 💡 |
+| :------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- | :- | :- | :- | :- |
+| [css-nesting-operator](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/css-nesting-operator.md)           | Enforces css selectors in yak to correctly use the nesting selector (&)                                      | ✅  |    |    | 💡 |
+| [enforce-semicolon](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/enforce-semicolon.md)                 | Enforces that expression in styled/css literals from yak use semicolons                                      | ✅  |    | 🔧 |    |
+| [style-conditions](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/style-conditions.md)                   | Warns when arrow functions in yak styled/css literals would create unnecessary or invalid CSS variables      |    | ✅  |    |    |
+| [styled-function-fast-path](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/styled-function-fast-path.md) | Reports code in functions of yak styled/css literals that makes the component render slower                  | ✅  |    |    |    |
+| [styled-function-returns](https://github.com/galaxuslabs/yak/blob/main/packages/yak-eslint-plugin/docs/rules/styled-function-returns.md)     | Enforces that a function that stands on its own in a yak styled/css literal returns a css literal or nothing | ✅  |    |    |    |
 
 <!-- end auto-generated rules list -->

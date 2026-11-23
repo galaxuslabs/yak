@@ -78,19 +78,9 @@ ruleTester.run("@yak/styled-function-returns", yakPlugin.rules["styled-function-
       code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && 'color: red;'}`;",
       errors: [{ messageId: "stringReturn" }],
     },
+    {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && helper()}`;",
+      errors: [{ messageId: "callReturn" }],
+    },
   ],
 });
-
-ruleTester.run(
-  "@yak/styled-function-returned-calls",
-  yakPlugin.rules["styled-function-returned-calls"],
-  {
-    valid: [],
-    invalid: [
-      {
-        code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && helper()}`;",
-        errors: [{ messageId: "unclearReturn" }],
-      },
-    ],
-  },
-);

@@ -35,7 +35,7 @@ compiles to something like
 
 That works when the function is an expression, or when its body holds only `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` that names a prop read. Every other statement, like a `const` with a calculation, an assignment or a loop, has no place in such an expression. The component still works, but it renders slower.
 
-A returned call like `return helper()` also makes the component render slower, and the rule [`styled-function-returned-calls`](./styled-function-returned-calls.md) reports it.
+A returned call like `return helper()` adds no styles at all, and the rule [`styled-function-returns`](./styled-function-returns.md) reports it.
 
 A function that needs such a statement can turn the rule off for that line. The comment stands inside the function, above the reported statement:
 

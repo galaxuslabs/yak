@@ -6,7 +6,7 @@
 
 <!-- end auto-generated rule header -->
 
-Reports a function in a `styled` or `css` literal that stands on its own and returns a value without styles.
+Reports a function in a `styled` or `css` literal that stands on its own and returns a value without styles, like a string or a call.
 
 ## Reason why
 
@@ -35,7 +35,28 @@ const Button = styled.button<{ $active: boolean }>`
 
 The fix is to wrap the CSS in a `css` literal, like `` $active && css`font-weight: bold;` ``. A number, `true`, a calculation, an object or an array adds no styles either. To set a CSS value, write the function after a property.
 
-The rule leaves returned calls to [`styled-function-returned-calls`](./styled-function-returned-calls.md).
+A returned call adds no styles either. yak reads a `css` literal at build time, and only where a `styled` or `css` literal uses it directly. A `css` literal that a helper returns arrives empty:
+
+```tsx
+const focusRing = () => css`outline: 2px solid blue;`;
+
+const Button = styled.button<{ $active: boolean }>`
+  ${({ $active }) => $active && focusRing()} // reported: adds no styles
+  ${({ $active }) => $active && css`outline: 2px solid blue;`} // fine
+`;
+```
+
+A call that only checks something, like `assertNever`, returns nothing. It needs no `return` in front of it:
+
+```tsx
+default:
+  return assertNever($size); // reported
+
+default:
+  assertNever($size); // fine: the call still runs, and nothing is returned
+```
+
+`atoms()` is the one call that adds class names when it is returned.
 
 ## Rule details
 
@@ -53,6 +74,14 @@ styled.button`
 styled.button`
   ${({ $active }) => $active && { fontWeight: "bold" }}
 `;
+
+styled.button`
+  ${({ theme }) => theme.helpers.focusRing()}
+`;
+
+styled.button`
+  ${({ $active }) => $active && keyframes`from { opacity: 0; }`}
+`;
 ```
 
 The following patterns are not considered errors:
@@ -67,7 +96,11 @@ styled.button`
   ${({ $big, $mixin }) => ($big ? large : $mixin)}
 `;
 
-// nothing
+styled.button`
+  ${({ $active }) => $active && atoms("bold")}
+`;
+
+// a call that is not returned
 styled.button`
   ${({ $size }) => {
     if ($size === "s") return css`padding: 2px;`;

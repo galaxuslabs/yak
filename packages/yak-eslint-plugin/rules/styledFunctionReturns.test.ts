@@ -70,11 +70,14 @@ ruleTester.run("yak-styled-function-returns", rule, {
       ),
     },
     {
-      name: "a returned call or tagged template",
+      name: "a call that is not returned",
       code: code(
         "styled.div`",
-        "  ${({ theme }) => theme.helpers.focus(1)}",
-        "  ${({ $on }) => $on && keyframes`from { opacity: 0; }`}",
+        "  ${({ $size }) => {",
+        "    if ($size === 1) return css`color: red;`;",
+        "    assertNever($size);",
+        "  }}",
+        "  width: ${({ $size }) => getWidth($size)}px;",
         "`;",
       ),
     },
@@ -141,6 +144,74 @@ ruleTester.run("yak-styled-function-returns", rule, {
         "`;",
       ].join("\n"),
       errors: [{ messageId: "stringReturn", line: 3 }],
+    },
+    {
+      name: "a call in the default case of a switch",
+      code: code(
+        "styled.div`",
+        "  ${({ $size }) => {",
+        "    switch ($size) {",
+        '      case "s":',
+        "        return css`padding: 1px;`;",
+        "      default:",
+        "        return assertNever($size);",
+        "    }",
+        "  }}",
+        "`;",
+      ),
+      errors: [
+        {
+          messageId: "callReturn",
+          data: { name: "assertNever", example: "assertNever($size);" },
+          line: 8,
+        },
+      ],
+    },
+    {
+      name: "a helper call in a nested css literal",
+      code: code(
+        "styled.div`",
+        "  ${({ $on }) =>",
+        "    $on &&",
+        "    css`",
+        "      ${({ theme }) => theme.helpers.focus(1)}",
+        "    `}",
+        "`;",
+      ),
+      errors: [
+        {
+          messageId: "callReturn",
+          data: { name: "theme.helpers.focus", example: "theme.helpers.focus(1);" },
+          line: 6,
+        },
+      ],
+    },
+    {
+      name: "a call on the result of a call",
+      code: code("styled.div`", "  ${({ $on }) => $on && getHelpers().focus()}", "`;"),
+      errors: [{ messageId: "callReturnWithoutName", line: 3 }],
+    },
+    {
+      name: "a tagged template other than css",
+      code: code(
+        "styled.div`",
+        "  ${({ $on }) => ($on ? keyframes`from { opacity: 0; }` : styled.span`color: red;`)}",
+        "`;",
+      ),
+      errors: [
+        { messageId: "taggedTemplateReturn", line: 3 },
+        { messageId: "taggedTemplateReturn", line: 3 },
+      ],
+    },
+    {
+      name: "a helper call with @yak/solid",
+      code: [
+        'import { styled } from "@yak/solid";',
+        "styled.div`",
+        "  ${({ theme }) => theme.helpers.focus()}",
+        "`;",
+      ].join("\n"),
+      errors: [{ messageId: "callReturn", line: 3 }],
     },
   ],
 });

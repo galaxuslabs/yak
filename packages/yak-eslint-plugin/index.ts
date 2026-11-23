@@ -4,7 +4,6 @@ import { cssNestingOperator } from "./rules/cssNestingOperator.js";
 import { enforceSemicolons } from "./rules/enforceSemicolon.js";
 import { styleConditions } from "./rules/styleConditions.js";
 import { styledFunctionFastPath } from "./rules/styledFunctionFastPath.js";
-import { styledFunctionReturnedCalls } from "./rules/styledFunctionReturnedCalls.js";
 import { styledFunctionReturns } from "./rules/styledFunctionReturns.js";
 
 const compatPlugin = eslintCompatPlugin({
@@ -16,7 +15,6 @@ const compatPlugin = eslintCompatPlugin({
     "enforce-semicolon": enforceSemicolons,
     "style-conditions": styleConditions,
     "styled-function-fast-path": styledFunctionFastPath,
-    "styled-function-returned-calls": styledFunctionReturnedCalls,
     "styled-function-returns": styledFunctionReturns,
   },
 });

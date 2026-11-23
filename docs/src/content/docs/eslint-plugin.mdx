@@ -297,7 +297,7 @@ A function that needs another statement can turn the rule off with `// eslint-di
 
 ### styled-function-returns
 
-Reports a function that stands on its own in a `styled` or `css` literal and returns a value without styles.
+Reports a function that stands on its own in a `styled` or `css` literal and returns a value without styles, like a string or a call.
 
 A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names, when it stands on its own. At the second place a string drops the styles without any sign. Wrap the CSS in a `css` literal. A number, `true`, a calculation, an object or an array adds no styles either.
 
@@ -310,13 +310,7 @@ styled.button<{ $active: boolean }>`
 `;
 ```
 
-### styled-function-returned-calls
-
-Reports a call that a function standing on its own returns, like `return helper()`, and a tagged template other than `css`. The rule is off by default and only checks files that import from `@yak/react`.
-
-yak can not see what a call returns, so the component renders slower. A helper that returns a `css` literal is valid code, so turn the rule on when render speed matters.
-
-Example:
+A returned call adds no styles either: yak only reads a `css` literal that the function itself holds, so one that a helper returns arrives empty. A call that only checks something, like `assertNever`, needs no `return` in front of it:
 
 ```tsx title="example.tsx"
 styled.div<{ $size: "s" | "m" }>`
