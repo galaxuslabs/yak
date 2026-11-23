@@ -34,11 +34,11 @@ catalogs:
   core:
     "@babel/parser": ^8.0.7
     "@oxlint/plugins": ^1.88.0
-    "@solidjs/web": ^2.0.0-rc.15
+    "@solidjs/web": ^2.0.0
     # Keep in sync with swc_core in packages/yak-swc/Cargo.toml and next.js version of bundled SWC
     "@swc/core": ~1.16.18
     "@swc/counter": ^0.1.3
-    solid-js: ^2.0.0-rc.15
+    solid-js: ^2.0.0
   dev:
     "@base-ui/react": 1.8.0
     "@babel/standalone": 7.29.9
@@ -108,8 +108,8 @@ catalogs:
     typescript: 6.0.3
     vinext: 1.2.1
     vite: 8.3.4
-    "@solidjs/vite-plugin": 3.0.0-next.50
-    "@solidjs/babel-plugin": 2.0.0-rc.10
+    "@solidjs/vite-plugin": 3.0.1
+    "@solidjs/babel-plugin": 2.0.2
     vitest: 5.0.5
     wasm-pack: 0.15.0
     yaml: 2.9.1

@@ -157,6 +157,22 @@ export type StyledInternal = <
 const VOID_ELEMENTS =
   /^(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)$/i;
 
+/**
+ * the brand on a finished server node: `<div>hi</div>` -> { t: "<div>hi</div>", $: SSR_NODE }.
+ * solid's resolver prints an object child only when it carries this brand and
+ * drops any other object, so every node the writer builds by hand sets it.
+ * solid does not export the symbol; it is a registered symbol, so
+ * Symbol.for returns the same one
+ */
+const SSR_NODE = Symbol.for("solid.ssrNode");
+
+/**
+ * a server node: the html text and solid's brand. the brand is optional
+ * because solid types the return of ssr() as { t: string } without it,
+ * although ssr() sets it at runtime
+ */
+type ServerNode = { t: string; $?: symbol };
+
 const styledFactory: StyledFn = (Component) =>
   Object.assign(yakStyled(Component), {
     attrs: (attrs: Attrs<any>) => yakStyled(Component, attrs),
@@ -365,7 +381,7 @@ const valueDescriptor = (value: unknown): PropertyDescriptor => ({
 
 /**
  * a getter is only defined for a read through its own object: solid's
- * compiled props getters (2.0.0-rc.10, `hoistProps`) reach their captured
+ * compiled props getters (`hoistProps`) reach their captured
  * values through `this`, so a descriptor moved to another object reads
  * nothing. re-homing keeps the laziness (nothing is read here) and reads
  * the source when the target is read; a data descriptor passes as it is
@@ -458,14 +474,14 @@ const createChildrenOnlyRenderer = (
     const parts = [head, open, closing];
     // as in childContent: script and style content is not escaped
     const raw = tag === "script" || tag === "style";
-    return (props, hasChildren): { t: string } => {
+    return (props, hasChildren): ServerNode => {
       // key first: the child getter may render
       const hk = ssrHydrationKey();
       const children = hasChildren ? (raw ? props.children : escape(props.children)) : undefined;
       // text joins in place; anything else goes through ssr() like a compiled
       // template's hole, which handles async children and text separators
       const text = plainContent(children);
-      if (text !== undefined) return { t: `${head}${hk}${open}${text}${closing}` };
+      if (text !== undefined) return { t: `${head}${hk}${open}${text}${closing}`, $: SSR_NODE };
       return ssr(parts, hk, children);
     };
   }
@@ -662,7 +678,7 @@ const serializeElement = (
   closing: string | undefined,
   props: Props,
   meta: RenderMeta,
-): { t: string } => {
+): ServerNode => {
   // key first: a prop getter may render a child and take keys
   const hk = ssrHydrationKey();
   // one memo read for class, style and attrs. branch on meta.compute, not
@@ -708,13 +724,13 @@ const serializeElement = (
   if (style !== undefined) result += ` style="${ssrStyle(style as Record<string, string>)}"`;
   // a void tag has no children: the finished string is the node, no ssr() call.
   // the space keeps an unquoted hydration key from swallowing the slash
-  if (!closing) return { t: result + " />" };
+  if (!closing) return { t: result + " />", $: SSR_NODE };
   // text and finished nodes join in place, as solid's own resolver does.
   // functions, arrays and nodes with pending holes go to ssr(): async wrap,
   // error boundary routing, and the separator marker between adjacent
   // text items so the client can claim two text nodes
   const text = plainContent(children);
-  if (text !== undefined) return { t: result + ">" + text + closing };
+  if (text !== undefined) return { t: result + ">" + text + closing, $: SSR_NODE };
   return ssr([result + ">", closing], children);
 };
 
@@ -724,14 +740,17 @@ const isChildKey = (key: string, textarea: boolean) =>
 
 /**
  * the string a child resolves to without ssr(), else undefined. a server
- * node is { t: html, h?: pending async holes }; one with holes needs ssr()
+ * node is { t: html, h?: pending async holes, $: SSR_NODE }; one with holes
+ * needs ssr(). an object without the brand goes to ssr() too, which drops it
+ * as solid's resolver does
  */
 const plainContent = (node: unknown): string | undefined => {
   if (typeof node === "string") return node;
   if (typeof node === "number") return String(node);
   if (node == null || typeof node === "boolean") return "";
   if (typeof node !== "object" || Array.isArray(node)) return undefined;
-  const server = node as { t?: unknown; h?: unknown[] };
+  const server = node as { t?: unknown; h?: unknown[]; $?: unknown };
+  if (server.$ !== SSR_NODE) return undefined;
   if (server.h && server.h.length > 0) return undefined;
   if (typeof server.t === "string") return server.t;
   return undefined;

@@ -17,7 +17,7 @@ yak runs in production at [Digitec Galaxus](https://www.galaxus.ch), the largest
 | Package                                                                                         | Version                                                                                                                                      | What it is                                                    |
 | :---------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------ |
 | [`@yak/react`](https://github.com/galaxuslabs/yak/tree/main/packages/yak-react)                 | [![@yak/react version](https://npmx.dev/api/registry/badge/version/@yak/react)](https://npmx.dev/package/@yak/react)                         | yak for React, with plugins for Next.js, Vite and Rsbuild     |
-| [`@yak/solid`](https://github.com/galaxuslabs/yak/tree/main/packages/yak-solid)                 | [![@yak/solid version](https://npmx.dev/api/registry/badge/version/@yak/solid)](https://npmx.dev/package/@yak/solid)                         | yak for Solid 2, with a Vite plugin (experimental)            |
+| [`@yak/solid`](https://github.com/galaxuslabs/yak/tree/main/packages/yak-solid)                 | [![@yak/solid version](https://npmx.dev/api/registry/badge/version/@yak/solid)](https://npmx.dev/package/@yak/solid)                         | yak for Solid 2, with a Vite plugin                           |
 | [`@yak/swc`](https://github.com/galaxuslabs/yak/tree/main/packages/yak-swc)                     | [![@yak/swc version](https://npmx.dev/api/registry/badge/version/@yak/swc)](https://npmx.dev/package/@yak/swc)                               | the Rust SWC plugin that both runtimes use to extract the CSS |
 | [`@yak/eslint-plugin`](https://github.com/galaxuslabs/yak/tree/main/packages/yak-eslint-plugin) | [![@yak/eslint-plugin version](https://npmx.dev/api/registry/badge/version/@yak/eslint-plugin)](https://npmx.dev/package/@yak/eslint-plugin) | ESLint and Oxlint rules for yak                               |
 | [`@yak/storybook`](https://github.com/galaxuslabs/yak/tree/main/packages/yak-storybook)         | [![@yak/storybook version](https://npmx.dev/api/registry/badge/version/@yak/storybook)](https://npmx.dev/package/@yak/storybook)             | Storybook addon for the Vite and webpack builders             |
@@ -112,7 +112,7 @@ See the [Rsbuild guide](https://yak.style/docs/rsbuild).
 
 ### Solid
 
-`@yak/solid` brings the same API to Solid 2. It is experimental while Solid 2 is in release candidate.
+`@yak/solid` brings the same API to Solid 2.
 
 ```bash
 npm install @yak/solid
@@ -170,7 +170,7 @@ Versions before 10 are published as `next-yak`:
 | 3.x      | 15.x      | -               | 18.x / 19.x | 3.0.2    |
 | 2.x      | 14.x      | -               | 18.x / 19.x | 0.279.0  |
 
-`@yak/solid` needs `solid-js` and `@solidjs/web` 2.0.0-rc.15 or newer.
+`@yak/solid` needs `solid-js` and `@solidjs/web` 2.0.0 or newer.
 
 ## More Examples
 

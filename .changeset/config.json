@@ -9,7 +9,7 @@
     }
   ],
   "commit": false,
-  "fixed": [["@yak/react", "@yak/swc", "@yak/storybook"]],
+  "fixed": [["@yak/react", "@yak/solid", "@yak/swc", "@yak/storybook"]],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
