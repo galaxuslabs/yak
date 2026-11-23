@@ -39,7 +39,6 @@
     "zod": "catalog:dev"
   },
   "devDependencies": {
-    "@types/babel__standalone": "catalog:dev",
     "@types/node": "catalog:dev",
     "@types/react": "catalog:dev",
     "@types/react-dom": "catalog:dev",

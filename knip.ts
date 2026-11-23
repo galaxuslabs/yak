@@ -15,8 +15,6 @@ const bundler = (extra: Workspace = {}): Workspace => ({
 const config: KnipConfig = {
   // Exports that are also used inside their own module are a deliberate choice
   ignoreExportsUsedInFile: true,
-  // System binary used by the e2e runner
-  ignoreBinaries: ["pgrep"],
   workspaces: {
     "packages/yak-react": {
       entry: ["runtime/__tests__/*.tsx"],
