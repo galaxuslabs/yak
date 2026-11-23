@@ -23,5 +23,9 @@ test(
     expect(await atomClasses(page, "conditional-active")).toEqual(["bg-blue", "text-white"]);
     expect(await atomClasses(page, "conditional-inactive")).toEqual(["bg-blue"]);
     await expect(page.getByTestId("conditional-inactive")).toHaveCSS("color", "rgb(0, 0, 0)");
+
+    // a condition inside atoms() adds its class name per props
+    expect(await atomClasses(page, "conditional-atom-white")).toEqual(["bg-blue", "text-white"]);
+    expect(await atomClasses(page, "conditional-atom-plain")).toEqual(["bg-blue"]);
   }),
 );

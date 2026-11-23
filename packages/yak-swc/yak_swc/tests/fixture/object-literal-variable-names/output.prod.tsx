@@ -6,18 +6,10 @@ const buttons = {
 .ym7uBBu {
   color: var(--ym7uBBu1);
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu", {
-        "style": {
-            "--ym7uBBu1": ({ $c })=>$c
-        }
-    }),
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu", 2, ({ $c }, style)=>"ym7uBBu" + (style["--ym7uBBu1"] = $c, "")),
     danger: /*YAK Extracted CSS:
 .ym7uBBu2 {
   color: var(--ym7uBBu3);
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu2", {
-        "style": {
-            "--ym7uBBu3": ({ $c })=>$c
-        }
-    })
+*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBu2", 2, ({ $c }, style)=>"ym7uBBu2" + (style["--ym7uBBu3"] = $c, ""))
 };

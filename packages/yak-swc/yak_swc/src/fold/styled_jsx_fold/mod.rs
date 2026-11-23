@@ -1,22 +1,17 @@
-//! Compile-time folding of yak's runtime wrappers into plain markup
+//! Folds the JSX of a styled component into the plain element it wraps
 //!
-//! yak normally emits a runtime component for every styled component and a
-//! runtime merge call for every `css` prop. When the styles are fully known at
-//! build time both can be skipped, and the element keeps only the class names it
-//! would have received at runtime. Folding is opt-in through `foldStatic`.
+//! yak normally emits a runtime component for every styled component. When the
+//! styles are fully known at build time it can be skipped: a JSX usage of a
+//! same-file static component becomes the plain element with the class names
+//! it would have received at runtime, and a `styled(Parent)` chain of same-file
+//! static components collapses to that element. The fold is opt-in through
+//! `foldStatic` and works for React and Solid.
 //!
-//! The feature is built from four parts:
+//! - [`jsx_to_plain_element`] rewrites one JSX usage.
+//! - [`can_inline_prop_value`] grades how freely a prop value may be moved,
+//!   which the rewrite needs to keep inlining unobservable.
 //!
-//! - [`css_expr`] turns a compiled `css(...)` expression into the `className`
-//!   value it stands for. Both fold paths build on it.
-//! - [`purity`] grades how freely a prop value may be moved, which the usage
-//!   rewrite needs to keep inlining unobservable.
-//! - [`css_prop`] folds a static `css` prop into a plain `className`.
-//! - This module folds styled components: a JSX usage of a same-file static
-//!   component becomes the plain element it wraps, and a `styled(Parent)` chain
-//!   of same-file static components collapses to that element.
-//!
-//! ## The styled component fold in three phases
+//! ## The three phases
 //!
 //! 1. **Register.** [`StyledFold::try_register`] runs during the main transform
 //!    pass and records every declaration whose usages could be folded. A usage
@@ -25,7 +20,7 @@
 //! 2. **Resolve.** [`StyledFold::resolve`] collapses the `styled(Parent)` chains
 //!    and drops the components that turned out not to be foldable.
 //! 3. **Rewrite.** [`StyledFold::fold_module`] rewrites every foldable JSX usage
-//!    into its plain element (see [`usage`]) and each collapsed chain's
+//!    into its plain element (see [`jsx_to_plain_element`]) and each collapsed chain's
 //!    declaration into the same element (see [`collapse_declarations`]).
 //!
 //! A component that only folds at its usages keeps its declaration - it is
@@ -45,16 +40,14 @@ use swc_core::{
   ecma::visit::{VisitMut, VisitMutWith},
 };
 
-use crate::utils::fold::css_expr::{merge_class_names, str_expr};
+use crate::fold::css_call_to_class_name::merge_class_names;
+use crate::utils::ast_helper::str_expr;
 use crate::utils::native_elements::VALID_ELEMENTS;
 use crate::variable_visitor::ScopedVariableReference;
 use crate::yak_imports::YakImports;
 
-pub(crate) mod class_name_function;
-mod css_expr;
-pub(crate) mod css_prop;
-mod purity;
-mod usage;
+mod can_inline_prop_value;
+mod jsx_to_plain_element;
 
 /// What a foldable JSX usage is rewritten to
 #[derive(Debug, PartialEq)]
@@ -155,7 +148,7 @@ impl StyledFold {
     if !collapses.is_empty() {
       collapse_declarations(module, &collapses, yak_imports);
     }
-    usage::fold(module, &self.components, yak_imports);
+    jsx_to_plain_element::fold(module, &self.components, yak_imports);
   }
 
   /// Drops the components that can not be folded and collapses the
@@ -464,7 +457,7 @@ fn is_chain_call(call: &CallExpr, parent: &Id) -> bool {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::utils::fold::css_expr::str_lit;
+  use crate::utils::ast_helper::str_lit;
   use swc_core::common::{SyntaxContext, DUMMY_SP};
   use swc_core::ecma::ast::{CallExpr, ExprOrSpread, IdentName};
 

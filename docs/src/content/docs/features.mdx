@@ -155,9 +155,7 @@ const Paragraph = __yak.__yak_p(
     ? css("input_Paragraph__props_$primary_m7uBBu")
     : css("input_Paragraph__not_props_$primary_m7uBBu"),
   {
-    style: {
-      "--input_Paragraph__background_m7uBBu": props => props.$primary ? "#BF4F74" : "white",
-    },
+    "--input_Paragraph__background_m7uBBu": props => props.$primary ? "#BF4F74" : "white",
   },
 );
 ```
@@ -521,15 +519,11 @@ const MyComp = styled.div`
 <Tab value="output javascript">
 ```jsx
 const mixin = css({
-  style: {
-    "--input_mixin__color_m7uBBu": (props) => props.$green ? 'green' : 'blue',
-  },
+  "--input_mixin__color_m7uBBu": (props) => props.$green ? 'green' : 'blue',
 });
 
 const MyComp = __yak.__yak_div("input_MyComp_m7uBBu", {
-  style: {
-    "--input_MyComp__color_m7uBBu": (props) => props.$green ? 'green' : 'blue',
-  },
+  "--input_MyComp__color_m7uBBu": (props) => props.$green ? 'green' : 'blue',
 });
 ```
 </Tab>
@@ -598,10 +592,8 @@ const Box = styled.div`
 <Tab value="output javascript">
 ```jsx
 const Box = __yak.__yak_div("input_Box_m7uBBu", {
-  style: {
-    "--input_Box__font-size_m7uBBu": props => props.$variant === "primary" ? "2rem" : "1rem",
-    "--input_Box__color_m7uBBu": props => props.$color,
-  },
+  "--input_Box__font-size_m7uBBu": props => props.$variant === "primary" ? "2rem" : "1rem",
+  "--input_Box__color_m7uBBu": props => props.$color,
 });
 ```
 </Tab>
@@ -951,6 +943,15 @@ import { truncate } from "../mixins";
 const Label = styled.span`
   ${truncate}
   max-width: 200px;
+`;
+```
+
+An imported mixin also works inside a condition if you wrap it in `css`. Returned on its own from the arrow function,
+it [adds no styles](/docs/troubleshooting#a-mixin-returned-from-a-function):
+
+```tsx
+const Label = styled.span<{ $short?: boolean }>`
+  ${({ $short }) => $short && css`${truncate}`};
 `;
 ```
 

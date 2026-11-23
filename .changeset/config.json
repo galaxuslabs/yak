@@ -2,7 +2,11 @@
   "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
   "changelog": [
     "./changelog.mts",
-    { "repo": "galaxuslabs/yak", "template": "\n- {summary} {ref}" }
+    {
+      "repo": "galaxuslabs/yak",
+      "template": "\n- {summary} {ref}",
+      "maintainers": ["jantimon", "Mad-Kat"]
+    }
   ],
   "commit": false,
   "fixed": [["@yak/react", "@yak/swc", "@yak/storybook"]],

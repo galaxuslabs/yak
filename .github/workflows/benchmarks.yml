@@ -5,6 +5,7 @@ on:
     branches: ["main"]
     paths:
       - "packages/yak-react/runtime/**"
+      - "packages/yak-swc/**"
       - "benchmarks/**"
       - ".github/workflows/benchmarks.yml"
   workflow_dispatch:
@@ -75,11 +76,12 @@ jobs:
 
       # ----- Pass 1: build the benchmark suite of the PR's target branch -----
       # Each baseline step uses `continue-on-error`, so a broken target branch
-      # only leaves the main columns out of the results.
+      # only leaves main out of the results.
       - name: Switch to baseline ref
         continue-on-error: true
         env:
-          BASE_REF: ${{ github.base_ref }}
+          # a manual run has no base branch and compares with main
+          BASE_REF: ${{ github.base_ref || 'main' }}
         run: git checkout "origin/${BASE_REF}"
 
       - name: Install dependencies (baseline)
@@ -113,7 +115,8 @@ jobs:
       # ----- Pass 2: PR head -----
       - name: Switch to PR head
         env:
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          # a manual run has no pull request and measures the commit it started on
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: git checkout "${PR_HEAD_SHA}"
 
       - name: Install dependencies (PR)
@@ -133,18 +136,23 @@ jobs:
         working-directory: benchmarks
         run: pnpm run bench:build
 
-      # Runs each case for main and PR in turns, see bench/rounds.ts
       - name: Run benchmarks
         working-directory: benchmarks
         run: pnpm --silent run bench:rounds --rounds 3
 
       - name: Write results table
         working-directory: benchmarks
-        run: pnpm --silent run bench:report bench/runs > bench-table.html
+        env:
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          pnpm --silent run bench:report bench/runs > bench-table.html
+          pnpm --silent run bench:report bench/runs --raw > bench-table-raw.html
 
       # The token of a fork PR is read-only and cannot comment, so the job summary shows the results.
       - name: Write job summary
-        run: cat benchmarks/bench-table.html >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          echo "## Benchmark results" >> "$GITHUB_STEP_SUMMARY"
+          cat benchmarks/bench-table-raw.html >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upsert PR comment
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository

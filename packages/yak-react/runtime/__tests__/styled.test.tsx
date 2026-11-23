@@ -379,9 +379,7 @@ describe("dev mode - error tests", () => {
 
   it("should show the function body in error message when dynamic css function returns invalid value", () => {
     const Component = styled.div("cssClass", {
-      style: {
-        "--bar": ({ $groupColor }) => $groupColor,
-      },
+      "--bar": ({ $groupColor }) => $groupColor,
     });
 
     let error = null;

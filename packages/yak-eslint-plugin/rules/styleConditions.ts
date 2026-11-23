@@ -343,7 +343,7 @@ type CssParserState = {
  * are represented by a neutral identifier so the surrounding CSS syntax can be
  * followed without resolving JavaScript values.
  */
-function isInsideCssDeclarationValue(
+export function isInsideCssDeclarationValue(
   tag: ESTree.TaggedTemplateExpression,
   needle: ESTree.Node,
 ): boolean {

@@ -69,9 +69,7 @@ const Elem8 = ()=>{
   color: var(--ym7uBBuF);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--ym7uBBuF": ()=>show && "red"
-        }
+        "--ym7uBBuF": ()=>show && "red"
     }, "ym7uBBuE"))}/>;
 };
 const Elem9 = ()=>{
@@ -81,9 +79,7 @@ const Elem9 = ()=>{
   color: var(--ym7uBBuH);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--ym7uBBuH": ()=>show && "red"
-        }
+        "--ym7uBBuH": ()=>show && "red"
     }, "ym7uBBuG"), {
         className: "test-class"
     })}/>;
@@ -95,9 +91,7 @@ const Elem10 = ()=>{
   padding: var(--ym7uBBuJ);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--ym7uBBuJ": ()=>show && "10px"
-        }
+        "--ym7uBBuJ": ()=>show && "10px"
     }, "ym7uBBuI"), {
         style: {
             padding: "5px"
@@ -111,9 +105,7 @@ const Elem11 = (props: any)=>{
   color: var(--ym7uBBuL);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--ym7uBBuL": ()=>show && "green"
-        }
+        "--ym7uBBuL": ()=>show && "green"
     }, "ym7uBBuK"), props)}/>;
 };
 const Elem12 = (props: any)=>{
@@ -122,9 +114,7 @@ const Elem12 = (props: any)=>{
   color: var(--ym7uBBuN);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--ym7uBBuN": ()=>props.show && "purple"
-        }
+        "--ym7uBBuN": ()=>props.show && "purple"
     }, "ym7uBBuM"), props.a, props.b)}/>;
 };
 const Elem13 = (props: any)=>{
@@ -133,9 +123,7 @@ const Elem13 = (props: any)=>{
   font-size: var(--ym7uBBuP);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--ym7uBBuP": ()=>props.show && "16px"
-        }
+        "--ym7uBBuP": ()=>props.show && "16px"
     }, "ym7uBBuO"), {
         className: "main",
         style: {
@@ -149,9 +137,7 @@ const Elem14 = (props: any)=>{
   display: var(--ym7uBBuR);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--ym7uBBuR": ()=>props.show && "block"
-        }
+        "--ym7uBBuR": ()=>props.show && "block"
     }, "ym7uBBuQ"), {
         className: "empty-css"
     })}/>;
@@ -162,8 +148,6 @@ const Elem15 = (props: any)=>{
   color: var(--ym7uBBuV);
 }
 */ /*#__PURE__*/ css(()=>props.a && /*#__PURE__*/ css("ym7uBBuT", ()=>props.b && /*#__PURE__*/ css("ym7uBBuU", {
-                "style": {
-                    "--ym7uBBuV": ()=>props.c && "orange"
-                }
+                "--ym7uBBuV": ()=>props.c && "orange"
             })), "ym7uBBuS"))}/>;
 };

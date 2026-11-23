@@ -1,18 +1,3 @@
-// Runs the benchmark bundles of main and the PR in turns and writes one log per side and round.
-//
-// Usage: node bench/rounds.ts [--rounds <n>] [--no-base]
-//
-// Reads  bench/dist-base/index.bench.mjs  the bundle of main (left out when it is missing or with --no-base)
-//        bench/dist/index.bench.mjs       the bundle of the PR
-// Writes bench/runs/<side>.<round>.log    for side "base" or "pr", in the input format of report.ts
-//        bench/runs/cpu.stat-start/-end   `date +%s` and the first line of /proc/stat, on Linux only
-//
-// Each case runs for main and PR in turns, in a new Node process each time: main, PR, PR, main,
-// main, PR. Both sides of a case run seconds apart, so a change of the machine speed affects both
-// the same way, and no case changes the JIT state of another case.
-//
-// A failing main run removes main from the results. A failing PR run stops the script with an error.
-
 import { spawn, spawnSync } from "node:child_process";
 import {
   appendFileSync,
@@ -47,13 +32,11 @@ if (!Number.isInteger(rounds) || rounds < 1) {
 let hasBase = !values["no-base"] && existsSync(BUNDLES.base);
 const inGitHubActions = process.env.GITHUB_ACTIONS === "true";
 
-// Main, PR in odd rounds and PR, main in even rounds
 function roundOrder(round: number): Side[] {
   const order: Side[] = round % 2 === 1 ? ["base", "pr"] : ["pr", "base"];
   return order.filter((side) => side === "pr" || hasBase);
 }
 
-// Collapses the output of a block in the GitHub Actions log
 function group<T>(title: string, block: () => Promise<T>): Promise<T> {
   if (inGitHubActions) console.log(`::group::${title}`);
   return block().finally(() => {
@@ -61,7 +44,6 @@ function group<T>(title: string, block: () => Promise<T>): Promise<T> {
   });
 }
 
-// Runs one bundle, prints its output and adds the output to the log of its side and round
 function run(side: Side, round: number, args: string[]): Promise<void> {
   const log = `${OUT_DIR}/${side}.${round}.log`;
   return new Promise((resolve, reject) => {
@@ -114,6 +96,8 @@ rmSync(OUT_DIR, { recursive: true, force: true });
 mkdirSync(OUT_DIR);
 writeCpuStat("cpu.stat-start");
 
+// Both sides of a case run seconds apart, so a change of the machine speed affects both
+// the same way. A new process for each run keeps the JIT state of one case out of the others.
 for (const name of listCases()) {
   await group(name, async () => {
     for (let round = 1; round <= rounds; round++) {

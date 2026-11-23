@@ -9,11 +9,6 @@ const ThemedComponent = /*YAK Extracted CSS:
   padding: 20px;
   border-radius: 8px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ThemedComponent_m7uBBu", {
-    "style": {
-        "--input_ThemedComponent__background-color_m7uBBu": (props)=>props.theme.background,
-        "--input_ThemedComponent__color_m7uBBu": (props)=>props.theme.text
-    }
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ThemedComponent_m7uBBu", 3, ({}, style, theme)=>"input_ThemedComponent_m7uBBu" + (style["--input_ThemedComponent__background-color_m7uBBu"] = theme.background, style["--input_ThemedComponent__color_m7uBBu"] = theme.text, "")), {
     "displayName": "ThemedComponent"
 });

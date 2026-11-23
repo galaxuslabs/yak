@@ -74,7 +74,5 @@ const MixedDynamic = ({ color }: {
   color: var(--input_MixedDynamic__color_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "style": {
-            "--input_MixedDynamic__color_m7uBBu": ()=>color
-        }
+        "--input_MixedDynamic__color_m7uBBu": ()=>color
     }, "input_MixedDynamic_m7uBBu"))}/>;

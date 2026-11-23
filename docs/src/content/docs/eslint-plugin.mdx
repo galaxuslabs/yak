@@ -64,7 +64,9 @@ const myDiv = styled.div`
   "rules": {
     "@yak/css-nesting-operator": "error",
     "@yak/enforce-semicolon": "error",
-    "@yak/style-conditions": "warn"
+    "@yak/style-conditions": "warn",
+    "@yak/styled-function-fast-path": "error",
+    "@yak/styled-function-returns": "error"
   }
 }
 ```
@@ -141,7 +143,7 @@ styled.div`
 
 Warns if runtime performance could be improved by using css literals.
 
-The rule checks arrow functions used as CSS declaration values, where yak creates runtime CSS variables. Arrow functions outside declarations are runtime class expressions and may return local or imported css mixins.
+The rule checks arrow functions used as CSS declaration values, where yak creates runtime CSS variables. Arrow functions outside declarations are runtime class expressions and may return local css mixins, or imported ones wrapped in a `css` literal.
 
 Example:
 
@@ -250,6 +252,79 @@ In this example:
   - Values from external APIs
 
 The `@yak/style-conditions` rule flags unnecessary uses of CSS variables, which keeps your HTML smaller and faster.
+
+### styled-function-fast-path
+
+Reports code in a function of a `styled` or `css` literal that makes the component render slower.
+
+`@yak/react` compiles the functions of a styled component into one function that returns the class names of a render. That works when a function is an expression, or when its body holds only `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` that names a prop read like `const size = $layout.size;`. Every other statement, like a `const` with a calculation, an assignment or a loop, makes the component render slower.
+
+Example:
+
+```tsx title="example.tsx"
+styled.button<{ $size: number }>`
+  ${({ $size }) => {
+    //[!code --]
+    const big = $size > 2;
+    //[!code --]
+    return big && css`padding: 8px;`;
+    //[!code ++]
+    if ($size > 2) {
+      //[!code ++]
+      return css`padding: 8px;`;
+      //[!code ++]
+    }
+  }}
+`;
+```
+
+A `switch` works too, as long as it switches on a prop and every `case` before the last one ends with a `return`:
+
+```tsx title="example.tsx"
+styled.button<{ $variant: "primary" | "danger" }>`
+  ${({ $variant }) => {
+    switch ($variant) {
+      case "primary":
+        return css`color: blue;`;
+      case "danger":
+        return css`color: red;`;
+    }
+  }}
+`;
+```
+
+A function that needs another statement can turn the rule off with `// eslint-disable-next-line @yak/styled-function-fast-path` inside the function, above the reported statement. The component still works and only renders a little slower.
+
+### styled-function-returns
+
+Reports a function that stands on its own in a `styled` or `css` literal and returns a value without styles, like a string or a call.
+
+A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names, when it stands on its own. At the second place a string drops the styles without any sign. Wrap the CSS in a `css` literal. A number, `true`, a calculation, an object or an array adds no styles either.
+
+Example:
+
+```tsx title="example.tsx"
+styled.button<{ $active: boolean }>`
+  ${({ $active }) => $active && "font-weight: bold;"} // [!code --]
+  ${({ $active }) => $active && css`font-weight: bold;`} // [!code ++]
+`;
+```
+
+A returned call adds no styles either: yak only reads a `css` literal that the function itself holds, so one that a helper returns arrives empty. A call that only checks something, like `assertNever`, needs no `return` in front of it:
+
+```tsx title="example.tsx"
+styled.div<{ $size: "s" | "m" }>`
+  ${({ $size }) => {
+    switch ($size) {
+      case "s":
+        return css`padding: 2px;`;
+      default:
+        return assertNever($size); // [!code --]
+        assertNever($size); // [!code ++]
+    }
+  }}
+`;
+```
 
 ## Next steps
 

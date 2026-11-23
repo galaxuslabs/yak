@@ -57,6 +57,37 @@ test(
     await expect(disabled).toBeDisabled();
     await expect(disabled).toHaveCSS("color", "rgb(0, 0, 0)");
 
+    // a default value in the destructuring applies when the prop is missing
+    await expect(page.getByTestId("default-start")).toHaveCSS("text-align", "start");
+    await expect(page.getByTestId("default-end")).toHaveCSS("text-align", "end");
+    await expect(page.getByTestId("default-size")).toHaveCSS("width", "32px");
+    await expect(page.getByTestId("default-size-set")).toHaveCSS("width", "48px");
+
+    // a condition and a pick between css constants inside a nested css literal
+    const nestedBig = page.getByTestId("nested-big");
+    await expect(nestedBig).toHaveCSS("color", "rgb(72, 61, 139)");
+    await expect(nestedBig).toHaveCSS("text-indent", "5px");
+    await expect(nestedBig).toHaveCSS("letter-spacing", "3px");
+    const nestedSmall = page.getByTestId("nested-small");
+    await expect(nestedSmall).toHaveCSS("color", "rgb(72, 61, 139)");
+    await expect(nestedSmall).toHaveCSS("text-indent", "0px");
+    await expect(nestedSmall).toHaveCSS("letter-spacing", "1px");
+    await expect(page.getByTestId("nested-off")).toHaveCSS("letter-spacing", "normal");
+
+    // a switch whose default runs an exhaustive check as a statement
+    await expect(page.getByTestId("density-compact")).toHaveCSS("line-height", "10px");
+    await expect(page.getByTestId("density-roomy")).toHaveCSS("line-height", "30px");
+
+    // a const that names a prop read with an optional member
+    await expect(page.getByTestId("placed-small")).toHaveCSS("word-spacing", "2px");
+    await expect(page.getByTestId("placed-missing")).toHaveCSS("word-spacing", "6px");
+
+    // a path that returns inside the guard block, one that goes on after it,
+    // and a `return;` inside it that adds nothing
+    await expect(page.getByTestId("guarded-return")).toHaveCSS("padding-left", "12px");
+    await expect(page.getByTestId("guarded-fall-through")).toHaveCSS("padding-left", "6px");
+    await expect(page.getByTestId("guarded-nothing")).toHaveCSS("padding-left", "0px");
+
     // entity-spelled attribute strings compare by decoded value, like the runtime path
     await expect(page.getByTestId("entity")).toHaveCSS("color", "rgb(220, 20, 60)");
     await expect(page.getByTestId("entity-runtime")).toHaveCSS("color", "rgb(220, 20, 60)");

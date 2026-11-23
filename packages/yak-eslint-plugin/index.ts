@@ -3,6 +3,8 @@ import { eslintCompatPlugin } from "@oxlint/plugins";
 import { cssNestingOperator } from "./rules/cssNestingOperator.js";
 import { enforceSemicolons } from "./rules/enforceSemicolon.js";
 import { styleConditions } from "./rules/styleConditions.js";
+import { styledFunctionFastPath } from "./rules/styledFunctionFastPath.js";
+import { styledFunctionReturns } from "./rules/styledFunctionReturns.js";
 
 const compatPlugin = eslintCompatPlugin({
   meta: {
@@ -12,6 +14,8 @@ const compatPlugin = eslintCompatPlugin({
     "css-nesting-operator": cssNestingOperator,
     "enforce-semicolon": enforceSemicolons,
     "style-conditions": styleConditions,
+    "styled-function-fast-path": styledFunctionFastPath,
+    "styled-function-returns": styledFunctionReturns,
   },
 });
 
@@ -36,6 +40,8 @@ const configs = {
       [`${prefix}/css-nesting-operator`]: "error",
       [`${prefix}/enforce-semicolon`]: "error",
       [`${prefix}/style-conditions`]: "warn",
+      [`${prefix}/styled-function-fast-path`]: "error",
+      [`${prefix}/styled-function-returns`]: "error",
     },
   },
 };
