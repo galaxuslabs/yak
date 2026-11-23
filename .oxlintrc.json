@@ -13,7 +13,9 @@
     "typescript/no-empty-object-type": "off",
     "@yak/css-nesting-operator": "error",
     "@yak/enforce-semicolon": "error",
-    "@yak/style-conditions": "warn"
+    "@yak/style-conditions": "warn",
+    "@yak/styled-function-fast-path": "error",
+    "@yak/styled-function-returns": "error"
   },
   "overrides": [
     {
@@ -27,7 +29,9 @@
         "oxc/number-arg-out-of-range": "off",
         "react/purity": "off",
         "@yak/enforce-semicolon": "off",
-        "@yak/style-conditions": "off"
+        "@yak/style-conditions": "off",
+        "@yak/styled-function-fast-path": "off",
+        "@yak/styled-function-returns": "off"
       }
     },
     {

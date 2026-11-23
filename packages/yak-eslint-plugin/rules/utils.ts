@@ -1,7 +1,11 @@
 import type { ESTree } from "@oxlint/plugins";
 import { yakPackageNames } from "yak-internals/package-names";
 
-export const importsYak = () => {
+/**
+ * `packageNames` limits the tracked imports, e.g. to `["@yak/react"]` for a
+ * rule that only applies to the React runtime
+ */
+export const importsYak = (packageNames: readonly string[] = yakPackageNames) => {
   /** track the imported names for css and styled from a yak runtime package */
   const importedNames: ImportedNames = {};
 
@@ -12,7 +16,7 @@ export const importsYak = () => {
       importedNames.css = undefined;
     },
     ImportDeclaration(node: ESTree.ImportDeclaration) {
-      if ((yakPackageNames as readonly string[]).includes(node.source.value)) {
+      if (packageNames.includes(node.source.value)) {
         node.specifiers.forEach((specifier) => {
           if (specifier.type === "ImportSpecifier" && specifier.imported.type === "Identifier") {
             if (specifier.imported.name === "styled") {
@@ -91,4 +95,19 @@ export function isStyledOrCssTag(
   }
 
   return false;
+}
+
+/** `$size` for `$size as string`, `$size!`, `$size satisfies Size`, `<string>$size` or `($size)` */
+export function unwrapTypeCasts(expression: ESTree.Expression): ESTree.Expression {
+  let node = expression;
+  while (
+    node.type === "TSAsExpression" ||
+    node.type === "TSNonNullExpression" ||
+    node.type === "TSSatisfiesExpression" ||
+    node.type === "TSTypeAssertion" ||
+    node.type === "ParenthesizedExpression"
+  ) {
+    node = node.expression;
+  }
+  return node;
 }
