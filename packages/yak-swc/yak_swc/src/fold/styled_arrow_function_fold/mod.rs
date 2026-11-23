@@ -177,7 +177,9 @@ impl ClassNameFolder<'_> {
     let body = match &*arrow.body {
       ArrowFunctionBody::Expr(expr) => Cow::Borrowed(&**expr),
       // `{ if ($on) { return css("yB1"); } }` -> `$on ? css("yB1") : undefined`
-      ArrowFunctionBody::FunctionBody(block) => Cow::Owned(*block_body_to_expr(&block.stmts)?),
+      ArrowFunctionBody::FunctionBody(block) => {
+        Cow::Owned(*block_body_to_expr(&block.stmts, &mut self.params.consts)?)
+      }
       #[cfg(swc_ast_unknown)]
       _ => return None,
     };
