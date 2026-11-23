@@ -1,3 +1,4 @@
+use super::block_body_to_expr::is_discarded_expression;
 use super::ClassNameFolder;
 use crate::fold::css_call_to_class_name::{
   is_yak_atoms_callee, is_yak_css_callee, merge_class_names, with_leading_space,
@@ -5,13 +6,14 @@ use crate::fold::css_call_to_class_name::{
 use crate::utils::ast_helper::{binary, condition, paren, str_expr, unwrap_type_casts};
 use swc_core::{
   atoms::Wtf8Atom,
-  ecma::ast::{BinaryOp, CallExpr, Expr, Lit},
+  common::DUMMY_SP,
+  ecma::ast::{BinaryOp, CallExpr, Expr, Lit, SeqExpr},
 };
 
 impl ClassNameFolder<'_> {
   /// Folds what a runtime expression returns: a `css(...)` call, a falsy
-  /// literal, `cond && <value>`, `cond || <value>` or
-  /// `cond ? <value> : <value>`
+  /// literal, `cond && <value>`, `cond || <value>`,
+  /// `cond ? <value> : <value>` or `(call, <value>)`
   ///
   /// The result is a folded class name expression: the class names the value
   /// adds, as a string that is empty or starts with a space, e.g.
@@ -59,6 +61,24 @@ impl ClassNameFolder<'_> {
         let cons = self.fold_value(&cond.cons)?;
         let alt = self.fold_value(&cond.alt)?;
         Some(create_folded_class_name_condition(test, cons, alt))
+      }
+      // a call before the value, e.g. from a statement in a block body:
+      // `(assertNever($size), undefined)` -> `(assertNever($size), "")`.
+      // Only the last expression is the value, see `is_discarded_expression`
+      Expr::Seq(seq) => {
+        let (value, discarded) = seq.exprs.split_last()?;
+        let mut exprs = Vec::new();
+        for expr in discarded {
+          if !is_discarded_expression(expr) {
+            return None;
+          }
+          exprs.push(self.params.substitute(unwrap_type_casts(expr))?);
+        }
+        exprs.push(self.fold_value(value)?);
+        Some(paren(Box::new(Expr::Seq(SeqExpr {
+          span: DUMMY_SP,
+          exprs,
+        }))))
       }
       _ => None,
     }

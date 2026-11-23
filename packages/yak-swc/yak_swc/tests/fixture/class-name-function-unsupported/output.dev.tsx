@@ -97,18 +97,18 @@ export const MixinInterpolation = /*YAK EXPORTED STYLED:MixinInterpolation:input
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_MixinInterpolation_m7uBBu"), {
     "displayName": "MixinInterpolation"
 });
-// a statement next to the `if` and `return` has no place in an expression
-export const BlockWithLog = /*YAK EXPORTED STYLED:BlockWithLog:input_BlockWithLog_m7uBBu*//*YAK Extracted CSS:
-.input_BlockWithLog___m7uBBu {
+// an assignment next to the `if` and `return` has no place in an expression
+export const BlockWithAssignment = /*YAK EXPORTED STYLED:BlockWithAssignment:input_BlockWithAssignment_m7uBBu*//*YAK Extracted CSS:
+.input_BlockWithAssignment___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_BlockWithLog_m7uBBu", ({ $on })=>{
-    console.log($on);
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_BlockWithAssignment_m7uBBu", ({ $on })=>{
+    window.lastOn = $on;
     if ($on) {
-        return /*#__PURE__*/ css("input_BlockWithLog___m7uBBu");
+        return /*#__PURE__*/ css("input_BlockWithAssignment___m7uBBu");
     }
 }), {
-    "displayName": "BlockWithLog"
+    "displayName": "BlockWithAssignment"
 });
 export const BlockWithDebugger = /*YAK EXPORTED STYLED:BlockWithDebugger:input_BlockWithDebugger_m7uBBu*//*YAK Extracted CSS:
 .input_BlockWithDebugger___m7uBBu {

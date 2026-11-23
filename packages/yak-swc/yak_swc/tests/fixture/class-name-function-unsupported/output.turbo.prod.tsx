@@ -71,13 +71,13 @@ export const MixinInterpolation = /*YAK EXPORTED STYLED:MixinInterpolation:ym7uB
   --yak-css-import: url("./helpers:mixin",mixin);
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuL");
-// a statement next to the `if` and `return` has no place in an expression
-export const BlockWithLog = /*YAK EXPORTED STYLED:BlockWithLog:ym7uBBuM*//*YAK Extracted CSS:
+// an assignment next to the `if` and `return` has no place in an expression
+export const BlockWithAssignment = /*YAK EXPORTED STYLED:BlockWithAssignment:ym7uBBuM*//*YAK Extracted CSS:
 .ym7uBBuN {
   color: red;
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBuM", ({ $on })=>{
-    console.log($on);
+    window.lastOn = $on;
     if ($on) {
         return /*#__PURE__*/ css("ym7uBBuN");
     }

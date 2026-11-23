@@ -1,12 +1,12 @@
-use crate::utils::ast_helper::{binary, condition, paren};
+use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts};
 use rustc_hash::{FxHashMap, FxHashSet};
 use swc_core::{
   atoms::Atom,
   common::{Mark, SyntaxContext, DUMMY_SP},
   ecma::ast::{
-    AssignPatProp, BinaryOp, BindingIdent, EsReserved, Expr, Id, Ident, IdentName, KeyValuePatProp,
-    KeyValueProp, Lit, MemberProp, Number, ObjectPat, ObjectPatProp, Pat, Prop, PropName,
-    UnaryExpr, UnaryOp,
+    AssignPatProp, BinaryOp, BindingIdent, Callee, EsReserved, Expr, Id, Ident, IdentName,
+    KeyValuePatProp, KeyValueProp, Lit, MemberProp, Number, ObjectPat, ObjectPatProp, OptCall, Pat,
+    Prop, PropName, UnaryExpr, UnaryOp,
   },
   ecma::visit::{VisitMut, VisitMutWith},
 };
@@ -211,6 +211,12 @@ impl SubstituteReads<'_> {
       Box::new(Expr::Ident(param)),
     )))
   }
+
+  /// `p.$on` for the props parameter `p`
+  fn is_props_member(&self, expr: &Expr) -> bool {
+    matches!(unwrap_type_casts(expr), Expr::Member(member)
+      if matches!(unwrap_type_casts(&member.obj), Expr::Ident(obj) if self.params.member_params.contains(&obj.to_id())))
+  }
 }
 
 impl VisitMut for SubstituteReads<'_> {
@@ -246,6 +252,28 @@ impl VisitMut for SubstituteReads<'_> {
       _ => {}
     }
     expr.visit_mut_children_with(self);
+  }
+
+  /// A method call on the props, e.g. `p.onRender()`, runs with the props
+  /// object as `this`. The folded function has no props object, and
+  /// `onRender()` would run with `this` undefined
+  fn visit_mut_callee(&mut self, callee: &mut Callee) {
+    if let Callee::Expr(expr) = callee {
+      if self.is_props_member(expr) {
+        self.failed = true;
+        return;
+      }
+    }
+    callee.visit_mut_children_with(self);
+  }
+
+  /// `p.onRender?.()`, see `visit_mut_callee`
+  fn visit_mut_opt_call(&mut self, call: &mut OptCall) {
+    if self.is_props_member(&call.callee) {
+      self.failed = true;
+      return;
+    }
+    call.visit_mut_children_with(self);
   }
 
   /// Expands a shorthand `{ on }` to `{ on: $on }` for `({ $on: on })`
