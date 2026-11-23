@@ -34,43 +34,52 @@ export interface YakComponent<T> extends React.FunctionComponent<T> {
  * Extends StyledLiteral with the ability to specify default attributes.
  */
 export interface LiteralWithAttrs<T extends object> extends StyledLiteral<T> {
-  attrs: <
-    TAttrsIn extends object = {},
-    TAttrsOut extends AttrsMerged<T, TAttrsIn> = AttrsMerged<T, TAttrsIn>,
-  >(
+  attrs: <TAttrsIn extends object = {}, TAttrsOut extends object = {}>(
     attrs: Attrs<T, TAttrsIn, TAttrsOut>,
-  ) => StyledLiteral<Substitute<T, TAttrsIn>>;
+  ) => StyledLiteral<
+    Substitute<T, TAttrsIn>,
+    Substitute<Substitute<T, TAttrsIn>, TAttrsOut>,
+    keyof TAttrsOut
+  >;
 }
 
 /**
  * Template literal function for defining CSS styles with interpolation support.
  * Accepts CSS template strings and interpolated values with proper typing.
  */
-export interface StyledLiteral<T> {
+export interface StyledLiteral<T, TInterpolationProps = T, TAttrsKeys extends PropertyKey = never> {
   <TCSSProps>(
     styles: TemplateStringsArray,
     ...values: Array<
       CSSInterpolation<
-        T &
+        TInterpolationProps &
           // Prevent TypeScript from inferring types from template literal usage
           // This ensures proper typing and enables destructuring hints
           NoInfer<TCSSProps> & { theme: YakTheme }
       >
     >
-  ): YakComponent<TCSSProps & T>;
+  ): YakComponent<MakeOptional<TCSSProps & T, TAttrsKeys>>;
 }
+
+type MakeOptional<TProps, TKeys extends PropertyKey> = [TKeys] extends [never]
+  ? TProps
+  : FastOmit<TProps & object, TKeys> & Partial<Pick<TProps, Extract<keyof TProps, TKeys>>>;
 
 /**
  * Function variant of attrs that receives current props and returns additional props.
  * Allows for dynamic prop generation based on component state.
  */
-export interface AttrsFunction<
-  TBaseProps,
-  TIn extends object = {},
-  TOut extends AttrsMerged<TBaseProps, TIn> = AttrsMerged<TBaseProps, TIn>,
-> {
-  (p: Substitute<TBaseProps & { theme: YakTheme }, TIn>): Partial<TOut>;
+export interface AttrsFunction<TBaseProps, TIn extends object = {}, TOut extends object = {}> {
+  (p: Substitute<TBaseProps & { theme: YakTheme }, TIn>): AttrsResult<TBaseProps, TIn, TOut>;
 }
+
+/**
+ * A bare `TOut` would also infer the attrs function itself, and
+ * `Partial<TOut>` would drop `undefined` from the inferred props
+ */
+type AttrsResult<TBaseProps, TIn extends object, TOut extends object> = Partial<
+  AttrsMerged<TBaseProps, NoInfer<TIn>>
+> & { [K in keyof TOut]: TOut[K] };
 
 /**
  * Merges provided props with initial props, making specified props optional.
@@ -93,11 +102,9 @@ export type MappedHtmlTags = {
  * The attrs function allows adding additional props to a styled component.
  * Props can be specified as an object or as a function that receives current props.
  */
-export type Attrs<
-  TBaseProps,
-  TIn extends object = {},
-  TOut extends AttrsMerged<TBaseProps, TIn> = AttrsMerged<TBaseProps, TIn>,
-> = Partial<TOut> | AttrsFunction<TBaseProps, TIn, TOut>;
+export type Attrs<TBaseProps, TIn extends object = {}, TOut extends object = {}> =
+  | AttrsResult<TBaseProps, TIn, TOut>
+  | AttrsFunction<TBaseProps, TIn, TOut>;
 
 /**
  * Utility type to merge two object types, with properties from B taking precedence.

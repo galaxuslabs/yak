@@ -32,6 +32,66 @@ const WithAttrs = styled.input.attrs({ type: "text" })`
 `;
 const withAttrsUsage = <WithAttrs value="x" />;
 
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false;
+const assert = <T extends true>() => {};
+
+// props returned from attrs reach interpolations
+const Dot = styled.div.attrs(({ disableAnimation }: { disableAnimation?: boolean }) => ({
+  $disableAnimation: disableAnimation,
+  disableAnimation: undefined,
+}))`
+  ${({ $disableAnimation }) =>
+    $disableAnimation &&
+    css`
+      animation: none;
+    `}
+  ${(p) => {
+    assert<Equal<typeof p.$disableAnimation, boolean | undefined>>();
+    assert<Equal<typeof p.disableAnimation, undefined>>();
+    return "";
+  }}
+`;
+const dotUsage = <Dot disableAnimation />;
+// @ts-expect-error - props returned from attrs do not become public props
+const dotPrivateUsage = <Dot $disableAnimation />;
+
+// a static attrs object adds props as well
+const Sized = styled.div<{ $size: number }>``;
+const SizedWithAttrs = styled(Sized).attrs({ $size: 2, $label: "two" })`
+  ${(p) => {
+    const size: number = p.$size;
+    const label: string = p.$label;
+    return `${size}${label}`;
+  }}
+`;
+
+// attrs accept hyphenated attributes
+const WithDataAttrs = styled.div.attrs({ "data-foo": "", "aria-label": "dot" })``;
+const WithDataAttrsFn = styled.div.attrs(() => ({ "data-foo": "" }))``;
+
+// returned props keep their declared type
+// @ts-expect-error - wrong type for a known attribute
+const wrongAttrType = styled.input.attrs({ type: 1 })``;
+// @ts-expect-error - wrong type for a known custom prop
+const wrongCustomPropType = styled(Sized).attrs({ $size: "2" })``;
+
+// props that attrs sets become optional
+const SizedStatic = styled(Sized).attrs({ $size: 2 })``;
+const SizedDynamic = styled(Sized).attrs(() => ({ $size: 2 }))``;
+const sizedStaticUsage = <SizedStatic />;
+const sizedOverrideUsage = <SizedStatic $size={3} />;
+const sizedDynamicUsage = <SizedDynamic />;
+// @ts-expect-error - a prop that attrs sets keeps its type
+const sizedWrongUsage = <SizedStatic $size="3" />;
+// @ts-expect-error - without attrs the prop stays required
+const sizedMissingUsage = <Sized />;
+const Labeled = styled.div<{ $size: number; $label: string }>``;
+const LabeledWithAttrs = styled(Labeled).attrs({ $size: 2 })``;
+const labeledUsage = <LabeledWithAttrs $label="two" />;
+// @ts-expect-error - props that attrs does not set stay required
+const labeledMissingUsage = <LabeledWithAttrs />;
+
 // keyframes returns an animation-name usable in interpolations
 const rotate = keyframes`
   from { transform: rotate(0deg); }
