@@ -61,10 +61,10 @@ export const MixinInterpolation = styled.div`
   ${mixin}
 `;
 
-// a statement next to the `if` and `return` has no place in an expression
-export const BlockWithLog = styled.div<{ $on: boolean }>`
+// an assignment next to the `if` and `return` has no place in an expression
+export const BlockWithAssignment = styled.div<{ $on: boolean }>`
   ${({ $on }) => {
-    console.log($on);
+    window.lastOn = $on;
     if ($on) {
       return css`color: red;`;
     }

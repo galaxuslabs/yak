@@ -74,6 +74,10 @@ test(
     await expect(nestedSmall).toHaveCSS("letter-spacing", "1px");
     await expect(page.getByTestId("nested-off")).toHaveCSS("letter-spacing", "normal");
 
+    // a switch whose default runs an exhaustive check as a statement
+    await expect(page.getByTestId("density-compact")).toHaveCSS("line-height", "10px");
+    await expect(page.getByTestId("density-roomy")).toHaveCSS("line-height", "30px");
+
     // entity-spelled attribute strings compare by decoded value, like the runtime path
     await expect(page.getByTestId("entity")).toHaveCSS("color", "rgb(220, 20, 60)");
     await expect(page.getByTestId("entity-runtime")).toHaveCSS("color", "rgb(220, 20, 60)");

@@ -113,6 +113,28 @@ const Nested = styled.p<{ $on?: boolean; $big?: boolean }>`
     `}
 `;
 
+// a switch that ends with an exhaustive check as a statement
+type Density = "compact" | "roomy";
+function assertNever(value: never): never {
+  throw new Error(`Unknown density: ${String(value)}`);
+}
+const Dense = styled.p<{ $density: Density }>`
+  ${({ $density }) => {
+    switch ($density) {
+      case "compact":
+        return css`
+          line-height: 10px;
+        `;
+      case "roomy":
+        return css`
+          line-height: 30px;
+        `;
+      default:
+        assertNever($density);
+    }
+  }}
+`;
+
 export default function App() {
   const [active, setActive] = useState(false);
   const spreadProps = { $active: true };
@@ -167,6 +189,12 @@ export default function App() {
         nested small
       </Nested>
       <Nested data-testid="nested-off">nested off</Nested>
+      <Dense data-testid="density-compact" $density="compact">
+        compact
+      </Dense>
+      <Dense data-testid="density-roomy" {...{ $density: "roomy" as const }}>
+        roomy
+      </Dense>
       {/* entity spelling decodes to "Food & Drink" - must match like the runtime twin below */}
       <Category data-testid="entity" $label="Food &amp; Drink">
         Food &amp; Drink

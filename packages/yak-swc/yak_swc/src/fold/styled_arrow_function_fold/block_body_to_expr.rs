@@ -1,9 +1,12 @@
 use swc_core::{
   common::{SyntaxContext, DUMMY_SP},
-  ecma::ast::{BinaryOp, Expr, Ident, Lit, MemberProp, ParenExpr, Stmt, SwitchCase, SwitchStmt},
+  ecma::ast::{
+    BinaryOp, BreakStmt, CallExpr, Callee, Expr, Ident, Lit, MemberProp, ParenExpr, SeqExpr, Stmt,
+    SwitchCase, SwitchStmt,
+  },
 };
 
-use crate::utils::ast_helper::{binary, condition, unwrap_type_casts};
+use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts};
 
 /// Turns the block body of a runtime expression into the one expression it
 /// returns, so the folded function can take it like an arrow without a block:
@@ -19,10 +22,11 @@ use crate::utils::ast_helper::{binary, condition, unwrap_type_casts};
 /// $size === "s" ? css("yB1") : css("yB2")
 /// ```
 ///
-/// The body may hold `if`, `else`, `switch`, `return`, `;` and nested `{}`
-/// blocks only. Every other statement, e.g. a `const` or a `console.log`, has
-/// no place in an expression, so the component keeps its unfolded output.
-/// That also holds for a statement after a `return`, see `can_drop`
+/// The body may hold `if`, `else`, `switch`, `return`, `;`, nested `{}`
+/// blocks and calls like `assertNever($size);`, see `is_discarded_expression`.
+/// Every other statement, e.g. a `const` or `$size++`, has no place in the
+/// expression, so the component keeps its unfolded output. That also holds
+/// for a statement after a `return`, see `can_drop`
 ///
 /// Each condition stays in the order the user wrote it and runs as often as
 /// in the block. A path that ends without a `return` yields `undefined`
@@ -52,7 +56,55 @@ pub fn block_body_to_expr(stmts: &[Stmt]) -> Option<Box<Expr>> {
       Some(condition(if_stmt.test.clone(), cons, alt))
     }
     Stmt::Switch(switch) => switch_to_expr(switch, rest),
+    // Devs write an exhaustive check like `assertNever($size);` or add a
+    // `console.log($size);` while they debug. The source throws the value of
+    // the statement away, so it can add no class name. The call stays at its
+    // place in a sequence, so it still runs as often and in the same order,
+    // and `assertNever` still throws for an unknown value:
+    //
+    // switch ($size) {
+    //   case "s": return css("yB1");
+    //   default: assertNever($size);
+    // }
+    // ->
+    // $size === "s" ? css("yB1") : (assertNever($size), undefined)
+    //
+    // `{ log($a); return css("yB1"); }` -> `(log($a), css("yB1"))` keeps the
+    // order of the statements. `fold_value` later turns the `undefined` into
+    // `""` and the `css("yB1")` into `" yB1"`
+    Stmt::Expr(statement) if is_discarded_expression(&statement.expr) => {
+      Some(paren(Box::new(Expr::Seq(SeqExpr {
+        span: DUMMY_SP,
+        exprs: vec![
+          Box::new(unwrap_type_casts(&statement.expr).clone()),
+          block_body_to_expr(rest)?,
+        ],
+      }))))
+    }
     _ => None,
+  }
+}
+
+/// A statement or a part of a sequence whose value the source throws away:
+/// a call like `assertNever($size)` or `console.log($size)`, or a plain read
+/// like `$size`, which is what `$size satisfies never;` leaves after the
+/// types are stripped
+///
+/// The callee is a plain read, so the call is the only thing that runs. A
+/// plain read stays in the sequence like a call, so the folded function reads
+/// what the source reads. An assignment, `$size++`, `await` and `yield` stay
+/// unfolded: an assignment or an update could write to a prop that the other
+/// conditions read from the same parameter, and `await` or `yield` pause the
+/// function, which an expression of the folded function can not do. The
+/// arguments go through `FoldParams::substitute` like a condition, which
+/// fails for a write to a prop inside them
+pub(super) fn is_discarded_expression(expr: &Expr) -> bool {
+  match unwrap_type_casts(expr) {
+    Expr::Call(CallExpr {
+      callee: Callee::Expr(callee),
+      ..
+    }) => is_plain_read(unwrap_type_casts(callee)),
+    expr => is_plain_read(expr),
   }
 }
 
@@ -88,9 +140,14 @@ fn branch_to_expr(branch: &[Stmt], rest: &[Stmt]) -> Option<Box<Expr>> {
 /// plain read like `$size` or `props.$size`. A `case` compares with `===`,
 /// and so does the expression. A case value is a literal or a plain read
 /// like `Size.Small`: it can not change the switched value between two
-/// comparisons, which a call like `case next():` could. Every `case`
-/// returns: a `break` or a `case` that runs into the next one would need the
-/// statements after the `switch` a second time
+/// comparisons, which a call like `case next():` could. Every `case` but the
+/// last returns: a `break` or a `case` that runs into the next one would need
+/// the statements after the `switch` a second time
+///
+/// The last case may end without a `return` or with a `break`, e.g.
+/// `default: assertNever($size);`. It runs out of the `switch` and continues
+/// with the statements after it, which `branch_to_expr` copies if they are
+/// one `return`, like for an `if` without `return`
 fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
   let discriminant = unwrap_type_casts(&switch.discriminant);
   if !is_plain_read(discriminant) {
@@ -101,7 +158,7 @@ fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
   let mut tests: Vec<&Expr> = Vec::new();
   let mut default_case: Option<&SwitchCase> = None;
   let mut default_label_seen = false;
-  for case in &switch.cases {
+  for (index, case) in switch.cases.iter().enumerate() {
     // `default` is the last group, so that the order of the tests stays
     if default_case.is_some() {
       return None;
@@ -118,7 +175,8 @@ fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
     if case.cons.is_empty() {
       continue;
     }
-    if !always_returns(&case.cons) {
+    // a case before the last one without `return` runs into the next case
+    if !always_returns(&case.cons) && index + 1 < switch.cases.len() {
       return None;
     }
     if default_label_seen {
@@ -132,9 +190,9 @@ fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
     return None;
   }
   let mut result = match default_case {
-    // the statements after a `switch` with a `default` never run
-    Some(_) if !can_drop(rest) => return None,
-    Some(case) => block_body_to_expr(&case.cons)?,
+    // the statements after a `switch` whose `default` returns never run
+    Some(case) if always_returns(&case.cons) && !can_drop(rest) => return None,
+    Some(case) => case_to_expr(case, rest)?,
     None => block_body_to_expr(rest)?,
   };
   for (tests, case) in groups.into_iter().rev() {
@@ -148,9 +206,21 @@ fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
         )
       })
       .reduce(|left, right| binary(BinaryOp::LogicalOr, left, right))?;
-    result = condition(test, block_body_to_expr(&case.cons)?, result);
+    result = condition(test, case_to_expr(case, rest)?, result);
   }
   Some(result)
+}
+
+/// Returns the expression for the statements of one `case`. Only the last
+/// case can end without a `return`, see `switch_to_expr`. A `break` at its
+/// end leaves the `switch` like the end of the case does, so it is left out:
+/// `default: assertNever($size); break;` -> `(assertNever($size), undefined)`
+fn case_to_expr(case: &SwitchCase, rest: &[Stmt]) -> Option<Box<Expr>> {
+  let cons = match case.cons.split_last() {
+    Some((Stmt::Break(BreakStmt { label: None, .. }), init)) => init,
+    _ => &case.cons[..],
+  };
+  branch_to_expr(cons, rest)
 }
 
 /// Statements that never run are left out of the expression, e.g. the `break`
