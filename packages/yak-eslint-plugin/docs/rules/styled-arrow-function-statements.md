@@ -35,12 +35,12 @@ compiles to something like
 
 That works when the function is an expression, or when its body holds only `if`, `else`, `switch`, `return`, calls like `assertNever($size);` and a `const` that names a prop read. Every other statement, like a `const` with a calculation, an assignment or a loop, has no place in such an expression. The component still works, but it renders on a slower path.
 
-A function that needs such a statement can turn the rule off for that line:
+A function that needs such a statement can turn the rule off for that line. The comment stands inside the function, above the reported statement:
 
 ```tsx
 const Button = styled.button<{ $size: number }>`
-  // eslint-disable-next-line @yak/styled-arrow-function-statements
   ${({ $size }) => {
+    // eslint-disable-next-line @yak/styled-arrow-function-statements
     const padding = Math.min($size, 8);
     return padding > 4 && css`...`;
   }}

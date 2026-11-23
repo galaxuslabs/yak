@@ -277,7 +277,7 @@ styled.button<{ $size: number }>`
 `;
 ```
 
-A `switch` works too, as long as it switches on a prop and every `case` ends with a `return`:
+A `switch` works too, as long as it switches on a prop and every `case` before the last one ends with a `return`:
 
 ```tsx title="example.tsx"
 styled.button<{ $variant: "primary" | "danger" }>`
@@ -292,11 +292,11 @@ styled.button<{ $variant: "primary" | "danger" }>`
 `;
 ```
 
-A function that needs another statement can turn the rule off for its line with `// eslint-disable-next-line @yak/styled-arrow-function-statements`. The component still works and only renders a little slower.
+A function that needs another statement can turn the rule off with `// eslint-disable-next-line @yak/styled-arrow-function-statements` inside the function, above the reported statement. The component still works and only renders a little slower.
 
 ### styled-arrow-function-returns
 
-Reports a function that adds class names but returns something else than a `css` literal. The rule is off by default.
+Reports a function that adds class names but returns anything other than a `css` literal. The rule is off by default.
 
 A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names, when it stands on its own. At the second place a string or a number adds no styles, and yak can not tell what a call to another function returns.
 

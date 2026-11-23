@@ -4,7 +4,7 @@
 
 <!-- end auto-generated rule header -->
 
-Reports a function in a `styled` or `css` literal that adds class names but returns something else than a `css` literal.
+Reports a function in a `styled` or `css` literal that adds class names but returns anything other than a `css` literal.
 
 ## Reason why
 
