@@ -37,6 +37,7 @@ catalogs:
     "@solidjs/web": ^2.0.0-rc.15
     # qwik 2 release candidates: pinned, a new one ships every one to three weeks
     "@qwik.dev/core": 2.0.0-rc.5
+    "@qwik.dev/router": 2.0.0-rc.5
     # Keep in sync with swc_core in packages/yak-swc/Cargo.toml and next.js version of bundled SWC
     "@swc/core": ~1.16.18
     "@swc/counter": ^0.1.3
@@ -116,3 +117,11 @@ catalogs:
     wasm-pack: 0.15.0
     yaml: 2.9.1
     zod: 4.6.7
+
+# Temporary: this patch makes Vite keep the files addWatchFile adds in load on
+# a module's first request. Qwik links yak's css only through a <link>, so
+# without it an edit to a file the css reads from sends no update. Upstream fix:
+# vitejs/vite#23861. Drop this patch once the catalog moves to a Vite release
+# that includes it.
+patchedDependencies:
+  vite@8.3.4: patches/vite@8.3.4.patch

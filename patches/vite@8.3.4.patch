@@ -1,0 +1,12 @@
+diff --git a/dist/node/chunks/node.js b/dist/node/chunks/node.js
+index 121ef458164ab3687690f0e6d14c23ffe4c5d4a3..43987305c0ec3d9b0d31394836e664c4318c6fe0 100644
+--- a/dist/node/chunks/node.js
++++ b/dist/node/chunks/node.js
+@@ -20134,6 +20134,7 @@ async function loadAndTransform(environment, id, url, options, timestamp, mod, r
+ 	let map = null;
+ 	let moduleType;
+ 	const loadStart = debugLoad ? performance$1.now() : 0;
++	mod ??= await moduleGraph._ensureEntryFromUrl(url, void 0, resolved);
+ 	const loadResult = await pluginContainer.load(id);
+ 	if (loadResult == null) {
+ 		const file = cleanUrl(id);

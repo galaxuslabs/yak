@@ -10,9 +10,12 @@
     "./box-react": "./box.react.js",
     "./box-solid": "./box.solid.js",
     "./card-react": "./card.react.tsx",
-    "./card-solid": "./card.solid.tsx"
+    "./card-solid": "./card.solid.tsx",
+    "./box-qwik": "./box.qwik.js",
+    "./card-qwik": "./card.qwik.tsx"
   },
   "peerDependencies": {
+    "@yak/qwik": "*",
     "@yak/react": "*",
     "@yak/solid": "*"
   },
@@ -21,6 +24,9 @@
       "optional": true
     },
     "@yak/solid": {
+      "optional": true
+    },
+    "@yak/qwik": {
       "optional": true
     }
   }

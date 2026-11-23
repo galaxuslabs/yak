@@ -17,6 +17,7 @@
     "@playwright/test": "catalog:dev",
     "@types/node": "catalog:dev",
     "@types/react": "catalog:dev",
+    "@yak/qwik": "workspace:*",
     "@yak/react": "workspace:*",
     "@yak/solid": "workspace:*",
     "typescript": "catalog:dev",
