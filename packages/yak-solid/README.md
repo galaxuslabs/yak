@@ -2,7 +2,7 @@
 
 Styled-components syntax for SolidJS, compiled away at build time. Your CSS is extracted by the [yak](https://yak.style/) SWC compiler and what's left at runtime is a thin layer that fits Solid's model: components run once, and dynamic styles are driven by signals, not re-renders.
 
-> **Status: experimental.** `@yak/solid` targets Solid 2. Expect breaking changes while `@yak/solid` stabilizes. Solid 1 is not supported.
+> `@yak/solid` targets Solid 2. Solid 1 is not supported.
 
 ## Why this fits Solid
 
