@@ -32,7 +32,6 @@ import { css, Classes, yakComponentSymbol } from "./cssLiteral.js";
 import type {
   AnyComponent,
   Attrs,
-  AttrsMerged,
   Styled,
   YakComponent,
   StyledFn,
@@ -147,11 +146,15 @@ type TargetRenderer = (props: Props, meta: RenderMeta) => JSX.Element;
 export type StyledInternal = <
   T extends object,
   TAttrsIn extends object = {},
-  TAttrsOut extends AttrsMerged<T, TAttrsIn> = AttrsMerged<T, TAttrsIn>,
+  TAttrsOut extends object = {},
 >(
   Component: AnyComponent<T> | YakComponent<T> | HtmlTags | string,
   attrs?: Attrs<T, TAttrsIn, TAttrsOut>,
-) => StyledLiteral<Substitute<T, TAttrsIn>>;
+) => StyledLiteral<
+  Substitute<T, TAttrsIn>,
+  Substitute<Substitute<T, TAttrsIn>, TAttrsOut>,
+  keyof TAttrsOut
+>;
 
 /** solid's server regex (not exported); its VoidElements set lacks keygen and menuitem */
 const VOID_ELEMENTS =
@@ -159,7 +162,8 @@ const VOID_ELEMENTS =
 
 const styledFactory: StyledFn = (Component) =>
   Object.assign(yakStyled(Component), {
-    attrs: (attrs: Attrs<any>) => yakStyled(Component, attrs),
+    attrs: (attrs: Attrs<any, any, any>) =>
+      yakStyled(Component, attrs) as StyledLiteral<any, any, any>,
   });
 
 /**

@@ -5,7 +5,6 @@ import React from "react";
 import { jsx } from "react/jsx-runtime";
 import type {
   Attrs,
-  AttrsMerged,
   Styled,
   YakComponent,
   AttrsFunction,
@@ -34,7 +33,8 @@ import { mergeClassNames } from "./internals/mergeClassNames.js";
 //
 const styledFactory: StyledFn = (Component) =>
   Object.assign(yakStyled(Component), {
-    attrs: (attrs: Attrs<any>) => yakStyled(Component, attrs),
+    attrs: (attrs: Attrs<any, any, any>) =>
+      yakStyled(Component, attrs) as StyledLiteral<any, any, any>,
   });
 
 /**
@@ -400,11 +400,7 @@ const combineProps = <
  * @param parentAttrsFn The attrs function of the parent/wrapped component (if any)
  * @returns A function that receives the props and returns the transformed props
  */
-const buildRuntimeAttrsProcessor = <
-  T,
-  TAttrsIn extends object,
-  TAttrsOut extends AttrsMerged<T, TAttrsIn>,
->(
+const buildRuntimeAttrsProcessor = <T, TAttrsIn extends object, TAttrsOut extends object>(
   attrs?: Attrs<T, TAttrsIn, TAttrsOut>,
   parentAttrsFn?: AttrsFunction<T, TAttrsIn, TAttrsOut>,
 ): AttrsFunction<T, TAttrsIn, TAttrsOut> | undefined => {
@@ -561,11 +557,15 @@ const joinStaticClassNames = (parent: string, own: string) =>
 export type StyledInternal = <
   T extends object,
   TAttrsIn extends object = {},
-  TAttrsOut extends AttrsMerged<T, TAttrsIn> = AttrsMerged<T, TAttrsIn>,
+  TAttrsOut extends object = {},
 >(
   Component: React.FunctionComponent<T> | YakComponent<T> | HtmlTags | string,
   attrs?: Attrs<T, TAttrsIn, TAttrsOut>,
-) => StyledLiteral<Substitute<T, TAttrsIn>>;
+) => StyledLiteral<
+  Substitute<T, TAttrsIn>,
+  Substitute<Substitute<T, TAttrsIn>, TAttrsOut>,
+  keyof TAttrsOut
+>;
 
 /**
  * Utility type to extract the AttrsFunction from the Attrs type
