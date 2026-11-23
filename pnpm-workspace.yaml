@@ -108,8 +108,8 @@ catalogs:
     typescript: 6.0.3
     vinext: 1.2.1
     vite: 8.3.4
-    "@solidjs/vite-plugin": 3.0.0
-    "@solidjs/babel-plugin": 2.0.0
+    "@solidjs/vite-plugin": 3.0.1
+    "@solidjs/babel-plugin": 2.0.2
     vitest: 5.0.5
     wasm-pack: 0.15.0
     yaml: 2.9.1
