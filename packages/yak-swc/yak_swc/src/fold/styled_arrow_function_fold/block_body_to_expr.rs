@@ -1,9 +1,11 @@
+use rustc_hash::FxHashMap;
 use swc_core::{
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
-    BinaryOp, BreakStmt, CallExpr, Callee, Expr, Ident, Lit, MemberProp, ParenExpr, SeqExpr, Stmt,
-    SwitchCase, SwitchStmt,
+    BinaryOp, BreakStmt, CallExpr, Callee, Decl, Expr, Id, Ident, Lit, MemberProp, OptChainBase,
+    ParenExpr, Pat, SeqExpr, Stmt, SwitchCase, SwitchStmt, VarDecl, VarDeclKind,
   },
+  ecma::visit::{Visit, VisitWith},
 };
 
 use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts};
@@ -23,24 +25,30 @@ use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts};
 /// ```
 ///
 /// The body may hold `if`, `else`, `switch`, `return`, `;`, nested `{}`
-/// blocks and calls like `assertNever($size);`, see `is_discarded_expression`.
-/// Every other statement, e.g. a `const` or `$size++`, has no place in the
-/// expression, so the component keeps its unfolded output. That also holds
-/// for a statement after a `return`, see `can_drop`
+/// blocks, calls like `assertNever($size);`, see `is_discarded_expression`,
+/// and a `const` that names a prop read, see `bind_consts`. Every other
+/// statement, e.g. a `let` or `$size++`, has no place in the expression, so
+/// the component keeps its unfolded output. That also holds for a statement
+/// after a `return`, see `can_drop`
 ///
 /// Each condition stays in the order the user wrote it and runs as often as
 /// in the block. A path that ends without a `return` yields `undefined`
-pub fn block_body_to_expr(stmts: &[Stmt]) -> Option<Box<Expr>> {
+pub fn block_body_to_expr(stmts: &[Stmt], consts: &mut ConstReads) -> Option<Box<Expr>> {
   let Some((first, rest)) = stmts.split_first() else {
     return Some(undefined());
   };
+  // `if (w) return css("yB1"); const w = $a.w;` reads `w` before its
+  // declaration and throws, which the folded function would not
+  if reads_later_const(first, rest) {
+    return None;
+  }
   match first {
     Stmt::Return(return_stmt) if can_drop(rest) => Some(match &return_stmt.arg {
       Some(arg) => wrap_in_parens(arg),
       None => undefined(),
     }),
-    Stmt::Empty(_) => block_body_to_expr(rest),
-    Stmt::Block(block) if can_drop(rest) => branch_to_expr(&block.stmts, rest),
+    Stmt::Empty(_) => block_body_to_expr(rest, consts),
+    Stmt::Block(block) if can_drop(rest) => branch_to_expr(&block.stmts, rest, consts),
     // `if (a) { return x; } return y;` -> `a ? x : y`
     Stmt::If(if_stmt) => {
       // with an `else` the statements after the `if` never run, or they are
@@ -48,14 +56,20 @@ pub fn block_body_to_expr(stmts: &[Stmt]) -> Option<Box<Expr>> {
       if if_stmt.alt.is_some() && !can_drop(rest) {
         return None;
       }
-      let cons = branch_to_expr(std::slice::from_ref(&*if_stmt.cons), rest)?;
+      let cons = branch_to_expr(std::slice::from_ref(&*if_stmt.cons), rest, consts)?;
       let alt = match &if_stmt.alt {
-        Some(alt) => branch_to_expr(std::slice::from_ref(&**alt), rest)?,
-        None => block_body_to_expr(rest)?,
+        Some(alt) => branch_to_expr(std::slice::from_ref(&**alt), rest, consts)?,
+        None => block_body_to_expr(rest, consts)?,
       };
       Some(condition(if_stmt.test.clone(), cons, alt))
     }
-    Stmt::Switch(switch) => switch_to_expr(switch, rest),
+    Stmt::Switch(switch) => switch_to_expr(switch, rest, consts),
+    // `const size = $layout.medium?.size;` leaves no trace in the expression:
+    // every read of `size` becomes `$layout.medium?.size`, see `bind_consts`
+    Stmt::Decl(Decl::Var(var)) if var.kind == VarDeclKind::Const => {
+      bind_consts(var, consts)?;
+      block_body_to_expr(rest, consts)
+    }
     // Devs write an exhaustive check like `assertNever($size);` or add a
     // `console.log($size);` while they debug. The source throws the value of
     // the statement away, so it can add no class name. The call stays at its
@@ -77,11 +91,150 @@ pub fn block_body_to_expr(stmts: &[Stmt]) -> Option<Box<Expr>> {
         span: DUMMY_SP,
         exprs: vec![
           Box::new(unwrap_type_casts(&statement.expr).clone()),
-          block_body_to_expr(rest)?,
+          block_body_to_expr(rest, consts)?,
         ],
       }))))
     }
     _ => None,
+  }
+}
+
+/// The initializer of each `const` that names a prop read, e.g. `$a.width`
+/// for `const width = $a.width;`. `FoldParams::substitute` writes it at every
+/// read of the name. SWC gives each binding an `Id` of its own, so a `const`
+/// of the same name in another block or function is another entry
+pub(super) type ConstReads = FxHashMap<Id, Box<Expr>>;
+
+/// Registers the declarators of a `const` statement in `consts`
+///
+/// Devs give a prop read a short name, so that the conditions after it stay
+/// readable. The folded function has no statements, so it writes the
+/// initializer at each read of the name instead:
+///
+/// ```text
+/// const size = $layout.medium?.size;
+/// if (size === "s") return css("yB1");
+/// return css("yB2");
+/// ->
+/// $layout.medium?.size === "s" ? css("yB1") : css("yB2")
+/// ```
+///
+/// The initializer runs once per read, so it has to be a plain read like
+/// `$a`, `p.$a.b` or `$a?.b`, or a literal like `2`: a call like `calc($a)`
+/// would run several times. `let` and `var` stay unfolded, because an
+/// assignment between two reads could change their value
+///
+/// A getter on a prop runs once per read of the name instead of once. We
+/// accept that, because a React render has to be free of side effects, and
+/// React itself renders a component more than once, e.g. in strict mode. The
+/// same holds for a call in a condition that changes the prop between two
+/// reads. Getters on props are rare, and a default value from the
+/// destructuring like `({ $a = SIZES.s })` is already read this way
+fn bind_consts(var: &VarDecl, consts: &mut ConstReads) -> Option<()> {
+  if var.declare {
+    return None;
+  }
+  for (index, declarator) in var.decls.iter().enumerate() {
+    // a destructuring like `const { medium } = $layout;` stays unfolded
+    let Pat::Ident(name) = &declarator.name else {
+      return None;
+    };
+    let init = unwrap_type_casts(declarator.init.as_deref()?);
+    if !is_const_initializer(init) {
+      return None;
+    }
+    // `const a = a.b;` and `const a = b.c, b = $d;` read a name before its
+    // declaration. A read of an earlier name like `b = a.c` in
+    // `const a = $d, b = a.c;` stays in the initializer of `b`. The
+    // substitution replaces it when it writes the initializer at a read of `b`
+    let later: Vec<Id> = var.decls[index..]
+      .iter()
+      .filter_map(|later| later.name.as_ident().map(|later| later.to_id()))
+      .collect();
+    if reads_any(init, &later) {
+      return None;
+    }
+    consts.insert(name.to_id(), Box::new(init.clone()));
+  }
+  Some(())
+}
+
+/// `"s"`, `2`, `true`, `null` or a plain read, see `is_read_chain`
+fn is_const_initializer(expr: &Expr) -> bool {
+  matches!(
+    expr,
+    Expr::Lit(Lit::Str(_) | Lit::Num(_) | Lit::Bool(_) | Lit::Null(_))
+  ) || is_read_chain(expr)
+}
+
+/// A plain read with or without optional chaining: `$a`, `props.$a.b`,
+/// `$a?.b` or `$a.b?.c`
+fn is_read_chain(expr: &Expr) -> bool {
+  let member = match expr {
+    Expr::Ident(_) => return true,
+    Expr::Member(member) => member,
+    Expr::OptChain(chain) => match &*chain.base {
+      OptChainBase::Member(member) => member,
+      _ => return false,
+    },
+    _ => return false,
+  };
+  matches!(member.prop, MemberProp::Ident(_)) && is_read_chain(unwrap_type_casts(&member.obj))
+}
+
+/// Returns true if `first` reads a `const` that `rest` declares, see
+/// `block_body_to_expr`. A body without a `const` skips the visit
+fn reads_later_const(first: &Stmt, rest: &[Stmt]) -> bool {
+  let later = declared_consts(rest);
+  !later.is_empty() && reads_any(first, &later)
+}
+
+/// Returns true if a `const` of one `case` is read outside of that case:
+/// `case "s": const w = $a.w; return w; case "m": return w;`. All cases
+/// share the block of the `switch`, so the second `w` reads the first one
+/// before its declaration and throws, which the folded function would not
+fn reads_const_of_other_case(switch: &SwitchStmt) -> bool {
+  switch.cases.iter().enumerate().any(|(index, case)| {
+    let ids = declared_consts(&case.cons);
+    !ids.is_empty()
+      && (reads_any(&*switch.discriminant, &ids)
+        || reads_any(&case.test, &ids)
+        || (switch.cases.iter().enumerate())
+          .any(|(other, case)| other != index && reads_any(case, &ids)))
+  })
+}
+
+/// The names that the `const` statements in `stmts` declare, without the
+/// ones in nested blocks
+fn declared_consts(stmts: &[Stmt]) -> Vec<Id> {
+  stmts
+    .iter()
+    .filter_map(|stmt| match stmt {
+      Stmt::Decl(Decl::Var(var)) if var.kind == VarDeclKind::Const => Some(var),
+      _ => None,
+    })
+    .flat_map(|var| &var.decls)
+    .filter_map(|declarator| declarator.name.as_ident().map(|name| name.to_id()))
+    .collect()
+}
+
+/// Returns true if one of the `ids` appears anywhere in `node`
+fn reads_any<N: for<'a> VisitWith<ReadsAny<'a>>>(node: &N, ids: &[Id]) -> bool {
+  let mut visitor = ReadsAny { ids, found: false };
+  node.visit_with(&mut visitor);
+  visitor.found
+}
+
+struct ReadsAny<'a> {
+  ids: &'a [Id],
+  found: bool,
+}
+
+impl Visit for ReadsAny<'_> {
+  fn visit_ident(&mut self, ident: &Ident) {
+    if self.ids.contains(&ident.to_id()) {
+      self.found = true;
+    }
   }
 }
 
@@ -123,11 +276,11 @@ pub(super) fn is_discarded_expression(expr: &Expr) -> bool {
 /// ->
 /// $on ? ($big ? css("yB1") : css("yB2")) : css("yB2")
 /// ```
-fn branch_to_expr(branch: &[Stmt], rest: &[Stmt]) -> Option<Box<Expr>> {
+fn branch_to_expr(branch: &[Stmt], rest: &[Stmt], consts: &mut ConstReads) -> Option<Box<Expr>> {
   if rest.is_empty() || always_returns(branch) {
-    block_body_to_expr(branch)
+    block_body_to_expr(branch, consts)
   } else if matches!(rest, [Stmt::Return(_)]) {
-    block_body_to_expr(&[branch, rest].concat())
+    block_body_to_expr(&[branch, rest].concat(), consts)
   } else {
     None
   }
@@ -148,9 +301,13 @@ fn branch_to_expr(branch: &[Stmt], rest: &[Stmt]) -> Option<Box<Expr>> {
 /// `default: assertNever($size);`. It runs out of the `switch` and continues
 /// with the statements after it, which `branch_to_expr` copies if they are
 /// one `return`, like for an `if` without `return`
-fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
+fn switch_to_expr(
+  switch: &SwitchStmt,
+  rest: &[Stmt],
+  consts: &mut ConstReads,
+) -> Option<Box<Expr>> {
   let discriminant = unwrap_type_casts(&switch.discriminant);
-  if !is_plain_read(discriminant) {
+  if !is_plain_read(discriminant) || reads_const_of_other_case(switch) {
     return None;
   }
   // `case "m": case "l": return b;` is one group with two tests
@@ -192,8 +349,8 @@ fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
   let mut result = match default_case {
     // the statements after a `switch` whose `default` returns never run
     Some(case) if always_returns(&case.cons) && !can_drop(rest) => return None,
-    Some(case) => case_to_expr(case, rest)?,
-    None => block_body_to_expr(rest)?,
+    Some(case) => case_to_expr(case, rest, consts)?,
+    None => block_body_to_expr(rest, consts)?,
   };
   for (tests, case) in groups.into_iter().rev() {
     let test = tests
@@ -206,7 +363,7 @@ fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
         )
       })
       .reduce(|left, right| binary(BinaryOp::LogicalOr, left, right))?;
-    result = condition(test, case_to_expr(case, rest)?, result);
+    result = condition(test, case_to_expr(case, rest, consts)?, result);
   }
   Some(result)
 }
@@ -215,12 +372,12 @@ fn switch_to_expr(switch: &SwitchStmt, rest: &[Stmt]) -> Option<Box<Expr>> {
 /// case can end without a `return`, see `switch_to_expr`. A `break` at its
 /// end leaves the `switch` like the end of the case does, so it is left out:
 /// `default: assertNever($size); break;` -> `(assertNever($size), undefined)`
-fn case_to_expr(case: &SwitchCase, rest: &[Stmt]) -> Option<Box<Expr>> {
+fn case_to_expr(case: &SwitchCase, rest: &[Stmt], consts: &mut ConstReads) -> Option<Box<Expr>> {
   let cons = match case.cons.split_last() {
     Some((Stmt::Break(BreakStmt { label: None, .. }), init)) => init,
     _ => &case.cons[..],
   };
-  branch_to_expr(cons, rest)
+  branch_to_expr(cons, rest, consts)
 }
 
 /// Statements that never run are left out of the expression, e.g. the `break`

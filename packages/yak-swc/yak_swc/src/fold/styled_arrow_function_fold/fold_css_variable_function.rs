@@ -70,6 +70,12 @@ impl ClassNameFolder<'_> {
         }
         Some(Box::new(Expr::Call(call)))
       }
+      // `const w = $a.w;` stands for its initializer, e.g. in
+      // `css("yB1", { "--yX": w })`
+      Expr::Ident(ident) if self.params.consts.contains_key(&ident.to_id()) => {
+        let init = self.params.consts[&ident.to_id()].clone();
+        self.fold_style_value(&init)
+      }
       // an identifier or member could hold a helper function, which the
       // runtime would call with the props: only a destructured prop is safe
       Expr::Ident(ident) if !self.params.locals.contains_key(&ident.to_id()) => None,

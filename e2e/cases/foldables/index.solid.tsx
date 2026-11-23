@@ -134,6 +134,22 @@ const Dense = styled.p<{ $density: Density }>`
   }}
 `;
 
+// a short name for a read of a nested prop with an optional member
+type Placement = { medium?: { size: "s" | "m" } };
+const Placed = styled.p<{ $placement: Placement }>`
+  ${({ $placement }) => {
+    const size = $placement.medium?.size;
+    if (size === "s") {
+      return css`
+        word-spacing: 2px;
+      `;
+    }
+    return css`
+      word-spacing: 6px;
+    `;
+  }}
+`;
+
 export default function App() {
   const [active, setActive] = createSignal(false);
   const spreadProps = { $active: true };
@@ -194,6 +210,12 @@ export default function App() {
       <Dense data-testid="density-roomy" {...{ $density: "roomy" as const }}>
         roomy
       </Dense>
+      <Placed data-testid="placed-small" $placement={{ medium: { size: "s" } }}>
+        placed small
+      </Placed>
+      <Placed data-testid="placed-missing" $placement={{}}>
+        placed missing
+      </Placed>
       {/* entity spelling decodes to "Food & Drink" - must match like the runtime twin below */}
       <Category data-testid="entity" $label="Food &amp; Drink">
         Food &amp; Drink

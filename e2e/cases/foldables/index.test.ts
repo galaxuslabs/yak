@@ -78,6 +78,10 @@ test(
     await expect(page.getByTestId("density-compact")).toHaveCSS("line-height", "10px");
     await expect(page.getByTestId("density-roomy")).toHaveCSS("line-height", "30px");
 
+    // a const that names a prop read with an optional member
+    await expect(page.getByTestId("placed-small")).toHaveCSS("word-spacing", "2px");
+    await expect(page.getByTestId("placed-missing")).toHaveCSS("word-spacing", "6px");
+
     // entity-spelled attribute strings compare by decoded value, like the runtime path
     await expect(page.getByTestId("entity")).toHaveCSS("color", "rgb(220, 20, 60)");
     await expect(page.getByTestId("entity-runtime")).toHaveCSS("color", "rgb(220, 20, 60)");

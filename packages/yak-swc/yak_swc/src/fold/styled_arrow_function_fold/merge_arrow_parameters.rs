@@ -1,3 +1,4 @@
+use super::block_body_to_expr::ConstReads;
 use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts};
 use rustc_hash::{FxHashMap, FxHashSet};
 use swc_core::{
@@ -5,8 +6,8 @@ use swc_core::{
   common::{Mark, SyntaxContext, DUMMY_SP},
   ecma::ast::{
     AssignPatProp, BinaryOp, BindingIdent, Callee, EsReserved, Expr, Id, Ident, IdentName,
-    KeyValuePatProp, KeyValueProp, Lit, MemberProp, Number, ObjectPat, ObjectPatProp, OptCall, Pat,
-    Prop, PropName, UnaryExpr, UnaryOp,
+    KeyValuePatProp, KeyValueProp, Lit, MemberExpr, MemberProp, NewExpr, Number, ObjectPat,
+    ObjectPatProp, OptCall, Pat, Prop, PropName, TaggedTpl, UnaryExpr, UnaryOp,
   },
   ecma::visit::{VisitMut, VisitMutWith},
 };
@@ -29,6 +30,9 @@ pub(super) struct FoldParams {
   pub(super) defaults: FxHashMap<Id, Box<Expr>>,
   /// identifier props parameters, e.g. `p` in `(p) => p.$on`
   pub(super) member_params: FxHashSet<Id>,
+  /// the initializer of a `const` in a block body, e.g. `$a.width` for
+  /// `const width = $a.width;`, see `bind_consts`
+  pub(super) consts: ConstReads,
   pub(super) reads_theme: bool,
 }
 
@@ -217,6 +221,23 @@ impl SubstituteReads<'_> {
     matches!(unwrap_type_casts(expr), Expr::Member(member)
       if matches!(unwrap_type_casts(&member.obj), Expr::Ident(obj) if self.params.member_params.contains(&obj.to_id())))
   }
+
+  /// `w` for `const w = $a.w;`
+  fn is_const_read(&self, expr: &Expr) -> bool {
+    matches!(unwrap_type_casts(expr), Expr::Ident(ident) if self.params.consts.contains_key(&ident.to_id()))
+  }
+
+  /// A function that the folded function calls, e.g. `p.onRender()`, needs
+  /// the same `this` and the same callee as in the source
+  ///
+  /// A method call on the props runs with the props object as `this`. The
+  /// folded function has no props object, and `onRender()` would run with
+  /// `this` undefined. A `const` read like `fn()` for `const fn = $a.fn;`
+  /// would turn into `$a.fn()`, which runs with `$a` as `this`, and
+  /// `$a?.fn()` would not throw for a missing `$a` like `fn()` does
+  fn is_unsafe_callee(&self, expr: &Expr) -> bool {
+    self.is_props_member(expr) || self.is_const_read(expr)
+  }
 }
 
 impl VisitMut for SubstituteReads<'_> {
@@ -231,6 +252,14 @@ impl VisitMut for SubstituteReads<'_> {
           if let Some(read) = self.local_read(&id) {
             *expr = read;
           }
+          return;
+        }
+        // `w` -> `$a.w` for `const w = $a.w;`. The initializer reads props
+        // and earlier consts, which this visit replaces as well
+        if let Some(init) = self.params.consts.get(&id) {
+          let mut init = init.clone();
+          self.visit_mut_expr(&mut init);
+          *expr = *init;
           return;
         }
       }
@@ -254,12 +283,10 @@ impl VisitMut for SubstituteReads<'_> {
     expr.visit_mut_children_with(self);
   }
 
-  /// A method call on the props, e.g. `p.onRender()`, runs with the props
-  /// object as `this`. The folded function has no props object, and
-  /// `onRender()` would run with `this` undefined
+  /// `p.onRender()`, see `is_unsafe_callee`
   fn visit_mut_callee(&mut self, callee: &mut Callee) {
     if let Callee::Expr(expr) = callee {
-      if self.is_props_member(expr) {
+      if self.is_unsafe_callee(expr) {
         self.failed = true;
         return;
       }
@@ -267,37 +294,72 @@ impl VisitMut for SubstituteReads<'_> {
     callee.visit_mut_children_with(self);
   }
 
-  /// `p.onRender?.()`, see `visit_mut_callee`
+  /// `p.onRender?.()`, see `is_unsafe_callee`
   fn visit_mut_opt_call(&mut self, call: &mut OptCall) {
-    if self.is_props_member(&call.callee) {
+    if self.is_unsafe_callee(&call.callee) {
       self.failed = true;
       return;
     }
     call.visit_mut_children_with(self);
   }
 
-  /// Expands a shorthand `{ on }` to `{ on: $on }` for `({ $on: on })`
+  /// `` tag`x` `` for `const tag = $a.tag;`, see `is_unsafe_callee`
+  fn visit_mut_tagged_tpl(&mut self, tagged: &mut TaggedTpl) {
+    if self.is_const_read(&tagged.tag) {
+      self.failed = true;
+      return;
+    }
+    tagged.visit_mut_children_with(self);
+  }
+
+  /// `new Shape()` for `const Shape = $a?.Shape;` would turn into
+  /// `new $a?.Shape()`, which is a syntax error
+  fn visit_mut_new_expr(&mut self, new: &mut NewExpr) {
+    if self.is_const_read(&new.callee) {
+      self.failed = true;
+      return;
+    }
+    new.visit_mut_children_with(self);
+  }
+
+  /// `w.b` for `const w = $a?.w;` becomes `($a?.w).b`. Without the parens
+  /// `$a?.w.b` would stop at a missing `$a` where `w.b` throws. A literal
+  /// like `2` needs them as well: `(2).toFixed`
+  fn visit_mut_member_expr(&mut self, member: &mut MemberExpr) {
+    let reads_const = self.is_const_read(&member.obj);
+    member.visit_mut_children_with(self);
+    if reads_const && matches!(&*member.obj, Expr::OptChain(_) | Expr::Lit(_)) {
+      member.obj = paren(member.obj.clone());
+    }
+  }
+
+  /// Expands a shorthand `{ on }` to `{ on: $on }` for `({ $on: on })` and
+  /// `{ w }` to `{ w: $a.w }` for `const w = $a.w;`
   fn visit_mut_prop(&mut self, prop: &mut Prop) {
     if let Prop::Shorthand(ident) = prop {
       let id = ident.to_id();
-      if self.params.locals.contains_key(&id) {
-        if let Some(read) = self.local_read(&id) {
-          *prop = Prop::KeyValue(KeyValueProp {
-            key: PropName::Ident(IdentName::new(ident.sym.clone(), ident.span)),
-            value: Box::new(read),
-          });
-        }
+      if self.params.locals.contains_key(&id) || self.params.consts.contains_key(&id) {
+        let mut read = Box::new(Expr::Ident(ident.clone()));
+        self.visit_mut_expr(&mut read);
+        *prop = Prop::KeyValue(KeyValueProp {
+          key: PropName::Ident(IdentName::new(ident.sym.clone(), ident.span)),
+          value: read,
+        });
         return;
       }
     }
     prop.visit_mut_children_with(self);
   }
 
-  /// A props binding left after the expression rewrite sits somewhere the
-  /// rewrite cannot reach, e.g. the target of `p.$on = 1` or `$on++`
+  /// A props or const binding left after the expression rewrite sits
+  /// somewhere the rewrite cannot reach, e.g. the target of `p.$on = 1` or
+  /// `$on++`
   fn visit_mut_ident(&mut self, ident: &mut Ident) {
     let id = ident.to_id();
-    if self.params.locals.contains_key(&id) || self.params.member_params.contains(&id) {
+    if self.params.locals.contains_key(&id)
+      || self.params.member_params.contains(&id)
+      || self.params.consts.contains_key(&id)
+    {
       self.failed = true;
     }
   }
