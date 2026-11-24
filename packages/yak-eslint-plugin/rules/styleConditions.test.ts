@@ -67,13 +67,13 @@ ruleTester.run("yak-style-conditions", styleConditions, {
       `,
     },
     {
-      // Valid because imported mixins are runtime class expressions outside declarations
+      // Valid because imported mixins in a css template are runtime class expressions outside declarations
       code: `
-        import { styled } from "@yak/react";
+        import { styled, css } from "@yak/react";
         import { activeStyles } from "./styles";
 
         const Button = styled.button\`
-          \${({ $isSelected }) => $isSelected && activeStyles}
+          \${({ $isSelected }) => $isSelected && css\`\${activeStyles}\`}
         \`;
       `,
     },

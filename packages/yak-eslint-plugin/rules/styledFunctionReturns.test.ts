@@ -19,6 +19,31 @@ const code = (...lines: string[]) => [react, ...lines].join("\n");
 ruleTester.run("yak-styled-function-returns", rule, {
   valid: [
     {
+      name: "an imported mixin in a css literal, used directly, and local values",
+      code: code(
+        'import { outlined, buttonClasses } from "./mixins";',
+        'import type { Theme } from "./theme";',
+        "const local = css`color: red;`;",
+        "const buttonAtoms = atoms(buttonClasses);",
+        "styled.div`",
+        "  ${outlined};",
+        "  ${({ $on }) => $on && css`${outlined}`}",
+        "  ${({ $on }) => $on && local}",
+        "  ${({ $on }) => $on && buttonAtoms}",
+        "  ${({ $on, theme }) => $on && (theme as Theme)}",
+        "`;",
+      ),
+    },
+    {
+      name: "an imported value after a property sets a CSS value",
+      code: code(
+        'import { colors } from "./tokens";',
+        "styled.div`",
+        "  color: ${({ $on }) => ($on ? colors.primary : colors.secondary)};",
+        "`;",
+      ),
+    },
+    {
       name: "a css literal behind a condition",
       code: code(
         "styled.div`",
@@ -91,6 +116,79 @@ ruleTester.run("yak-styled-function-returns", rule, {
     },
   ],
   invalid: [
+    {
+      name: "an imported mixin behind a condition",
+      code: code(
+        'import { outlined } from "./mixins";',
+        "styled.div`",
+        "  ${({ $on }) => $on && outlined}",
+        "`;",
+      ),
+      errors: [
+        {
+          messageId: "importReturn",
+          line: 4,
+          suggestions: [
+            {
+              messageId: "wrapInCss",
+              output: code(
+                'import { outlined } from "./mixins";',
+                "styled.div`",
+                "  ${({ $on }) => $on && css`${outlined}`}",
+                "`;",
+              ),
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "a member of an imported namespace in a return",
+      code: code(
+        'import * as mixins from "./mixins";',
+        "styled.div`",
+        "  &:hover {",
+        "    ${({ $on }) => {",
+        "      if ($on) return mixins.large;",
+        "      return null;",
+        "    }}",
+        "  }",
+        "`;",
+      ),
+      errors: [
+        {
+          messageId: "importReturn",
+          line: 6,
+          suggestions: [
+            {
+              messageId: "wrapInCss",
+              output: code(
+                'import * as mixins from "./mixins";',
+                "styled.div`",
+                "  &:hover {",
+                "    ${({ $on }) => {",
+                "      if ($on) return css`${mixins.large}`;",
+                "      return null;",
+                "    }}",
+                "  }",
+                "`;",
+              ),
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "an imported mixin without an import of css gets no suggestion",
+      code: [
+        'import { styled } from "@yak/react";',
+        'import { outlined } from "./mixins";',
+        "styled.div`",
+        "  ${({ $on }) => ($on ? outlined : null)}",
+        "`;",
+      ].join("\n"),
+      errors: [{ messageId: "importReturn", line: 4, suggestions: [] }],
+    },
     {
       name: "a string",
       code: code("styled.div`", '  ${({ $on }) => $on && "color: red;"}', "`;"),

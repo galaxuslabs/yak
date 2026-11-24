@@ -1,0 +1,60 @@
+  x The imported value "outlined" applies no styles when a function returns it.
+  | A mixin from the same file works as is, but "outlined" is imported and needs a css literal around it:
+  | 
+  | ${(p) => p.$on && css`${outlined}`}
+  | 
+  | See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function
+    ,-[input.js:13:1]
+ 12 | const Imported = styled.div<{ $on?: boolean }>`
+ 13 |   ${(p) => p.$on && outlined}
+    :                     ^^^^^^^^
+ 14 | `;
+    `----
+  x The imported value "mixins.large" applies no styles when a function returns it.
+  | A mixin from the same file works as is, but "mixins.large" is imported and needs a css literal around it:
+  | 
+  | ${(p) => p.$on && css`${mixins.large}`}
+  | 
+  | See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function
+    ,-[input.js:17:1]
+ 16 | const Namespace = styled.div<{ $on?: boolean }>`
+ 17 |   ${(p) => (p.$on ? mixins.large : null)}
+    :                     ^^^^^^^^^^^^
+ 18 | `;
+    `----
+  x The imported value "outlined" applies no styles when a function returns it.
+  | A mixin from the same file works as is, but "outlined" is imported and needs a css literal around it:
+  | 
+  | ${(p) => p.$on && css`${outlined}`}
+  | 
+  | See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function
+    ,-[input.js:24:1]
+ 23 |       if (p.$on) {
+ 24 |         return outlined;
+    :                ^^^^^^^^
+ 25 |       }
+    `----
+  x The call "getMixin()" applies no styles when a function returns it.
+  | Return the css literals or mixins from the arrow function itself:
+  | 
+  | ${(p) => (p.$big ? large : small)}
+  | 
+  | See https://yak.style/docs/troubleshooting#a-call-returned-from-a-function
+    ,-[input.js:32:1]
+ 31 | const Call = styled.div`
+ 32 |   ${() => getMixin()}
+    :           ^^^^^^^^^^
+ 33 | `;
+    `----
+  x The call "size()" applies no styles when a function returns it.
+  | Return the css literals or mixins from the arrow function itself:
+  | 
+  | ${(p) => (p.$big ? large : small)}
+  | 
+  | See https://yak.style/docs/troubleshooting#a-call-returned-from-a-function
+    ,-[input.js:38:1]
+ 37 | const Helper = styled.div<{ $big?: boolean }>`
+ 38 |   ${(p) => size(p.$big)};
+    :            ^^^^^^^^^^^^
+ 39 | `;
+    `----

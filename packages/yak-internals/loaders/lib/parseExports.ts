@@ -207,7 +207,7 @@ function unpackTSAsExpression(node: TSAsExpression | Expression): Expression {
 function parseExportValueExpression(node: Expression, code?: string): ModuleExport {
   // ignores `as` casts so it doesn't interfere with the ast node type detection
   const expression = unpackTSAsExpression(node);
-  if (expression.type === "CallExpression" || expression.type === "TaggedTemplateExpression") {
+  if (expression.type === "TaggedTemplateExpression") {
     return { type: "tag-template" };
   } else if (expression.type === "StringLiteral" || expression.type === "NumericLiteral") {
     return { type: "constant", value: expression.value };

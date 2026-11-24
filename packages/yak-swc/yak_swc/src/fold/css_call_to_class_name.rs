@@ -219,7 +219,7 @@ pub(super) fn is_yak_style_callee(callee: &Callee, yak_imports: &YakImports) -> 
 }
 
 /// Matches a callee that resolves to the yak `atoms` import
-pub(super) fn is_yak_atoms_callee(callee: &Callee, yak_imports: &YakImports) -> bool {
+pub(crate) fn is_yak_atoms_callee(callee: &Callee, yak_imports: &YakImports) -> bool {
   match callee {
     Callee::Expr(expr) => match unwrap_type_casts(expr) {
       Expr::Ident(ident) => {

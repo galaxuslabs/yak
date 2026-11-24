@@ -4,7 +4,7 @@ import { calleeName, checkReturnedValues } from "./returnedValues.js";
 import { importsYak, isStyledOrCssTag } from "./utils.js";
 
 const expected =
-  "A function that stands on its own in a styled/css literal has to return a css`...` literal or nothing.";
+  "A function outside a CSS property in a styled/css literal has to return a css`...` literal or nothing.";
 
 const callFix =
   "Write the css`...` literal in this function, or remove the `return` in front of the call if it only checks something, like";
@@ -24,13 +24,18 @@ const callFix =
  *
  * So `${({ $on }) => $on && focusRing()}` adds no class name and no CSS.
  * `atoms()` is the one call that adds class names at runtime
+ *
+ * An imported mixin that a function returns is empty at runtime too, and the
+ * build fails for it. Inside a css`...` literal, yak copies its styles from the
+ * other file at build time
  */
 export const styledFunctionReturns = createRule("styled-function-returns", {
   meta: {
     type: "problem",
+    hasSuggestions: true,
     docs: {
       description:
-        "Enforces that a function that stands on its own in a yak styled/css literal returns a css literal or nothing",
+        "Enforces that a function outside a CSS property in a yak styled/css literal returns a css literal or nothing",
       recommended: true,
       requiresTypeChecking: false,
     },
@@ -40,12 +45,15 @@ export const styledFunctionReturns = createRule("styled-function-returns", {
       callReturn: `${expected} A css\`...\` literal that \`{{name}}()\` returns adds no styles. ${callFix} \`{{example}}\`.`,
       callReturnWithoutName: `${expected} A css\`...\` literal that this call returns adds no styles. ${callFix} \`assertNever($size);\`.`,
       taggedTemplateReturn: `${expected} Only a css\`...\` literal adds styles here, and this tagged template is none.`,
+      importReturn: `${expected} A mixin from the same file works as is, but a mixin from another file needs a css\`...\` literal around it, or the build fails. Wrap \`{{name}}\` like \`{{fixed}}\`.`,
+      wrapInCss: "Wrap `{{name}}` in a css`...` literal",
     },
     schema: [],
     defaultOptions: [],
   },
   createOnce: (context) => {
-    const { before, importedNames, ImportDeclaration } = importsYak();
+    const { before: beforeYak, importedNames, ImportDeclaration: trackYak } = importsYak();
+    const imports = new Set<string>();
 
     /** The call as written, like `assertNever($size);`, or `name(...);` for a long or multi-line call */
     const example = (node: ESTree.CallExpression, name: string) => {
@@ -94,18 +102,65 @@ export const styledFunctionReturns = createRule("styled-function-returns", {
         case "ArrayExpression":
           context.report({ node, messageId: "invalidReturn", data: { kind: "An array" } });
           return;
-        // a prop or a constant can hold a css`...` literal
+        case "Identifier":
+        case "MemberExpression": {
+          const name = rootName(node);
+          if (name === undefined || !imports.has(name)) {
+            // a prop or a local constant can hold a css`...` literal, only an import surely fails
+            return;
+          }
+          const text = context.sourceCode.getText(node);
+          const fixed = `${importedNames.css ?? "css"}\`\${${text}}\``;
+          context.report({
+            node,
+            messageId: "importReturn",
+            data: { name: text, fixed },
+            suggest: importedNames.css
+              ? [
+                  {
+                    messageId: "wrapInCss",
+                    data: { name: text },
+                    fix: (fixer) => fixer.replaceText(node, fixed),
+                  },
+                ]
+              : [],
+          });
+          return;
+        }
         default:
           return;
       }
     };
 
     return {
-      before,
-      ImportDeclaration,
+      before() {
+        beforeYak();
+        imports.clear();
+      },
+      ImportDeclaration(node: ESTree.ImportDeclaration) {
+        trackYak(node);
+        if (node.importKind === "type") {
+          return;
+        }
+        for (const specifier of node.specifiers) {
+          if (specifier.type === "ImportSpecifier" && specifier.importKind === "type") {
+            continue;
+          }
+          imports.add(specifier.local.name);
+        }
+      },
       TaggedTemplateExpression(node: ESTree.TaggedTemplateExpression) {
         checkReturnedValues(node, importedNames, check);
       },
     };
   },
 });
+
+/** `mixins` for `mixins.large.focus`, and `undefined` for a computed access like `mixins[name]` */
+function rootName(node: ESTree.Node): string | undefined {
+  let current = node;
+  while (current.type === "MemberExpression" && !current.computed) {
+    current = current.object;
+  }
+  return current.type === "Identifier" ? current.name : undefined;
+}

@@ -890,6 +890,28 @@ test("Error: unsupported export from a regular .ts file shows a Rust-style snipp
   see:  https://yak.style/docs/migration-from-styled-components#move-some-code-to-yak-files`);
 });
 
+test("Error: a function call export like atoms() used as a mixin", async () => {
+  await expect(() =>
+    resolveCrossFileConstant(
+      createParseContext({
+        "/foo/atoms.ts": 'export const buttonAtoms = atoms("shadow-md");',
+      }),
+      "/foo/bar.ts",
+      `.a { --yak-css-import: url("./atoms.ts:buttonAtoms",mixin); }`,
+    ),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`
+    [Error: Error while resolving cross-file selectors in file "/foo/bar.ts"
+      Caused by: Unable to resolve "buttonAtoms" in module "/foo/atoms.ts"
+      Caused by: \`buttonAtoms\` is the result of a function call.
+       --> /foo/atoms.ts:1:28
+          |
+        1 | export const buttonAtoms = atoms("shadow-md");
+          |                            ^^^^^^^^^^^^^^^^^^ CallExpression
+      help: for atoms(), export the class names as a string and call atoms() in the file that uses them
+      see:  https://yak.style/docs/troubleshooting#an-atoms-value-from-another-file]
+  `);
+});
+
 test("Error: unsupported value from an evaluated .yak.ts file explains supported types", async () => {
   await expect(() =>
     resolveCrossFileConstant(

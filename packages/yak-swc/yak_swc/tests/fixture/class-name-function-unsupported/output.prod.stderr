@@ -1,0 +1,12 @@
+  x The imported value "mixin" applies no styles when a function returns it.
+  | A mixin from the same file works as is, but "mixin" is imported and needs a css literal around it:
+  | 
+  | ${(p) => p.$on && css`${mixin}`}
+  | 
+  | See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function
+    ,-[input.js:35:1]
+ 34 | export const MixinReturn = styled.div<{ $on: boolean }>`
+ 35 |   ${({ $on }) => $on && mixin}
+    :                         ^^^^^
+ 36 | `;
+    `----

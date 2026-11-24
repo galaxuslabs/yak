@@ -11,4 +11,4 @@ pub(crate) mod styled_arrow_function_fold;
 pub(crate) mod styled_jsx_fold;
 
 /// `css("yB1")` to the class names it stands for, shared by the three folds
-mod css_call_to_class_name;
+pub(crate) mod css_call_to_class_name;

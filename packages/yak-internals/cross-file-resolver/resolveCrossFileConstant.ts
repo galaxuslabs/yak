@@ -566,6 +566,16 @@ function explainUnsupported(
     return lines.join("\n");
   }
 
+  if (hint === "CallExpression") {
+    lines.push(`\`${specifier}\` is the result of a function call.`);
+    if (snippet) lines.push(snippet);
+    lines.push(
+      `  help: for atoms(), export the class names as a string and call atoms() in the file that uses them`,
+      `  see:  https://yak.style/docs/troubleshooting#an-atoms-value-from-another-file`,
+    );
+    return lines.join("\n");
+  }
+
   const got = hint ? ` (got a ${hint})` : "";
   lines.push(`\`${specifier}\` is not a string or number literal${got}.`);
   if (snippet) lines.push(snippet);

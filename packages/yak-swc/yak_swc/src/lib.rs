@@ -8,6 +8,7 @@ use std::ops::Deref;
 use std::vec;
 use swc_core::atoms::Wtf8Atom;
 
+use fold::css_call_to_class_name::is_yak_atoms_callee;
 use fold::css_jsx_prop_fold::HasCSSProp;
 use fold::styled_arrow_function_fold::{build_class_names, fold_class_names};
 use fold::styled_jsx_fold::StyledFold;
@@ -25,6 +26,7 @@ use utils::cross_file_selectors::ImportType;
 use utils::css_value_call::css_value_call;
 use utils::css_variable_dedup::CssVariableDedup;
 use utils::parse_quasi::{css_error_span, parse_quasi, source_position};
+use utils::returned_values::returned_values;
 
 mod variable_visitor;
 use variable_visitor::{ScopedVariableReference, VariableVisitor};
@@ -46,6 +48,7 @@ mod utils {
   pub(crate) mod css_variable_dedup;
   pub(crate) mod native_elements;
   pub(crate) mod parse_quasi;
+  pub(crate) mod returned_values;
 }
 pub mod naming_convention;
 use naming_convention::{CssImportConfig, ImportModeEncoding, NamingConvention};
@@ -239,6 +242,27 @@ const MISSING_COLON_ERROR: &str = "\
 This declaration has no `:`, so the browser ignores it. \
 Use the form `property: value;`.";
 
+fn returned_import_error(name: &str) -> String {
+  format!(
+    "The imported value \"{name}\" applies no styles when a function returns it.\n\
+     A mixin from the same file works as is, but \"{name}\" is imported and needs a css literal around it:\n\n\
+     ${{(p) => p.$on && css`${{{name}}}`}}\n\n\
+     See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function"
+  )
+}
+
+fn returned_call_error(name: Option<String>) -> String {
+  let call = name.map_or("This call".to_string(), |name| {
+    format!("The call \"{name}()\"")
+  });
+  format!(
+    "{call} applies no styles when a function returns it.\n\
+     Return the css literals or mixins from the arrow function itself:\n\n\
+     ${{(p) => (p.$big ? large : small)}}\n\n\
+     See https://yak.style/docs/troubleshooting#a-call-returned-from-a-function"
+  )
+}
+
 /// Emitted for a `(` or `{` which is still open at the end of a literal,
 /// e.g. styled.div`@media (min-width: 600px { color: red; }`
 const UNCLOSED_BRACKET_ERROR: &str = "\
@@ -409,6 +433,44 @@ where
       .yak_library_imports
       .as_ref()
       .expect("Internal error: yak_library_imports is None - this should be impossible as imports are parsed in the initial program visit before any other processing")
+  }
+
+  /// Reports an imported value or a call that a function in the template
+  /// returns, e.g. `${(p) => p.$on && importedMixin}` or `${(p) => size(p.$big)}`.
+  /// The compiler copies the styles of a mixin into the template only where the
+  /// template names it, so such a value applies no styles at runtime.
+  /// `atoms()` calls are allowed, as they return class names
+  fn report_returned_imports(&mut self, expr: &Expr) {
+    for value in returned_values(expr) {
+      let message = match value {
+        Expr::Call(call) => {
+          if is_yak_atoms_callee(&call.callee, self.yak_imports()) {
+            continue;
+          }
+          let name = match &call.callee {
+            Callee::Expr(callee) => extract_ident_and_parts(callee, false),
+            _ => None,
+          };
+          returned_call_error(name.map(|name| name.to_readable_string()))
+        }
+        _ => {
+          let Some(scoped_name) = extract_ident_and_parts(value, false) else {
+            continue;
+          };
+          if self
+            .variables
+            .get_imported_variable(&scoped_name.id)
+            .is_none()
+          {
+            continue;
+          }
+          returned_import_error(&scoped_name.to_readable_string())
+        }
+      };
+      HANDLER.with(|handler| {
+        handler.struct_span_err(value.span(), &message).emit();
+      });
+    }
   }
 
   /// Try to get the component id of the current styled component mixin or animation
@@ -946,6 +1008,14 @@ ${{() => {var}}};\n",
               name
             });
             css_state = Some(parse_css(&format!("var(--{})", css_variable_name), css_state).state);
+          }
+
+          // `${value} { ... }` uses the value as a selector, which another check reports
+          let starts_block = pair
+            .next_quasi
+            .is_some_and(|quasi| quasi.raw.trim_start().starts_with('{'));
+          if !is_inside_property_value && !starts_block {
+            self.report_returned_imports(expr);
           }
 
           let was_inside_runtime_expression = self.inside_runtime_expression;
