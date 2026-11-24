@@ -32,17 +32,17 @@ const Wrapped = /*YAK Extracted CSS:
 .input_Wrapped__p_\$on_m7uBBu {
   --yak-css-import: url("./other:outlined",mixin);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Wrapped_m7uBBu", 0, ({ $on })=>"input_Wrapped_m7uBBu" + ($on ? " input_Wrapped__p_$on_m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"input_Wrapped_m7uBBu" + ($on ? " input_Wrapped__p_$on_m7uBBu" : "")), {
     "displayName": "Wrapped"
 });
 const Local = /*YAK Extracted CSS:
 .input_Local__p_\$on_m7uBBu {
   outline: 3px solid red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Local_m7uBBu", 0, ({ $on })=>"input_Local_m7uBBu" + ($on ? " input_Local__p_$on_m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"input_Local_m7uBBu" + ($on ? " input_Local__p_$on_m7uBBu" : "")), {
     "displayName": "Local"
 });
-const Atoms = /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Atoms_m7uBBu", 0, ({ $on })=>"input_Atoms_m7uBBu" + ($on ? " shadow-md" : "")), {
+const Atoms = /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"input_Atoms_m7uBBu" + ($on ? " shadow-md" : "")), {
     "displayName": "Atoms"
 });
 const PropertyValue = /*YAK Extracted CSS:
@@ -50,6 +50,6 @@ const PropertyValue = /*YAK Extracted CSS:
   color: var(--input_PropertyValue__color_m7uBBu);
   padding: var(--input_PropertyValue__padding_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_PropertyValue_m7uBBu", 2, ({ $on }, style)=>"input_PropertyValue_m7uBBu" + (style["--input_PropertyValue__color_m7uBBu"] = $on ? colors.primary : colors.secondary, style["--input_PropertyValue__padding_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($on && spacing, "px"), "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $on }, style)=>"input_PropertyValue_m7uBBu" + (style["--input_PropertyValue__color_m7uBBu"] = $on ? colors.primary : colors.secondary, style["--input_PropertyValue__padding_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($on && spacing, "px"), "")), {
     "displayName": "PropertyValue"
 });

@@ -22,16 +22,16 @@ const Wrapped = /*YAK Extracted CSS:
 .ym7uBBu7 {
   --yak-css-import: url("./other:outlined",mixin);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu6", 0, ({ $on })=>"ym7uBBu6" + ($on ? " ym7uBBu7" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"ym7uBBu6" + ($on ? " ym7uBBu7" : ""));
 const Local = /*YAK Extracted CSS:
 .ym7uBBu9 {
   outline: 3px solid red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu8", 0, ({ $on })=>"ym7uBBu8" + ($on ? " ym7uBBu9" : ""));
-const Atoms = /*#__PURE__*/ __yak.__yak_div("ym7uBBuA", 0, ({ $on })=>"ym7uBBuA" + ($on ? " shadow-md" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"ym7uBBu8" + ($on ? " ym7uBBu9" : ""));
+const Atoms = /*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"ym7uBBuA" + ($on ? " shadow-md" : ""));
 const PropertyValue = /*YAK Extracted CSS:
 .ym7uBBuB {
   color: var(--ym7uBBuC);
   padding: var(--ym7uBBuD);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuB", 2, ({ $on }, style)=>"ym7uBBuB" + (style["--ym7uBBuC"] = $on ? colors.primary : colors.secondary, style["--ym7uBBuD"] = /*#__PURE__*/ __yak_cssValue($on && spacing, "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $on }, style)=>"ym7uBBuB" + (style["--ym7uBBuC"] = $on ? colors.primary : colors.secondary, style["--ym7uBBuD"] = /*#__PURE__*/ __yak_cssValue($on && spacing, "px"), ""));
