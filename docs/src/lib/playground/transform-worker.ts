@@ -120,7 +120,7 @@ function runSwc(
   // tab and the preview read it from the CommonJS copy. The minifier removes an unused
   // declaration together with its comment, so only the copies the tabs show are compressed.
   const compress = output.display && options.deadCodeElimination ? DEAD_CODE_ELIMINATION : false;
-  return transform(
+  const code = transform(
     file.content,
     {
       filename: `${file.name}.tsx`,
@@ -147,7 +147,17 @@ function runSwc(
       foldStatic: options.foldStatic,
     },
   ).code;
+  return compress ? code.replace(UNUSED_YAK_IMPORT, "") : code;
 }
+
+/**
+ * A yak import without bindings, which the minifier leaves behind once it removes every use:
+ * `import { css } from "@yak/react/internal";` becomes `import "@yak/react/internal";`.
+ * Both packages set `"sideEffects": false`, so a bundler removes an import once no binding
+ * of it is used. SWC compiles one file and cannot read that flag, so the tabs drop these lines.
+ * The `.yak.css` import stays, because a bundler keeps CSS imports for their side effect.
+ */
+const UNUSED_YAK_IMPORT = /^import\s*(["'])@yak\/(?:react|solid)(?:\/internal)?\1;?[^\S\n]*\n?/gm;
 
 /**
  * The compress passes that remove code, without those that rewrite the rest into a shorter
