@@ -37,6 +37,12 @@ pub(super) struct FoldParams {
 }
 
 impl FoldParams {
+  /// The props the function reads, in order of their first read, with their
+  /// parameter
+  pub(super) fn read(&self) -> &[(Atom, Ident)] {
+    &self.read
+  }
+
   /// The parameter that stands for a prop. Every runtime expression which
   /// reads the prop shares it, however it spells the read: `({ $on })`,
   /// `({ $on: on })` or `(p) => p.$on`

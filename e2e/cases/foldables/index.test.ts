@@ -32,6 +32,18 @@ test(
     await expect(runtime).toHaveCSS("color", "rgb(255, 0, 0)");
     await expect(runtime).not.toHaveAttribute("$active");
 
+    // a switch and a nested css literal fold at the usage. The state driven
+    // usages show the start state here and the clicked state below
+    await expect(page.getByTestId("picked-default")).toHaveCSS("margin-left", "1px");
+    await expect(page.getByTestId("picked-literal")).toHaveCSS("margin-left", "2px");
+    await expect(page.getByTestId("picked-state")).toHaveCSS("margin-left", "1px");
+    await expect(page.getByTestId("picked-call")).toHaveCSS("margin-left", "2px");
+    const framedLarge = page.getByTestId("framed-large");
+    await expect(framedLarge).toHaveCSS("border-top-style", "solid");
+    await expect(framedLarge).toHaveCSS("padding-top", "4px");
+    await expect(page.getByTestId("framed-state")).toHaveCSS("border-top-style", "none");
+    await expect(page.getByTestId("framed-off")).toHaveCSS("padding-top", "0px");
+
     // the inlined condition stays reactive. The server-rendered button is
     // clickable before hydration attaches its handler, so on a cold dev
     // server a click can get lost — retry until it takes effect.
@@ -41,6 +53,10 @@ test(
       await page.getByTestId("activate").click();
       await expect(stateDriven).toHaveCSS("color", "rgb(255, 0, 0)", { timeout: 1000 });
     }).toPass({ timeout: 15_000 });
+    await expect(page.getByTestId("picked-state")).toHaveCSS("margin-left", "3px");
+    const framedState = page.getByTestId("framed-state");
+    await expect(framedState).toHaveCSS("border-top-style", "solid");
+    await expect(framedState).toHaveCSS("padding-top", "4px");
 
     // a folded css prop class merges into the inlined className
     const merged = page.getByTestId("merged");

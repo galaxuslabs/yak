@@ -7,9 +7,10 @@ use crate::yak_imports::{YakImports, YakRuntime};
 use rustc_hash::FxHashMap;
 use std::borrow::Cow;
 use swc_core::{
+  atoms::Atom,
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
-    ArrowExpr, ArrowFunctionBody, AssignPat, AssignPatProp, Expr, Id, KeyValuePatProp, Lit,
+    ArrowExpr, ArrowFunctionBody, AssignPat, AssignPatProp, Expr, Id, Ident, KeyValuePatProp, Lit,
     MemberProp, Number, ObjectPatProp, Pat, PropName,
   },
 };
@@ -44,9 +45,9 @@ const FLAG_STYLE: u32 = 2;
 /// props, e.g. `"yB" + ($on ? " yB1" : "")`, plus what a caller needs to put
 /// the expression into a function or inline it at a JSX usage
 pub(crate) struct FoldedClassNames {
-  /// The class name expression. It reads each prop through a parameter of its
-  /// own, the theme through `theme` and writes CSS variables to `style`, and
-  /// all of these parameters carry a syntax context of their own
+  /// The class name expression. It reads each prop through the parameter that
+  /// `props()` lists for it, the theme through `theme` and writes CSS variables
+  /// to `style`, and all of these parameters carry a syntax context of their own
   pub(crate) class_name: Box<Expr>,
   params: FoldParams,
   /// `true` when the expression writes CSS variables to the style parameter
@@ -57,6 +58,13 @@ pub(crate) struct FoldedClassNames {
 }
 
 impl FoldedClassNames {
+  /// The props the expression reads, in order of their first read, with the
+  /// parameter that stands for each, e.g. `[("$on", $on)]` for
+  /// `"yB" + ($on ? " yB1" : "")`
+  pub(crate) fn props(&self) -> &[(Atom, Ident)] {
+    self.params.read()
+  }
+
   /// `true` when the expression reads the theme through the theme parameter
   pub(crate) fn reads_theme(&self) -> bool {
     self.params.reads_theme

@@ -48,14 +48,6 @@ pub fn paren(expr: Box<Expr>) -> Box<Expr> {
   }))
 }
 
-/// Matches a function body holding a single `return <expr>;`
-pub fn single_return_expr(block: &FunctionBody) -> Option<&Expr> {
-  let [Stmt::Return(return_stmt)] = block.stmts.as_slice() else {
-    return None;
-  };
-  return_stmt.arg.as_deref()
-}
-
 /// Convert a HashMap to an Object expression
 pub fn expr_hash_map_to_object(values: FxHashMap<String, Expr>) -> Expr {
   let properties = values

@@ -1552,6 +1552,25 @@ where
       self.process_yak_literal(n, css_state.clone());
     self.inside_global_style = was_inside_global_style;
 
+    // A dynamic styled component whose runtime expressions only toggle
+    // class names or set CSS variables has one class name expression over its
+    // props, e.g. `({ $on }) => $on && css("yB1")` -> `"yB" + ($on ? " yB1" : "")`.
+    // The same-file JSX fold inlines it at the usages, and the React runtime
+    // takes it as one function that returns the root class name, so the call
+    // leaves out the class name argument:
+    // `__yak_button(0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`
+    let class_names = match transform.get_component_class_name() {
+      Some(class_name) if is_top_level && yak_library_function_name.deref() == "styled" => {
+        build_class_names(
+          class_name,
+          &runtime_expressions,
+          &runtime_css_variables,
+          self.yak_library_imports.as_ref().unwrap(),
+        )
+      }
+      _ => None,
+    };
+
     // dynamic css values compile to css variables set through the style prop
     // which are not folded yet
     if self.fold_static
@@ -1564,31 +1583,13 @@ where
           &n.tag,
           class_name,
           &runtime_expressions,
+          class_names.as_ref(),
         );
       }
     }
 
-    // A dynamic styled component whose runtime expressions only toggle
-    // class names or set CSS variables compiles to one function that returns
-    // the class string, e.g.
-    // `__yak_button("yB", ({ $on }) => $on && css("yB1"))` ->
-    // `__yak_button(0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`.
-    // The folded function returns the root class name, so the call leaves out
-    // the class name argument. It runs on the finished runtime expressions,
-    // after the same-file fold above took its own copy of them
-    let folded = match transform.get_component_class_name() {
-      Some(class_name) if is_top_level && yak_library_function_name.deref() == "styled" => {
-        let yak_imports = self.yak_library_imports.as_ref().unwrap();
-        build_class_names(
-          class_name,
-          &runtime_expressions,
-          &runtime_css_variables,
-          yak_imports,
-        )
-        .and_then(|folded| fold_class_names(folded, yak_imports))
-      }
-      _ => None,
-    };
+    let folded = class_names
+      .and_then(|folded| fold_class_names(folded, self.yak_library_imports.as_ref().unwrap()));
     let (runtime_expressions, runtime_css_variables) = match folded {
       Some(folded) => {
         transform.omit_class_name_argument();

@@ -23,10 +23,12 @@
 //! <Card className="yE">Hello</Card>
 //! ```
 //!
-//! Class-toggling expressions over props are inlined at the usage by
-//! substituting the destructured props with the attribute values:
+//! The conditions of a dynamic component are inlined at the usage. The styled
+//! function fold builds one class name expression over the props, and the
+//! usage puts the attribute values in place of its parameters:
 //! ```jsx
 //! const Box = styled.div`${({ $active }) => $active && css`color: red;`}`;
+//! // class name expression: "yB" + ($active ? " yA" : "")
 //! <Box $active={on}>Hello</Box>
 //! ```
 //! becomes
@@ -43,11 +45,10 @@ use swc_core::{
   atoms::{Atom, Wtf8Atom},
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
-    ArrowExpr, ArrowFunctionBody, AssignPatProp, BinaryOp, Bool, CallExpr, Callee, Expr,
-    ExprOrSpread, Id, Ident, IdentName, Invalid, JSXAttr, JSXAttrName, JSXAttrOrSpread,
-    JSXAttrValue, JSXElement, JSXElementChild, JSXElementName, JSXEmptyExpr, JSXExpr,
-    JSXExprContainer, KeyValueProp, Lit, MemberProp, Module, Number, ObjectPatProp, Pat, Prop,
-    PropName, UnaryExpr, UnaryOp,
+    ArrowExpr, ArrowFunctionBody, BinaryOp, Bool, CallExpr, Callee, Expr, ExprOrSpread, Id, Ident,
+    Invalid, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementChild,
+    JSXElementName, JSXEmptyExpr, JSXExpr, JSXExprContainer, Lit, Module, Number, Pat, UnaryExpr,
+    UnaryOp,
   },
   ecma::visit::{VisitMut, VisitMutWith},
 };
@@ -55,10 +56,9 @@ use swc_core::{
 use super::can_inline_prop_value::{purity, Purity};
 use super::{FoldTarget, FoldableComponent};
 use crate::fold::css_call_to_class_name::{
-  append_condition_segment, class_name_attr, expr_attr_value, fold_condition_body,
-  merge_class_names, with_leading_space, ConditionSegment,
+  class_name_attr, expr_attr_value, merge_class_names, with_leading_space,
 };
-use crate::utils::ast_helper::{binary, single_return_expr, str_expr, str_lit};
+use crate::utils::ast_helper::{binary, str_expr, str_lit};
 use crate::yak_imports::{YakImports, YakRuntime};
 
 /// Rewrites every foldable JSX usage of the registered components in the module
@@ -455,49 +455,66 @@ impl FoldVisitor<'_> {
     let mut slot = attrs.len();
     let mut capture = Vec::new();
     let mut user_class_name = class_name_attr.and_then(|(_, attr)| attr.value.clone());
-    let yak_class = if component.runtime_expressions.is_empty() {
-      YakClassName::Static(component.class_name.clone())
-    } else {
-      let attr_values = attr_value_map(attrs);
-      let mut binder = ParamBinder::default();
-      let mut class_name_expr =
-        inline_runtime_expressions(component, &mut binder, self.yak_imports)?;
-      let (bakeable, bindings) = binder.split(attrs, &attr_values);
-      class_name_expr.visit_mut_with(&mut BakeParams { values: &bakeable });
-      match select_shape(
-        attrs,
-        &attr_values,
-        &bindings,
-        class_name_index,
-        self.runtime,
-      ) {
-        FoldShape::Inline => YakClassName::Dynamic(class_name_expr),
-        FoldShape::ClassNameIife => {
-          slot = class_name_slot(attrs, &bindings, class_name_index);
-          YakClassName::Dynamic(bind_params(class_name_expr, bindings))
+    let yak_class = match &component.dynamic {
+      None => YakClassName::Static(component.class_name.clone()),
+      Some(dynamic) => {
+        let attr_values = attr_value_map(attrs);
+        let mut binder = ParamBinder::default();
+        let mut class_name_expr = dynamic.class_name.clone();
+        // each prop the expression reads gets its `__yak_` parameter up front,
+        // so the binder knows exactly the props the class name reads, which
+        // `split` and the element-wrap rely on
+        for (name, _) in &dynamic.props {
+          binder.param_for(name);
         }
-        FoldShape::ElementWrap => {
-          // Solid components run once, so an element-wrap would freeze its
-          // bound values (only the other shapes stay inside the class
-          // attribute, which Solid compiles to an effect) -> keep the
-          // runtime component instead
-          if self.runtime == YakRuntime::Solid {
-            return None;
+        let (bakeable, bindings) = binder.split(attrs, &attr_values);
+        let values = dynamic
+          .props
+          .iter()
+          .map(|(name, param)| {
+            let value = bakeable
+              .get(name)
+              .cloned()
+              .unwrap_or_else(|| Cow::Owned(Expr::Ident(binder.bound[name].clone())));
+            (param.to_id(), value)
+          })
+          .collect();
+        class_name_expr.visit_mut_with(&mut BakeParams { values: &values });
+        match select_shape(
+          attrs,
+          &attr_values,
+          &bindings,
+          class_name_index,
+          self.runtime,
+        ) {
+          FoldShape::Inline => YakClassName::Dynamic(class_name_expr),
+          FoldShape::ClassNameIife => {
+            slot = class_name_slot(attrs, &bindings, class_name_index);
+            YakClassName::Dynamic(bind_params(class_name_expr, bindings))
           }
-          let read: FxHashSet<Atom> = binder.bound.keys().cloned().collect();
-          capture = full_capture(attrs, &mut binder, &attr_values, &read);
-          // the user's className is bound like any other value, so it composes
-          // around the parameter block instead of evaluating inside it
-          if let Some(binding) = capture
-            .iter()
-            .find(|binding| binding.name == *self.runtime.class_attr())
-          {
-            user_class_name = Some(expr_attr_value(Box::new(Expr::Ident(
-              binding.param.clone(),
-            ))));
+          FoldShape::ElementWrap => {
+            // Solid components run once, so an element-wrap would freeze its
+            // bound values (only the other shapes stay inside the class
+            // attribute, which Solid compiles to an effect) -> keep the
+            // runtime component instead
+            if self.runtime == YakRuntime::Solid {
+              return None;
+            }
+            let read: FxHashSet<Atom> = binder.bound.keys().cloned().collect();
+            capture = full_capture(attrs, &mut binder, &attr_values, &read);
+            // the user's className is bound like any other value, so it composes
+            // around the parameter block instead of evaluating inside it
+            if let Some(binding) = capture
+              .iter()
+              .find(|binding| binding.name == *self.runtime.class_attr())
+            {
+              user_class_name = Some(expr_attr_value(Box::new(Expr::Ident(
+                binding.param.clone(),
+              ))));
+            }
+            // the parameters stay in the class name: the wrap binds them
+            YakClassName::Dynamic(class_name_expr)
           }
-          // the parameters stay in the class name: the wrap binds them
-          YakClassName::Dynamic(class_name_expr)
         }
       }
     };
@@ -600,24 +617,6 @@ impl FoldVisitor<'_> {
   }
 }
 
-/// Inlines the class-toggling expressions of a dynamic component at a JSX
-/// usage into a single className expression
-/// e.g. `"yX" + (on ? " yY" : "")` for `<Box $active={on}>`
-fn inline_runtime_expressions(
-  component: &FoldableComponent,
-  binder: &mut ParamBinder,
-  yak_imports: &YakImports,
-) -> Option<Box<Expr>> {
-  // every prop read becomes a parameter first, so "was this prop read" is
-  // exact by construction rather than a second analysis which could disagree
-  let mut class_name_expr = str_expr(component.class_name.clone());
-  for expression in &component.runtime_expressions {
-    let segment = inline_expression(expression, binder, yak_imports)?;
-    class_name_expr = append_condition_segment(class_name_expr, segment);
-  }
-  Some(class_name_expr)
-}
-
 /// Every attribute value the element-wrap binds: everything the usage evaluates
 /// which cannot move
 ///
@@ -662,101 +661,6 @@ fn full_capture<'a>(
     });
   }
   bindings
-}
-
-/// Inlines one class-toggling expression by substituting its prop reads
-/// with the JSX attribute values, e.g. with `$active={on}`:
-/// `({ $active }) => $active && css("yY")` becomes the segment `on ? " yY" : ""`
-///
-/// The condition shape is folded before substituting: the class names are
-/// verified static, so props can only appear inside the condition expression
-/// and unfoldable shapes bail before any substitution work
-///
-/// The props parameter must be a plain object destructuring or an identifier
-/// read through plain members (`(p) => p.$active`) - `theme` and props like
-/// `children` which are not plain attributes bail
-///
-/// Every read is replaced by the prop's [ParamBinder] parameter rather than by
-/// the attribute value directly. [BakeParams] then puts the value back wherever
-/// inlining it cannot be observed; whatever is left keeps its parameter and is
-/// bound once at the usage site
-fn inline_expression(
-  expression: &Expr,
-  binder: &mut ParamBinder,
-  yak_imports: &YakImports,
-) -> Option<ConditionSegment> {
-  let (params, body): (Vec<&Pat>, &Expr) = match expression {
-    Expr::Arrow(arrow) if !arrow.is_async && !arrow.is_generator => {
-      let body = match &*arrow.body {
-        ArrowFunctionBody::Expr(expr) => &**expr,
-        ArrowFunctionBody::FunctionBody(block) => single_return_expr(block)?,
-        #[cfg(swc_ast_unknown)]
-        _ => return None,
-      };
-      (arrow.params.iter().collect(), body)
-    }
-    _ => return None,
-  };
-  let (mut condition, cons_class, alt_class) = fold_condition_body(body, yak_imports)?;
-  match params.as_slice() {
-    // e.g. `${() => darkMode && css`...`}` - references the outer scope only
-    [] => {}
-    [Pat::Object(param)] => {
-      let mut props = FxHashMap::default();
-      for prop in &param.props {
-        // only plain destructuring - renames, defaults and rest bail
-        let ObjectPatProp::Assign(AssignPatProp {
-          key, value: None, ..
-        }) = prop
-        else {
-          return None;
-        };
-        // the runtime passes more than the attributes to the expressions -
-        // only plain props can be substituted
-        if is_runtime_injected_prop(&key.sym) {
-          return None;
-        }
-        props.insert(key.to_id(), key.sym.clone());
-      }
-      // every remaining reference is a plain prop read - the keys which could
-      // not be substituted bailed above
-      condition.visit_mut_with(&mut SubstituteProps {
-        props: &props,
-        binder,
-      });
-    }
-    // e.g. `${(p) => p.$active && css`...`}` - plain member reads on the
-    // props parameter substitute like destructured props; any other use of
-    // the parameter (e.g. forwarding it with `calculate(p)`) bails
-    [Pat::Ident(param)] => {
-      let mut substitution = SubstituteMemberProps {
-        param: param.to_id(),
-        binder,
-        failed: false,
-      };
-      condition.visit_mut_with(&mut substitution);
-      if substitution.failed {
-        return None;
-      }
-    }
-    _ => return None,
-  }
-  Some((condition, cons_class, alt_class))
-}
-
-/// The runtime passes more than the plain attributes to the class-toggling
-/// expressions - these props can not be substituted from the JSX attributes
-///
-/// `key` is listed for the opposite reason: React strips it before the
-/// component sees props, so the runtime path reads `undefined` while a
-/// substituted fold would see the attribute value - reading it must bail
-///
-/// `ref` is absent on purpose: React 19, the minimum yak supports, passes
-/// it as an ordinary prop, so the runtime and the fold read the same value
-///
-fn is_runtime_injected_prop(name: &Atom) -> bool {
-  matches!(name.as_ref(), "theme" | "children" | "style" | "key")
-    || YakRuntime::is_class_attr(name.as_ref())
 }
 
 /// An attribute's value expression and how freely the fold may treat it
@@ -819,10 +723,8 @@ fn attr_purity(attr_values: &FxHashMap<Atom, PropValue>, name: &str) -> Purity {
     .map_or(Purity::Dup, |prop_value| prop_value.purity)
 }
 
-/// Hands out one parameter per prop name while the conditions are substituted
-///
-/// Binding during the substitution itself, rather than counting reads in a
-/// separate pass, keeps the substitution rules in one place
+/// Hands out one parameter per prop name: for each prop the class name
+/// expression reads, and for each attribute the element-wrap binds
 ///
 /// One parameter per prop *name*, so a prop read by two conditions, or twice by
 /// one condition, is still bound exactly once
@@ -880,7 +782,7 @@ impl ParamBinder {
     &self,
     attrs: &'a [JSXAttrOrSpread],
     attr_values: &FxHashMap<Atom, PropValue<'a>>,
-  ) -> (FxHashMap<Id, Cow<'a, Expr>>, Vec<Binding>) {
+  ) -> (FxHashMap<Atom, Cow<'a, Expr>>, Vec<Binding>) {
     let mut bakeable = FxHashMap::default();
     let mut bindings = Vec::new();
     // walking the attributes rather than the bound props gives source order for
@@ -890,7 +792,7 @@ impl ParamBinder {
         continue;
       };
       if prop_value.purity == Purity::Dup {
-        bakeable.insert(param.to_id(), prop_value.value.clone());
+        bakeable.insert(name, prop_value.value.clone());
       } else {
         bindings.retain(|binding: &Binding| binding.name != name);
         bindings.push(Binding {
@@ -902,9 +804,9 @@ impl ParamBinder {
       }
     }
     // a prop the usage never passes is `undefined`, which always inlines
-    for (name, param) in &self.bound {
+    for name in self.bound.keys() {
       if !attr_values.contains_key(name) {
-        bakeable.insert(param.to_id(), Cow::Owned(undefined_expr()));
+        bakeable.insert(name.clone(), Cow::Owned(undefined_expr()));
       }
     }
     bindings.sort_by_key(|binding| binding.attr_index);
@@ -926,93 +828,13 @@ fn attr_names(attrs: &[JSXAttrOrSpread]) -> impl Iterator<Item = (usize, Atom)> 
   })
 }
 
-/// Replaces the destructured prop references with the prop's parameter
-struct SubstituteProps<'a> {
-  /// the local binding introduced by the destructuring -> prop name
-  props: &'a FxHashMap<Id, Atom>,
-  binder: &'a mut ParamBinder,
-}
-
-impl SubstituteProps<'_> {
-  fn param_for(&mut self, ident: &Ident) -> Option<Ident> {
-    let name = self.props.get(&ident.to_id())?.clone();
-    Some(self.binder.param_for(&name))
-  }
-}
-
-impl VisitMut for SubstituteProps<'_> {
-  fn visit_mut_expr(&mut self, expr: &mut Expr) {
-    if let Expr::Ident(ident) = expr {
-      if let Some(param) = self.param_for(ident) {
-        *expr = Expr::Ident(param);
-        return;
-      }
-    }
-    expr.visit_mut_children_with(self);
-  }
-
-  /// Expands a shorthand `{ $active }` to `{ $active: <param> }`
-  fn visit_mut_prop(&mut self, prop: &mut Prop) {
-    if let Prop::Shorthand(ident) = prop {
-      if let Some(param) = self.param_for(ident) {
-        *prop = Prop::KeyValue(KeyValueProp {
-          key: PropName::Ident(IdentName::new(ident.sym.clone(), ident.span)),
-          value: Box::new(Expr::Ident(param)),
-        });
-        return;
-      }
-    }
-    prop.visit_mut_children_with(self);
-  }
-}
-
-/// Replaces plain `p.prop` member reads on the props parameter with the prop's
-/// parameter - the identifier param counterpart of [SubstituteProps]
-/// Any other use of the parameter escapes the whole props object (forwarding
-/// it with `calculate(p)`, spreads, computed access) and bails
-struct SubstituteMemberProps<'a> {
-  param: Id,
-  binder: &'a mut ParamBinder,
-  failed: bool,
-}
-
-impl VisitMut for SubstituteMemberProps<'_> {
-  fn visit_mut_expr(&mut self, expr: &mut Expr) {
-    if let Expr::Member(member) = expr {
-      if matches!(&*member.obj, Expr::Ident(obj) if obj.to_id() == self.param) {
-        if let MemberProp::Ident(name) = &member.prop {
-          // the runtime passes more than the attributes to the expressions -
-          // only plain props can be substituted
-          if is_runtime_injected_prop(&name.sym) {
-            self.failed = true;
-            return;
-          }
-          *expr = Expr::Ident(self.binder.param_for(&name.sym));
-          return;
-        }
-      }
-    }
-    if matches!(expr, Expr::Ident(ident) if ident.to_id() == self.param) {
-      self.failed = true;
-      return;
-    }
-    expr.visit_mut_children_with(self);
-  }
-
-  /// A shorthand `{ p }` also escapes the whole props object
-  fn visit_mut_prop(&mut self, prop: &mut Prop) {
-    if matches!(prop, Prop::Shorthand(ident) if ident.to_id() == self.param) {
-      self.failed = true;
-      return;
-    }
-    prop.visit_mut_children_with(self);
-  }
-}
-
-/// Puts an attribute value back where its parameter is read, dropping the
-/// parameter
+/// Replaces each parameter of the class name expression, e.g. `$active` in
+/// `"yB" + ($active ? " yA" : "")`, with the attribute value where inlining it
+/// cannot be observed, and with the parameter the usage binds otherwise
 ///
-/// A parameter which survives this is bound once at the usage site instead
+/// The map is keyed by the identifier id of the parameter, which carries a
+/// syntax context of its own, so a user variable of the same name stays as it
+/// is. A bound parameter gets the `__yak_` name of [ParamBinder::param_for]
 struct BakeParams<'a> {
   values: &'a FxHashMap<Id, Cow<'a, Expr>>,
 }

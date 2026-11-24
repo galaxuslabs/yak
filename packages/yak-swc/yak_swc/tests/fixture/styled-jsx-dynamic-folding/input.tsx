@@ -72,14 +72,15 @@ const BlockBody = styled.aside<{ $wide?: boolean }>`
   }}
 `;
 
-// usages bail: only plain destructuring substitutes - a rename, a default or a
-// rest element all keep the runtime path
+// folds: a rename reads the prop under another name, and a default moves to
+// the read as `($size === void 0 ? "big" : $size)`
 const Renamed = styled.mark<{ $size?: string }>`
   ${({ $size: size }) => size && size === "big" && css`padding: 8px;`}
 `;
 const Defaulted = styled.mark<{ $size?: string }>`
   ${({ $size = "big" }) => $size === "big" && css`padding: 8px;`}
 `;
+// usages bail: a rest element keeps the runtime path
 const Rested = styled.mark<{ $size?: string }>`
   ${({ $size, ...rest }) => $size && rest && css`padding: 8px;`}
 `;
@@ -260,6 +261,8 @@ const Optimizable = ({ active, size, i }: { active?: boolean; size?: string, i: 
       key at the call site still folds
     </KeyedRow>
     <BlockBody $wide={active}>block body arrow</BlockBody>
+    <Renamed $size="big">renamed destructuring</Renamed>
+    <Defaulted>default value destructuring</Defaulted>
     {/* getSize() ran between the two rolls, and may not jump the parameter
         block, so the whole element is wrapped and captures all three in
         source order */}
@@ -300,8 +303,6 @@ const NotOptimizable = () => (
     <MemberComputed $active>bails: computed member access</MemberComputed>
     <KeyBail key="active">bails: destructured key access</KeyBail>
     <MemberKey key="active">bails: key access</MemberKey>
-    <Renamed $size="big">bails: renamed destructuring</Renamed>
-    <Defaulted>bails: default value destructuring</Defaulted>
     <Rested $size="big">bails: rest element destructuring</Rested>
     <Fn $on>bails: function expression condition</Fn>
     {/* spriteFor() would jump both rolls: the namespaced name is the only

@@ -14,9 +14,12 @@
 //! ## The three phases
 //!
 //! 1. **Register.** [`StyledFold::try_register`] runs during the main transform
-//!    pass and records every declaration whose usages could be folded. A usage
-//!    may appear before its declaration (inside a hoisted function), so the
-//!    rewrite is deferred until the whole module has been seen.
+//!    pass and records every declaration whose usages could be folded. A
+//!    dynamic component carries the class name expression the
+//!    [styled function fold](super::styled_arrow_function_fold) built from its
+//!    conditions. A usage may appear before its declaration (inside a hoisted
+//!    function), so the rewrite is deferred until the whole module has been
+//!    seen.
 //! 2. **Resolve.** [`StyledFold::resolve`] collapses the `styled(Parent)` chains
 //!    and drops the components that turned out not to be foldable.
 //! 3. **Rewrite.** [`StyledFold::fold_module`] rewrites every foldable JSX usage
@@ -41,10 +44,11 @@ use swc_core::{
 };
 
 use crate::fold::css_call_to_class_name::merge_class_names;
+use crate::fold::styled_arrow_function_fold::FoldedClassNames;
 use crate::utils::ast_helper::str_expr;
 use crate::utils::native_elements::VALID_ELEMENTS;
 use crate::variable_visitor::ScopedVariableReference;
-use crate::yak_imports::YakImports;
+use crate::yak_imports::{YakImports, YakRuntime};
 
 mod can_inline_prop_value;
 mod jsx_to_plain_element;
@@ -64,12 +68,24 @@ struct FoldableComponent {
   target: FoldTarget,
   /// The generated static class name, e.g. `"ym7uBBu"`
   class_name: Wtf8Atom,
-  /// The compiled class-toggling expressions over props,
-  /// e.g. `({ $active }) => $active && css("ym7uBBu1")`.
-  /// Empty for fully static components; usages of dynamic components only fold
-  /// if these can be inlined by substituting the props with the JSX attribute
-  /// values
-  runtime_expressions: Vec<Expr>,
+  /// The class names over props of a dynamic component, `None` for a fully
+  /// static one
+  dynamic: Option<DynamicClassName>,
+}
+
+/// The class names of a dynamic component as one expression over its props,
+/// built by the styled function fold, e.g. for
+/// `${({ $active }) => $active && css`color: red;`}`:
+/// `"ym7uBBu" + ($active ? " ym7uBBu1" : "")`
+///
+/// A usage replaces each parameter with the attribute value or with a
+/// parameter it binds, see `jsx_to_plain_element`
+#[derive(Debug)]
+struct DynamicClassName {
+  class_name: Box<Expr>,
+  /// The props the expression reads, in order of their first read, with the
+  /// parameter that stands for each in `class_name`
+  props: Vec<(Atom, Ident)>,
 }
 
 /// The registry of foldable styled components and the driver of their fold
@@ -89,16 +105,18 @@ impl StyledFold {
   ///   these shapes exclude `.attrs(...)` chains
   /// - `class_name` is the static root class name of the component, e.g.
   ///   `"yB"` in `__yak_button("yB")`
-  /// - `runtime_expressions` must all be class-toggling arrows over props -
-  ///   anything else keeps the runtime path. Function expressions bail too:
-  ///   they bind `this`/`arguments`, which inlining would silently rebind to
-  ///   the enclosing component
-  pub fn try_register(
+  /// - `runtime_expressions` holds the compiled `${...}` of the template, and
+  ///   `folded` the class name expression the styled function fold built from
+  ///   them. A component with runtime expressions registers only when that
+  ///   expression exists and reads nothing but plain attributes, see
+  ///   `reads_only_attributes`
+  pub(crate) fn try_register(
     &mut self,
     declaration: Option<&ScopedVariableReference>,
     tag: &Expr,
     class_name: &str,
     runtime_expressions: &[Expr],
+    folded: Option<&FoldedClassNames>,
   ) {
     let Some(declaration) = declaration else {
       return;
@@ -109,23 +127,28 @@ impl StyledFold {
     let Some(target) = Self::fold_target(tag) else {
       return;
     };
-    if !runtime_expressions
-      .iter()
-      .all(|expr| matches!(expr, Expr::Arrow(_)))
-    {
-      return;
-    }
-    // dynamic styled(Component) wrappers keep the runtime path - the $prop
-    // forwarding semantics depend on the wrapped component
-    if !runtime_expressions.is_empty() && matches!(target, FoldTarget::Component(_)) {
-      return;
-    }
+    let dynamic = if runtime_expressions.is_empty() {
+      None
+    } else {
+      // dynamic styled(Component) wrappers keep the runtime path - the $prop
+      // forwarding semantics depend on the wrapped component
+      if matches!(target, FoldTarget::Component(_)) {
+        return;
+      }
+      let Some(folded) = folded.filter(|folded| reads_only_attributes(folded)) else {
+        return;
+      };
+      Some(DynamicClassName {
+        class_name: folded.class_name.clone(),
+        props: folded.props().to_vec(),
+      })
+    };
     let previous = self.components.insert(
       declaration.id.clone(),
       FoldableComponent {
         target,
         class_name: class_name.into(),
-        runtime_expressions: runtime_expressions.to_vec(),
+        dynamic,
       },
     );
     // a binding can only hold one styled component - a second registration
@@ -300,6 +323,35 @@ impl StyledFold {
   }
 }
 
+/// `true` when every value the class name expression reads is a JSX attribute
+/// of the usage, so a usage can put the attribute values in its place
+///
+/// The runtime passes the theme, and the expression writes CSS variables to the
+/// style prop, neither of which a plain element has. See
+/// `is_runtime_injected_prop` for the props the runtime passes differently
+fn reads_only_attributes(folded: &FoldedClassNames) -> bool {
+  !folded.reads_theme()
+    && !folded.writes_style
+    && !folded
+      .props()
+      .iter()
+      .any(|(name, _)| is_runtime_injected_prop(name))
+}
+
+/// The runtime passes more than the plain attributes to the class-toggling
+/// expressions - these props can not be substituted from the JSX attributes
+///
+/// `key` is listed for the opposite reason: React strips it before the
+/// component sees props, so the runtime path reads `undefined` while a
+/// substituted fold would see the attribute value - reading it must bail
+///
+/// `ref` is absent on purpose: React 19, the minimum yak supports, passes
+/// it as an ordinary prop, so the runtime and the fold read the same value
+fn is_runtime_injected_prop(name: &Atom) -> bool {
+  matches!(name.as_ref(), "theme" | "children" | "style" | "key")
+    || YakRuntime::is_class_attr(name.as_ref())
+}
+
 /// A `styled(Parent)` chain that collapses to a plain element: its declaration
 /// and every usage carry the whole chain's class names directly
 struct Collapse {
@@ -332,7 +384,7 @@ fn resolve_chain(
     return None;
   }
   let component = components.get(id)?;
-  if !component.runtime_expressions.is_empty() {
+  if component.dynamic.is_some() {
     return None;
   }
   match &component.target {
