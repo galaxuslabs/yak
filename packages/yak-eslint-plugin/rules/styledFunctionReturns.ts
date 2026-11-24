@@ -4,7 +4,7 @@ import { calleeName, checkReturnedValues } from "./returnedValues.js";
 import { importsYak, isStyledOrCssTag } from "./utils.js";
 
 const expected =
-  "A function that stands on its own in a styled/css literal has to return a css`...` literal or nothing.";
+  "A function used as a mixin in a styled/css literal has to return a css`...` literal or nothing.";
 
 const callFix =
   "Write the css`...` literal in this function, or remove the `return` in front of the call if it only checks something, like";
@@ -35,7 +35,7 @@ export const styledFunctionReturns = createRule("styled-function-returns", {
     hasSuggestions: true,
     docs: {
       description:
-        "Enforces that a function that stands on its own in a yak styled/css literal returns a css literal or nothing",
+        "Enforces that a function used as a mixin in a yak styled/css literal returns a css literal or nothing",
       recommended: true,
       requiresTypeChecking: false,
     },

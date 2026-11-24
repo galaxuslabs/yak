@@ -299,7 +299,7 @@ A function that needs another statement can turn the rule off with `// eslint-di
 
 Reports a function in a `styled` or `css` literal that returns a value without styles, like a string or a call.
 
-A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names, when it stands on its own. Wrap the CSS in a `css` literal, otherwise it doesn't get any styles.
+A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or works as a mixin and adds styles, when it stands on its own. Wrap the CSS in a `css` literal, otherwise it doesn't get any styles.
 
 Example:
 

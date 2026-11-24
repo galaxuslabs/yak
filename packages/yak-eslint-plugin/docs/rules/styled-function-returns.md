@@ -1,6 +1,6 @@
 # @yak/styled-function-returns
 
-📝 Enforces that a function that stands on its own in a yak styled/css literal returns a css literal or nothing.
+📝 Enforces that a function used as a mixin in a yak styled/css literal returns a css literal or nothing.
 
 💼 This rule is enabled in the ✅ `recommended` config.
 
@@ -12,7 +12,7 @@ Reports a function in a `styled` or `css` literal that returns a value without s
 
 ## Reason why
 
-A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names:
+A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or works as a mixin and adds styles:
 
 ```tsx
 const Button = styled.button<{ $color: string; $active: boolean }>`
