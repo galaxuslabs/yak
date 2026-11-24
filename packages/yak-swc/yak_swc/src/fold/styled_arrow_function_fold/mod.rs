@@ -48,16 +48,26 @@ pub(crate) struct FoldedClassNames {
   /// The class name expression. It reads each prop through the parameter that
   /// `props()` lists for it, the theme through `theme` and writes CSS variables
   /// to `style`, and all of these parameters carry a syntax context of their own
-  pub(crate) class_name: Box<Expr>,
+  class_name: Box<Expr>,
   params: FoldParams,
   /// `true` when the expression writes CSS variables to the style parameter
-  pub(crate) writes_style: bool,
+  writes_style: bool,
   /// `false` for a component with nothing but `atoms("flex")` calls, whose
   /// class names never change
   has_condition: bool,
 }
 
 impl FoldedClassNames {
+  /// The class name expression, see the `class_name` field
+  pub(crate) fn class_name(&self) -> &Expr {
+    &self.class_name
+  }
+
+  /// See the `writes_style` field
+  pub(crate) fn writes_style(&self) -> bool {
+    self.writes_style
+  }
+
   /// The props the expression reads, in order of their first read, with the
   /// parameter that stands for each, e.g. `[("$on", $on)]` for
   /// `"yB" + ($on ? " yB1" : "")`

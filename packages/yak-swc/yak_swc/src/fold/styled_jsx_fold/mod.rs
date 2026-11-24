@@ -80,6 +80,9 @@ struct FoldableComponent {
 ///
 /// A usage replaces each parameter with the attribute value or with a
 /// parameter it binds, see `jsx_to_plain_element`
+///
+/// It copies the two values from `FoldedClassNames` because the React runtime
+/// fold consumes the original afterwards
 #[derive(Debug)]
 struct DynamicClassName {
   class_name: Box<Expr>,
@@ -139,7 +142,7 @@ impl StyledFold {
         return;
       };
       Some(DynamicClassName {
-        class_name: folded.class_name.clone(),
+        class_name: Box::new(folded.class_name().clone()),
         props: folded.props().to_vec(),
       })
     };
@@ -331,7 +334,7 @@ impl StyledFold {
 /// `is_runtime_injected_prop` for the props the runtime passes differently
 fn reads_only_attributes(folded: &FoldedClassNames) -> bool {
   !folded.reads_theme()
-    && !folded.writes_style
+    && !folded.writes_style()
     && !folded
       .props()
       .iter()
