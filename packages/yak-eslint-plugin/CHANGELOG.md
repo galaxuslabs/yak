@@ -1,5 +1,15 @@
 # @yak/eslint-plugin
 
+## 2.1.0
+
+### Minor Changes
+
+- Adds the rule `@yak/styled-function-fast-path`, an error in the recommended config: it reports code in a function of a `styled` or `css` literal that makes the component render slower, like `const big = $size > 2;` in `${({ $size }) => { const big = $size > 2; return big && css`padding: 8px;`; }}` ([#775](https://github.com/galaxuslabs/yak/pull/775))
+
+- The lint rule `@yak/styled-function-returns` also reports an imported mixin that a function returns, like `${({ $on }) => $on && importedMixin}`, and suggests `` css`${importedMixin}` `` instead ([#803](https://github.com/galaxuslabs/yak/pull/803))
+
+- Adds the rule `@yak/styled-function-returns`, an error in the recommended config: a function that stands on its own in a `styled` or `css` literal has to return a `css` literal or nothing, so `${({ $active }) => $active && "font-weight: bold;"}` and `${({ $active }) => $active && helper()}` are errors because they add no styles ([#775](https://github.com/galaxuslabs/yak/pull/775))
+
 ## 2.0.1
 
 ### Patch Changes

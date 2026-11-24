@@ -1,5 +1,45 @@
 # @yak/react
 
+## 10.2.0
+
+### Minor Changes
+
+- Props that `attrs` sets are now optional on the component, like `$size` in `` const Icon = styled.svg.attrs({ $size: 24 })<{ $size: number }>`width: ${({ $size }) => $size}px;` `` that renders as `<Icon />` ([#800](https://github.com/galaxuslabs/yak/pull/800))
+
+- Importing an `atoms()` value from another file is no longer supported and fails the build, export the class names as a string like `export const buttonClasses = "shadow-md rounded"` and call `atoms(buttonClasses)` in the file that uses it ([#803](https://github.com/galaxuslabs/yak/pull/803))
+
+- `styled(Component)` no longer applies the `defaultProps` of a function component, which React 19 already ignores in JSX. Use default parameters like `const Price = ({ currency = "CHF" }) => <b>{currency}</b>` ([#759](https://github.com/galaxuslabs/yak/pull/759))
+
+- Rsbuild now compiles yak components that come from an installed package in `node_modules` ([#787](https://github.com/galaxuslabs/yak/pull/787))
+
+### Patch Changes
+
+- Fixes a bug where `attrs` failed the type check for a hyphenated attribute like `styled.div.attrs({ "data-foo": "" })`. ([#800](https://github.com/galaxuslabs/yak/pull/800))
+
+- Fixes a bug where interpolations could not read a prop that `attrs` returns, like `$muted` in `` styled.input.attrs(({ disabled }) => ({ $muted: disabled }))`opacity: ${({ $muted }) => ($muted ? 0.5 : 1)};` `` ([#800](https://github.com/galaxuslabs/yak/pull/800))
+
+- Fixes a bug where a `css` prop inside a destructuring declaration rendered without styles, like ``const { getByText } = render(<div css={css`color: red;`} />)`` ([#783](https://github.com/galaxuslabs/yak/pull/783)) Thanks @drewbitt!
+
+- Styled components with dynamic values like ``${({ $active }) => $active && css`color: red;`}``, constant `.attrs({...})` or a chain like `styled(styled(Button))` render faster ([#754](https://github.com/galaxuslabs/yak/pull/754))
+
+- A component with a dynamic value like `width: ${({ $width }) => $width}px` now compiles to less JavaScript ([#772](https://github.com/galaxuslabs/yak/pull/772))
+
+- `atoms()` accepts `null` and `undefined`, so an optional prop works as a condition: `atoms("flex", $wide && "w-full")` ([#768](https://github.com/galaxuslabs/yak/pull/768))
+
+- Styled components with dynamic values like ``${({ $active }) => $active && css`color: red;`}`` compile to less JavaScript ([#807](https://github.com/galaxuslabs/yak/pull/807))
+
+- A styled component whose dynamic values use a `switch`, an `if` block, a nested `css` literal, `atoms` or a renamed or default prop like `({ $size = "m" }) => ...` now renders as a plain element where you use it in the same file ([#802](https://github.com/galaxuslabs/yak/pull/802))
+
+- Fixes a bug where a call to a function that returns mixins, like `${(p) => size(p.$big)}`, added no styles, the build now fails and asks you to write the condition in the template like `${(p) => (p.$big ? large : small)}` ([#803](https://github.com/galaxuslabs/yak/pull/803))
+
+- Fixes a bug where an imported mixin that a function returns, like `${(p) => p.$on && importedMixin}`, added no styles, the build now fails and asks you to wrap it in a `css` literal like ``${(p) => p.$on && css`${importedMixin}`}`` ([#803](https://github.com/galaxuslabs/yak/pull/803))
+
+- Fixes a bug where `vite dev` failed with an `ENOENT` on the CSS of a yak component in a file of an installed package ([#787](https://github.com/galaxuslabs/yak/pull/787))
+
+- Fixes a bug where a constant from an installed package, like `${layout.reading}` from `import { layout } from "my-ui"`, failed in Vite with "Error while resolving cross-file selectors" ([#787](https://github.com/galaxuslabs/yak/pull/787))
+- Updated dependencies:
+  - @yak/swc@10.2.0
+
 ## 10.1.0
 
 ### Minor Changes

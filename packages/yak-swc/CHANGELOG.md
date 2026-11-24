@@ -1,5 +1,21 @@
 # @yak/swc
 
+## 10.2.0
+
+### Patch Changes
+
+- Fixes a bug where a `css` prop inside a destructuring declaration rendered without styles, like ``const { getByText } = render(<div css={css`color: red;`} />)`` ([#783](https://github.com/galaxuslabs/yak/pull/783)) Thanks @drewbitt!
+
+- Styled components with dynamic values like ``${({ $active }) => $active && css`color: red;`}``, constant `.attrs({...})` or a chain like `styled(styled(Button))` render faster ([#754](https://github.com/galaxuslabs/yak/pull/754))
+
+- Styled components with dynamic values like ``${({ $active }) => $active && css`color: red;`}`` compile to less JavaScript ([#807](https://github.com/galaxuslabs/yak/pull/807))
+
+- A styled component whose dynamic values use a `switch`, an `if` block, a nested `css` literal, `atoms` or a renamed or default prop like `({ $size = "m" }) => ...` now renders as a plain element where you use it in the same file ([#802](https://github.com/galaxuslabs/yak/pull/802))
+
+- Fixes a bug where a call to a function that returns mixins, like `${(p) => size(p.$big)}`, added no styles, the build now fails and asks you to write the condition in the template like `${(p) => (p.$big ? large : small)}` ([#803](https://github.com/galaxuslabs/yak/pull/803))
+
+- Fixes a bug where an imported mixin that a function returns, like `${(p) => p.$on && importedMixin}`, added no styles, the build now fails and asks you to wrap it in a `css` literal like ``${(p) => p.$on && css`${importedMixin}`}`` ([#803](https://github.com/galaxuslabs/yak/pull/803))
+
 ## 10.1.0
 
 ### Minor Changes
