@@ -13,7 +13,7 @@ const items: { key: keyof TransformOptions; label: string; hint: string }[] = [
   {
     key: "deadCodeElimination",
     label: "Dead code elimination",
-    hint: "Remove unused code and fixed conditions, as a minifier does",
+    hint: "Remove unused code and fixed logic like a modern minifier",
   },
 ];
 
