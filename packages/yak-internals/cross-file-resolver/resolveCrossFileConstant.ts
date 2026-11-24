@@ -567,9 +567,7 @@ function explainUnsupported(
   }
 
   if (hint === "CallExpression") {
-    lines.push(
-      `\`${specifier}\` is the result of a function call.`,
-    );
+    lines.push(`\`${specifier}\` is the result of a function call.`);
     if (snippet) lines.push(snippet);
     lines.push(
       `  help: for atoms(), export the class names as a string and call atoms() in the file that uses them`,
