@@ -13,14 +13,14 @@ const Input = /*YAK Extracted CSS:
     content: var(--ym7uBBu2);
   }
 }
-*/ /*#__PURE__*/ __yak.__yak_input("ym7uBBu", 2, ({ $placeholder, $marker }, style)=>"ym7uBBu" + (style["--ym7uBBu1"] = $placeholder, style["--ym7uBBu2"] = $marker, ""));
+*/ /*#__PURE__*/ __yak.__yak_input(2, ({ $placeholder, $marker }, style)=>"ym7uBBu" + (style["--ym7uBBu1"] = $placeholder, style["--ym7uBBu2"] = $marker, ""));
 // var() inside url() works because url() evaluates the var, so
 // `url("${...}")` is also stripped to `url(var(--xxx))`.
 const Bg = /*YAK Extracted CSS:
 .ym7uBBu3 {
   background: url(var(--ym7uBBu4));
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu3", 2, ({ $url }, style)=>"ym7uBBu3" + (style["--ym7uBBu4"] = $url, ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $url }, style)=>"ym7uBBu3" + (style["--ym7uBBu4"] = $url, ""));
 // Partial interpolation is intentionally NOT rewritten — the surrounding
 // static text means the user must restructure their CSS (e.g. split into
 // multiple values) for var() to actually substitute.
@@ -30,4 +30,4 @@ const Partial = /*YAK Extracted CSS:
     content: "Hello var(--ym7uBBu6)";
   }
 }
-*/ /*#__PURE__*/ __yak.__yak_span("ym7uBBu5", 2, ({ $name }, style)=>"ym7uBBu5" + (style["--ym7uBBu6"] = $name, ""));
+*/ /*#__PURE__*/ __yak.__yak_span(2, ({ $name }, style)=>"ym7uBBu5" + (style["--ym7uBBu6"] = $name, ""));

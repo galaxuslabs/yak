@@ -7,63 +7,63 @@ const TwiceSameArrow = /*YAK Extracted CSS:
   left: var(--ym7uBBu1);
   right: var(--ym7uBBu1);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", 2, ({ $x }, style)=>"ym7uBBu" + (style["--ym7uBBu1"] = /*#__PURE__*/ __yak_cssValue($x, "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $x }, style)=>"ym7uBBu" + (style["--ym7uBBu1"] = /*#__PURE__*/ __yak_cssValue($x, "px"), ""));
 // Identical logic, but one side carries a TS parameter annotation
 const TypedVsUntyped = /*YAK Extracted CSS:
 .ym7uBBu2 {
   top: var(--ym7uBBu3);
   bottom: var(--ym7uBBu3);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu2", 2, ({ $y }, style)=>"ym7uBBu2" + (style["--ym7uBBu3"] = /*#__PURE__*/ __yak_cssValue($y, "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $y }, style)=>"ym7uBBu2" + (style["--ym7uBBu3"] = /*#__PURE__*/ __yak_cssValue($y, "px"), ""));
 // Identical calculation including a Math.min call
 const WithCalculation = /*YAK Extracted CSS:
 .ym7uBBu4 {
   width: var(--ym7uBBu5);
   max-width: var(--ym7uBBu5);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu4", 2, ({ $ratio }, style)=>"ym7uBBu4" + (style["--ym7uBBu5"] = /*#__PURE__*/ __yak_cssValue(Math.min($ratio * 100, 100), "%"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $ratio }, style)=>"ym7uBBu4" + (style["--ym7uBBu5"] = /*#__PURE__*/ __yak_cssValue(Math.min($ratio * 100, 100), "%"), ""));
 // Same expression but different trailing units: must stay separate
 const DifferentUnits = /*YAK Extracted CSS:
 .ym7uBBu6 {
   width: var(--ym7uBBu7);
   height: var(--ym7uBBu8);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu6", 2, ({ $size }, style)=>"ym7uBBu6" + (style["--ym7uBBu7"] = /*#__PURE__*/ __yak_cssValue($size, "px"), style["--ym7uBBu8"] = /*#__PURE__*/ __yak_cssValue($size, "rem"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $size }, style)=>"ym7uBBu6" + (style["--ym7uBBu7"] = /*#__PURE__*/ __yak_cssValue($size, "px"), style["--ym7uBBu8"] = /*#__PURE__*/ __yak_cssValue($size, "rem"), ""));
 // Parenthesized arrow vs plain arrow
 const Parens = /*YAK Extracted CSS:
 .ym7uBBu9 {
   margin-left: var(--ym7uBBuA);
   margin-right: var(--ym7uBBuA);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu9", 2, ({ $z }, style)=>"ym7uBBu9" + (style["--ym7uBBuA"] = /*#__PURE__*/ __yak_cssValue($z, "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $z }, style)=>"ym7uBBu9" + (style["--ym7uBBuA"] = /*#__PURE__*/ __yak_cssValue($z, "px"), ""));
 // Different props: must stay separate
 const DifferentProps = /*YAK Extracted CSS:
 .ym7uBBuB {
   padding-left: var(--ym7uBBuC);
   padding-right: var(--ym7uBBuD);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuB", 2, ({ $a, $b }, style)=>"ym7uBBuB" + (style["--ym7uBBuC"] = /*#__PURE__*/ __yak_cssValue($a, "px"), style["--ym7uBBuD"] = /*#__PURE__*/ __yak_cssValue($b, "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $a, $b }, style)=>"ym7uBBuB" + (style["--ym7uBBuC"] = /*#__PURE__*/ __yak_cssValue($a, "px"), style["--ym7uBBuD"] = /*#__PURE__*/ __yak_cssValue($b, "px"), ""));
 // Same bindings, different destructuring order in the parameter
 const DestructureOrder = /*YAK Extracted CSS:
 .ym7uBBuE {
   width: var(--ym7uBBuF);
   height: var(--ym7uBBuF);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuE", 2, ({ $a, $b }, style)=>"ym7uBBuE" + (style["--ym7uBBuF"] = /*#__PURE__*/ __yak_cssValue($a * $b, "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $a, $b }, style)=>"ym7uBBuE" + (style["--ym7uBBuF"] = /*#__PURE__*/ __yak_cssValue($a * $b, "px"), ""));
 // A sibling-referencing default: reordering changes behavior
 const DefaultReferencesSibling = /*YAK Extracted CSS:
 .ym7uBBuG {
   min-width: var(--ym7uBBuH);
   min-height: var(--ym7uBBuI);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuG", 2, ({ $a, $b }, style)=>"ym7uBBuG" + (style["--ym7uBBuH"] = /*#__PURE__*/ __yak_cssValue($a * ($b === void 0 ? $a : $b), "px"), style["--ym7uBBuI"] = /*#__PURE__*/ __yak_cssValue($a * ($b === void 0 ? 1 : $b), "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $a, $b }, style)=>"ym7uBBuG" + (style["--ym7uBBuH"] = /*#__PURE__*/ __yak_cssValue($a * ($b === void 0 ? $a : $b), "px"), style["--ym7uBBuI"] = /*#__PURE__*/ __yak_cssValue($a * ($b === void 0 ? 1 : $b), "px"), ""));
 // Repeated interpolations inside a single declaration value
 const Dot = /*YAK Extracted CSS:
 .ym7uBBuJ {
   animation-range: max(0%, calc((var(--ym7uBBuK) - 1) * 100% / (var(--ym7uBBuL) - 1)))
 min(100%, calc((var(--ym7uBBuK) + 1) * 100% / (var(--ym7uBBuL) - 1)));
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuJ", 2, ({ $index, $slideCount }, style)=>"ym7uBBuJ" + (style["--ym7uBBuK"] = $index, style["--ym7uBBuL"] = $slideCount, ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $index, $slideCount }, style)=>"ym7uBBuJ" + (style["--ym7uBBuK"] = $index, style["--ym7uBBuL"] = $slideCount, ""));
 const Nested = /*YAK Extracted CSS:
 .ym7uBBuM {
   left: var(--ym7uBBuN);
@@ -76,4 +76,4 @@ const Nested = /*YAK Extracted CSS:
     transform: translate(var(--ym7uBBuN), var(--ym7uBBuO));
   }
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuM", 2, ({ $x, $y }, style)=>"ym7uBBuM" + (style["--ym7uBBuN"] = /*#__PURE__*/ __yak_cssValue($x, "px"), style["--ym7uBBuO"] = /*#__PURE__*/ __yak_cssValue($y, "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $x, $y }, style)=>"ym7uBBuM" + (style["--ym7uBBuN"] = /*#__PURE__*/ __yak_cssValue($x, "px"), style["--ym7uBBuO"] = /*#__PURE__*/ __yak_cssValue($y, "px"), ""));

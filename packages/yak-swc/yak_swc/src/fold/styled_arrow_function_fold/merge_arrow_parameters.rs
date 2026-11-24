@@ -52,7 +52,7 @@ impl FoldParams {
   ///   ${(p) => p.$on && $size > 2 && css`margin: 8px;`}
   /// `
   /// // after the hygiene pass
-  /// __yak.__yak_button("yB", 0, ({ $size: $size1, $on }) =>
+  /// __yak.__yak_button(0, ({ $size: $size1, $on }) =>
   ///   "yB" + ($size1 > 2 ? " yB1" : "") + ($on && $size > 2 ? " yB2" : ""))
   /// ```
   ///

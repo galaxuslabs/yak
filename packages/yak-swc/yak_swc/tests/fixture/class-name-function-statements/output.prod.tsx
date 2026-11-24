@@ -10,12 +10,12 @@ export const SwitchAssertNever = /*YAK EXPORTED STYLED:SwitchAssertNever:ym7uBBu
 .ym7uBBu2 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", 0, ({ $size })=>"ym7uBBu" + ($size === "s" ? " ym7uBBu1" : $size === "m" ? " ym7uBBu2" : (assertNever($size), "")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBu" + ($size === "s" ? " ym7uBBu1" : $size === "m" ? " ym7uBBu2" : (assertNever($size), "")));
 export const SwitchAssertNeverBreak = /*YAK EXPORTED STYLED:SwitchAssertNeverBreak:ym7uBBu3*//*YAK Extracted CSS:
 .ym7uBBu4 {
   padding: 2px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu3", 0, ({ $size })=>"ym7uBBu3" + ($size === "s" ? " ym7uBBu4" : (assertNever($size), "")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBu3" + ($size === "s" ? " ym7uBBu4" : (assertNever($size), "")));
 export const SwitchSatisfiesNever = /*YAK EXPORTED STYLED:SwitchSatisfiesNever:ym7uBBu5*//*YAK Extracted CSS:
 .ym7uBBu6 {
   padding: 2px;
@@ -23,7 +23,7 @@ export const SwitchSatisfiesNever = /*YAK EXPORTED STYLED:SwitchSatisfiesNever:y
 .ym7uBBu7 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu5", 0, ({ $size })=>"ym7uBBu5" + ($size === "s" ? " ym7uBBu6" : $size === "m" ? " ym7uBBu7" : ($size, "")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBu5" + ($size === "s" ? " ym7uBBu6" : $size === "m" ? " ym7uBBu7" : ($size, "")));
 export const SwitchRenamedDefault = /*YAK EXPORTED STYLED:SwitchRenamedDefault:ym7uBBu8*//*YAK Extracted CSS:
 .ym7uBBu9 {
   padding: 2px;
@@ -31,7 +31,7 @@ export const SwitchRenamedDefault = /*YAK EXPORTED STYLED:SwitchRenamedDefault:y
 .ym7uBBuA {
   padding: 4px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu8", 0, ({ $size })=>"ym7uBBu8" + (($size === void 0 ? "m" : $size) === "s" ? " ym7uBBu9" : ($size === void 0 ? "m" : $size) === "m" ? " ym7uBBuA" : (assertNever($size === void 0 ? "m" : $size), "")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBu8" + (($size === void 0 ? "m" : $size) === "s" ? " ym7uBBu9" : ($size === void 0 ? "m" : $size) === "m" ? " ym7uBBuA" : (assertNever($size === void 0 ? "m" : $size), "")));
 export const SwitchMemberRead = /*YAK EXPORTED STYLED:SwitchMemberRead:ym7uBBuB*//*YAK Extracted CSS:
 .ym7uBBuC {
   padding: 2px;
@@ -39,7 +39,7 @@ export const SwitchMemberRead = /*YAK EXPORTED STYLED:SwitchMemberRead:ym7uBBuB*
 .ym7uBBuD {
   padding: 4px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuB", 0, ({ $size })=>"ym7uBBuB" + ($size === "s" ? " ym7uBBuC" : $size === "m" ? " ym7uBBuD" : (console.log($size), "")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBuB" + ($size === "s" ? " ym7uBBuC" : $size === "m" ? " ym7uBBuD" : (console.log($size), "")));
 export const CaseLogBeforeReturn = /*YAK EXPORTED STYLED:CaseLogBeforeReturn:ym7uBBuE*//*YAK Extracted CSS:
 .ym7uBBuF {
   padding: 2px;
@@ -47,7 +47,7 @@ export const CaseLogBeforeReturn = /*YAK EXPORTED STYLED:CaseLogBeforeReturn:ym7
 .ym7uBBuG {
   padding: 4px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuE", 0, ({ $size })=>"ym7uBBuE" + ($size === "s" ? (log($size), " ym7uBBuF") : " ym7uBBuG"));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBuE" + ($size === "s" ? (log($size), " ym7uBBuF") : " ym7uBBuG"));
 // the last case runs out of the `switch` into the `return` after it
 export const LastCaseWithoutReturn = /*YAK EXPORTED STYLED:LastCaseWithoutReturn:ym7uBBuH*//*YAK Extracted CSS:
 .ym7uBBuI {
@@ -56,7 +56,7 @@ export const LastCaseWithoutReturn = /*YAK EXPORTED STYLED:LastCaseWithoutReturn
 .ym7uBBuJ {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuH", 0, ({ $size })=>"ym7uBBuH" + ($size === "s" ? " ym7uBBuI" : $size === "m" ? (log($size), " ym7uBBuJ") : " ym7uBBuJ"));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBuH" + ($size === "s" ? " ym7uBBuI" : $size === "m" ? (log($size), " ym7uBBuJ") : " ym7uBBuJ"));
 export const DefaultWithoutReturnThenReturn = /*YAK EXPORTED STYLED:DefaultWithoutReturnThenReturn:ym7uBBuK*//*YAK Extracted CSS:
 .ym7uBBuL {
   padding: 2px;
@@ -64,32 +64,32 @@ export const DefaultWithoutReturnThenReturn = /*YAK EXPORTED STYLED:DefaultWitho
 .ym7uBBuM {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuK", 0, ({ $size })=>"ym7uBBuK" + ($size === "s" ? " ym7uBBuL" : (log($size), " ym7uBBuM")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBuK" + ($size === "s" ? " ym7uBBuL" : (log($size), " ym7uBBuM")));
 export const LogBeforeIf = /*YAK EXPORTED STYLED:LogBeforeIf:ym7uBBuN*//*YAK Extracted CSS:
 .ym7uBBuO {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuN", 0, ({ $on })=>"ym7uBBuN" + (console.log($on), $on ? " ym7uBBuO" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"ym7uBBuN" + (console.log($on), $on ? " ym7uBBuO" : ""));
 export const StatementsBeforeReturn = /*YAK EXPORTED STYLED:StatementsBeforeReturn:ym7uBBuP*//*YAK Extracted CSS:
 .ym7uBBuQ {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuP", 0, ({ $on, $a, $b })=>"ym7uBBuP" + ($on ? (log($a), log($b), " ym7uBBuQ") : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $a, $b })=>"ym7uBBuP" + ($on ? (log($a), log($b), " ym7uBBuQ") : ""));
 export const IfWithoutReturn = /*YAK EXPORTED STYLED:IfWithoutReturn:ym7uBBuR*//*YAK Extracted CSS:
 .ym7uBBuS {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuR", 0, ({ $on })=>"ym7uBBuR" + ($on ? (log($on), " ym7uBBuS") : " ym7uBBuS"));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"ym7uBBuR" + ($on ? (log($on), " ym7uBBuS") : " ym7uBBuS"));
 export const StatementAtEnd = /*YAK EXPORTED STYLED:StatementAtEnd:ym7uBBuT*//*YAK Extracted CSS:
 .ym7uBBuU {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuT", 0, ({ $on })=>"ym7uBBuT" + ($on ? " ym7uBBuU" : (log($on), "")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"ym7uBBuT" + ($on ? " ym7uBBuU" : (log($on), "")));
 export const CssVariable = /*YAK EXPORTED STYLED:CssVariable:ym7uBBuV*//*YAK Extracted CSS:
 .ym7uBBuV {
   width: var(--ym7uBBuW);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuV", 2, ({ $width }, style)=>"ym7uBBuV" + (style["--ym7uBBuW"] = /*#__PURE__*/ __yak_cssValue((log($width), $width), "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $width }, style)=>"ym7uBBuV" + (style["--ym7uBBuW"] = /*#__PURE__*/ __yak_cssValue((log($width), $width), "px"), ""));
 // stays unfolded: a returned call can return a css literal
 export const ReturnAssertNever = /*YAK EXPORTED STYLED:ReturnAssertNever:ym7uBBuX*//*YAK Extracted CSS:
 .ym7uBBuY {

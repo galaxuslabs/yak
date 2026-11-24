@@ -37,7 +37,7 @@ const Dynamic = /*YAK Extracted CSS:
 .input_Dynamic_m7uBBu {
   color: var(--input_Dynamic__color_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Dynamic_m7uBBu", 2, ({ $color }, style)=>"input_Dynamic_m7uBBu" + (style["--input_Dynamic__color_m7uBBu"] = $color, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $color }, style)=>"input_Dynamic_m7uBBu" + (style["--input_Dynamic__color_m7uBBu"] = $color, "")), {
     "displayName": "Dynamic"
 });
 // bails: attrs
@@ -87,7 +87,7 @@ const ToggleBase = /*YAK Extracted CSS:
 .input_ToggleBase__\$on_m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button("input_ToggleBase_m7uBBu", 0, ({ $on })=>"input_ToggleBase_m7uBBu" + ($on ? " input_ToggleBase__$on_m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button(0, ({ $on })=>"input_ToggleBase_m7uBBu" + ($on ? " input_ToggleBase__$on_m7uBBu" : "")), {
     "displayName": "ToggleBase"
 });
 // folds to the wrapped component: a dynamic parent never collapses

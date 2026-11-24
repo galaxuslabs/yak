@@ -12,7 +12,7 @@ export const FadeInText = /*YAK EXPORTED STYLED:FadeInText:ym7uBBu*//*YAK Extrac
   font-size: 18px;
   color: #333;
 }
-*/ /*#__PURE__*/ __yak.__yak_p("ym7uBBu", 0, ({ $reverse })=>"ym7uBBu" + ($reverse ? " ym7uBBu1" : " ym7uBBu3"));
+*/ /*#__PURE__*/ __yak.__yak_p(0, ({ $reverse })=>"ym7uBBu" + ($reverse ? " ym7uBBu1" : " ym7uBBu3"));
 const animations = {
     fadeIn: /*YAK Extracted CSS:
 @keyframes ym7uBBu4 {

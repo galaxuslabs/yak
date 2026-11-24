@@ -19,7 +19,7 @@ export const LayoutPosition = /*YAK EXPORTED STYLED:LayoutPosition:ym7uBBu*//*YA
 .ym7uBBu3 {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", 0, ({ $layoutPosition })=>"ym7uBBu" + ($layoutPosition.medium?.visualSize === "s" ? " ym7uBBu1" : $layoutPosition.medium?.visualSize === "m" ? " ym7uBBu2" : " ym7uBBu3"));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $layoutPosition })=>"ym7uBBu" + ($layoutPosition.medium?.visualSize === "s" ? " ym7uBBu1" : $layoutPosition.medium?.visualSize === "m" ? " ym7uBBu2" : " ym7uBBu3"));
 export const MemberParam = /*YAK EXPORTED STYLED:MemberParam:ym7uBBu4*//*YAK Extracted CSS:
 .ym7uBBu5 {
   padding: 2px;
@@ -27,34 +27,34 @@ export const MemberParam = /*YAK EXPORTED STYLED:MemberParam:ym7uBBu4*//*YAK Ext
 .ym7uBBu6 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu4", 0, ({ $layout })=>"ym7uBBu4" + ($layout.medium!.visualSize === "s" ? " ym7uBBu5" : " ym7uBBu6"));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $layout })=>"ym7uBBu4" + ($layout.medium!.visualSize === "s" ? " ym7uBBu5" : " ym7uBBu6"));
 export const RenamedWithDefault = /*YAK EXPORTED STYLED:RenamedWithDefault:ym7uBBu7*//*YAK Extracted CSS:
 .ym7uBBu8 {
   padding: 2px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu7", 0, ({ $size })=>"ym7uBBu7" + (($size === void 0 ? "m" : $size) === "s" ? " ym7uBBu8" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBu7" + (($size === void 0 ? "m" : $size) === "s" ? " ym7uBBu8" : ""));
 export const SeveralDeclarators = /*YAK EXPORTED STYLED:SeveralDeclarators:ym7uBBu9*//*YAK Extracted CSS:
 .ym7uBBuA {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu9", 0, ({ $a, $layout })=>"ym7uBBu9" + ($a && $layout.medium ? " ym7uBBuA" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $a, $layout })=>"ym7uBBu9" + ($a && $layout.medium ? " ym7uBBuA" : ""));
 // a const that reads an earlier const
 export const ConstOfConst = /*YAK EXPORTED STYLED:ConstOfConst:ym7uBBuB*//*YAK Extracted CSS:
 .ym7uBBuC {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuB", 0, ({ $layout })=>"ym7uBBuB" + ($layout.medium?.visualSize === "l" ? " ym7uBBuC" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $layout })=>"ym7uBBuB" + ($layout.medium?.visualSize === "l" ? " ym7uBBuC" : ""));
 // `medium.visualSize` throws for a missing `medium`, so it keeps the parens
 export const MemberOfOptionalConst = /*YAK EXPORTED STYLED:MemberOfOptionalConst:ym7uBBuD*//*YAK Extracted CSS:
 .ym7uBBuE {
   padding: 2px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuD", 0, ({ $layout })=>"ym7uBBuD" + (($layout?.medium).visualSize === "s" ? " ym7uBBuE" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $layout })=>"ym7uBBuD" + (($layout?.medium).visualSize === "s" ? " ym7uBBuE" : ""));
 export const LiteralConst = /*YAK EXPORTED STYLED:LiteralConst:ym7uBBuF*//*YAK Extracted CSS:
 .ym7uBBuG {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuF", 0, ({ $count })=>"ym7uBBuF" + ($count > 2 ? " ym7uBBuG" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $count })=>"ym7uBBuF" + ($count > 2 ? " ym7uBBuG" : ""));
 // the same name in two blocks is two bindings
 export const SameNameInTwoBlocks = /*YAK EXPORTED STYLED:SameNameInTwoBlocks:ym7uBBuH*//*YAK Extracted CSS:
 .ym7uBBuI {
@@ -63,7 +63,7 @@ export const SameNameInTwoBlocks = /*YAK EXPORTED STYLED:SameNameInTwoBlocks:ym7
 .ym7uBBuJ {
   padding: 4px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuH", 0, ({ $on, $a, $b })=>"ym7uBBuH" + ($on ? $a.medium?.visualSize === "s" ? " ym7uBBuI" : "" : $b.medium?.visualSize === "s" ? " ym7uBBuJ" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $a, $b })=>"ym7uBBuH" + ($on ? $a.medium?.visualSize === "s" ? " ym7uBBuI" : "" : $b.medium?.visualSize === "s" ? " ym7uBBuJ" : ""));
 // the same name in two functions of one component is two bindings
 export const SameNameInTwoFunctions = /*YAK EXPORTED STYLED:SameNameInTwoFunctions:ym7uBBuK*//*YAK Extracted CSS:
 .ym7uBBuL {
@@ -72,7 +72,7 @@ export const SameNameInTwoFunctions = /*YAK EXPORTED STYLED:SameNameInTwoFunctio
 .ym7uBBuM {
   margin: 2px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuK", 0, ({ $a, $b })=>"ym7uBBuK" + ($a.medium?.visualSize === "s" ? " ym7uBBuL" : "") + ($b.medium?.visualSize === "s" ? " ym7uBBuM" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $a, $b })=>"ym7uBBuK" + ($a.medium?.visualSize === "s" ? " ym7uBBuL" : "") + ($b.medium?.visualSize === "s" ? " ym7uBBuM" : ""));
 export const ConstInCase = /*YAK EXPORTED STYLED:ConstInCase:ym7uBBuN*//*YAK Extracted CSS:
 .ym7uBBuO {
   padding: 2px;
@@ -80,7 +80,7 @@ export const ConstInCase = /*YAK EXPORTED STYLED:ConstInCase:ym7uBBuN*//*YAK Ext
 .ym7uBBuP {
   padding: 4px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuN", 0, ({ $kind, $layout })=>"ym7uBBuN" + ($kind === "a" ? $layout.medium?.visualSize === "s" ? " ym7uBBuO" : "" : $kind === "b" ? $layout.medium?.width === 1 ? " ym7uBBuP" : "" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $kind, $layout })=>"ym7uBBuN" + ($kind === "a" ? $layout.medium?.visualSize === "s" ? " ym7uBBuO" : "" : $kind === "b" ? $layout.medium?.width === 1 ? " ym7uBBuP" : "" : ""));
 // reads in a nested css literal, a nested arrow, a call statement and a case value
 export const ReadsEverywhere = /*YAK EXPORTED STYLED:ReadsEverywhere:ym7uBBuQ*//*YAK Extracted CSS:
 .ym7uBBuR {
@@ -89,7 +89,7 @@ export const ReadsEverywhere = /*YAK EXPORTED STYLED:ReadsEverywhere:ym7uBBuQ*//
 .ym7uBBuS {
   color: blue;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuQ", 0, ({ $layout, $kind, $on })=>"ym7uBBuQ" + (log($layout.medium?.visualSize, {
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $layout, $kind, $on })=>"ym7uBBuQ" + (log($layout.medium?.visualSize, {
         size: $layout.medium?.visualSize
     }), $kind === $layout.medium?.visualSize ? " ym7uBBuR" + ($on && $layout.medium?.visualSize === "m" ? " ym7uBBuS" : "") : ""));
 // the parameter `size` of the nested arrow is another binding than the const
@@ -97,18 +97,18 @@ export const ShadowingParameter = /*YAK EXPORTED STYLED:ShadowingParameter:ym7uB
 .ym7uBBuV {
   color: blue;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuT", 0, ({ $layout, size })=>"ym7uBBuT" + ($layout.medium?.visualSize === "s" ? " ym7uBBuU" + (size === "m" ? " ym7uBBuV" : "") : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $layout, size })=>"ym7uBBuT" + ($layout.medium?.visualSize === "s" ? " ym7uBBuU" + (size === "m" ? " ym7uBBuV" : "") : ""));
 export const CssValue = /*YAK EXPORTED STYLED:CssValue:ym7uBBuW*//*YAK Extracted CSS:
 .ym7uBBuW {
   width: var(--ym7uBBuX);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuW", 2, ({ $layout }, style)=>"ym7uBBuW" + (style["--ym7uBBuX"] = /*#__PURE__*/ __yak_cssValue($layout.medium?.width, "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $layout }, style)=>"ym7uBBuW" + (style["--ym7uBBuX"] = /*#__PURE__*/ __yak_cssValue($layout.medium?.width, "px"), ""));
 // a module constant as initializer
 export const ModuleConstant = /*YAK EXPORTED STYLED:ModuleConstant:ym7uBBuY*//*YAK Extracted CSS:
 .ym7uBBuZ {
   padding: 2px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuY", 0, ({ $size })=>"ym7uBBuY" + ($size === SIZES.small ? " ym7uBBuZ" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"ym7uBBuY" + ($size === SIZES.small ? " ym7uBBuZ" : ""));
 // stays unfolded: `let` could change between two reads
 export const LetBinding = /*YAK EXPORTED STYLED:LetBinding:ym7uBBua*//*YAK Extracted CSS:
 .ym7uBBub {

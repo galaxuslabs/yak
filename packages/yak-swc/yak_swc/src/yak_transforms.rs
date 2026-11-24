@@ -59,12 +59,17 @@ pub trait YakTransform {
   fn get_export_name_comment(&self, _exported_name: &Wtf8Atom, _css_code: &str) -> Option<String> {
     None
   }
-  /// The root class name a compiled styled component carries as the first
-  /// argument of its runtime call - `None` for other transforms
-  /// Used to fold static JSX usages
+  /// The root class name of a styled component, `None` for other transforms.
+  /// The compiled call carries it as its first argument unless the component
+  /// is folded. Used to fold static JSX usages
   fn get_component_class_name(&self) -> Option<&str> {
     None
   }
+  /// Tells a styled transform that its runtime expressions are the flags and
+  /// the folded function, e.g. `[0, ({ $on }) => "yB" + ($on ? " yB1" : "")]`.
+  /// The folded function returns the root class name itself, so the call
+  /// leaves out the class name argument
+  fn omit_class_name_argument(&mut self) {}
 }
 
 /// Transform for nested css mixins
@@ -313,6 +318,9 @@ pub struct TransformStyled {
   declaration_name: ScopedVariableReference,
   assign_display_name: bool,
   is_exported: bool,
+  /// Set for a folded component, whose call starts with the flags:
+  /// `__yak_button(0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`
+  omit_class_name_argument: bool,
 }
 
 impl TransformStyled {
@@ -329,6 +337,7 @@ impl TransformStyled {
       declaration_name,
       assign_display_name,
       is_exported,
+      omit_class_name_argument: false,
     }
   }
 
@@ -472,15 +481,20 @@ impl YakTransform for TransformStyled {
     yak_imports: &mut YakImports,
   ) -> YakTransformResult {
     let mut arguments: Vec<ExprOrSpread> = vec![];
-    // Always pass the class name so the component can be used as a selector
-    arguments.push(
-      Expr::Lit(Lit::Str(Str {
-        span: DUMMY_SP,
-        value: self.class_name.clone().into(),
-        raw: None,
-      }))
-      .into(),
-    );
+    // The runtime reads the root class name from the first argument, e.g.
+    // `__yak_button("yB", ({ $on }) => $on && css("yB1"))`. A folded
+    // component starts with the flags instead, as its folded function returns
+    // the root class name: `__yak_button(0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`
+    if !self.omit_class_name_argument {
+      arguments.push(
+        Expr::Lit(Lit::Str(Str {
+          span: DUMMY_SP,
+          value: self.class_name.clone().into(),
+          raw: None,
+        }))
+        .into(),
+      );
+    }
     arguments.extend(runtime_expressions.into_iter().map(ExprOrSpread::from));
     if !runtime_css_variables.is_empty() {
       arguments.push(expr_hash_map_to_object(runtime_css_variables).into());
@@ -529,6 +543,10 @@ impl YakTransform for TransformStyled {
 
   fn get_component_class_name(&self) -> Option<&str> {
     Some(&self.class_name)
+  }
+
+  fn omit_class_name_argument(&mut self) {
+    self.omit_class_name_argument = true;
   }
 
   /// Replaces the current variable name with "default" for the comment marker

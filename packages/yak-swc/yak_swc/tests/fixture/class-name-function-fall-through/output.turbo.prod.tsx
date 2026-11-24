@@ -25,7 +25,7 @@ export const GuardBlocks = /*YAK EXPORTED STYLED:GuardBlocks:ym7uBBu*//*YAK Extr
 .ym7uBBu5 {
   padding: 0;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", 0, ({ $layout, $n })=>"ym7uBBu" + ($layout.large?.size === "s" ? " ym7uBBu1" : ($layout.large?.size === "l" ? $n >= 12 ? " ym7uBBu2" : $n >= 6 ? " ym7uBBu3" : void 0 : void 0) ?? ($layout.large?.size === "m" ? $n >= 9 ? " ym7uBBu4" : " ym7uBBu5" : " ym7uBBu5")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $layout, $n })=>"ym7uBBu" + ($layout.large?.size === "s" ? " ym7uBBu1" : ($layout.large?.size === "l" ? $n >= 12 ? " ym7uBBu2" : $n >= 6 ? " ym7uBBu3" : void 0 : void 0) ?? ($layout.large?.size === "m" ? $n >= 9 ? " ym7uBBu4" : " ym7uBBu5" : " ym7uBBu5")));
 // `return;` and `return null;` end the function and add nothing
 export const ReturnNothingInGuard = /*YAK EXPORTED STYLED:ReturnNothingInGuard:ym7uBBu6*//*YAK Extracted CSS:
 .ym7uBBu7 {
@@ -34,7 +34,7 @@ export const ReturnNothingInGuard = /*YAK EXPORTED STYLED:ReturnNothingInGuard:y
 .ym7uBBu8 {
   color: blue;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu6", 0, ({ $on, $big, $wide })=>"ym7uBBu6" + (($on ? $big ? "" : $wide ? "" : void 0 : void 0) ?? ($big ? " ym7uBBu7" : " ym7uBBu8")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $big, $wide })=>"ym7uBBu6" + (($on ? $big ? "" : $wide ? "" : void 0 : void 0) ?? ($big ? " ym7uBBu7" : " ym7uBBu8")));
 export const IfElseWithOpenBranch = /*YAK EXPORTED STYLED:IfElseWithOpenBranch:ym7uBBu9*//*YAK Extracted CSS:
 .ym7uBBuA {
   color: red;
@@ -48,7 +48,7 @@ export const IfElseWithOpenBranch = /*YAK EXPORTED STYLED:IfElseWithOpenBranch:y
 .ym7uBBuD {
   color: black;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu9", 0, ({ $a, $b, $c })=>"ym7uBBu9" + (($a ? $b ? " ym7uBBuA" : void 0 : " ym7uBBuB") ?? ($c ? " ym7uBBuC" : " ym7uBBuD")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $a, $b, $c })=>"ym7uBBu9" + (($a ? $b ? " ym7uBBuA" : void 0 : " ym7uBBuB") ?? ($c ? " ym7uBBuC" : " ym7uBBuD")));
 export const PlainBlock = /*YAK EXPORTED STYLED:PlainBlock:ym7uBBuE*//*YAK Extracted CSS:
 .ym7uBBuF {
   color: red;
@@ -59,7 +59,7 @@ export const PlainBlock = /*YAK EXPORTED STYLED:PlainBlock:ym7uBBuE*//*YAK Extra
 .ym7uBBuH {
   color: black;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuE", 0, ({ $a, $b })=>"ym7uBBuE" + (($a ? " ym7uBBuF" : void 0) ?? ($b ? " ym7uBBuG" : " ym7uBBuH")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $a, $b })=>"ym7uBBuE" + (($a ? " ym7uBBuF" : void 0) ?? ($b ? " ym7uBBuG" : " ym7uBBuH")));
 export const SwitchDefaultThenStatements = /*YAK EXPORTED STYLED:SwitchDefaultThenStatements:ym7uBBuI*//*YAK Extracted CSS:
 .ym7uBBuJ {
   padding: 2px;
@@ -70,7 +70,7 @@ export const SwitchDefaultThenStatements = /*YAK EXPORTED STYLED:SwitchDefaultTh
 .ym7uBBuL {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuI", 0, ({ $size, $on })=>"ym7uBBuI" + (($size === "s" ? " ym7uBBuJ" : (log($size), void 0)) ?? ($on ? " ym7uBBuK" : " ym7uBBuL")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size, $on })=>"ym7uBBuI" + (($size === "s" ? " ym7uBBuJ" : (log($size), void 0)) ?? ($on ? " ym7uBBuK" : " ym7uBBuL")));
 export const SwitchLastCaseThenStatements = /*YAK EXPORTED STYLED:SwitchLastCaseThenStatements:ym7uBBuM*//*YAK Extracted CSS:
 .ym7uBBuN {
   padding: 2px;
@@ -84,7 +84,7 @@ export const SwitchLastCaseThenStatements = /*YAK EXPORTED STYLED:SwitchLastCase
 .ym7uBBuQ {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuM", 0, ({ $size, $on })=>"ym7uBBuM" + (($size === "s" ? " ym7uBBuN" : $size === "m" ? $on ? " ym7uBBuO" : void 0 : void 0) ?? ($on ? " ym7uBBuP" : " ym7uBBuQ")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $size, $on })=>"ym7uBBuM" + (($size === "s" ? " ym7uBBuN" : $size === "m" ? $on ? " ym7uBBuO" : void 0 : void 0) ?? ($on ? " ym7uBBuP" : " ym7uBBuQ")));
 export const ThreeLevels = /*YAK EXPORTED STYLED:ThreeLevels:ym7uBBuR*//*YAK Extracted CSS:
 .ym7uBBuS {
   color: red;
@@ -98,7 +98,7 @@ export const ThreeLevels = /*YAK EXPORTED STYLED:ThreeLevels:ym7uBBuR*//*YAK Ext
 .ym7uBBuV {
   color: black;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuR", 0, ({ $a, $b, $c, $d })=>"ym7uBBuR" + (($a ? ($b ? $c ? " ym7uBBuS" : (log($c), void 0) : void 0) ?? ($d ? " ym7uBBuT" : void 0) : void 0) ?? ($c ? " ym7uBBuU" : " ym7uBBuV")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $a, $b, $c, $d })=>"ym7uBBuR" + (($a ? ($b ? $c ? " ym7uBBuS" : (log($c), void 0) : void 0) ?? ($d ? " ym7uBBuT" : void 0) : void 0) ?? ($c ? " ym7uBBuU" : " ym7uBBuV")));
 export const CallInGuard = /*YAK EXPORTED STYLED:CallInGuard:ym7uBBuW*//*YAK Extracted CSS:
 .ym7uBBuX {
   color: red;
@@ -106,7 +106,7 @@ export const CallInGuard = /*YAK EXPORTED STYLED:CallInGuard:ym7uBBuW*//*YAK Ext
 .ym7uBBuY {
   color: blue;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuW", 0, ({ $on, $a, $b })=>"ym7uBBuW" + (($on ? (log($a), void 0) : void 0) ?? ($b ? " ym7uBBuX" : " ym7uBBuY")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $a, $b })=>"ym7uBBuW" + (($on ? (log($a), void 0) : void 0) ?? ($b ? " ym7uBBuX" : " ym7uBBuY")));
 export const ConstInGuard = /*YAK EXPORTED STYLED:ConstInGuard:ym7uBBuZ*//*YAK Extracted CSS:
 .ym7uBBua {
   padding: 2px;
@@ -117,7 +117,7 @@ export const ConstInGuard = /*YAK EXPORTED STYLED:ConstInGuard:ym7uBBuZ*//*YAK E
 .ym7uBBuc {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuZ", 0, ({ $on, $layout })=>"ym7uBBuZ" + (($on ? $layout.large?.size === "s" ? " ym7uBBua" : void 0 : void 0) ?? (!$on ? " ym7uBBub" : " ym7uBBuc")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $layout })=>"ym7uBBuZ" + (($on ? $layout.large?.size === "s" ? " ym7uBBua" : void 0 : void 0) ?? (!$on ? " ym7uBBub" : " ym7uBBuc")));
 // the conditions of the returned values keep their parens next to `??`
 export const ConditionalValues = /*YAK EXPORTED STYLED:ConditionalValues:ym7uBBud*//*YAK Extracted CSS:
 .ym7uBBue {
@@ -144,7 +144,7 @@ export const ConditionalValues = /*YAK EXPORTED STYLED:ConditionalValues:ym7uBBu
 .ym7uBBul {
   margin: 4px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBud", 0, ({ $a, $b, $c })=>"ym7uBBud" + (($a ? $b ? $c ? " ym7uBBue" : "" : $c ? $b ? " ym7uBBuf" : "" : void 0 : void 0) ?? ($b ? $c ? "" : " ym7uBBug" : " ym7uBBuh" + ($c ? " ym7uBBui" : ""))) + (($a ? $b ? " ym7uBBuj" : void 0 : void 0) ?? ($b ? " ym7uBBuk" : " ym7uBBul")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $a, $b, $c })=>"ym7uBBud" + (($a ? $b ? $c ? " ym7uBBue" : "" : $c ? $b ? " ym7uBBuf" : "" : void 0 : void 0) ?? ($b ? $c ? "" : " ym7uBBug" : " ym7uBBuh" + ($c ? " ym7uBBui" : ""))) + (($a ? $b ? " ym7uBBuj" : void 0 : void 0) ?? ($b ? " ym7uBBuk" : " ym7uBBul")));
 // a nested function has fall through markers of its own
 export const NestedFunction = /*YAK EXPORTED STYLED:NestedFunction:ym7uBBum*//*YAK Extracted CSS:
 .ym7uBBun {
@@ -165,13 +165,13 @@ export const NestedFunction = /*YAK EXPORTED STYLED:NestedFunction:ym7uBBum*//*Y
 .ym7uBBus {
   color: black;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBum", 0, ({ $on, $size, $n })=>"ym7uBBum" + (($on ? $size === "s" ? " ym7uBBun" + (($n > 2 ? $n > 4 ? " ym7uBBuo" : void 0 : void 0) ?? ($n > 1 ? " ym7uBBup" : " ym7uBBuq")) : void 0 : void 0) ?? ($size === "m" ? " ym7uBBur" : " ym7uBBus")));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $size, $n })=>"ym7uBBum" + (($on ? $size === "s" ? " ym7uBBun" + (($n > 2 ? $n > 4 ? " ym7uBBuo" : void 0 : void 0) ?? ($n > 1 ? " ym7uBBup" : " ym7uBBuq")) : void 0 : void 0) ?? ($size === "m" ? " ym7uBBur" : " ym7uBBus")));
 // a guard block at the end of the function adds nothing when no `return` runs
 export const GuardBlockAtTheEnd = /*YAK EXPORTED STYLED:GuardBlockAtTheEnd:ym7uBBut*//*YAK Extracted CSS:
 .ym7uBBuu {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBut", 0, ({ $on, $big })=>"ym7uBBut" + ($on ? $big ? " ym7uBBuu" : "" : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $big })=>"ym7uBBut" + ($on ? $big ? " ym7uBBuu" : "" : ""));
 // stays unfolded: at a CSS value position, `null` is a value that a `??`
 // would skip
 export const CssValuePosition = /*YAK EXPORTED STYLED:CssValuePosition:ym7uBBuv*//*YAK Extracted CSS:

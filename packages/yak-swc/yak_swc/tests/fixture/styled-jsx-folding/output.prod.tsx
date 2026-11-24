@@ -31,7 +31,7 @@ const Dynamic = /*YAK Extracted CSS:
 .ym7uBBu4 {
   color: var(--ym7uBBu5);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu4", 2, ({ $color }, style)=>"ym7uBBu4" + (style["--ym7uBBu5"] = $color, ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $color }, style)=>"ym7uBBu4" + (style["--ym7uBBu5"] = $color, ""));
 // bails: attrs
 const WithAttrs = /*YAK Extracted CSS:
 .ym7uBBu6 {
@@ -69,7 +69,7 @@ const ToggleBase = /*YAK Extracted CSS:
 .ym7uBBuC {
   color: red;
 }
-*/ /*#__PURE__*/ __yak.__yak_button("ym7uBBuB", 0, ({ $on })=>"ym7uBBuB" + ($on ? " ym7uBBuC" : ""));
+*/ /*#__PURE__*/ __yak.__yak_button(0, ({ $on })=>"ym7uBBuB" + ($on ? " ym7uBBuC" : ""));
 // folds to the wrapped component: a dynamic parent never collapses
 const OfDynamic = /*YAK Extracted CSS:
 .ym7uBBuD {
