@@ -79,8 +79,8 @@ const formatCode = (code: string) =>
 /** React: SWC compiles the JSX itself, with yak's JSX runtime for the css prop. */
 const compileReact: Compile = (file, options) => ({
   executable: runSwc(file, options, { jsx: "automatic", commonjs: true, comments: true }),
-  js: runSwc(file, options, { jsx: "automatic", commonjs: false }),
-  jsx: runSwc(file, options, { jsx: "preserve", commonjs: false }),
+  js: runSwc(file, options, { jsx: "automatic", commonjs: false, display: true }),
+  jsx: runSwc(file, options, { jsx: "preserve", commonjs: false, display: true }),
 });
 
 /** Solid: SWC runs yak and keeps the JSX, then Solid's compiler turns the JSX into DOM code. */
@@ -89,7 +89,8 @@ function solidCompiler(): Promise<Compile> {
   // Babel is large, so a React-only visit never loads it
   solidPromise ??= import("./solid-compiler").then(({ compileSolidJsx }) => (file, options) => {
     const filename = `${file.name}.tsx`;
-    const jsx = runSwc(file, options, { jsx: "preserve", commonjs: false });
+    // the dead code elimination runs in this step, so Solid's compiler gets the shorter JSX
+    const jsx = runSwc(file, options, { jsx: "preserve", commonjs: false, display: true });
     const withComments = runSwc(file, options, {
       jsx: "preserve",
       commonjs: false,
@@ -107,8 +108,18 @@ function solidCompiler(): Promise<Compile> {
 function runSwc(
   file: PlaygroundFile,
   options: TransformOptions,
-  output: { jsx: "automatic" | "preserve"; commonjs: boolean; comments?: boolean },
+  output: {
+    jsx: "automatic" | "preserve";
+    commonjs: boolean;
+    comments?: boolean;
+    /** true for the copies the JS and JSX tabs show, which the preview never runs */
+    display?: boolean;
+  },
 ): string {
+  // The compiler puts the CSS of a component in a comment on its declaration, and the CSS
+  // tab and the preview read it from the CommonJS copy. The minifier removes an unused
+  // declaration together with its comment, so only the copies the tabs show are compressed.
+  const compress = output.display && options.deadCodeElimination ? DEAD_CODE_ELIMINATION : false;
   return transform(
     file.content,
     {
@@ -116,7 +127,7 @@ function runSwc(
       jsc: {
         target: "es2022",
         loose: false,
-        minify: { compress: false, mangle: false },
+        minify: { compress, mangle: false },
         // the CSS loader needs the yak comments in the CommonJS copy
         preserveAllComments: output.comments || options.showComments,
         transform: {
@@ -137,3 +148,23 @@ function runSwc(
     },
   ).code;
 }
+
+/**
+ * The compress passes that remove code, without those that rewrite the rest into a shorter
+ * but harder to read form: `className={"y" + (void 0 === "l" ? " y1" : " y2")}` becomes
+ * `className={"y y2"}`, and a component that no JSX uses any more disappears.
+ * `compress: true` would also inline functions and constants, write `false` as `!1` and
+ * turn `const` into `let`, so the output would no longer look like the source.
+ */
+const DEAD_CODE_ELIMINATION = {
+  defaults: false,
+  dead_code: true,
+  evaluate: true,
+  conditionals: true,
+  booleans: false,
+  comparisons: true,
+  unused: true,
+  toplevel: true,
+  side_effects: true,
+  const_to_let: false,
+};

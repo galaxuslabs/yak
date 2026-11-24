@@ -10,6 +10,8 @@ export type TransformOptions = {
   minify: boolean;
   showComments: boolean;
   foldStatic: boolean;
+  /** Compresses the JS and JSX output with the SWC minifier, the preview code stays as it is */
+  deadCodeElimination: boolean;
 };
 
 export type TransformedFile = PlaygroundFile & {

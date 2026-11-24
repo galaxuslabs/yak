@@ -12,6 +12,7 @@ import { examples } from "@/lib/playground/examples";
 import { migrateFiles } from "@/lib/playground/migrate";
 import { DEFAULT_FRAMEWORK, isFrameworkId, type FrameworkId } from "@/lib/playground/frameworks";
 import { useCompiler } from "@/lib/playground/use-compiler";
+import { optionsFromParams, optionsToParams } from "@/lib/playground/options";
 import type { PlaygroundFile, TransformOptions } from "@/lib/playground/types";
 import { FRAMEWORK_TABS } from "@/components/landing-page/frameworks";
 import { EditorDots } from "@/components/landing-page/editor-dots";
@@ -42,8 +43,6 @@ const MAX_EXTRA_FILES = 3;
 const OUTPUT_KINDS = ["css", "jsx", "js"] as const;
 type OutputKind = (typeof OUTPUT_KINDS)[number];
 
-const defaultOptions: TransformOptions = { minify: false, showComments: true, foldStatic: true };
-
 const frameworkTabs = FRAMEWORK_TABS.filter((tab) => isFrameworkId(tab.value));
 
 export default function Playground() {
@@ -55,7 +54,7 @@ export default function Playground() {
   const drafts = useRef<Partial<Record<FrameworkId, PlaygroundFile[]>>>({});
   const [resetKey, setResetKey] = useState(0);
   const [activeFile, setActiveFile] = useState(initial.files[0].name);
-  const [options, setOptions] = useState(defaultOptions);
+  const [options, setOptions] = useState(initial.options);
   const [outputKind, setOutputKind] = useState<OutputKind>(initial.output);
   const [notice, setNotice] = useState<string | null>(initial.notice);
   const [compiler, compile] = useCompiler();
@@ -86,10 +85,11 @@ export default function Playground() {
       output: outputKind,
       // links from before the framework switch have no framework and open in React
       ...(framework === DEFAULT_FRAMEWORK ? {} : { framework }),
+      ...optionsToParams(options),
     }).toString();
     window.history.replaceState(null, "", url);
     void copy(url.toString());
-  }, [framework, files, outputKind, copy]);
+  }, [framework, files, outputKind, options, copy]);
 
   /** Shows `next` in the editor. The share link in the address bar no longer matches it. */
   const showFiles = (nextFramework: FrameworkId, next: PlaygroundFile[]) => {
@@ -223,14 +223,16 @@ function readShareLink(): {
   framework: FrameworkId;
   files: PlaygroundFile[];
   output: OutputKind;
+  options: TransformOptions;
   notice: string | null;
 } {
   const params = new URLSearchParams(window.location.search);
   const output = OUTPUT_KINDS.find((kind) => kind === params.get("output")) ?? "css";
   const requested = params.get("framework");
   const framework = isFrameworkId(requested) ? requested : DEFAULT_FRAMEWORK;
+  const options = optionsFromParams(params);
   const q = params.get("q");
-  if (!q) return { framework, files: examples[framework], output, notice: null };
+  if (!q) return { framework, files: examples[framework], output, options, notice: null };
   try {
     const { files: record, legacy } = decompressWithDictionary(q);
     const migrated = legacy ? migrateFiles(record) : null;
@@ -238,6 +240,7 @@ function readShareLink(): {
       framework,
       files: filesFromRecord(migrated ?? record),
       output,
+      options,
       notice: migrated
         ? "This share link is from an older yak version. The playground updated the code to @yak/react."
         : null,
@@ -248,6 +251,7 @@ function readShareLink(): {
       framework,
       files: examples[framework],
       output,
+      options,
       notice: "This share link could not be read. The playground shows the default example.",
     };
   }
