@@ -9,7 +9,7 @@ use std::vec;
 use swc_core::atoms::Wtf8Atom;
 
 use fold::css_jsx_prop_fold::HasCSSProp;
-use fold::styled_arrow_function_fold::fold_class_names;
+use fold::styled_arrow_function_fold::{build_class_names, fold_class_names};
 use fold::styled_jsx_fold::StyledFold;
 use swc_core::common::comments::Comment;
 use swc_core::common::comments::CommentKind;
@@ -1578,12 +1578,14 @@ where
     // after the same-file fold above took its own copy of them
     let folded = match transform.get_component_class_name() {
       Some(class_name) if is_top_level && yak_library_function_name.deref() == "styled" => {
-        fold_class_names(
+        let yak_imports = self.yak_library_imports.as_ref().unwrap();
+        build_class_names(
           class_name,
           &runtime_expressions,
           &runtime_css_variables,
-          self.yak_library_imports.as_ref().unwrap(),
+          yak_imports,
         )
+        .and_then(|folded| fold_class_names(folded, yak_imports))
       }
       _ => None,
     };

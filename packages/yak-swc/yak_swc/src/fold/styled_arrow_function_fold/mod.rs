@@ -40,8 +40,31 @@ const FLAG_THEME: u32 = 1;
 /// of the style prop as the second argument and renders it
 const FLAG_STYLE: u32 = 2;
 
-/// Turns the conditions of a styled component into one "folded" function that
-/// returns its class names
+/// The class names of one styled component as a single expression over its
+/// props, e.g. `"yB" + ($on ? " yB1" : "")`, plus what a caller needs to put
+/// the expression into a function or inline it at a JSX usage
+pub(crate) struct FoldedClassNames {
+  /// The class name expression. It reads each prop through a parameter of its
+  /// own, the theme through `theme` and writes CSS variables to `style`, and
+  /// all of these parameters carry a syntax context of their own
+  pub(crate) class_name: Box<Expr>,
+  params: FoldParams,
+  /// `true` when the expression writes CSS variables to the style parameter
+  pub(crate) writes_style: bool,
+  /// `false` for a component with nothing but `atoms("flex")` calls, whose
+  /// class names never change
+  has_condition: bool,
+}
+
+impl FoldedClassNames {
+  /// `true` when the expression reads the theme through the theme parameter
+  pub(crate) fn reads_theme(&self) -> bool {
+    self.params.reads_theme
+  }
+}
+
+/// Turns the conditions of a styled component into one class name expression
+/// over its props
 ///
 /// ```js
 /// // source
@@ -49,42 +72,26 @@ const FLAG_STYLE: u32 = 2;
 ///   ${({ $active }) => $active && css`color: red;`}
 ///   ${({ $size }) => $size === "s" ? css`padding: 0;` : css`padding: 4px;`}
 /// `
-/// // compiled without the folded function
-/// __yak.__yak_button("yB",
-///   ({ $active }) => $active && css("yB1"),
-///   ({ $size }) => $size === "s" ? css("yB2") : css("yB3"))
-/// // compiled with the folded function
-/// __yak.__yak_button(0, ({ $active, $size }) =>
-///   "yB" + ($active ? " yB1" : "") + ($size === "s" ? " yB2" : " yB3"))
+/// // compiled runtime expressions
+/// ({ $active }) => $active && css("yB1")
+/// ({ $size }) => $size === "s" ? css("yB2") : css("yB3")
+/// // class name expression
+/// "yB" + ($active ? " yB1" : "") + ($size === "s" ? " yB2" : " yB3")
 /// ```
 ///
-/// The folded function returns the root class name `"yB"` itself, so the
-/// compiled call leaves out the class name argument and starts with the flags
-///
 /// `runtime_expressions` holds the compiled form of each `${...}` in the
-/// template. Without the folded function, each `css("yB1")` call inside one
-/// creates a function on every render, which the runtime calls only to add a
-/// class name
+/// template. The builder works for every runtime: `fold_class_names` wraps the
+/// result into the folded function of the React runtime, and the styled JSX
+/// fold inlines it at the usages of a component
 ///
-/// Returns the flags and the folded function, e.g.
-/// `[0, ({ $on }) => "yB" + ($on ? " yB1" : "")]`, or `None` if a runtime
-/// expression is not an arrow that toggles class names or a CSS variable has
-/// a value the folded function cannot write. The component then
-/// keeps its compiled shape with one function per condition, so nothing
-/// changes for it
-pub(crate) fn fold_class_names(
+/// Returns `None` if a runtime expression is not an arrow that toggles class
+/// names or a CSS variable has a value the expression cannot write
+pub(crate) fn build_class_names(
   class_name: &str,
   runtime_expressions: &[Expr],
   css_variables: &FxHashMap<String, Expr>,
   yak_imports: &YakImports,
-) -> Option<Vec<Expr>> {
-  // The Solid runtime takes no folded function
-  if yak_imports.runtime() != YakRuntime::React {
-    return None;
-  }
-  if runtime_expressions.is_empty() && css_variables.is_empty() {
-    return None;
-  }
+) -> Option<FoldedClassNames> {
   let mut folder = ClassNameFolder {
     yak_imports,
     params: FoldParams::default(),
@@ -92,9 +99,6 @@ pub(crate) fn fold_class_names(
     fall_through: None,
   };
   let mut class_name_expr = str_expr(class_name.into());
-  // a component with nothing but `atoms("flex")` calls has no condition. The
-  // runtime joins its class names once at definition, which a folded function
-  // would do on every render
   let mut has_arrow = false;
   for expression in runtime_expressions {
     let folded_class_names = match unwrap_type_casts(expression) {
@@ -106,9 +110,6 @@ pub(crate) fn fold_class_names(
       }
     };
     class_name_expr = join_folded_class_names(class_name_expr, folded_class_names);
-  }
-  if !has_arrow && css_variables.is_empty() {
-    return None;
   }
   // the runtime writes the CSS variables of the component after it ran the
   // runtime expressions, in the key order of the compiled `{ "--yX": value }` object
@@ -124,18 +125,64 @@ pub(crate) fn fold_class_names(
       create_folded_css_variable_definition(definitions),
     );
   }
+  Some(FoldedClassNames {
+    class_name: class_name_expr,
+    params: folder.params,
+    writes_style: folder.writes_style,
+    has_condition: has_arrow || !css_variables.is_empty(),
+  })
+}
+
+/// Turns the class name expression of a styled component into the "folded"
+/// function of the React runtime
+///
+/// ```js
+/// // compiled without the folded function
+/// __yak.__yak_button("yB",
+///   ({ $active }) => $active && css("yB1"),
+///   ({ $size }) => $size === "s" ? css("yB2") : css("yB3"))
+/// // compiled with the folded function
+/// __yak.__yak_button(0, ({ $active, $size }) =>
+///   "yB" + ($active ? " yB1" : "") + ($size === "s" ? " yB2" : " yB3"))
+/// ```
+///
+/// The folded function returns the root class name `"yB"` itself, so the
+/// compiled call leaves out the class name argument and starts with the flags
+///
+/// Without the folded function, each `css("yB1")` call inside a runtime
+/// expression creates a function on every render, which the runtime calls
+/// only to add a class name
+///
+/// Returns the flags and the folded function, e.g.
+/// `[0, ({ $on }) => "yB" + ($on ? " yB1" : "")]`, or `None` for the Solid
+/// runtime, which takes no folded function, and for a component without a
+/// condition. The component then keeps its compiled shape with one function
+/// per condition, so nothing changes for it
+pub(crate) fn fold_class_names(
+  folded: FoldedClassNames,
+  yak_imports: &YakImports,
+) -> Option<Vec<Expr>> {
+  if yak_imports.runtime() != YakRuntime::React {
+    return None;
+  }
+  // a component with nothing but `atoms("flex")` calls has no condition. The
+  // runtime joins its class names once at definition, which a folded function
+  // would do on every render
+  if !folded.has_condition {
+    return None;
+  }
   let mut flags = FLAGS_PROPS_ONLY;
-  if folder.params.reads_theme {
+  if folded.reads_theme() {
     flags |= FLAG_THEME;
   }
-  if folder.writes_style {
+  if folded.writes_style {
     flags |= FLAG_STYLE;
   }
   let fold_function = Expr::Arrow(ArrowExpr {
     span: DUMMY_SP,
     ctxt: SyntaxContext::empty(),
-    params: folder.params.into_params(folder.writes_style),
-    body: Box::new(ArrowFunctionBody::Expr(class_name_expr)),
+    params: folded.params.into_params(folded.writes_style),
+    body: Box::new(ArrowFunctionBody::Expr(folded.class_name)),
     is_async: false,
     is_generator: false,
     type_params: None,
