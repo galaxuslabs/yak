@@ -18,7 +18,7 @@ export function compileSolidJsx(code: string, filename: string, commonjs: boolea
       ...(commonjs ? ["transform-modules-commonjs"] : []),
     ],
   });
-  return result.code ?? "";
+  return result?.code ?? "";
 }
 
 /**
@@ -26,10 +26,10 @@ export function compileSolidJsx(code: string, filename: string, commonjs: boolea
  * start column. The yak CSS comment starts after `const Button =`, so its CSS would lose
  * all indentation. Without a location, Babel prints the comment as it is.
  */
-const keepCssIndent = {
+const keepCssIndent = () => ({
   pre(file: { ast: { comments?: { value: string; loc?: unknown }[] | null } }) {
     for (const comment of file.ast.comments ?? []) {
       if (comment.value.startsWith("YAK")) comment.loc = undefined;
     }
   },
-};
+});
