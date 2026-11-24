@@ -127,7 +127,9 @@ mod tests {
   #[test]
   fn follows_returns_in_blocks() {
     assert_eq!(
-      returned("(p) => { if (p.$on) { return a; } switch (p.$size) { case 1: return b; } return null; }"),
+      returned(
+        "(p) => { if (p.$on) { return a; } switch (p.$size) { case 1: return b; } return null; }"
+      ),
       vec!["a", "b", "null"]
     );
   }
@@ -147,6 +149,9 @@ mod tests {
 
   #[test]
   fn keeps_calls_as_values() {
-    assert_eq!(returned("(p) => p.$on && atoms(\"x\")"), vec!["atoms(\"x\")"]);
+    assert_eq!(
+      returned("(p) => p.$on && atoms(\"x\")"),
+      vec!["atoms(\"x\")"]
+    );
   }
 }

@@ -8,8 +8,8 @@ use std::ops::Deref;
 use std::vec;
 use swc_core::atoms::Wtf8Atom;
 
-use fold::css_jsx_prop_fold::HasCSSProp;
 use fold::css_call_to_class_name::is_yak_atoms_callee;
+use fold::css_jsx_prop_fold::HasCSSProp;
 use fold::styled_arrow_function_fold::fold_class_names;
 use fold::styled_jsx_fold::StyledFold;
 use swc_core::common::comments::Comment;
@@ -256,7 +256,9 @@ fn returned_import_error(name: &str) -> String {
 }
 
 fn returned_call_error(name: Option<String>) -> String {
-  let call = name.map_or("This call".to_string(), |name| format!("The call \"{name}()\""));
+  let call = name.map_or("This call".to_string(), |name| {
+    format!("The call \"{name}()\"")
+  });
   format!(
     "{call} applies no styles when a function returns it, as yak reads styles at build time.\n\
      Return a css template or a mixin from this function instead:\n\n\
@@ -457,7 +459,11 @@ where
           let Some(scoped_name) = extract_ident_and_parts(value, false) else {
             continue;
           };
-          if self.variables.get_imported_variable(&scoped_name.id).is_none() {
+          if self
+            .variables
+            .get_imported_variable(&scoped_name.id)
+            .is_none()
+          {
             continue;
           }
           returned_import_error(&scoped_name.to_readable_string())
