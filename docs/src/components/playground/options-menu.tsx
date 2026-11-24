@@ -10,6 +10,11 @@ const items: { key: keyof TransformOptions; label: string; hint: string }[] = [
   { key: "minify", label: "Minify", hint: "Short hashed class names, as in production" },
   { key: "showComments", label: "Comments", hint: "Keep comments in the JSX and JS output" },
   { key: "foldStatic", label: "Fold static", hint: "Plain elements for styles without props" },
+  {
+    key: "deadCodeElimination",
+    label: "Dead code elimination",
+    hint: "Remove unused code and fixed conditions, as a minifier does",
+  },
 ];
 
 export function OptionsMenu({
