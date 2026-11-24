@@ -20,7 +20,7 @@ use swc_core::{
 
 /// A conditional class name segment: the condition expression, the class name
 /// for the truthy branch and an optional class name for the falsy branch
-pub(super) type ConditionSegment = (Box<Expr>, Wtf8Atom, Option<Wtf8Atom>);
+type ConditionSegment = (Box<Expr>, Wtf8Atom, Option<Wtf8Atom>);
 
 /// Folds a compiled css expression into a className expression and the spans
 /// of the folded css calls
@@ -129,7 +129,7 @@ fn fold_css_call(call: &CallExpr, yak_imports: &YakImports) -> Option<(Box<Expr>
 
 /// Appends one conditional class name segment to a className expression:
 /// `<expr> + (cond ? " a" : "")` or `<expr> + (cond ? " b" : " c")`
-pub(super) fn append_condition_segment(
+fn append_condition_segment(
   class_name_expr: Box<Expr>,
   (test, cons_class, alt_class): ConditionSegment,
 ) -> Box<Expr> {
@@ -160,10 +160,7 @@ fn fold_condition_arrow(arrow: &ArrowExpr, yak_imports: &YakImports) -> Option<C
 /// Matches the condition shapes `cond && css("x")` and
 /// `cond ? css("x") : css("y")` and returns the condition expression
 /// plus the static class name(s)
-pub(super) fn fold_condition_body(
-  body: &Expr,
-  yak_imports: &YakImports,
-) -> Option<ConditionSegment> {
+fn fold_condition_body(body: &Expr, yak_imports: &YakImports) -> Option<ConditionSegment> {
   match unwrap_type_casts(body) {
     Expr::Bin(bin) if bin.op == BinaryOp::LogicalAnd => {
       let class_name = pure_static_css_class(&bin.right, yak_imports)?;

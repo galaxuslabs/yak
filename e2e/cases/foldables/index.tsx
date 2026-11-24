@@ -173,6 +173,44 @@ const Guarded = styled.p<{ $size: "s" | "l"; $n: number }>`
   }}
 `;
 
+// a switch picks one of three classes, and usages fold with literal, state
+// and call values
+const Picked = styled.p<{ $variant?: "s" | "m" | "l" }>`
+  ${({ $variant }) => {
+    switch ($variant) {
+      case "m":
+        return css`
+          margin-left: 2px;
+        `;
+      case "l":
+        return css`
+          margin-left: 3px;
+        `;
+      default:
+        return css`
+          margin-left: 1px;
+        `;
+    }
+  }}
+`;
+function pickMedium() {
+  return "m" as const;
+}
+
+// a nested css literal with a condition of its own
+const Framed = styled.p<{ $on?: boolean; $variant?: "s" | "m" | "l" }>`
+  ${({ $on }) =>
+    $on &&
+    css`
+      border-top-style: solid;
+      ${({ $variant }) =>
+        $variant === "l" &&
+        css`
+          padding-top: 4px;
+        `}
+    `}
+`;
+
 export default function App() {
   const [active, setActive] = useState(false);
   const spreadProps = { $active: true };
@@ -248,6 +286,25 @@ export default function App() {
       <Guarded data-testid="guarded-nothing" $size="l" $n={0}>
         guarded nothing
       </Guarded>
+      <Picked data-testid="picked-default">picked default</Picked>
+      <Picked data-testid="picked-literal" $variant="m">
+        picked literal
+      </Picked>
+      <Picked data-testid="picked-state" $variant={active ? "l" : "s"}>
+        picked state
+      </Picked>
+      <Picked data-testid="picked-call" $variant={pickMedium()}>
+        picked call
+      </Picked>
+      <Framed data-testid="framed-large" $on $variant="l">
+        framed large
+      </Framed>
+      <Framed data-testid="framed-state" $on={active} $variant="l">
+        framed state
+      </Framed>
+      <Framed data-testid="framed-off" $variant="l">
+        framed off
+      </Framed>
       {/* entity spelling decodes to "Food & Drink" - must match like the runtime twin below */}
       <Category data-testid="entity" $label="Food &amp; Drink">
         Food &amp; Drink

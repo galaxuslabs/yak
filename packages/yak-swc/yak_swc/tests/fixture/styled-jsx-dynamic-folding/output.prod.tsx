@@ -95,8 +95,8 @@ const BlockBody = /*YAK Extracted CSS:
   padding: 8px;
 }
 */ /*#__PURE__*/ __yak.__yak_aside(0, ({ $wide })=>"ym7uBBuJ" + ($wide ? " ym7uBBuK" : ""));
-// usages bail: only plain destructuring substitutes - a rename, a default or a
-// rest element all keep the runtime path
+// folds: a rename reads the prop under another name, and a default moves to
+// the read as `($size === void 0 ? "big" : $size)`
 const Renamed = /*YAK Extracted CSS:
 .ym7uBBuM {
   padding: 8px;
@@ -107,6 +107,7 @@ const Defaulted = /*YAK Extracted CSS:
   padding: 8px;
 }
 */ /*#__PURE__*/ __yak.__yak_mark(0, ({ $size })=>"ym7uBBuN" + (($size === void 0 ? "big" : $size) === "big" ? " ym7uBBuO" : ""));
+// usages bail: a rest element keeps the runtime path
 const Rested = /*YAK Extracted CSS:
 .ym7uBBuQ {
   padding: 8px;
@@ -315,6 +316,8 @@ const Optimizable = ({ active, size, i: i1 }: {
       key at the call site still folds
     </li>
     <aside className={"ym7uBBuJ" + (active ? " ym7uBBuK" : "")}>block body arrow</aside>
+    <mark className={"ym7uBBuL" + ("big" && "big" === "big" ? " ym7uBBuM" : "")}>renamed destructuring</mark>
+    <mark className={"ym7uBBuN" + ((void 0 === void 0 ? "big" : void 0) === "big" ? " ym7uBBuO" : "")}>default value destructuring</mark>
     { /* getSize() ran between the two rolls, and may not jump the parameter
         block, so the whole element is wrapped and captures all three in
         source order */ }
@@ -349,8 +352,6 @@ const NotOptimizable = ()=><>
     <MemberComputed $active>bails: computed member access</MemberComputed>
     <KeyBail key="active">bails: destructured key access</KeyBail>
     <MemberKey key="active">bails: key access</MemberKey>
-    <Renamed $size="big">bails: renamed destructuring</Renamed>
-    <Defaulted>bails: default value destructuring</Defaulted>
     <Rested $size="big">bails: rest element destructuring</Rested>
     <Fn $on>bails: function expression condition</Fn>
     { /* spriteFor() would jump both rolls: the namespaced name is the only

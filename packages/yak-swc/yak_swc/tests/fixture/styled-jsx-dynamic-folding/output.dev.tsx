@@ -113,8 +113,8 @@ const BlockBody = /*YAK Extracted CSS:
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_aside(0, ({ $wide })=>"input_BlockBody_m7uBBu" + ($wide ? " input_BlockBody__$wide_m7uBBu" : "")), {
     "displayName": "BlockBody"
 });
-// usages bail: only plain destructuring substitutes - a rename, a default or a
-// rest element all keep the runtime path
+// folds: a rename reads the prop under another name, and a default moves to
+// the read as `($size === void 0 ? "big" : $size)`
 const Renamed = /*YAK Extracted CSS:
 .input_Renamed___m7uBBu {
   padding: 8px;
@@ -129,6 +129,7 @@ const Defaulted = /*YAK Extracted CSS:
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_mark(0, ({ $size })=>"input_Defaulted_m7uBBu" + (($size === void 0 ? "big" : $size) === "big" ? " input_Defaulted___m7uBBu" : "")), {
     "displayName": "Defaulted"
 });
+// usages bail: a rest element keeps the runtime path
 const Rested = /*YAK Extracted CSS:
 .input_Rested___m7uBBu {
   padding: 8px;
@@ -369,6 +370,8 @@ const Optimizable = ({ active, size, i: i1 }: {
       key at the call site still folds
     </li>
     <aside className={"input_BlockBody_m7uBBu" + (active ? " input_BlockBody__$wide_m7uBBu" : "")}>block body arrow</aside>
+    <mark className={"input_Renamed_m7uBBu" + ("big" && "big" === "big" ? " input_Renamed___m7uBBu" : "")}>renamed destructuring</mark>
+    <mark className={"input_Defaulted_m7uBBu" + ((void 0 === void 0 ? "big" : void 0) === "big" ? " input_Defaulted___m7uBBu" : "")}>default value destructuring</mark>
     { /* getSize() ran between the two rolls, and may not jump the parameter
         block, so the whole element is wrapped and captures all three in
         source order */ }
@@ -403,8 +406,6 @@ const NotOptimizable = ()=><>
     <MemberComputed $active>bails: computed member access</MemberComputed>
     <KeyBail key="active">bails: destructured key access</KeyBail>
     <MemberKey key="active">bails: key access</MemberKey>
-    <Renamed $size="big">bails: renamed destructuring</Renamed>
-    <Defaulted>bails: default value destructuring</Defaulted>
     <Rested $size="big">bails: rest element destructuring</Rested>
     <Fn $on>bails: function expression condition</Fn>
     { /* spriteFor() would jump both rolls: the namespaced name is the only
