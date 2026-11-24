@@ -1,0 +1,12 @@
+  x The call "assertNever()" applies no styles when a function returns it.
+  | Return the css literals or mixins from the arrow function itself:
+  | 
+  | ${(p) => (p.$big ? large : small)}
+  | 
+  | See https://yak.style/docs/troubleshooting#a-call-returned-from-a-function
+     ,-[input.js:157:1]
+ 156 |       default:
+ 157 |         return assertNever($size);
+     :                ^^^^^^^^^^^^^^^^^^
+ 158 |     }
+     `----

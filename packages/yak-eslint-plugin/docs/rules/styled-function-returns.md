@@ -1,16 +1,18 @@
 # @yak/styled-function-returns
 
-📝 Enforces that a function that stands on its own in a yak styled/css literal returns a css literal or nothing.
+📝 Enforces that a function outside a CSS property in a yak styled/css literal returns a css literal or nothing.
 
 💼 This rule is enabled in the ✅ `recommended` config.
 
+💡 This rule is manually fixable by [editor suggestions](https://eslint.org/docs/latest/use/core-concepts#rule-suggestions).
+
 <!-- end auto-generated rule header -->
 
-Reports a function in a `styled` or `css` literal that stands on its own and returns a value without styles, like a string or a call.
+Reports a function in a `styled` or `css` literal that returns a value without styles, like a string or a call like `size($big)`.
 
 ## Reason why
 
-A function in a `styled` or `css` literal has one of two jobs, and its place in the CSS decides which:
+A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or works as a mixin and adds styles:
 
 ```tsx
 const Button = styled.button<{ $color: string; $active: boolean }>`
@@ -23,40 +25,43 @@ const Button = styled.button<{ $color: string; $active: boolean }>`
 `;
 ```
 
-The first function stands after a property, so it sets a CSS value and can return a string or a number. The second function stands on its own, so it adds class names. It has to return a `css` literal, an `atoms()` call or nothing.
-
-A string at the second place drops the styles, and nothing tells you:
+Wrap the CSS in a `css` literal, otherwise the function adds no styles:
 
 ```tsx
 const Button = styled.button<{ $active: boolean }>`
-  ${({ $active }) => $active && "font-weight: bold;"}
+  ${({ $active }) => $active && "font-weight: bold;"} // reported
+  ${({ $active }) => $active && css`font-weight: bold;`} // fine
 `;
 ```
 
-The fix is to wrap the CSS in a `css` literal, like `` $active && css`font-weight: bold;` ``. A number, `true`, a calculation, an object or an array adds no styles either. To set a CSS value, write the function after a property.
+A number, `true`, a calculation, an object or an array adds no styles either. To set a CSS value, write the function after a property.
 
-A returned call adds no styles either. yak reads a `css` literal at build time, and only where a `styled` or `css` literal uses it directly. A `css` literal that a helper returns arrives empty:
+Return the `css` literal from the function itself instead of a call, otherwise the build fails. To reuse the styles, make a `css` constant instead of a function:
 
 ```tsx
-const focusRing = () => css`outline: 2px solid blue;`;
+const getFocusRing = () => css`outline: 2px solid blue;`;
+const focusRing = css`outline: 2px solid blue;`;
 
 const Button = styled.button<{ $active: boolean }>`
-  ${({ $active }) => $active && focusRing()} // reported: adds no styles
-  ${({ $active }) => $active && css`outline: 2px solid blue;`} // fine
+  ${({ $active }) => $active && getFocusRing()} // reported: the build fails
+  ${({ $active }) => $active && focusRing} // fine
 `;
 ```
 
-A call that only checks something, like `assertNever`, returns nothing. It needs no `return` in front of it:
+The only call you can return is `atoms()`.
+
+A mixin from the same file works as is, like `focusRing` above. Wrap a mixin imported from another file in a `css` literal, otherwise the build fails:
 
 ```tsx
-default:
-  return assertNever($size); // reported
+import { outlined } from "./mixins";
 
-default:
-  assertNever($size); // fine: the call still runs, and nothing is returned
+const Button = styled.button<{ $active: boolean }>`
+  ${({ $active }) => $active && outlined} // reported: the build fails
+  ${({ $active }) => $active && css`${outlined}`} // fine
+`;
 ```
 
-`atoms()` is the one call that adds class names when it is returned.
+An `atoms()` value imported from another file does not work in a `css` literal either. See [Troubleshooting](https://yak.style/docs/troubleshooting#an-atoms-value-from-another-file).
 
 ## Rule details
 
@@ -82,6 +87,11 @@ styled.button`
 styled.button`
   ${({ $active }) => $active && keyframes`from { opacity: 0; }`}
 `;
+
+// outlined is imported from another file
+styled.button`
+  ${({ $active }) => $active && outlined}
+`;
 ```
 
 The following patterns are not considered errors:
@@ -91,9 +101,14 @@ styled.button`
   ${({ $active }) => $active && css`font-weight: bold;`}
 `;
 
-// a prop or a constant can hold a css literal
+// a prop or a local constant can hold a css literal
 styled.button`
   ${({ $big, $mixin }) => ($big ? large : $mixin)}
+`;
+
+// an imported mixin in a css literal
+styled.button`
+  ${({ $active }) => $active && css`${outlined}`}
 `;
 
 styled.button`

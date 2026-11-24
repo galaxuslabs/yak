@@ -42,30 +42,25 @@ update the remaining imports, or search the project for `next-yak` and follow th
 If you wrap a styled-components component with a yak component while both libraries run side by side, add `&&` to
 raise the specificity. The [migration guide](/docs/migration-from-styled-components#styles-from-styled-components-win) explains why.
 
-### A mixin returned from a function
+### A mixin passed through a prop
 
-yak resolves an imported mixin at build time, but only where the template uses it directly. An arrow function that
-returns the mixin hands it over at runtime, when it no longer holds any styles, so the component silently gets none of
-them. A helper function that returns a mixin has the same problem, even with local mixins, because yak can't tell which
-one the call returns:
+A mixin adds its styles only where a template uses the mixin itself, like `${large}`, or wraps it in a `css` literal.
+A function that gets a mixin from a prop, the theme or another variable adds no styles. yak shows no error for this,
+because it can't tell that the value is a mixin:
 
 ```tsx title="button.tsx"
-import { css, styled } from "@yak/react";
-import { outlined } from "./mixins";
-
 const large = css`font-size: 24px;`;
-const small = css`font-size: 12px;`;
-const size = (big?: boolean) => (big ? large : small);
 
-const Button = styled.button<{ $active?: boolean; $big?: boolean }>`
-  ${({ $active }) => $active && outlined}; // [!code --]
-  ${({ $active }) => $active && css`${outlined}`}; // [!code ++]
-  ${({ $big }) => size($big)}; // [!code --]
-  ${({ $big }) => ($big ? large : small)}; // [!code ++]
+const Button = styled.button<{ $big?: boolean }>`
+  ${({ $mixin }) => $mixin}; // [!code --]
+  ${({ $big }) => $big && large}; // [!code ++]
 `;
+
+<Button $mixin={large} />; // [!code --]
+<Button $big />; // [!code ++]
 ```
 
-Wrap an imported mixin in a `css` literal, and return mixins from the arrow function itself rather than from a helper.
+Pass a prop that selects the styles, and write the condition in the template.
 
 ## Build errors
 
@@ -84,6 +79,50 @@ The `css` prop accepts a `css` template, an `atoms()` call, those combined with 
 `false`, `null` and `undefined`. Objects, arrays and plain strings fail the build. If another library on the same
 element owns the `css` prop, set [`strictCssProp`](/docs/api#plugin-options) to `false`, and yak leaves such values
 alone.
+
+### An imported mixin returned from a function
+
+> The imported value "outlined" applies no styles when a function returns it.
+
+An imported mixin adds its styles only where the template uses it directly, like `${outlined}`, or inside a `css`
+literal. A function that returns the imported mixin itself adds no styles. Wrap the imported mixin in a `css` literal:
+
+```tsx title="button.tsx"
+import { outlined } from "./mixins";
+
+const Button = styled.button<{ $active?: boolean }>`
+  ${({ $active }) => $active && outlined}; // [!code --]
+  ${({ $active }) => $active && css`${outlined}`}; // [!code ++]
+`;
+```
+
+The [`@yak/styled-function-returns`](/docs/eslint-plugin#styled-function-returns) lint rule shows this error in your
+editor.
+
+### A call returned from a function
+
+> The call "size()" applies no styles when a function returns it.
+
+Write the condition in the arrow function itself, and return the mixins or `css` literals from there. Do not call
+another function to pick them, even when it returns mixins from the same file like `large`:
+
+```tsx title="button.tsx"
+const large = css`font-size: 24px;`;
+const small = css`font-size: 12px;`;
+const size = (big?: boolean) => (big ? large : small);
+
+const Button = styled.button<{ $big?: boolean }>`
+  ${({ $big }) => size($big)}; // [!code --]
+  ${({ $big }) => ($big ? large : small)}; // [!code ++]
+`;
+```
+
+To reuse styles without a condition, make a `css` constant instead of a function, like
+``const focusRing = css`outline: 2px solid blue;` ``, and use `${focusRing}`.
+
+The only call you can return is `atoms()`. The
+[`@yak/styled-function-returns`](/docs/eslint-plugin#styled-function-returns) lint rule shows this error in your
+editor.
 
 ### Dynamic values must be wrapped in arrow functions
 
@@ -147,6 +186,31 @@ valid identifiers, like `tokens["x-large"]`, array access like `list[1]`, and va
 
 Rename the file to `tokens.yak.ts` to fix it. yak runs [`.yak` files](/docs/features#build-time-constants-with-yak-files)
 at build time, so any key, array access and computed value works there.
+
+### An atoms() value from another file
+
+> `buttonAtoms` is the result of a function call.
+
+yak cannot import the result of `atoms()` from another file. A string, a number, an object or a `css` literal works.
+Export the class names as a string instead:
+
+```ts title="shared.ts"
+export const buttonClasses = "shadow-md rounded";
+```
+
+Then call `atoms()` once in the file that uses them:
+
+```tsx title="button.tsx"
+import { buttonClasses } from "./shared";
+
+const buttonAtoms = atoms(buttonClasses);
+
+const Button = styled.button<{ $active?: boolean }>`
+  ${({ $active }) => $active && buttonAtoms};
+`;
+```
+
+For other values, export a `css` literal, a string or a number instead of the result of a call.
 
 ### Imports inside .yak files fail
 
