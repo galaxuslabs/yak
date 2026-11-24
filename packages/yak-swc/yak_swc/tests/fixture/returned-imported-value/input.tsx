@@ -28,6 +28,16 @@ const Block = styled.div<{ $on?: boolean }>`
   }
 `;
 
+const Call = styled.div`
+  ${() => getMixin()}
+`;
+
+const size = (big?: boolean) => (big ? local : null);
+
+const Helper = styled.div<{ $big?: boolean }>`
+  ${(p) => size(p.$big)};
+`;
+
 // allowed
 const Wrapped = styled.div<{ $on?: boolean }>`
   ${(p) => p.$on && css`${outlined}`}
@@ -46,6 +56,3 @@ const PropertyValue = styled.div<{ $on?: boolean }>`
   padding: ${(p) => p.$on && spacing}px;
 `;
 
-const Call = styled.div`
-  ${() => getMixin()}
-`;

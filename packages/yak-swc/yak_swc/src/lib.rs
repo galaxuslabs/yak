@@ -9,6 +9,7 @@ use std::vec;
 use swc_core::atoms::Wtf8Atom;
 
 use fold::css_jsx_prop_fold::HasCSSProp;
+use fold::css_call_to_class_name::is_yak_atoms_callee;
 use fold::styled_arrow_function_fold::fold_class_names;
 use fold::styled_jsx_fold::StyledFold;
 use swc_core::common::comments::Comment;
@@ -254,6 +255,17 @@ fn returned_import_error(name: &str) -> String {
   )
 }
 
+fn returned_call_error(name: Option<String>) -> String {
+  let call = name.map_or("This call".to_string(), |name| format!("The call \"{name}()\""));
+  format!(
+    "{call} applies no styles when a function returns it, as yak reads styles at build time.\n\
+     Return a css template or a mixin from this function instead:\n\n\
+     ${{(p) => (p.$big ? large : small)}}\n\n\
+     A call that only checks something, like assertNever(), needs no return.\n\
+     For atoms, call atoms() here, or use a constant like const buttonAtoms = atoms(buttonClasses);\n"
+  )
+}
+
 const UNCLOSED_BRACKET_ERROR: &str = "\
 This bracket is never closed, so yak reads all CSS after it as part of the same statement.\n\
 Add the missing `)` or `}`.";
@@ -424,24 +436,35 @@ where
       .expect("Internal error: yak_library_imports is None - this should be impossible as imports are parsed in the initial program visit before any other processing")
   }
 
-  /// An imported value that reaches the runtime applies no styles, as the
-  /// compiler copies the styles of a mixin into each template that uses it
-  /// e.g. `${(p) => p.$on && importedMixin}`
+  /// An imported value or a call result that reaches the runtime applies no
+  /// styles, as the compiler copies the styles of a mixin into each template
+  /// that uses it, e.g. `${(p) => p.$on && importedMixin}` or
+  /// `${(p) => size(p.$big)}`. `atoms()` is the one call that adds class names
   fn report_returned_imports(&mut self, expr: &Expr) {
     for value in returned_values(expr) {
-      let Some(scoped_name) = extract_ident_and_parts(value, false) else {
-        continue;
+      let message = match value {
+        Expr::Call(call) => {
+          if is_yak_atoms_callee(&call.callee, self.yak_imports()) {
+            continue;
+          }
+          let name = match &call.callee {
+            Callee::Expr(callee) => extract_ident_and_parts(callee, false),
+            _ => None,
+          };
+          returned_call_error(name.map(|name| name.to_readable_string()))
+        }
+        _ => {
+          let Some(scoped_name) = extract_ident_and_parts(value, false) else {
+            continue;
+          };
+          if self.variables.get_imported_variable(&scoped_name.id).is_none() {
+            continue;
+          }
+          returned_import_error(&scoped_name.to_readable_string())
+        }
       };
-      if self.variables.get_imported_variable(&scoped_name.id).is_none() {
-        continue;
-      }
       HANDLER.with(|handler| {
-        handler
-          .struct_span_err(
-            value.span(),
-            &returned_import_error(&scoped_name.to_readable_string()),
-          )
-          .emit();
+        handler.struct_span_err(value.span(), &message).emit();
       });
     }
   }
@@ -983,7 +1006,11 @@ ${{() => {var}}};\n",
             css_state = Some(parse_css(&format!("var(--{})", css_variable_name), css_state).state);
           }
 
-          if !is_inside_property_value {
+          // A value before a `{` gets the dynamic block error instead
+          let starts_block = pair
+            .next_quasi
+            .is_some_and(|quasi| quasi.raw.trim_start().starts_with('{'));
+          if !is_inside_property_value && !starts_block {
             self.report_returned_imports(expr);
           }
 

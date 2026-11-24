@@ -37,7 +37,7 @@ const Button = styled.button<{ $active: boolean }>`
 
 The fix is to wrap the CSS in a `css` literal, like `` $active && css`font-weight: bold;` ``. A number, `true`, a calculation, an object or an array adds no styles either. To set a CSS value, write the function after a property.
 
-A returned call adds no styles either. yak reads a `css` literal at build time, and only where a `styled` or `css` literal uses it directly. A `css` literal that a helper returns arrives empty:
+A returned call adds no styles either, and the build fails for it. yak reads a `css` literal at build time, and only where a `styled` or `css` literal uses it directly. A `css` literal that a helper returns arrives empty:
 
 ```tsx
 const focusRing = () => css`outline: 2px solid blue;`;

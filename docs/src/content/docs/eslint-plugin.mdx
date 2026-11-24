@@ -310,7 +310,7 @@ styled.button<{ $active: boolean }>`
 `;
 ```
 
-A returned call adds no styles either: yak only reads a `css` literal that the function itself holds, so one that a helper returns arrives empty. A call that only checks something, like `assertNever`, needs no `return` in front of it:
+A returned call adds no styles either, and the build fails for it: yak only reads a `css` literal that the function itself holds, so one that a helper returns arrives empty. A call that only checks something, like `assertNever`, needs no `return` in front of it:
 
 ```tsx title="example.tsx"
 styled.div<{ $size: "s" | "m" }>`
@@ -328,7 +328,7 @@ styled.div<{ $size: "s" | "m" }>`
 
 An imported mixin is empty at runtime for the same reason, and the build fails for it. Wrap it in a `css` literal, so
 yak reads its styles from the other file. For an `atoms()` value from another file, see
-[Troubleshooting](/docs/troubleshooting#a-mixin-returned-from-a-function):
+[Troubleshooting](/docs/troubleshooting#an-atoms-value-from-another-file):
 
 ```tsx title="example.tsx"
 import { outlined } from "./mixins";

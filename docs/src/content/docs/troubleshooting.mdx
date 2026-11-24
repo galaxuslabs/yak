@@ -42,53 +42,27 @@ update the remaining imports, or search the project for `next-yak` and follow th
 If you wrap a styled-components component with a yak component while both libraries run side by side, add `&&` to
 raise the specificity. The [migration guide](/docs/migration-from-styled-components#styles-from-styled-components-win) explains why.
 
-### A mixin returned from a function
+### A mixin passed through a prop or the theme
 
-yak resolves a mixin at build time, but only where the template uses it directly. A mixin that a function returns
-reaches the component at runtime, when it no longer holds any styles. An imported mixin fails the build with:
-
-> The imported value "…" applies no styles when a function returns it.
-
-A helper function that returns a mixin gives no error, and the component silently gets none of the styles. This
-happens even with local mixins, because yak can't tell which one the call returns:
+yak copies the styles of a mixin into each template that uses it at build time, so the mixin object itself holds no
+styles. A mixin that reaches a function through a prop, the theme or another variable therefore adds nothing, and yak
+can't see where the value comes from to report it:
 
 ```tsx title="button.tsx"
-import { css, styled } from "@yak/react";
-import { outlined } from "./mixins";
-
 const large = css`font-size: 24px;`;
-const small = css`font-size: 12px;`;
-const size = (big?: boolean) => (big ? large : small);
 
-const Button = styled.button<{ $active?: boolean; $big?: boolean }>`
-  ${({ $active }) => $active && outlined}; // [!code --]
-  ${({ $active }) => $active && css`${outlined}`}; // [!code ++]
-  ${({ $big }) => size($big)}; // [!code --]
-  ${({ $big }) => ($big ? large : small)}; // [!code ++]
+const Button = styled.button<{ $big?: boolean }>`
+  ${({ $mixin }) => $mixin}; // [!code --]
+  ${({ $big }) => $big && large}; // [!code ++]
 `;
+
+<Button $mixin={large} />; // [!code --]
+<Button $big />; // [!code ++]
 ```
 
-Wrap an imported mixin in a `css` literal, so yak reads its styles from the other file, and return mixins from the
-arrow function itself rather than from a helper. The
-[`@yak/styled-function-returns`](/docs/eslint-plugin#styled-function-returns) lint rule reports both cases in your
-editor.
-
-An `atoms()` value from another file can't be wrapped like this. yak reads a plain module without running it, so it
-can't know what `atoms("shadow-md")` returns, and the build fails with:
-
-> `buttonAtoms` is the result of a function call, so yak cannot read it at build time.
-
-Export the class names as a string instead and call `atoms()` once in the file that uses them:
-
-```tsx title="button.tsx"
-import { buttonClasses } from "./shared"; // "shadow-md rounded"
-
-const buttonAtoms = atoms(buttonClasses);
-
-const Button = styled.button<{ $active?: boolean }>`
-  ${({ $active }) => $active && buttonAtoms};
-`;
-```
+Pass a prop that selects the styles, and write the condition in the template. The same holds for a mixin from the
+theme, like `theme.mixins.focus`: import the mixin and use it in the template instead, in a condition as
+`` css`${focus}` ``.
 
 ## Build errors
 
@@ -107,6 +81,48 @@ The `css` prop accepts a `css` template, an `atoms()` call, those combined with 
 `false`, `null` and `undefined`. Objects, arrays and plain strings fail the build. If another library on the same
 element owns the `css` prop, set [`strictCssProp`](/docs/api#plugin-options) to `false`, and yak leaves such values
 alone.
+
+### An imported mixin returned from a function
+
+> The imported value "…" applies no styles when a function returns it.
+
+yak resolves a mixin at build time, but only where the template uses it directly. A mixin that a function returns
+reaches the component at runtime, when it no longer holds any styles. Wrap the imported mixin in a `css` literal, so
+yak reads its styles from the other file:
+
+```tsx title="button.tsx"
+import { outlined } from "./mixins";
+
+const Button = styled.button<{ $active?: boolean }>`
+  ${({ $active }) => $active && outlined}; // [!code --]
+  ${({ $active }) => $active && css`${outlined}`}; // [!code ++]
+`;
+```
+
+The [`@yak/styled-function-returns`](/docs/eslint-plugin#styled-function-returns) lint rule shows this error in your
+editor.
+
+### A call returned from a function
+
+> The call "…()" applies no styles when a function returns it, as yak reads styles at build time.
+
+A call gives its result only at runtime, so yak can't know which styles it returns. This happens even when the helper
+returns local mixins. Write the condition in the arrow function itself:
+
+```tsx title="button.tsx"
+const large = css`font-size: 24px;`;
+const small = css`font-size: 12px;`;
+const size = (big?: boolean) => (big ? large : small);
+
+const Button = styled.button<{ $big?: boolean }>`
+  ${({ $big }) => size($big)}; // [!code --]
+  ${({ $big }) => ($big ? large : small)}; // [!code ++]
+`;
+```
+
+`atoms()` is the one call you can return. A call that only checks something, like `assertNever($size)`, needs no
+`return` in front of it. The [`@yak/styled-function-returns`](/docs/eslint-plugin#styled-function-returns) lint rule
+shows this error in your editor.
 
 ### Dynamic values must be wrapped in arrow functions
 
@@ -170,6 +186,25 @@ valid identifiers, like `tokens["x-large"]`, array access like `list[1]`, and va
 
 Rename the file to `tokens.yak.ts` to fix it. yak runs [`.yak` files](/docs/features#build-time-constants-with-yak-files)
 at build time, so any key, array access and computed value works there.
+
+### An atoms() value from another file
+
+> `buttonAtoms` is the result of a function call, so yak cannot read it at build time.
+
+yak reads a plain module without running it, so it can't know what a call like `atoms("shadow-md")` returns. Export
+the class names as a string instead and call `atoms()` once in the file that uses them:
+
+```tsx title="button.tsx"
+import { buttonClasses } from "./shared"; // "shadow-md rounded"
+
+const buttonAtoms = atoms(buttonClasses);
+
+const Button = styled.button<{ $active?: boolean }>`
+  ${({ $active }) => $active && buttonAtoms};
+`;
+```
+
+For other values, export a `css` literal or a literal value instead.
 
 ### Imports inside .yak files fail
 

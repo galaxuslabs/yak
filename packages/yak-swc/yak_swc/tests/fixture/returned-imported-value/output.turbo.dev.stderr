@@ -46,3 +46,31 @@
     :                ^^^^^^^^
  25 |       }
     `----
+  x The call "getMixin()" applies no styles when a function returns it, as yak reads styles at build time.
+  | Return a css template or a mixin from this function instead:
+  | 
+  | ${(p) => (p.$big ? large : small)}
+  | 
+  | A call that only checks something, like assertNever(), needs no return.
+  | For atoms, call atoms() here, or use a constant like const buttonAtoms = atoms(buttonClasses);
+  | 
+    ,-[input.js:32:1]
+ 31 | const Call = styled.div`
+ 32 |   ${() => getMixin()}
+    :           ^^^^^^^^^^
+ 33 | `;
+    `----
+  x The call "size()" applies no styles when a function returns it, as yak reads styles at build time.
+  | Return a css template or a mixin from this function instead:
+  | 
+  | ${(p) => (p.$big ? large : small)}
+  | 
+  | A call that only checks something, like assertNever(), needs no return.
+  | For atoms, call atoms() here, or use a constant like const buttonAtoms = atoms(buttonClasses);
+  | 
+    ,-[input.js:38:1]
+ 37 | const Helper = styled.div<{ $big?: boolean }>`
+ 38 |   ${(p) => size(p.$big)};
+    :            ^^^^^^^^^^^^
+ 39 | `;
+    `----

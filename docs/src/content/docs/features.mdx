@@ -947,7 +947,7 @@ const Label = styled.span`
 ```
 
 An imported mixin also works inside a condition if you wrap it in `css`. Returned on its own from the arrow function,
-it [fails the build](/docs/troubleshooting#a-mixin-returned-from-a-function):
+it [fails the build](/docs/troubleshooting#an-imported-mixin-returned-from-a-function):
 
 ```tsx
 const Label = styled.span<{ $short?: boolean }>`
