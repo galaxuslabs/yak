@@ -92,8 +92,9 @@ impl FoldedClassNames {
 /// result into the folded function of the React runtime, and the styled JSX
 /// fold inlines it at the usages of a component
 ///
-/// Returns `None` if a runtime expression is not an arrow that toggles class
-/// names or a CSS variable has a value the expression cannot write
+/// Each runtime expression must be an arrow that toggles class names or an
+/// `atoms(...)` call such as `${atoms("flex")}`. Returns `None` for any other
+/// expression, or when a CSS variable has a value the expression cannot write
 pub(crate) fn build_class_names(
   class_name: &str,
   runtime_expressions: &[Expr],

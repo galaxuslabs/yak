@@ -494,9 +494,9 @@ impl FoldVisitor<'_> {
           }
           FoldShape::ElementWrap => {
             // Solid components run once, so an element-wrap would freeze its
-            // bound values (only the other shapes stay inside the class
-            // attribute, which Solid compiles to an effect) -> keep the
-            // runtime component instead
+            // bound values. The other shapes stay inside the class attribute,
+            // which Solid compiles to an effect, so they stay reactive. Here
+            // the usage keeps the runtime component.
             if self.runtime == YakRuntime::Solid {
               return None;
             }

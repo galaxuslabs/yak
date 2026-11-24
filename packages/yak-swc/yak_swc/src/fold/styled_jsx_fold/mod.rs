@@ -339,11 +339,11 @@ fn reads_only_attributes(folded: &FoldedClassNames) -> bool {
 }
 
 /// The runtime passes more than the plain attributes to the class-toggling
-/// expressions - these props can not be substituted from the JSX attributes
+/// expressions. The fold can not take these props from the JSX attributes
 ///
 /// `key` is listed for the opposite reason: React strips it before the
-/// component sees props, so the runtime path reads `undefined` while a
-/// substituted fold would see the attribute value - reading it must bail
+/// component sees props, so the runtime path reads `undefined`. A fold would
+/// read the attribute value instead, so reading `key` must bail
 ///
 /// `ref` is absent on purpose: React 19, the minimum yak supports, passes
 /// it as an ordinary prop, so the runtime and the fold read the same value

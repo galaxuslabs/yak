@@ -1552,9 +1552,9 @@ where
       self.process_yak_literal(n, css_state.clone());
     self.inside_global_style = was_inside_global_style;
 
-    // A dynamic styled component whose runtime expressions only toggle
-    // class names or set CSS variables has one class name expression over its
-    // props, e.g. `({ $on }) => $on && css("yB1")` -> `"yB" + ($on ? " yB1" : "")`.
+    // Every top-level styled component gets a class name expression over its
+    // props when its runtime expressions only toggle class names or set CSS
+    // variables, e.g. `({ $on }) => $on && css("yB1")` -> `"yB" + ($on ? " yB1" : "")`.
     // The same-file JSX fold inlines it at the usages, and the React runtime
     // takes it as one function that returns the root class name, so the call
     // leaves out the class name argument:
