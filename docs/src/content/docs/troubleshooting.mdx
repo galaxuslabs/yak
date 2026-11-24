@@ -44,10 +44,13 @@ raise the specificity. The [migration guide](/docs/migration-from-styled-compone
 
 ### A mixin returned from a function
 
-yak resolves an imported mixin at build time, but only where the template uses it directly. An arrow function that
-returns the mixin hands it over at runtime, when it no longer holds any styles, so the component silently gets none of
-them. A helper function that returns a mixin has the same problem, even with local mixins, because yak can't tell which
-one the call returns:
+yak resolves a mixin at build time, but only where the template uses it directly. A mixin that a function returns
+reaches the component at runtime, when it no longer holds any styles. An imported mixin fails the build with:
+
+> The imported value "…" applies no styles when a function returns it.
+
+A helper function that returns a mixin gives no error, and the component silently gets none of the styles. This
+happens even with local mixins, because yak can't tell which one the call returns:
 
 ```tsx title="button.tsx"
 import { css, styled } from "@yak/react";
@@ -65,7 +68,27 @@ const Button = styled.button<{ $active?: boolean; $big?: boolean }>`
 `;
 ```
 
-Wrap an imported mixin in a `css` literal, and return mixins from the arrow function itself rather than from a helper.
+Wrap an imported mixin in a `css` literal, so yak reads its styles from the other file, and return mixins from the
+arrow function itself rather than from a helper. The
+[`@yak/styled-function-returns`](/docs/eslint-plugin#styled-function-returns) lint rule reports both cases in your
+editor.
+
+An `atoms()` value from another file can't be wrapped like this. yak reads a plain module without running it, so it
+can't know what `atoms("shadow-md")` returns, and the build fails with:
+
+> `buttonAtoms` is the result of a function call, so yak cannot read it at build time.
+
+Export the class names as a string instead and call `atoms()` once in the file that uses them:
+
+```tsx title="button.tsx"
+import { buttonClasses } from "./shared"; // "shadow-md rounded"
+
+const buttonAtoms = atoms(buttonClasses);
+
+const Button = styled.button<{ $active?: boolean }>`
+  ${({ $active }) => $active && buttonAtoms};
+`;
+```
 
 ## Build errors
 

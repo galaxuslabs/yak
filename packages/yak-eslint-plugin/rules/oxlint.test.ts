@@ -82,5 +82,27 @@ ruleTester.run("@yak/styled-function-returns", yakPlugin.rules["styled-function-
       code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && helper()}`;",
       errors: [{ messageId: "callReturn" }],
     },
+    {
+      code: [
+        'import { styled, css } from "@yak/react";',
+        'import { outlined } from "./mixins";',
+        "styled.div`${({ $on }) => $on && outlined}`;",
+      ].join("\n"),
+      errors: [
+        {
+          messageId: "importReturn",
+          suggestions: [
+            {
+              messageId: "wrapInCss",
+              output: [
+                'import { styled, css } from "@yak/react";',
+                'import { outlined } from "./mixins";',
+                "styled.div`${({ $on }) => $on && css`${outlined}`}`;",
+              ].join("\n"),
+            },
+          ],
+        },
+      ],
+    },
   ],
 });

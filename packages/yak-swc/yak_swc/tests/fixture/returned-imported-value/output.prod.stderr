@@ -1,0 +1,48 @@
+  x The imported value "outlined" applies no styles when a function returns it.
+  | Wrap a css mixin in a css template:
+  | 
+  | ${(p) => p.$on && css`${outlined}`}
+  | 
+  | For atoms, export the class names as a string and call atoms() once in this file:
+  | 
+  | const buttonAtoms = atoms(buttonClasses);
+  | ${(p) => p.$on && buttonAtoms}
+  | 
+    ,-[input.js:13:1]
+ 12 | const Imported = styled.div<{ $on?: boolean }>`
+ 13 |   ${(p) => p.$on && outlined}
+    :                     ^^^^^^^^
+ 14 | `;
+    `----
+  x The imported value "mixins.large" applies no styles when a function returns it.
+  | Wrap a css mixin in a css template:
+  | 
+  | ${(p) => p.$on && css`${mixins.large}`}
+  | 
+  | For atoms, export the class names as a string and call atoms() once in this file:
+  | 
+  | const buttonAtoms = atoms(buttonClasses);
+  | ${(p) => p.$on && buttonAtoms}
+  | 
+    ,-[input.js:17:1]
+ 16 | const Namespace = styled.div<{ $on?: boolean }>`
+ 17 |   ${(p) => (p.$on ? mixins.large : null)}
+    :                     ^^^^^^^^^^^^
+ 18 | `;
+    `----
+  x The imported value "outlined" applies no styles when a function returns it.
+  | Wrap a css mixin in a css template:
+  | 
+  | ${(p) => p.$on && css`${outlined}`}
+  | 
+  | For atoms, export the class names as a string and call atoms() once in this file:
+  | 
+  | const buttonAtoms = atoms(buttonClasses);
+  | ${(p) => p.$on && buttonAtoms}
+  | 
+    ,-[input.js:24:1]
+ 23 |       if (p.$on) {
+ 24 |         return outlined;
+    :                ^^^^^^^^
+ 25 |       }
+    `----

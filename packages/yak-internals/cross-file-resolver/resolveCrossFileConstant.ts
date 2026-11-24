@@ -566,6 +566,18 @@ function explainUnsupported(
     return lines.join("\n");
   }
 
+  if (hint === "CallExpression") {
+    lines.push(
+      `\`${specifier}\` is the result of a function call, so yak cannot read it at build time.`,
+    );
+    if (snippet) lines.push(snippet);
+    lines.push(
+      `  help: export a css template or a literal value instead`,
+      `  help: for atoms(), export the class names as a string and call atoms() in the file that uses it`,
+    );
+    return lines.join("\n");
+  }
+
   const got = hint ? ` (got a ${hint})` : "";
   lines.push(`\`${specifier}\` is not a string or number literal${got}.`);
   if (snippet) lines.push(snippet);

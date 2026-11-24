@@ -143,7 +143,7 @@ styled.div`
 
 Warns if runtime performance could be improved by using css literals.
 
-The rule checks arrow functions used as CSS declaration values, where yak creates runtime CSS variables. Arrow functions outside declarations are runtime class expressions and may return local css mixins, or imported ones wrapped in a `css` literal.
+The rule checks arrow functions used as CSS declaration values, where yak creates runtime CSS variables. Arrow functions outside declarations are runtime class expressions and may return local css mixins, or imported ones wrapped in a `css` literal. An imported mixin on its own fails the build, see [styled-function-returns](#styled-function-returns).
 
 Example:
 
@@ -323,6 +323,19 @@ styled.div<{ $size: "s" | "m" }>`
         assertNever($size); // [!code ++]
     }
   }}
+`;
+```
+
+An imported mixin is empty at runtime for the same reason, and the build fails for it. Wrap it in a `css` literal, so
+yak reads its styles from the other file. For an `atoms()` value from another file, see
+[Troubleshooting](/docs/troubleshooting#a-mixin-returned-from-a-function):
+
+```tsx title="example.tsx"
+import { outlined } from "./mixins";
+
+styled.button<{ $active: boolean }>`
+  ${({ $active }) => $active && outlined} // [!code --]
+  ${({ $active }) => $active && css`${outlined}`} // [!code ++]
 `;
 ```
 

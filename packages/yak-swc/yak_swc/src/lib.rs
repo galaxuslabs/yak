@@ -25,6 +25,7 @@ use utils::cross_file_selectors::ImportType;
 use utils::css_value_call::css_value_call;
 use utils::css_variable_dedup::CssVariableDedup;
 use utils::parse_quasi::{css_error_span, parse_quasi, source_position};
+use utils::returned_values::returned_values;
 
 mod variable_visitor;
 use variable_visitor::{ScopedVariableReference, VariableVisitor};
@@ -46,6 +47,7 @@ mod utils {
   pub(crate) mod css_variable_dedup;
   pub(crate) mod native_elements;
   pub(crate) mod parse_quasi;
+  pub(crate) mod returned_values;
 }
 pub mod naming_convention;
 use naming_convention::{CssImportConfig, ImportModeEncoding, NamingConvention};
@@ -241,6 +243,17 @@ Use the form `property: value;`.";
 
 /// Emitted for a `(` or `{` which is still open at the end of a literal,
 /// e.g. styled.div`@media (min-width: 600px { color: red; }`
+fn returned_import_error(name: &str) -> String {
+  format!(
+    "The imported value \"{name}\" applies no styles when a function returns it.\n\
+     Wrap a css mixin in a css template:\n\n\
+     ${{(p) => p.$on && css`${{{name}}}`}}\n\n\
+     For atoms, export the class names as a string and call atoms() once in this file:\n\n\
+     const buttonAtoms = atoms(buttonClasses);\n\
+     ${{(p) => p.$on && buttonAtoms}}\n"
+  )
+}
+
 const UNCLOSED_BRACKET_ERROR: &str = "\
 This bracket is never closed, so yak reads all CSS after it as part of the same statement.\n\
 Add the missing `)` or `}`.";
@@ -409,6 +422,28 @@ where
       .yak_library_imports
       .as_ref()
       .expect("Internal error: yak_library_imports is None - this should be impossible as imports are parsed in the initial program visit before any other processing")
+  }
+
+  /// An imported value that reaches the runtime applies no styles, as the
+  /// compiler copies the styles of a mixin into each template that uses it
+  /// e.g. `${(p) => p.$on && importedMixin}`
+  fn report_returned_imports(&mut self, expr: &Expr) {
+    for value in returned_values(expr) {
+      let Some(scoped_name) = extract_ident_and_parts(value, false) else {
+        continue;
+      };
+      if self.variables.get_imported_variable(&scoped_name.id).is_none() {
+        continue;
+      }
+      HANDLER.with(|handler| {
+        handler
+          .struct_span_err(
+            value.span(),
+            &returned_import_error(&scoped_name.to_readable_string()),
+          )
+          .emit();
+      });
+    }
   }
 
   /// Try to get the component id of the current styled component mixin or animation
@@ -946,6 +981,10 @@ ${{() => {var}}};\n",
               name
             });
             css_state = Some(parse_css(&format!("var(--{})", css_variable_name), css_state).state);
+          }
+
+          if !is_inside_property_value {
+            self.report_returned_imports(expr);
           }
 
           let was_inside_runtime_expression = self.inside_runtime_expression;

@@ -4,6 +4,8 @@
 
 💼 This rule is enabled in the ✅ `recommended` config.
 
+💡 This rule is manually fixable by [editor suggestions](https://eslint.org/docs/latest/use/core-concepts#rule-suggestions).
+
 <!-- end auto-generated rule header -->
 
 Reports a function in a `styled` or `css` literal that stands on its own and returns a value without styles, like a string or a call.
@@ -58,6 +60,32 @@ default:
 
 `atoms()` is the one call that adds class names when it is returned.
 
+An imported mixin is empty at runtime for the same reason, and the build fails for it. A local mixin works, because yak
+replaces it with its class name at build time. For an imported mixin, wrap it in a `css` literal, so yak reads its
+styles from the other file:
+
+```tsx
+import { outlined } from "./mixins";
+
+const Button = styled.button<{ $active: boolean }>`
+  ${({ $active }) => $active && outlined} // reported: the build fails
+  ${({ $active }) => $active && css`${outlined}`} // fine
+`;
+```
+
+An `atoms()` value from another file can't be wrapped like this, because yak can't read its classes at build time.
+Export the class names as a string instead and call `atoms()` once in the file that uses them:
+
+```tsx
+import { buttonClasses } from "./shared"; // "shadow-md rounded"
+
+const buttonAtoms = atoms(buttonClasses);
+
+const Button = styled.button<{ $active: boolean }>`
+  ${({ $active }) => $active && buttonAtoms}
+`;
+```
+
 ## Rule details
 
 The following patterns are considered errors:
@@ -82,6 +110,11 @@ styled.button`
 styled.button`
   ${({ $active }) => $active && keyframes`from { opacity: 0; }`}
 `;
+
+// outlined is imported from another file
+styled.button`
+  ${({ $active }) => $active && outlined}
+`;
 ```
 
 The following patterns are not considered errors:
@@ -91,9 +124,14 @@ styled.button`
   ${({ $active }) => $active && css`font-weight: bold;`}
 `;
 
-// a prop or a constant can hold a css literal
+// a prop or a local constant can hold a css literal
 styled.button`
   ${({ $big, $mixin }) => ($big ? large : $mixin)}
+`;
+
+// an imported mixin in a css literal
+styled.button`
+  ${({ $active }) => $active && css`${outlined}`}
 `;
 
 styled.button`
