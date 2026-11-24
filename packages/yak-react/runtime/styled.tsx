@@ -94,12 +94,14 @@ const yakStyled: StyledInternal = (Component, attrs) => {
      * combine all interpolated logic into a single function
      * e.g. styled.button`color: ${props => props.color}; margin: ${props => props.margin};`
      *
-     * A number as the first value marks the folded shape: the compiler
-     * turned every runtime expression into one fold function
-     * e.g. `__yak_button("yB", 0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`
+     * A number as the first argument marks the folded shape: the compiler
+     * turned every runtime expression into one fold function, which returns
+     * the root class name itself, so the call has no class name argument
+     * e.g. `__yak_button(0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`
      */
-    const runtimeStylesFn = (typeof values[0] === "number"
-      ? foldedProcessor(values[0], values[1] as unknown as FoldFunction)
+    const flags = styles as unknown;
+    const runtimeStylesFn = (typeof flags === "number"
+      ? foldedProcessor(flags, values[0] as unknown as FoldFunction)
       : css(
           styles,
           ...(values as CSSInterpolation<unknown>[]),

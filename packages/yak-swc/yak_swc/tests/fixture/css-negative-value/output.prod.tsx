@@ -12,4 +12,4 @@ export const Box = /*YAK EXPORTED STYLED:Box:ym7uBBu*//*YAK Extracted CSS:
     content: "a -var(--ym7uBBu3)";
   }
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu", 2, ({ $x, $z }, style)=>"ym7uBBu" + (style["--ym7uBBu1"] = /*#__PURE__*/ __yak_cssValue($x, "px", true), style["--ym7uBBu2"] = /*#__PURE__*/ __yak_cssValue($z, "", true), style["--ym7uBBu3"] = $z, ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $x, $z }, style)=>"ym7uBBu" + (style["--ym7uBBu1"] = /*#__PURE__*/ __yak_cssValue($x, "px", true), style["--ym7uBBu2"] = /*#__PURE__*/ __yak_cssValue($z, "", true), style["--ym7uBBu3"] = $z, ""));

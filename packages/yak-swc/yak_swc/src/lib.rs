@@ -1572,9 +1572,10 @@ where
     // class names or set CSS variables compiles to one function that returns
     // the class string, e.g.
     // `__yak_button("yB", ({ $on }) => $on && css("yB1"))` ->
-    // `__yak_button("yB", 0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`.
-    // It runs on the finished runtime expressions, after the same-file fold
-    // above took its own copy of them
+    // `__yak_button(0, ({ $on }) => "yB" + ($on ? " yB1" : ""))`.
+    // The folded function returns the root class name, so the call leaves out
+    // the class name argument. It runs on the finished runtime expressions,
+    // after the same-file fold above took its own copy of them
     let folded = match transform.get_component_class_name() {
       Some(class_name) if is_top_level && yak_library_function_name.deref() == "styled" => {
         fold_class_names(
@@ -1587,7 +1588,10 @@ where
       _ => None,
     };
     let (runtime_expressions, runtime_css_variables) = match folded {
-      Some(folded) => (folded, FxHashMap::default()),
+      Some(folded) => {
+        transform.omit_class_name_argument();
+        (folded, FxHashMap::default())
+      }
       None => (runtime_expressions, runtime_css_variables),
     };
 

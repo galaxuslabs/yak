@@ -201,8 +201,11 @@ export type RuntimeStyleProcessor<T> = StaticStyleProcessor<T> | DynamicStylePro
  * ```js
  * styled.button`${({ $on }) => $on && css`color: red;`}`
  * // compiled
- * __yak_button("yB", 0, ({ $on }) => "yB" + ($on ? " yB1" : ""))
+ * __yak_button(0, ({ $on }) => "yB" + ($on ? " yB1" : ""))
  * ```
+ *
+ * The number before it holds the flags. The function returns the root class
+ * name `"yB"` too, so the compiled call has no class name argument.
  *
  * `style` is the style object the function may write CSS variables into and
  * `theme` is the yak theme. The fold render function passes each only when

@@ -10,14 +10,14 @@ export const SwitchAssertNever = /*YAK EXPORTED STYLED:SwitchAssertNever:input_S
 .input_SwitchAssertNever___m7uBBu-01 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchAssertNever_m7uBBu", 0, ({ $size })=>"input_SwitchAssertNever_m7uBBu" + ($size === "s" ? " input_SwitchAssertNever___m7uBBu" : $size === "m" ? " input_SwitchAssertNever___m7uBBu-01" : (assertNever($size), ""))), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_SwitchAssertNever_m7uBBu" + ($size === "s" ? " input_SwitchAssertNever___m7uBBu" : $size === "m" ? " input_SwitchAssertNever___m7uBBu-01" : (assertNever($size), ""))), {
     "displayName": "SwitchAssertNever"
 });
 export const SwitchAssertNeverBreak = /*YAK EXPORTED STYLED:SwitchAssertNeverBreak:input_SwitchAssertNeverBreak_m7uBBu*//*YAK Extracted CSS:
 .input_SwitchAssertNeverBreak___m7uBBu {
   padding: 2px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchAssertNeverBreak_m7uBBu", 0, ({ $size })=>"input_SwitchAssertNeverBreak_m7uBBu" + ($size === "s" ? " input_SwitchAssertNeverBreak___m7uBBu" : (assertNever($size), ""))), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_SwitchAssertNeverBreak_m7uBBu" + ($size === "s" ? " input_SwitchAssertNeverBreak___m7uBBu" : (assertNever($size), ""))), {
     "displayName": "SwitchAssertNeverBreak"
 });
 export const SwitchSatisfiesNever = /*YAK EXPORTED STYLED:SwitchSatisfiesNever:input_SwitchSatisfiesNever_m7uBBu*//*YAK Extracted CSS:
@@ -27,7 +27,7 @@ export const SwitchSatisfiesNever = /*YAK EXPORTED STYLED:SwitchSatisfiesNever:i
 .input_SwitchSatisfiesNever___m7uBBu-01 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchSatisfiesNever_m7uBBu", 0, ({ $size })=>"input_SwitchSatisfiesNever_m7uBBu" + ($size === "s" ? " input_SwitchSatisfiesNever___m7uBBu" : $size === "m" ? " input_SwitchSatisfiesNever___m7uBBu-01" : ($size, ""))), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_SwitchSatisfiesNever_m7uBBu" + ($size === "s" ? " input_SwitchSatisfiesNever___m7uBBu" : $size === "m" ? " input_SwitchSatisfiesNever___m7uBBu-01" : ($size, ""))), {
     "displayName": "SwitchSatisfiesNever"
 });
 export const SwitchRenamedDefault = /*YAK EXPORTED STYLED:SwitchRenamedDefault:input_SwitchRenamedDefault_m7uBBu*//*YAK Extracted CSS:
@@ -37,7 +37,7 @@ export const SwitchRenamedDefault = /*YAK EXPORTED STYLED:SwitchRenamedDefault:i
 .input_SwitchRenamedDefault___m7uBBu-01 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchRenamedDefault_m7uBBu", 0, ({ $size })=>"input_SwitchRenamedDefault_m7uBBu" + (($size === void 0 ? "m" : $size) === "s" ? " input_SwitchRenamedDefault___m7uBBu" : ($size === void 0 ? "m" : $size) === "m" ? " input_SwitchRenamedDefault___m7uBBu-01" : (assertNever($size === void 0 ? "m" : $size), ""))), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_SwitchRenamedDefault_m7uBBu" + (($size === void 0 ? "m" : $size) === "s" ? " input_SwitchRenamedDefault___m7uBBu" : ($size === void 0 ? "m" : $size) === "m" ? " input_SwitchRenamedDefault___m7uBBu-01" : (assertNever($size === void 0 ? "m" : $size), ""))), {
     "displayName": "SwitchRenamedDefault"
 });
 export const SwitchMemberRead = /*YAK EXPORTED STYLED:SwitchMemberRead:input_SwitchMemberRead_m7uBBu*//*YAK Extracted CSS:
@@ -47,7 +47,7 @@ export const SwitchMemberRead = /*YAK EXPORTED STYLED:SwitchMemberRead:input_Swi
 .input_SwitchMemberRead___m7uBBu-01 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SwitchMemberRead_m7uBBu", 0, ({ $size })=>"input_SwitchMemberRead_m7uBBu" + ($size === "s" ? " input_SwitchMemberRead___m7uBBu" : $size === "m" ? " input_SwitchMemberRead___m7uBBu-01" : (console.log($size), ""))), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_SwitchMemberRead_m7uBBu" + ($size === "s" ? " input_SwitchMemberRead___m7uBBu" : $size === "m" ? " input_SwitchMemberRead___m7uBBu-01" : (console.log($size), ""))), {
     "displayName": "SwitchMemberRead"
 });
 export const CaseLogBeforeReturn = /*YAK EXPORTED STYLED:CaseLogBeforeReturn:input_CaseLogBeforeReturn_m7uBBu*//*YAK Extracted CSS:
@@ -57,7 +57,7 @@ export const CaseLogBeforeReturn = /*YAK EXPORTED STYLED:CaseLogBeforeReturn:inp
 .input_CaseLogBeforeReturn___m7uBBu-01 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_CaseLogBeforeReturn_m7uBBu", 0, ({ $size })=>"input_CaseLogBeforeReturn_m7uBBu" + ($size === "s" ? (log($size), " input_CaseLogBeforeReturn___m7uBBu") : " input_CaseLogBeforeReturn___m7uBBu-01")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_CaseLogBeforeReturn_m7uBBu" + ($size === "s" ? (log($size), " input_CaseLogBeforeReturn___m7uBBu") : " input_CaseLogBeforeReturn___m7uBBu-01")), {
     "displayName": "CaseLogBeforeReturn"
 });
 // the last case runs out of the `switch` into the `return` after it
@@ -68,7 +68,7 @@ export const LastCaseWithoutReturn = /*YAK EXPORTED STYLED:LastCaseWithoutReturn
 .input_LastCaseWithoutReturn___m7uBBu-01 {
   padding: 8px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_LastCaseWithoutReturn_m7uBBu", 0, ({ $size })=>"input_LastCaseWithoutReturn_m7uBBu" + ($size === "s" ? " input_LastCaseWithoutReturn___m7uBBu" : $size === "m" ? (log($size), " input_LastCaseWithoutReturn___m7uBBu-01") : " input_LastCaseWithoutReturn___m7uBBu-01")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_LastCaseWithoutReturn_m7uBBu" + ($size === "s" ? " input_LastCaseWithoutReturn___m7uBBu" : $size === "m" ? (log($size), " input_LastCaseWithoutReturn___m7uBBu-01") : " input_LastCaseWithoutReturn___m7uBBu-01")), {
     "displayName": "LastCaseWithoutReturn"
 });
 export const DefaultWithoutReturnThenReturn = /*YAK EXPORTED STYLED:DefaultWithoutReturnThenReturn:input_DefaultWithoutReturnThenReturn_m7uBBu*//*YAK Extracted CSS:
@@ -78,42 +78,42 @@ export const DefaultWithoutReturnThenReturn = /*YAK EXPORTED STYLED:DefaultWitho
 .input_DefaultWithoutReturnThenReturn___m7uBBu-01 {
   padding: 8px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_DefaultWithoutReturnThenReturn_m7uBBu", 0, ({ $size })=>"input_DefaultWithoutReturnThenReturn_m7uBBu" + ($size === "s" ? " input_DefaultWithoutReturnThenReturn___m7uBBu" : (log($size), " input_DefaultWithoutReturnThenReturn___m7uBBu-01"))), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_DefaultWithoutReturnThenReturn_m7uBBu" + ($size === "s" ? " input_DefaultWithoutReturnThenReturn___m7uBBu" : (log($size), " input_DefaultWithoutReturnThenReturn___m7uBBu-01"))), {
     "displayName": "DefaultWithoutReturnThenReturn"
 });
 export const LogBeforeIf = /*YAK EXPORTED STYLED:LogBeforeIf:input_LogBeforeIf_m7uBBu*//*YAK Extracted CSS:
 .input_LogBeforeIf___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_LogBeforeIf_m7uBBu", 0, ({ $on })=>"input_LogBeforeIf_m7uBBu" + (console.log($on), $on ? " input_LogBeforeIf___m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"input_LogBeforeIf_m7uBBu" + (console.log($on), $on ? " input_LogBeforeIf___m7uBBu" : "")), {
     "displayName": "LogBeforeIf"
 });
 export const StatementsBeforeReturn = /*YAK EXPORTED STYLED:StatementsBeforeReturn:input_StatementsBeforeReturn_m7uBBu*//*YAK Extracted CSS:
 .input_StatementsBeforeReturn___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_StatementsBeforeReturn_m7uBBu", 0, ({ $on, $a, $b })=>"input_StatementsBeforeReturn_m7uBBu" + ($on ? (log($a), log($b), " input_StatementsBeforeReturn___m7uBBu") : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on, $a, $b })=>"input_StatementsBeforeReturn_m7uBBu" + ($on ? (log($a), log($b), " input_StatementsBeforeReturn___m7uBBu") : "")), {
     "displayName": "StatementsBeforeReturn"
 });
 export const IfWithoutReturn = /*YAK EXPORTED STYLED:IfWithoutReturn:input_IfWithoutReturn_m7uBBu*//*YAK Extracted CSS:
 .input_IfWithoutReturn___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_IfWithoutReturn_m7uBBu", 0, ({ $on })=>"input_IfWithoutReturn_m7uBBu" + ($on ? (log($on), " input_IfWithoutReturn___m7uBBu") : " input_IfWithoutReturn___m7uBBu")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"input_IfWithoutReturn_m7uBBu" + ($on ? (log($on), " input_IfWithoutReturn___m7uBBu") : " input_IfWithoutReturn___m7uBBu")), {
     "displayName": "IfWithoutReturn"
 });
 export const StatementAtEnd = /*YAK EXPORTED STYLED:StatementAtEnd:input_StatementAtEnd_m7uBBu*//*YAK Extracted CSS:
 .input_StatementAtEnd___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_StatementAtEnd_m7uBBu", 0, ({ $on })=>"input_StatementAtEnd_m7uBBu" + ($on ? " input_StatementAtEnd___m7uBBu" : (log($on), ""))), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on })=>"input_StatementAtEnd_m7uBBu" + ($on ? " input_StatementAtEnd___m7uBBu" : (log($on), ""))), {
     "displayName": "StatementAtEnd"
 });
 export const CssVariable = /*YAK EXPORTED STYLED:CssVariable:input_CssVariable_m7uBBu*//*YAK Extracted CSS:
 .input_CssVariable_m7uBBu {
   width: var(--input_CssVariable__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_CssVariable_m7uBBu", 2, ({ $width }, style)=>"input_CssVariable_m7uBBu" + (style["--input_CssVariable__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue((log($width), $width), "px"), "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $width }, style)=>"input_CssVariable_m7uBBu" + (style["--input_CssVariable__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue((log($width), $width), "px"), "")), {
     "displayName": "CssVariable"
 });
 // stays unfolded: a returned call can return a css literal

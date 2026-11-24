@@ -20,7 +20,7 @@ mod fold_css_variable_function;
 mod merge_arrow_parameters;
 
 /// The flags are the number before the folded function, e.g. the `0` in
-/// `__yak_button("yB", 0, fn)`. A number at that place tells the runtime that
+/// `__yak_button(0, fn)`. A number as the first argument tells the runtime that
 /// a folded function follows, and each bit says what the runtime has to pass
 /// in. A component can need several bits at once, so the flags are numbers
 /// the compiler combines with `|`
@@ -54,9 +54,12 @@ const FLAG_STYLE: u32 = 2;
 ///   ({ $active }) => $active && css("yB1"),
 ///   ({ $size }) => $size === "s" ? css("yB2") : css("yB3"))
 /// // compiled with the folded function
-/// __yak.__yak_button("yB", 0, ({ $active, $size }) =>
+/// __yak.__yak_button(0, ({ $active, $size }) =>
 ///   "yB" + ($active ? " yB1" : "") + ($size === "s" ? " yB2" : " yB3"))
 /// ```
+///
+/// The folded function returns the root class name `"yB"` itself, so the
+/// compiled call leaves out the class name argument and starts with the flags
 ///
 /// `runtime_expressions` holds the compiled form of each `${...}` in the
 /// template. Without the folded function, each `css("yB1")` call inside one

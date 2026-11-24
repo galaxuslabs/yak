@@ -87,8 +87,8 @@ impl StyledFold {
   /// - `tag` (the original tagged template tag) is `styled.element`,
   ///   `styled("element")` with a native DOM element or `styled(Component)` -
   ///   these shapes exclude `.attrs(...)` chains
-  /// - `class_name` is the static class name the compiled call carries as its
-  ///   first argument
+  /// - `class_name` is the static root class name of the component, e.g.
+  ///   `"yB"` in `__yak_button("yB")`
   /// - `runtime_expressions` must all be class-toggling arrows over props -
   ///   anything else keeps the runtime path. Function expressions bail too:
   ///   they bind `this`/`arguments`, which inlining would silently rebind to

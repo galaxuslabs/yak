@@ -19,7 +19,7 @@ export const LayoutPosition = /*YAK EXPORTED STYLED:LayoutPosition:input_LayoutP
 .input_LayoutPosition___m7uBBu-02 {
   padding: 8px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_LayoutPosition_m7uBBu", 0, ({ $layoutPosition })=>"input_LayoutPosition_m7uBBu" + ($layoutPosition.medium?.visualSize === "s" ? " input_LayoutPosition___m7uBBu" : $layoutPosition.medium?.visualSize === "m" ? " input_LayoutPosition___m7uBBu-01" : " input_LayoutPosition___m7uBBu-02")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $layoutPosition })=>"input_LayoutPosition_m7uBBu" + ($layoutPosition.medium?.visualSize === "s" ? " input_LayoutPosition___m7uBBu" : $layoutPosition.medium?.visualSize === "m" ? " input_LayoutPosition___m7uBBu-01" : " input_LayoutPosition___m7uBBu-02")), {
     "displayName": "LayoutPosition"
 });
 export const MemberParam = /*YAK EXPORTED STYLED:MemberParam:input_MemberParam_m7uBBu*//*YAK Extracted CSS:
@@ -29,21 +29,21 @@ export const MemberParam = /*YAK EXPORTED STYLED:MemberParam:input_MemberParam_m
 .input_MemberParam___m7uBBu-01 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_MemberParam_m7uBBu", 0, ({ $layout })=>"input_MemberParam_m7uBBu" + ($layout.medium!.visualSize === "s" ? " input_MemberParam___m7uBBu" : " input_MemberParam___m7uBBu-01")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $layout })=>"input_MemberParam_m7uBBu" + ($layout.medium!.visualSize === "s" ? " input_MemberParam___m7uBBu" : " input_MemberParam___m7uBBu-01")), {
     "displayName": "MemberParam"
 });
 export const RenamedWithDefault = /*YAK EXPORTED STYLED:RenamedWithDefault:input_RenamedWithDefault_m7uBBu*//*YAK Extracted CSS:
 .input_RenamedWithDefault___m7uBBu {
   padding: 2px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_RenamedWithDefault_m7uBBu", 0, ({ $size })=>"input_RenamedWithDefault_m7uBBu" + (($size === void 0 ? "m" : $size) === "s" ? " input_RenamedWithDefault___m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_RenamedWithDefault_m7uBBu" + (($size === void 0 ? "m" : $size) === "s" ? " input_RenamedWithDefault___m7uBBu" : "")), {
     "displayName": "RenamedWithDefault"
 });
 export const SeveralDeclarators = /*YAK EXPORTED STYLED:SeveralDeclarators:input_SeveralDeclarators_m7uBBu*//*YAK Extracted CSS:
 .input_SeveralDeclarators___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SeveralDeclarators_m7uBBu", 0, ({ $a, $layout })=>"input_SeveralDeclarators_m7uBBu" + ($a && $layout.medium ? " input_SeveralDeclarators___m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $a, $layout })=>"input_SeveralDeclarators_m7uBBu" + ($a && $layout.medium ? " input_SeveralDeclarators___m7uBBu" : "")), {
     "displayName": "SeveralDeclarators"
 });
 // a const that reads an earlier const
@@ -51,7 +51,7 @@ export const ConstOfConst = /*YAK EXPORTED STYLED:ConstOfConst:input_ConstOfCons
 .input_ConstOfConst___m7uBBu {
   padding: 8px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ConstOfConst_m7uBBu", 0, ({ $layout })=>"input_ConstOfConst_m7uBBu" + ($layout.medium?.visualSize === "l" ? " input_ConstOfConst___m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $layout })=>"input_ConstOfConst_m7uBBu" + ($layout.medium?.visualSize === "l" ? " input_ConstOfConst___m7uBBu" : "")), {
     "displayName": "ConstOfConst"
 });
 // `medium.visualSize` throws for a missing `medium`, so it keeps the parens
@@ -59,14 +59,14 @@ export const MemberOfOptionalConst = /*YAK EXPORTED STYLED:MemberOfOptionalConst
 .input_MemberOfOptionalConst___m7uBBu {
   padding: 2px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_MemberOfOptionalConst_m7uBBu", 0, ({ $layout })=>"input_MemberOfOptionalConst_m7uBBu" + (($layout?.medium).visualSize === "s" ? " input_MemberOfOptionalConst___m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $layout })=>"input_MemberOfOptionalConst_m7uBBu" + (($layout?.medium).visualSize === "s" ? " input_MemberOfOptionalConst___m7uBBu" : "")), {
     "displayName": "MemberOfOptionalConst"
 });
 export const LiteralConst = /*YAK EXPORTED STYLED:LiteralConst:input_LiteralConst_m7uBBu*//*YAK Extracted CSS:
 .input_LiteralConst___m7uBBu {
   color: red;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_LiteralConst_m7uBBu", 0, ({ $count })=>"input_LiteralConst_m7uBBu" + ($count > 2 ? " input_LiteralConst___m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $count })=>"input_LiteralConst_m7uBBu" + ($count > 2 ? " input_LiteralConst___m7uBBu" : "")), {
     "displayName": "LiteralConst"
 });
 // the same name in two blocks is two bindings
@@ -77,7 +77,7 @@ export const SameNameInTwoBlocks = /*YAK EXPORTED STYLED:SameNameInTwoBlocks:inp
 .input_SameNameInTwoBlocks___m7uBBu-01 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SameNameInTwoBlocks_m7uBBu", 0, ({ $on, $a, $b })=>"input_SameNameInTwoBlocks_m7uBBu" + ($on ? $a.medium?.visualSize === "s" ? " input_SameNameInTwoBlocks___m7uBBu" : "" : $b.medium?.visualSize === "s" ? " input_SameNameInTwoBlocks___m7uBBu-01" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on, $a, $b })=>"input_SameNameInTwoBlocks_m7uBBu" + ($on ? $a.medium?.visualSize === "s" ? " input_SameNameInTwoBlocks___m7uBBu" : "" : $b.medium?.visualSize === "s" ? " input_SameNameInTwoBlocks___m7uBBu-01" : "")), {
     "displayName": "SameNameInTwoBlocks"
 });
 // the same name in two functions of one component is two bindings
@@ -88,7 +88,7 @@ export const SameNameInTwoFunctions = /*YAK EXPORTED STYLED:SameNameInTwoFunctio
 .input_SameNameInTwoFunctions___m7uBBu-01 {
   margin: 2px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_SameNameInTwoFunctions_m7uBBu", 0, ({ $a, $b })=>"input_SameNameInTwoFunctions_m7uBBu" + ($a.medium?.visualSize === "s" ? " input_SameNameInTwoFunctions___m7uBBu" : "") + ($b.medium?.visualSize === "s" ? " input_SameNameInTwoFunctions___m7uBBu-01" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $a, $b })=>"input_SameNameInTwoFunctions_m7uBBu" + ($a.medium?.visualSize === "s" ? " input_SameNameInTwoFunctions___m7uBBu" : "") + ($b.medium?.visualSize === "s" ? " input_SameNameInTwoFunctions___m7uBBu-01" : "")), {
     "displayName": "SameNameInTwoFunctions"
 });
 export const ConstInCase = /*YAK EXPORTED STYLED:ConstInCase:input_ConstInCase_m7uBBu*//*YAK Extracted CSS:
@@ -98,7 +98,7 @@ export const ConstInCase = /*YAK EXPORTED STYLED:ConstInCase:input_ConstInCase_m
 .input_ConstInCase___m7uBBu-01 {
   padding: 4px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ConstInCase_m7uBBu", 0, ({ $kind, $layout })=>"input_ConstInCase_m7uBBu" + ($kind === "a" ? $layout.medium?.visualSize === "s" ? " input_ConstInCase___m7uBBu" : "" : $kind === "b" ? $layout.medium?.width === 1 ? " input_ConstInCase___m7uBBu-01" : "" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $kind, $layout })=>"input_ConstInCase_m7uBBu" + ($kind === "a" ? $layout.medium?.visualSize === "s" ? " input_ConstInCase___m7uBBu" : "" : $kind === "b" ? $layout.medium?.width === 1 ? " input_ConstInCase___m7uBBu-01" : "" : "")), {
     "displayName": "ConstInCase"
 });
 // reads in a nested css literal, a nested arrow, a call statement and a case value
@@ -109,7 +109,7 @@ export const ReadsEverywhere = /*YAK EXPORTED STYLED:ReadsEverywhere:input_Reads
 .input_ReadsEverywhere___m7uBBu-01 {
   color: blue;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ReadsEverywhere_m7uBBu", 0, ({ $layout, $kind, $on })=>"input_ReadsEverywhere_m7uBBu" + (log($layout.medium?.visualSize, {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $layout, $kind, $on })=>"input_ReadsEverywhere_m7uBBu" + (log($layout.medium?.visualSize, {
         size: $layout.medium?.visualSize
     }), $kind === $layout.medium?.visualSize ? " input_ReadsEverywhere___m7uBBu" + ($on && $layout.medium?.visualSize === "m" ? " input_ReadsEverywhere___m7uBBu-01" : "") : "")), {
     "displayName": "ReadsEverywhere"
@@ -119,14 +119,14 @@ export const ShadowingParameter = /*YAK EXPORTED STYLED:ShadowingParameter:input
 .input_ShadowingParameter__-and-_m7uBBu {
   color: blue;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ShadowingParameter_m7uBBu", 0, ({ $layout, size })=>"input_ShadowingParameter_m7uBBu" + ($layout.medium?.visualSize === "s" ? " input_ShadowingParameter___m7uBBu" + (size === "m" ? " input_ShadowingParameter__-and-_m7uBBu" : "") : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $layout, size })=>"input_ShadowingParameter_m7uBBu" + ($layout.medium?.visualSize === "s" ? " input_ShadowingParameter___m7uBBu" + (size === "m" ? " input_ShadowingParameter__-and-_m7uBBu" : "") : "")), {
     "displayName": "ShadowingParameter"
 });
 export const CssValue = /*YAK EXPORTED STYLED:CssValue:input_CssValue_m7uBBu*//*YAK Extracted CSS:
 .input_CssValue_m7uBBu {
   width: var(--input_CssValue__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_CssValue_m7uBBu", 2, ({ $layout }, style)=>"input_CssValue_m7uBBu" + (style["--input_CssValue__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($layout.medium?.width, "px"), "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $layout }, style)=>"input_CssValue_m7uBBu" + (style["--input_CssValue__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($layout.medium?.width, "px"), "")), {
     "displayName": "CssValue"
 });
 // a module constant as initializer
@@ -134,7 +134,7 @@ export const ModuleConstant = /*YAK EXPORTED STYLED:ModuleConstant:input_ModuleC
 .input_ModuleConstant___m7uBBu {
   padding: 2px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_ModuleConstant_m7uBBu", 0, ({ $size })=>"input_ModuleConstant_m7uBBu" + ($size === SIZES.small ? " input_ModuleConstant___m7uBBu" : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $size })=>"input_ModuleConstant_m7uBBu" + ($size === SIZES.small ? " input_ModuleConstant___m7uBBu" : "")), {
     "displayName": "ModuleConstant"
 });
 // stays unfolded: `let` could change between two reads
