@@ -54,7 +54,7 @@ use swc_core::{
 };
 
 use super::can_inline_prop_value::{purity, Purity};
-use super::{FoldTarget, FoldableComponent};
+use super::{DynamicClassName, FoldTarget, FoldableComponent};
 use crate::fold::css_call_to_class_name::{
   class_name_attr, expr_attr_value, merge_class_names, with_leading_space,
 };
@@ -242,6 +242,17 @@ struct FoldPlan {
   /// the values the parent binds around the element, in attribute source
   /// order - empty unless the usage takes the element-wrap
   bindings: Vec<Binding>,
+}
+
+/// The folded class name of a dynamic component at one usage
+struct DynamicFold {
+  class_name: Box<Expr>,
+  /// where the className is inserted when the usage passes none
+  slot: usize,
+  /// the values the element-wrap binds, empty for the other shapes
+  bindings: Vec<Binding>,
+  /// under an element-wrap, the parameter that binds the user's className
+  user_class_name_param: Option<Ident>,
 }
 
 /// One prop value which stays bound as a parameter because inlining it at every
@@ -450,72 +461,25 @@ impl FoldVisitor<'_> {
       }
     }
     let class_name_index = class_name_attr.map(|(index, _)| index);
-    // the className carries the parameter block, so it can no longer just be
-    // appended - it has to sit where the props it binds used to
-    let mut slot = attrs.len();
-    let mut capture = Vec::new();
     let mut user_class_name = class_name_attr.and_then(|(_, attr)| attr.value.clone());
-    let yak_class = match &component.dynamic {
-      None => YakClassName::Static(component.class_name.clone()),
+    let (yak_class, slot, bindings) = match &component.dynamic {
+      None => (
+        YakClassName::Static(component.class_name.clone()),
+        attrs.len(),
+        Vec::new(),
+      ),
       Some(dynamic) => {
-        let attr_values = attr_value_map(attrs);
-        let mut binder = ParamBinder::default();
-        let mut class_name_expr = dynamic.class_name.clone();
-        // each prop the expression reads gets its `__yak_` parameter up front,
-        // so the binder knows exactly the props the class name reads, which
-        // `split` and the element-wrap rely on
-        for (name, _) in &dynamic.props {
-          binder.param_for(name);
+        let fold = self.fold_dynamic(attrs, dynamic, class_name_index)?;
+        // the user's className is bound like any other value, so it composes
+        // around the parameter block instead of evaluating inside it
+        if let Some(param) = fold.user_class_name_param {
+          user_class_name = Some(expr_attr_value(Box::new(Expr::Ident(param))));
         }
-        let (bakeable, bindings) = binder.split(attrs, &attr_values);
-        let values = dynamic
-          .props
-          .iter()
-          .map(|(name, param)| {
-            let value = bakeable
-              .get(name)
-              .cloned()
-              .unwrap_or_else(|| Cow::Owned(Expr::Ident(binder.bound[name].clone())));
-            (param.to_id(), value)
-          })
-          .collect();
-        class_name_expr.visit_mut_with(&mut BakeParams { values: &values });
-        match select_shape(
-          attrs,
-          &attr_values,
-          &bindings,
-          class_name_index,
-          self.runtime,
-        ) {
-          FoldShape::Inline => YakClassName::Dynamic(class_name_expr),
-          FoldShape::ClassNameIife => {
-            slot = class_name_slot(attrs, &bindings, class_name_index);
-            YakClassName::Dynamic(bind_params(class_name_expr, bindings))
-          }
-          FoldShape::ElementWrap => {
-            // Solid components run once, so an element-wrap would freeze its
-            // bound values. The other shapes stay inside the class attribute,
-            // which Solid compiles to an effect, so they stay reactive. Here
-            // the usage keeps the runtime component.
-            if self.runtime == YakRuntime::Solid {
-              return None;
-            }
-            let read: FxHashSet<Atom> = binder.bound.keys().cloned().collect();
-            capture = full_capture(attrs, &mut binder, &attr_values, &read);
-            // the user's className is bound like any other value, so it composes
-            // around the parameter block instead of evaluating inside it
-            if let Some(binding) = capture
-              .iter()
-              .find(|binding| binding.name == *self.runtime.class_attr())
-            {
-              user_class_name = Some(expr_attr_value(Box::new(Expr::Ident(
-                binding.param.clone(),
-              ))));
-            }
-            // the parameters stay in the class name: the wrap binds them
-            YakClassName::Dynamic(class_name_expr)
-          }
-        }
+        (
+          YakClassName::Dynamic(fold.class_name),
+          fold.slot,
+          fold.bindings,
+        )
       }
     };
     // every bail has to happen before this: merging registers the
@@ -542,13 +506,76 @@ impl FoldVisitor<'_> {
       };
       return Some(FoldPlan {
         class_name: ClassNameFold::Insert(slot, value),
-        bindings: capture,
+        bindings,
       });
     };
     let value = self.merge_class_name(&user_class_name?, yak_class)?;
     Some(FoldPlan {
       class_name: ClassNameFold::Replace(index, value),
-      bindings: capture,
+      bindings,
+    })
+  }
+
+  /// The class name expression of a dynamic component at one usage, with each
+  /// prop it reads replaced by the attribute value or a bound parameter:
+  /// `<Button $on={open} />` -> `"yB" + (open ? " yB1" : "")`
+  ///
+  /// Returns `None` if the usage has to keep the runtime component
+  fn fold_dynamic(
+    &self,
+    attrs: &[JSXAttrOrSpread],
+    dynamic: &DynamicClassName,
+    class_name_index: Option<usize>,
+  ) -> Option<DynamicFold> {
+    let attr_values = attr_value_map(attrs);
+    let mut binder = ParamBinder::default();
+    let (values, bindings) = binder.split(&dynamic.props, attrs, &attr_values);
+    let mut class_name = dynamic.class_name.clone();
+    class_name.visit_mut_with(&mut BakeParams { values: &values });
+    let shape = select_shape(
+      attrs,
+      &attr_values,
+      &bindings,
+      class_name_index,
+      self.runtime,
+    );
+    Some(match shape {
+      FoldShape::Inline => DynamicFold {
+        class_name,
+        slot: attrs.len(),
+        bindings: Vec::new(),
+        user_class_name_param: None,
+      },
+      // the className carries the parameter block, so it can no longer just be
+      // appended: it has to sit where the props it binds used to
+      FoldShape::ClassNameIife => DynamicFold {
+        slot: class_name_slot(attrs, &bindings, class_name_index),
+        class_name: bind_params(class_name, bindings),
+        bindings: Vec::new(),
+        user_class_name_param: None,
+      },
+      FoldShape::ElementWrap => {
+        // Solid components run once, so an element-wrap would freeze its
+        // bound values. The other shapes stay inside the class attribute,
+        // which Solid compiles to an effect, so they stay reactive. Here
+        // the usage keeps the runtime component.
+        if self.runtime == YakRuntime::Solid {
+          return None;
+        }
+        let read: FxHashSet<Atom> = binder.bound.keys().cloned().collect();
+        let bindings = full_capture(attrs, &mut binder, &attr_values, &read);
+        let user_class_name_param = bindings
+          .iter()
+          .find(|binding| binding.name == *self.runtime.class_attr())
+          .map(|binding| binding.param.clone());
+        // the parameters stay in the class name: the wrap binds them
+        DynamicFold {
+          class_name,
+          slot: attrs.len(),
+          bindings,
+          user_class_name_param,
+        }
+      }
     })
   }
 
@@ -772,45 +799,55 @@ impl ParamBinder {
     param
   }
 
-  /// Splits the props the conditions read into the values which may be put back
-  /// where they are read, and the ones which have to stay bound
+  /// Decides for each prop the class name expression reads what [BakeParams]
+  /// puts in place of its parameter, and which values stay bound
+  ///
+  /// `props` pairs each prop with the parameter that stands for it in the
+  /// expression, e.g. `$on` in `"yB" + ($on ? " yB1" : "")`. That parameter
+  /// is replaced by:
+  /// - `undefined` if the usage does not pass the prop
+  /// - the attribute value if it may be put back where it is read
+  /// - the prop's `__yak_` parameter otherwise, which the returned bindings
+  ///   bind in attribute source order
   ///
   /// The gate is dup-purity, not "is it read twice": a single read is enough to
   /// change the count, because that read can sit inside a callback or behind a
   /// short circuit
+  ///
+  /// Registers every prop in `props` order, so the `__yak_` names stay stable
+  /// and the element-wrap sees exactly the props the class name reads
   fn split<'a>(
-    &self,
-    attrs: &'a [JSXAttrOrSpread],
+    &mut self,
+    props: &[(Atom, Ident)],
+    attrs: &[JSXAttrOrSpread],
     attr_values: &FxHashMap<Atom, PropValue<'a>>,
-  ) -> (FxHashMap<Atom, Cow<'a, Expr>>, Vec<Binding>) {
-    let mut bakeable = FxHashMap::default();
-    let mut bindings = Vec::new();
-    // walking the attributes rather than the bound props gives source order for
-    // free, and lets a repeated attribute bind its last value like React reads it
-    for (index, name) in attr_names(attrs) {
-      let (Some(param), Some(prop_value)) = (self.bound.get(&name), attr_values.get(&name)) else {
-        continue;
+  ) -> (FxHashMap<Id, Cow<'a, Expr>>, Vec<Binding>) {
+    let mut values = FxHashMap::default();
+    for (name, expr_param) in props {
+      let param = self.param_for(name);
+      let value = match attr_values.get(name) {
+        None => Cow::Owned(undefined_expr()),
+        Some(prop_value) if prop_value.purity == Purity::Dup => prop_value.value.clone(),
+        Some(_) => Cow::Owned(Expr::Ident(param)),
       };
-      if prop_value.purity == Purity::Dup {
-        bakeable.insert(name, prop_value.value.clone());
-      } else {
-        bindings.retain(|binding: &Binding| binding.name != name);
-        bindings.push(Binding {
+      values.insert(expr_param.to_id(), value);
+    }
+    // `fold_attrs` rejects a repeated attribute, so each name binds once
+    let bindings = attr_names(attrs)
+      .filter_map(|(attr_index, name)| {
+        let prop_value = attr_values.get(&name)?;
+        if prop_value.purity == Purity::Dup {
+          return None;
+        }
+        Some(Binding {
+          param: self.bound.get(&name)?.clone(),
           name,
-          param: param.clone(),
-          attr_index: index,
+          attr_index,
           value: Box::new(Expr::clone(&prop_value.value)),
-        });
-      }
-    }
-    // a prop the usage never passes is `undefined`, which always inlines
-    for name in self.bound.keys() {
-      if !attr_values.contains_key(name) {
-        bakeable.insert(name.clone(), Cow::Owned(undefined_expr()));
-      }
-    }
-    bindings.sort_by_key(|binding| binding.attr_index);
-    (bakeable, bindings)
+        })
+      })
+      .collect();
+    (values, bindings)
   }
 }
 
