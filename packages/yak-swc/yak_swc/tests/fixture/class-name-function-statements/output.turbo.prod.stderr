@@ -1,11 +1,9 @@
-  x The call "assertNever()" applies no styles when a function returns it, as yak reads styles at build time.
-  | Return a css template or a mixin from this function instead:
+  x The call "assertNever()" applies no styles when a function returns it.
+  | Return the css literals or mixins from the arrow function itself:
   | 
   | ${(p) => (p.$big ? large : small)}
   | 
-  | A call that only checks something, like assertNever(), needs no return.
-  | For atoms, call atoms() here, or use a constant like const buttonAtoms = atoms(buttonClasses);
-  | 
+  | See https://yak.style/docs/troubleshooting#a-call-returned-from-a-function
      ,-[input.js:157:1]
  156 |       default:
  157 |         return assertNever($size);

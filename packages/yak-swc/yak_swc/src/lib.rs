@@ -242,16 +242,12 @@ const MISSING_COLON_ERROR: &str = "\
 This declaration has no `:`, so the browser ignores it. \
 Use the form `property: value;`.";
 
-/// Emitted for a `(` or `{` which is still open at the end of a literal,
-/// e.g. styled.div`@media (min-width: 600px { color: red; }`
 fn returned_import_error(name: &str) -> String {
   format!(
     "The imported value \"{name}\" applies no styles when a function returns it.\n\
-     Wrap a css mixin in a css template:\n\n\
+     Wrap \"{name}\" in a css literal:\n\n\
      ${{(p) => p.$on && css`${{{name}}}`}}\n\n\
-     For atoms, export the class names as a string and call atoms() once in this file:\n\n\
-     const buttonAtoms = atoms(buttonClasses);\n\
-     ${{(p) => p.$on && buttonAtoms}}\n"
+     See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function"
   )
 }
 
@@ -260,14 +256,15 @@ fn returned_call_error(name: Option<String>) -> String {
     format!("The call \"{name}()\"")
   });
   format!(
-    "{call} applies no styles when a function returns it, as yak reads styles at build time.\n\
-     Return a css template or a mixin from this function instead:\n\n\
+    "{call} applies no styles when a function returns it.\n\
+     Return the css literals or mixins from the arrow function itself:\n\n\
      ${{(p) => (p.$big ? large : small)}}\n\n\
-     A call that only checks something, like assertNever(), needs no return.\n\
-     For atoms, call atoms() here, or use a constant like const buttonAtoms = atoms(buttonClasses);\n"
+     See https://yak.style/docs/troubleshooting#a-call-returned-from-a-function"
   )
 }
 
+/// Emitted for a `(` or `{` which is still open at the end of a literal,
+/// e.g. styled.div`@media (min-width: 600px { color: red; }`
 const UNCLOSED_BRACKET_ERROR: &str = "\
 This bracket is never closed, so yak reads all CSS after it as part of the same statement.\n\
 Add the missing `)` or `}`.";
@@ -438,10 +435,11 @@ where
       .expect("Internal error: yak_library_imports is None - this should be impossible as imports are parsed in the initial program visit before any other processing")
   }
 
-  /// An imported value or a call result that reaches the runtime applies no
-  /// styles, as the compiler copies the styles of a mixin into each template
-  /// that uses it, e.g. `${(p) => p.$on && importedMixin}` or
-  /// `${(p) => size(p.$big)}`. `atoms()` is the one call that adds class names
+  /// Reports an imported value or a call that a function in the template
+  /// returns, e.g. `${(p) => p.$on && importedMixin}` or `${(p) => size(p.$big)}`.
+  /// The compiler copies the styles of a mixin into the template only where the
+  /// template names it, so such a value applies no styles at runtime.
+  /// `atoms()` calls are allowed, as they return class names
   fn report_returned_imports(&mut self, expr: &Expr) {
     for value in returned_values(expr) {
       let message = match value {
@@ -1012,7 +1010,7 @@ ${{() => {var}}};\n",
             css_state = Some(parse_css(&format!("var(--{})", css_variable_name), css_state).state);
           }
 
-          // A value before a `{` gets the dynamic block error instead
+          // `${value} { ... }` uses the value as a selector, which another check reports
           let starts_block = pair
             .next_quasi
             .is_some_and(|quasi| quasi.raw.trim_start().starts_with('{'));

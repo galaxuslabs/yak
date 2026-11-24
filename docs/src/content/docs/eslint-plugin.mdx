@@ -143,7 +143,7 @@ styled.div`
 
 Warns if runtime performance could be improved by using css literals.
 
-The rule checks arrow functions used as CSS declaration values, where yak creates runtime CSS variables. Arrow functions outside declarations are runtime class expressions and may return local css mixins, or imported ones wrapped in a `css` literal. An imported mixin on its own fails the build, see [styled-function-returns](#styled-function-returns).
+The rule checks arrow functions used as CSS declaration values, where yak creates runtime CSS variables. Arrow functions outside declarations are runtime class expressions and may return local css mixins, or imported ones wrapped in a `css` literal. An arrow function that returns an imported mixin without a `css` literal around it fails the build, see [styled-function-returns](#styled-function-returns).
 
 Example:
 
@@ -297,9 +297,9 @@ A function that needs another statement can turn the rule off with `// eslint-di
 
 ### styled-function-returns
 
-Reports a function that stands on its own in a `styled` or `css` literal and returns a value without styles, like a string or a call.
+Reports a function in a `styled` or `css` literal that returns a value without styles, like a string or a call.
 
-A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names, when it stands on its own. At the second place a string drops the styles without any sign. Wrap the CSS in a `css` literal. A number, `true`, a calculation, an object or an array adds no styles either.
+A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names, when it stands on its own. Wrap the CSS in a `css` literal, otherwise it doesn't get any styles.
 
 Example:
 
@@ -310,25 +310,7 @@ styled.button<{ $active: boolean }>`
 `;
 ```
 
-A returned call adds no styles either, and the build fails for it: yak only reads a `css` literal that the function itself holds, so one that a helper returns arrives empty. A call that only checks something, like `assertNever`, needs no `return` in front of it:
-
-```tsx title="example.tsx"
-styled.div<{ $size: "s" | "m" }>`
-  ${({ $size }) => {
-    switch ($size) {
-      case "s":
-        return css`padding: 2px;`;
-      default:
-        return assertNever($size); // [!code --]
-        assertNever($size); // [!code ++]
-    }
-  }}
-`;
-```
-
-An imported mixin is empty at runtime for the same reason, and the build fails for it. Wrap it in a `css` literal, so
-yak reads its styles from the other file. For an `atoms()` value from another file, see
-[Troubleshooting](/docs/troubleshooting#an-atoms-value-from-another-file):
+Also imported mixins need to be wrapped in `css` in order that they return the correct styles.
 
 ```tsx title="example.tsx"
 import { outlined } from "./mixins";
@@ -338,6 +320,8 @@ styled.button<{ $active: boolean }>`
   ${({ $active }) => $active && css`${outlined}`} // [!code ++]
 `;
 ```
+
+For an `atoms()` value from another file, see [Troubleshooting](/docs/troubleshooting#an-atoms-value-from-another-file).
 
 ## Next steps
 

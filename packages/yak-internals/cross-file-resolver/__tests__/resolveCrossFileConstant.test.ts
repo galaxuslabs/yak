@@ -902,13 +902,13 @@ test("Error: a function call export like atoms() used as a mixin", async () => {
   ).rejects.toThrowErrorMatchingInlineSnapshot(`
     [Error: Error while resolving cross-file selectors in file "/foo/bar.ts"
       Caused by: Unable to resolve "buttonAtoms" in module "/foo/atoms.ts"
-      Caused by: \`buttonAtoms\` is the result of a function call, so yak cannot read it at build time.
+      Caused by: \`buttonAtoms\` is the result of a function call.
        --> /foo/atoms.ts:1:28
           |
         1 | export const buttonAtoms = atoms("shadow-md");
           |                            ^^^^^^^^^^^^^^^^^^ CallExpression
-      help: export a css template or a literal value instead
-      help: for atoms(), export the class names as a string and call atoms() in the file that uses it]
+      help: for atoms(), export the class names as a string and call atoms() in the file that uses them
+      see:  https://yak.style/docs/troubleshooting#an-atoms-value-from-another-file]
   `);
 });
 

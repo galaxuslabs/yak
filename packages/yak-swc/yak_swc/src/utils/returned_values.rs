@@ -4,9 +4,10 @@ use swc_core::ecma::ast::*;
 /// Collects the expressions that a template interpolation can give to the
 /// runtime, e.g. `outlined` for `${(p) => p.$on && outlined}`
 ///
-/// If the interpolation returns a function, the runtime calls it too, so its
-/// result counts, e.g. `outlined` in `${(p) => () => outlined}`.
-/// A helper declared in a body does not count, e.g. `outlined` in
+/// If the interpolation returns a function, the runtime calls it too, so the
+/// values of that function are collected as well, e.g. `outlined` in
+/// `${(p) => () => outlined}`.
+/// A function declared in a body is not followed, e.g. `outlined` in
 /// `${(p) => { const get = () => outlined; return get(); }}`, where only the
 /// call `get()` is returned
 pub fn returned_values(expr: &Expr) -> Vec<&Expr> {
@@ -43,6 +44,7 @@ fn collect_value<'a>(expr: &'a Expr, values: &mut Vec<&'a Expr>) {
         collect_value(last, values);
       }
     }
+    // Anything else is a value, also a call, as its result is only known at runtime
     value => values.push(value),
   }
 }

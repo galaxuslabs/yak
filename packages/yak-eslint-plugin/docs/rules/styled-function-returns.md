@@ -8,11 +8,11 @@
 
 <!-- end auto-generated rule header -->
 
-Reports a function in a `styled` or `css` literal that stands on its own and returns a value without styles, like a string or a call.
+Reports a function in a `styled` or `css` literal that returns a value without styles, like a string or a call.
 
 ## Reason why
 
-A function in a `styled` or `css` literal has one of two jobs, and its place in the CSS decides which:
+A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or adds class names:
 
 ```tsx
 const Button = styled.button<{ $color: string; $active: boolean }>`
@@ -25,44 +25,31 @@ const Button = styled.button<{ $color: string; $active: boolean }>`
 `;
 ```
 
-The first function stands after a property, so it sets a CSS value and can return a string or a number. The second function stands on its own, so it adds class names. It has to return a `css` literal, an `atoms()` call or nothing.
-
-A string at the second place drops the styles, and nothing tells you:
+Wrap the CSS in a `css` literal, otherwise the function adds no styles:
 
 ```tsx
 const Button = styled.button<{ $active: boolean }>`
-  ${({ $active }) => $active && "font-weight: bold;"}
+  ${({ $active }) => $active && "font-weight: bold;"} // reported
+  ${({ $active }) => $active && css`font-weight: bold;`} // fine
 `;
 ```
 
-The fix is to wrap the CSS in a `css` literal, like `` $active && css`font-weight: bold;` ``. A number, `true`, a calculation, an object or an array adds no styles either. To set a CSS value, write the function after a property.
+A number, `true`, a calculation, an object or an array adds no styles either. To set a CSS value, write the function after a property.
 
-A returned call adds no styles either, and the build fails for it. yak reads a `css` literal at build time, and only where a `styled` or `css` literal uses it directly. A `css` literal that a helper returns arrives empty:
+Return the `css` literal from the function itself instead of a call, otherwise the build fails:
 
 ```tsx
 const focusRing = () => css`outline: 2px solid blue;`;
 
 const Button = styled.button<{ $active: boolean }>`
-  ${({ $active }) => $active && focusRing()} // reported: adds no styles
+  ${({ $active }) => $active && focusRing()} // reported: the build fails
   ${({ $active }) => $active && css`outline: 2px solid blue;`} // fine
 `;
 ```
 
-A call that only checks something, like `assertNever`, returns nothing. It needs no `return` in front of it:
+`atoms()` is the one call that the function can return.
 
-```tsx
-default:
-  return assertNever($size); // reported
-
-default:
-  assertNever($size); // fine: the call still runs, and nothing is returned
-```
-
-`atoms()` is the one call that adds class names when it is returned.
-
-An imported mixin is empty at runtime for the same reason, and the build fails for it. A local mixin works, because yak
-replaces it with its class name at build time. For an imported mixin, wrap it in a `css` literal, so yak reads its
-styles from the other file:
+Wrap an imported mixin in a `css` literal too, otherwise the build fails:
 
 ```tsx
 import { outlined } from "./mixins";
@@ -73,18 +60,7 @@ const Button = styled.button<{ $active: boolean }>`
 `;
 ```
 
-An `atoms()` value from another file can't be wrapped like this, because yak can't read its classes at build time.
-Export the class names as a string instead and call `atoms()` once in the file that uses them:
-
-```tsx
-import { buttonClasses } from "./shared"; // "shadow-md rounded"
-
-const buttonAtoms = atoms(buttonClasses);
-
-const Button = styled.button<{ $active: boolean }>`
-  ${({ $active }) => $active && buttonAtoms}
-`;
-```
+For an `atoms()` value from another file, see [Troubleshooting](https://yak.style/docs/troubleshooting#an-atoms-value-from-another-file).
 
 ## Rule details
 

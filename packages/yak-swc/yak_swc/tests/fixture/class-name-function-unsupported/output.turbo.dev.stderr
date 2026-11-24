@@ -1,13 +1,9 @@
   x The imported value "mixin" applies no styles when a function returns it.
-  | Wrap a css mixin in a css template:
+  | Wrap "mixin" in a css literal:
   | 
   | ${(p) => p.$on && css`${mixin}`}
   | 
-  | For atoms, export the class names as a string and call atoms() once in this file:
-  | 
-  | const buttonAtoms = atoms(buttonClasses);
-  | ${(p) => p.$on && buttonAtoms}
-  | 
+  | See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function
     ,-[input.js:35:1]
  34 | export const MixinReturn = styled.div<{ $on: boolean }>`
  35 |   ${({ $on }) => $on && mixin}

@@ -25,8 +25,9 @@ const callFix =
  * So `${({ $on }) => $on && focusRing()}` adds no class name and no CSS.
  * `atoms()` is the one call that adds class names at runtime
  *
- * An imported mixin is empty at runtime for the same reason, and the build
- * fails for it. A css`...` literal around it lets yak read it from the other file
+ * An imported mixin that a function returns is empty at runtime too, and the
+ * build fails for it. Inside a css`...` literal, yak copies its styles from the
+ * other file at build time
  */
 export const styledFunctionReturns = createRule("styled-function-returns", {
   meta: {
@@ -44,7 +45,7 @@ export const styledFunctionReturns = createRule("styled-function-returns", {
       callReturn: `${expected} A css\`...\` literal that \`{{name}}()\` returns adds no styles. ${callFix} \`{{example}}\`.`,
       callReturnWithoutName: `${expected} A css\`...\` literal that this call returns adds no styles. ${callFix} \`assertNever($size);\`.`,
       taggedTemplateReturn: `${expected} Only a css\`...\` literal adds styles here, and this tagged template is none.`,
-      importReturn: `${expected} The imported mixin \`{{name}}\` adds no styles here, and the build fails. Wrap it in a css\`...\` literal, like \`{{fixed}}\`. For atoms, export the class names as a string and call atoms() once in this file.`,
+      importReturn: `${expected} A function that returns an imported mixin adds no styles, and the build fails. Wrap \`{{name}}\` in a css\`...\` literal, like \`{{fixed}}\`.`,
       wrapInCss: "Wrap `{{name}}` in a css`...` literal",
     },
     schema: [],
@@ -105,7 +106,7 @@ export const styledFunctionReturns = createRule("styled-function-returns", {
         case "MemberExpression": {
           const name = rootName(node);
           if (name === undefined || !imports.has(name)) {
-            // a prop or a local constant can hold a css`...` literal
+            // a prop or a local constant can hold a css`...` literal, only an import surely fails
             return;
           }
           const text = context.sourceCode.getText(node);

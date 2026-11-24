@@ -568,12 +568,12 @@ function explainUnsupported(
 
   if (hint === "CallExpression") {
     lines.push(
-      `\`${specifier}\` is the result of a function call, so yak cannot read it at build time.`,
+      `\`${specifier}\` is the result of a function call.`,
     );
     if (snippet) lines.push(snippet);
     lines.push(
-      `  help: export a css template or a literal value instead`,
-      `  help: for atoms(), export the class names as a string and call atoms() in the file that uses it`,
+      `  help: for atoms(), export the class names as a string and call atoms() in the file that uses them`,
+      `  see:  https://yak.style/docs/troubleshooting#an-atoms-value-from-another-file`,
     );
     return lines.join("\n");
   }

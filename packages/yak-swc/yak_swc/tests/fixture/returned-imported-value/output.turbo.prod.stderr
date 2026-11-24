@@ -1,13 +1,9 @@
   x The imported value "outlined" applies no styles when a function returns it.
-  | Wrap a css mixin in a css template:
+  | Wrap "outlined" in a css literal:
   | 
   | ${(p) => p.$on && css`${outlined}`}
   | 
-  | For atoms, export the class names as a string and call atoms() once in this file:
-  | 
-  | const buttonAtoms = atoms(buttonClasses);
-  | ${(p) => p.$on && buttonAtoms}
-  | 
+  | See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function
     ,-[input.js:13:1]
  12 | const Imported = styled.div<{ $on?: boolean }>`
  13 |   ${(p) => p.$on && outlined}
@@ -15,15 +11,11 @@
  14 | `;
     `----
   x The imported value "mixins.large" applies no styles when a function returns it.
-  | Wrap a css mixin in a css template:
+  | Wrap "mixins.large" in a css literal:
   | 
   | ${(p) => p.$on && css`${mixins.large}`}
   | 
-  | For atoms, export the class names as a string and call atoms() once in this file:
-  | 
-  | const buttonAtoms = atoms(buttonClasses);
-  | ${(p) => p.$on && buttonAtoms}
-  | 
+  | See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function
     ,-[input.js:17:1]
  16 | const Namespace = styled.div<{ $on?: boolean }>`
  17 |   ${(p) => (p.$on ? mixins.large : null)}
@@ -31,43 +23,35 @@
  18 | `;
     `----
   x The imported value "outlined" applies no styles when a function returns it.
-  | Wrap a css mixin in a css template:
+  | Wrap "outlined" in a css literal:
   | 
   | ${(p) => p.$on && css`${outlined}`}
   | 
-  | For atoms, export the class names as a string and call atoms() once in this file:
-  | 
-  | const buttonAtoms = atoms(buttonClasses);
-  | ${(p) => p.$on && buttonAtoms}
-  | 
+  | See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function
     ,-[input.js:24:1]
  23 |       if (p.$on) {
  24 |         return outlined;
     :                ^^^^^^^^
  25 |       }
     `----
-  x The call "getMixin()" applies no styles when a function returns it, as yak reads styles at build time.
-  | Return a css template or a mixin from this function instead:
+  x The call "getMixin()" applies no styles when a function returns it.
+  | Return the css literals or mixins from the arrow function itself:
   | 
   | ${(p) => (p.$big ? large : small)}
   | 
-  | A call that only checks something, like assertNever(), needs no return.
-  | For atoms, call atoms() here, or use a constant like const buttonAtoms = atoms(buttonClasses);
-  | 
+  | See https://yak.style/docs/troubleshooting#a-call-returned-from-a-function
     ,-[input.js:32:1]
  31 | const Call = styled.div`
  32 |   ${() => getMixin()}
     :           ^^^^^^^^^^
  33 | `;
     `----
-  x The call "size()" applies no styles when a function returns it, as yak reads styles at build time.
-  | Return a css template or a mixin from this function instead:
+  x The call "size()" applies no styles when a function returns it.
+  | Return the css literals or mixins from the arrow function itself:
   | 
   | ${(p) => (p.$big ? large : small)}
   | 
-  | A call that only checks something, like assertNever(), needs no return.
-  | For atoms, call atoms() here, or use a constant like const buttonAtoms = atoms(buttonClasses);
-  | 
+  | See https://yak.style/docs/troubleshooting#a-call-returned-from-a-function
     ,-[input.js:38:1]
  37 | const Helper = styled.div<{ $big?: boolean }>`
  38 |   ${(p) => size(p.$big)};
