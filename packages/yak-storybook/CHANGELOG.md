@@ -1,5 +1,9 @@
 # @yak/storybook
 
+## 10.2.0
+
+No changes in this release.
+
 ## 10.1.0
 
 ### Patch Changes
