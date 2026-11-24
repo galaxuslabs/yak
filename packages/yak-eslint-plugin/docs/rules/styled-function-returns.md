@@ -1,6 +1,6 @@
 # @yak/styled-function-returns
 
-📝 Enforces that a function used as a mixin in a yak styled/css literal returns a css literal or nothing.
+📝 Enforces that a function outside a CSS property in a yak styled/css literal returns a css literal or nothing.
 
 💼 This rule is enabled in the ✅ `recommended` config.
 
@@ -8,7 +8,7 @@
 
 <!-- end auto-generated rule header -->
 
-Reports a function in a `styled` or `css` literal that returns a value without styles, like a string or a call.
+Reports a function in a `styled` or `css` literal that returns a value without styles, like a string or a call like `size($big)`.
 
 ## Reason why
 
@@ -36,20 +36,21 @@ const Button = styled.button<{ $active: boolean }>`
 
 A number, `true`, a calculation, an object or an array adds no styles either. To set a CSS value, write the function after a property.
 
-Return the `css` literal from the function itself instead of a call, otherwise the build fails:
+Return the `css` literal from the function itself instead of a call, otherwise the build fails. To reuse the styles, make a `css` constant instead of a function:
 
 ```tsx
-const focusRing = () => css`outline: 2px solid blue;`;
+const getFocusRing = () => css`outline: 2px solid blue;`;
+const focusRing = css`outline: 2px solid blue;`;
 
 const Button = styled.button<{ $active: boolean }>`
-  ${({ $active }) => $active && focusRing()} // reported: the build fails
-  ${({ $active }) => $active && css`outline: 2px solid blue;`} // fine
+  ${({ $active }) => $active && getFocusRing()} // reported: the build fails
+  ${({ $active }) => $active && focusRing} // fine
 `;
 ```
 
-`atoms()` is the one call that the function can return.
+The only call you can return is `atoms()`.
 
-Wrap an imported mixin in a `css` literal too, otherwise the build fails:
+A mixin from the same file works as is, like `focusRing` above. Wrap a mixin imported from another file in a `css` literal, otherwise the build fails:
 
 ```tsx
 import { outlined } from "./mixins";
@@ -60,7 +61,7 @@ const Button = styled.button<{ $active: boolean }>`
 `;
 ```
 
-For an `atoms()` value from another file, see [Troubleshooting](https://yak.style/docs/troubleshooting#an-atoms-value-from-another-file).
+An `atoms()` value imported from another file does not work in a `css` literal either. See [Troubleshooting](https://yak.style/docs/troubleshooting#an-atoms-value-from-another-file).
 
 ## Rule details
 

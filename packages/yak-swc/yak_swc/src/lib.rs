@@ -245,7 +245,7 @@ Use the form `property: value;`.";
 fn returned_import_error(name: &str) -> String {
   format!(
     "The imported value \"{name}\" applies no styles when a function returns it.\n\
-     Wrap \"{name}\" in a css literal:\n\n\
+     A mixin from the same file works as is, but \"{name}\" is imported and needs a css literal around it:\n\n\
      ${{(p) => p.$on && css`${{{name}}}`}}\n\n\
      See https://yak.style/docs/troubleshooting#an-imported-mixin-returned-from-a-function"
   )

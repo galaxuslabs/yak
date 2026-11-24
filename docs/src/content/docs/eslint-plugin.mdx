@@ -297,9 +297,9 @@ A function that needs another statement can turn the rule off with `// eslint-di
 
 ### styled-function-returns
 
-Reports a function in a `styled` or `css` literal that returns a value without styles, like a string or a call.
+Reports a function in a `styled` or `css` literal that returns a value without styles, like a string or a call like `size($big)`.
 
-A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or works as a mixin and adds styles, when it stands on its own. Wrap the CSS in a `css` literal, otherwise it doesn't get any styles.
+A function in a `styled` or `css` literal either sets a CSS value, when it stands after a property, or works as a mixin and adds styles, when it stands on its own. Wrap the CSS in a `css` literal. Without it, the component gets no styles from this function.
 
 Example:
 
@@ -310,7 +310,7 @@ styled.button<{ $active: boolean }>`
 `;
 ```
 
-Also imported mixins need to be wrapped in `css` in order that they return the correct styles.
+A function can return a mixin from the same file as is. A mixin imported from another file needs a `css` literal around it, or the build fails:
 
 ```tsx title="example.tsx"
 import { outlined } from "./mixins";
@@ -321,7 +321,7 @@ styled.button<{ $active: boolean }>`
 `;
 ```
 
-For an `atoms()` value from another file, see [Troubleshooting](/docs/troubleshooting#an-atoms-value-from-another-file).
+An `atoms()` value imported from another file does not work in a `css` literal either. See [Troubleshooting](/docs/troubleshooting#an-atoms-value-from-another-file).
 
 ## Next steps
 

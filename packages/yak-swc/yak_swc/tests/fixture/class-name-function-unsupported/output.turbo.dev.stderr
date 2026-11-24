@@ -1,5 +1,5 @@
   x The imported value "mixin" applies no styles when a function returns it.
-  | Wrap "mixin" in a css literal:
+  | A mixin from the same file works as is, but "mixin" is imported and needs a css literal around it:
   | 
   | ${(p) => p.$on && css`${mixin}`}
   | 

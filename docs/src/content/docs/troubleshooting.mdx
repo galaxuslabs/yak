@@ -82,7 +82,7 @@ alone.
 
 ### An imported mixin returned from a function
 
-> The imported value "…" applies no styles when a function returns it.
+> The imported value "outlined" applies no styles when a function returns it.
 
 An imported mixin adds its styles only where the template uses it directly, like `${outlined}`, or inside a `css`
 literal. A function that returns the imported mixin itself adds no styles. Wrap the imported mixin in a `css` literal:
@@ -101,11 +101,10 @@ editor.
 
 ### A call returned from a function
 
-> The call "…()" applies no styles when a function returns it.
+> The call "size()" applies no styles when a function returns it.
 
-The arrow function in the template must return its `css` literals and mixins itself. A function that returns the
-result of another function adds no styles, even when the other function returns local mixins like `large`. Write the
-condition in the arrow function itself:
+Write the condition in the arrow function itself, and return the mixins or `css` literals from there. Do not call
+another function to pick them, even when it returns mixins from the same file like `large`:
 
 ```tsx title="button.tsx"
 const large = css`font-size: 24px;`;
@@ -118,8 +117,12 @@ const Button = styled.button<{ $big?: boolean }>`
 `;
 ```
 
-`atoms()` is the one call that the arrow function can return. The [`@yak/styled-function-returns`](/docs/eslint-plugin#styled-function-returns) lint rule
-shows this error in your editor.
+To reuse styles without a condition, make a `css` constant instead of a function, like
+``const focusRing = css`outline: 2px solid blue;` ``, and use `${focusRing}`.
+
+The only call you can return is `atoms()`. The
+[`@yak/styled-function-returns`](/docs/eslint-plugin#styled-function-returns) lint rule shows this error in your
+editor.
 
 ### Dynamic values must be wrapped in arrow functions
 
@@ -188,8 +191,8 @@ at build time, so any key, array access and computed value works there.
 
 > `buttonAtoms` is the result of a function call.
 
-From a plain `.ts` or `.js` module, yak can use strings, numbers, objects and `css` literals, but not the result of a
-call like `atoms("shadow-md")`. Export the class names as a string instead:
+yak cannot import the result of `atoms()` from another file. A string, a number, an object or a `css` literal works.
+Export the class names as a string instead:
 
 ```ts title="shared.ts"
 export const buttonClasses = "shadow-md rounded";

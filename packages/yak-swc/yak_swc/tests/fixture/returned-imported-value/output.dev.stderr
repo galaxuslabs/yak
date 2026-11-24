@@ -1,5 +1,5 @@
   x The imported value "outlined" applies no styles when a function returns it.
-  | Wrap "outlined" in a css literal:
+  | A mixin from the same file works as is, but "outlined" is imported and needs a css literal around it:
   | 
   | ${(p) => p.$on && css`${outlined}`}
   | 
@@ -11,7 +11,7 @@
  14 | `;
     `----
   x The imported value "mixins.large" applies no styles when a function returns it.
-  | Wrap "mixins.large" in a css literal:
+  | A mixin from the same file works as is, but "mixins.large" is imported and needs a css literal around it:
   | 
   | ${(p) => p.$on && css`${mixins.large}`}
   | 
@@ -23,7 +23,7 @@
  18 | `;
     `----
   x The imported value "outlined" applies no styles when a function returns it.
-  | Wrap "outlined" in a css literal:
+  | A mixin from the same file works as is, but "outlined" is imported and needs a css literal around it:
   | 
   | ${(p) => p.$on && css`${outlined}`}
   | 
