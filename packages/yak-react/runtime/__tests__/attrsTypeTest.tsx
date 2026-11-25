@@ -1,6 +1,7 @@
 import React from "react";
 import { styled } from "../styled";
 import { css } from "../cssLiteral";
+import type { YakComponent } from "../publicStyledApi";
 
 type Equal<X, Y> =
   (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false;
@@ -100,4 +101,71 @@ const PropsSetByAttrsBecomeOptional = () => {
   <LabeledWithAttrs $label="two" />;
   // @ts-expect-error
   <LabeledWithAttrs />;
+};
+
+const AttrsOnAComponentThatIsGenericOverTags = () => {
+  type Tag = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "div" | "label" | "legend";
+  const Title = <T extends Tag>(
+    _: { as: T; size: "small" | "large" } & React.JSX.IntrinsicElements[T],
+  ) => null;
+
+  const Static = styled(Title).attrs({ as: "h1" })``;
+  <Static size="small" />;
+  <Static size="small" as="h2" />;
+  // @ts-expect-error
+  <Static />;
+  // @ts-expect-error
+  <Static size="medium" />;
+
+  const Dynamic = styled(Title).attrs(({ size }) => ({ as: "h1", $size: size }))<{
+    $tone: string;
+  }>`
+    ${({ $size, $tone }) => $size + $tone}
+  `;
+  <Dynamic size="small" $tone="dark" />;
+  // @ts-expect-error
+  <Dynamic size="small" />;
+};
+
+const AttrsKeepUnionProps = () => {
+  type Shape = { kind: "circle"; radius: number } | { kind: "text"; label: string };
+  const Base = (_: Shape) => null;
+
+  // a key that only one union member has
+  const WithRadius = styled(Base).attrs({ radius: 1 })``;
+  <WithRadius kind="circle" />;
+  <WithRadius kind="circle" radius={2} />;
+  <WithRadius kind="text" label="two" />;
+  // @ts-expect-error
+  <WithRadius kind="text" />;
+
+  // the discriminator of the union
+  const WithKind = styled(Base).attrs({ kind: "circle" })``;
+  <WithKind radius={2} />;
+  // @ts-expect-error
+  <WithKind kind="text" radius={2} />;
+
+  const WithTemplateProps = styled.div.attrs({ $radius: 1 })<
+    { $kind: "circle"; $radius: number } | { $kind: "text"; $label: string }
+  >``;
+  <WithTemplateProps $kind="circle" />;
+  <WithTemplateProps $kind="circle" $radius={2} />;
+  <WithTemplateProps $kind="text" $label="two" />;
+};
+
+const AttrsKeepTheTypeNextToAnIndexSignature = () => {
+  const Base = (_: { [key: string]: unknown; $size: number }) => null;
+  const WithAttrs = styled(Base).attrs({ $size: 2 })``;
+  <WithAttrs />;
+  <WithAttrs $size={3} />;
+  // @ts-expect-error
+  <WithAttrs $size="3" />;
+};
+
+const AttrsThatSetOnlyOptionalPropsKeepTheTypeShort = () => {
+  type DivProps = React.JSX.IntrinsicElements["div"];
+  const Static = styled.div.attrs({ id: "a", "data-foo": "" })``;
+  assert<Equal<typeof Static, YakComponent<DivProps>>>();
+  const WithTemplateProps = styled.div.attrs({ id: "a" })<{ $on: boolean }>``;
+  assert<Equal<typeof WithTemplateProps, YakComponent<{ $on: boolean } & DivProps>>>();
 };
