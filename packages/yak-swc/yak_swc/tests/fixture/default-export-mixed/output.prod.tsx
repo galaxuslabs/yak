@@ -18,10 +18,5 @@ const Container = /*YAK EXPORTED STYLED:Container:ym7uBBu2*//*YAK Extracted CSS:
   background: yellow;
 }
 */ /*#__PURE__*/ __yak.__yak_div("ym7uBBu2");
-export default /*YAK EXPORTED STYLED:default:ym7uBBu2*//*YAK Extracted CSS:
-.ym7uBBu2 {
-  padding: 20px;
-  background: yellow;
-}
-*/ Container;
+export default /*YAK EXPORTED STYLED:default:ym7uBBu2*/ Container;
 export { Button };

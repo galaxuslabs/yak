@@ -50,12 +50,8 @@ pub trait YakTransform {
   fn get_css_reference_name(&self) -> Option<String> {
     None
   }
-  /// Get a comment prefix for the current variable as default export
-  fn get_default_export_comment_prefix(&self) -> Option<String> {
-    None
-  }
   /// Get a comment marker for the current variable exported under another name
-  /// through a local export list e.g. `export { foo as bar }` or `export { foo as default }`
+  /// e.g. `export { foo as bar }`, `export { foo as default }` or `export default foo`
   fn get_export_name_comment(&self, _exported_name: &Wtf8Atom, _css_code: &str) -> Option<String> {
     None
   }
@@ -279,21 +275,6 @@ impl YakTransform for TransformCssMixin {
     } else {
       None
     }
-  }
-
-  /// Replaces the current variable name with "default" for the comment marker
-  fn get_default_export_comment_prefix(&self) -> Option<String> {
-    Some(format!(
-      "YAK EXPORTED MIXIN:default{}",
-      self
-        .export_name
-        .parts
-        .iter()
-        .skip(1)
-        .map(|atom| encode_percent(atom.to_string_lossy().as_ref()))
-        .collect::<Vec<String>>()
-        .join(":"),
-    ))
   }
 
   /// Same marker as for the variable itself, with the first name part replaced by the exported name
@@ -547,14 +528,6 @@ impl YakTransform for TransformStyled {
 
   fn omit_class_name_argument(&mut self) {
     self.omit_class_name_argument = true;
-  }
-
-  /// Replaces the current variable name with "default" for the comment marker
-  fn get_default_export_comment_prefix(&self) -> Option<String> {
-    Some(format!(
-      "YAK EXPORTED STYLED:default:{}*//*YAK Extracted CSS:",
-      self.class_name.clone()
-    ))
   }
 
   /// Marker only (the CSS is already extracted with the variable itself)
