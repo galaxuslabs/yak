@@ -1,0 +1,39 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "enabledManagers": ["npm"],
+  "schedule": ["before 6am on the first day of the month"],
+  "minimumReleaseAge": "7 days",
+  "vulnerabilityAlerts": { "enabled": true },
+  "packageRules": [
+    {
+      "description": "Ranges that ship to users move only for a new major or a CVE",
+      "matchDepTypes": ["pnpm.catalog.core"],
+      "rangeStrategy": "replace"
+    },
+    {
+      "matchDepTypes": ["pnpm.catalog.core"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "enabled": false
+    },
+    {
+      "matchDepTypes": ["pnpm.catalog.dev"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "dev dependencies"
+    },
+    {
+      "description": "We don't support the release version 2 yet",
+      "matchPackageNames": ["@solidjs/babel-plugin", "@solidjs/vite-plugin"],
+      "enabled": false
+    },
+    {
+      "description": "@monaco-editor/react does not resolve 0.55 and later",
+      "matchPackageNames": ["monaco-editor"],
+      "enabled": false
+    },
+    {
+      "description": "typescript-eslint and next build need the programmatic API that 7 lacks",
+      "matchPackageNames": ["typescript"],
+      "enabled": false
+    }
+  ]
+}
