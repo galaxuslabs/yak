@@ -31,6 +31,7 @@
     "test:snapshots": "pnpm --filter=@yak/react --filter=@yak/swc run test:snapshots",
     "test:e2e": "pnpm --filter=yak-e2e test",
     "test:e2e:build": "pnpm --filter=yak-e2e test:build",
+    "update:deps": "node scripts/update-deps.mts",
     "watch": "pnpm run --filter=@yak/react watch",
     "release": "pnpm --filter='./packages/*' run build && npm_config_ignore_scripts=true changeset publish"
   },
