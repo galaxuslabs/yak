@@ -75,12 +75,23 @@ export interface StyledLiteral<T, TInterpolationProps = T, TAttrsKeys extends Pr
           NoInfer<TCSSProps> & { theme: Accessor<YakTheme> }
       >
     >
-  ): YakComponent<MakeOptional<TCSSProps & T, TAttrsKeys>>;
+  ): YakComponent<MakeOptional<TCSSProps, TAttrsKeys> & MakeOptional<T, TAttrsKeys>>;
 }
 
+/**
+ * Makes the props that `attrs` sets optional. If they already are, it returns
+ * `TProps` itself for shorter types in editors
+ *
+ * `TProps extends object` handles each member of a union on its own, so a prop
+ * that only one member has is not lost
+ */
 type MakeOptional<TProps, TKeys extends PropertyKey> = [TKeys] extends [never]
   ? TProps
-  : FastOmit<TProps & object, TKeys> & Partial<Pick<TProps, Extract<keyof TProps, TKeys>>>;
+  : TProps extends object
+    ? {} extends Pick<TProps, TKeys & keyof TProps>
+      ? TProps
+      : FastOmit<TProps, TKeys> & Partial<Pick<TProps, TKeys & keyof TProps>>
+    : TProps;
 
 /**
  * Function variant of attrs that receives current props and returns additional props.
@@ -129,7 +140,13 @@ export type Attrs<TBaseProps, TIn extends object = {}, TOut extends object = {}>
  * Utility type to merge two object types, with properties from B taking precedence.
  * If a property exists in both A and B, the property from B is used.
  */
-export type Substitute<A extends object, B extends object> = FastOmit<A, keyof B> & B;
+export type Substitute<A extends object, B extends object> = OmitIfAny<A, keyof B> & B;
+
+/**
+ * Returns `T` itself if there is nothing to omit, for faster type checks and
+ * shorter types in editors
+ */
+type OmitIfAny<T extends object, U extends PropertyKey> = [U] extends [never] ? T : FastOmit<T, U>;
 
 /**
  * Union type of all valid HTML element tag names.

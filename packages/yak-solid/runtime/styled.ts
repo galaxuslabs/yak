@@ -241,7 +241,7 @@ const yakStyled: StyledInternal = (Component, attrs) => {
       : createDynamicComponent(renderTarget, attrsFn, runtimeStyleProcessor, skip, !!baked);
 
     const metadata: ComponentMetadata = [mergedAttrs, runtimeStyleProcessor, targetComponent];
-    return Object.assign(Yak, { [yakComponentSymbol]: metadata });
+    return Object.assign(Yak as AnyComponent<any>, { [yakComponentSymbol]: metadata });
   };
 };
 
