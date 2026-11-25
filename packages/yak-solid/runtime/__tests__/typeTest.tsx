@@ -2,6 +2,7 @@
  * Type-only tests for the public @yak/solid API (pre-compilation typings).
  * Checked by `pnpm test:types`, never executed.
  */
+import type { JSX } from "@solidjs/web";
 import { css, styled, keyframes, useTheme, YakThemeProvider, YakThemeContext } from "@yak/solid";
 
 // styled with intrinsic elements infers tag props
@@ -91,6 +92,33 @@ const LabeledWithAttrs = styled(Labeled).attrs({ $size: 2 })``;
 const labeledUsage = <LabeledWithAttrs $label="two" />;
 // @ts-expect-error - props that attrs does not set stay required
 const labeledMissingUsage = <LabeledWithAttrs />;
+
+// attrs work on a component that is generic over several tags
+type TitleTag = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "div" | "label" | "legend";
+const Title = <T extends TitleTag>(
+  _: { as: T; size: "small" | "large" } & JSX.IntrinsicElements[T],
+) => null;
+const TitleWithAttrs = styled(Title).attrs({ as: "h1" })``;
+const titleUsage = <TitleWithAttrs size="small" />;
+// @ts-expect-error - props that attrs does not set stay required
+const titleMissingUsage = <TitleWithAttrs />;
+
+// attrs keep a prop that only one union member has
+type Shape = { kind: "circle"; radius: number } | { kind: "text"; label: string };
+const ShapeBase = (_: Shape) => null;
+const ShapeWithAttrs = styled(ShapeBase).attrs({ radius: 1 })``;
+const shapeUsage = <ShapeWithAttrs kind="circle" />;
+const shapeOverrideUsage = <ShapeWithAttrs kind="circle" radius={2} />;
+const shapeOtherUsage = <ShapeWithAttrs kind="text" label="two" />;
+// @ts-expect-error - the other union member keeps its required props
+const shapeMissingUsage = <ShapeWithAttrs kind="text" />;
+
+// attrs keep the type of a prop next to an index signature
+const IndexedBase = (_: { [key: string]: unknown; $size: number }) => null;
+const IndexedWithAttrs = styled(IndexedBase).attrs({ $size: 2 })``;
+const indexedUsage = <IndexedWithAttrs />;
+// @ts-expect-error - a prop that attrs sets keeps its type
+const indexedWrongUsage = <IndexedWithAttrs $size="3" />;
 
 // keyframes returns an animation-name usable in interpolations
 const rotate = keyframes`
