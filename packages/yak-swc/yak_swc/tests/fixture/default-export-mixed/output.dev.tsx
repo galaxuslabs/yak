@@ -24,10 +24,5 @@ const Container = /*YAK EXPORTED STYLED:Container:input_Container_m7uBBu*//*YAK 
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_Container_m7uBBu"), {
     "displayName": "Container"
 });
-export default /*YAK EXPORTED STYLED:default:input_Container_m7uBBu*//*YAK Extracted CSS:
-.input_Container_m7uBBu {
-  padding: 20px;
-  background: yellow;
-}
-*/ Container;
+export default /*YAK EXPORTED STYLED:default:input_Container_m7uBBu*/ Container;
 export { Button };

@@ -1691,13 +1691,10 @@ where
           self.all_css_rules.push(css_code.trim().into());
         }
 
-        let is_default_export = self.is_default_exported(&current_variable_id);
-        if let Some(default_prefix) = transform.get_default_export_comment_prefix() {
-          if is_default_export {
-            // add default export comment based on the "original" component to be used when generating the default export
-            self.default_export_comment =
-              Some(format!("{}\n{}\n", default_prefix, css_code.trim()).into());
-          }
+        // The marker for `export default Button`, same as for `export { Button as default }`
+        if is_default_exported {
+          self.default_export_comment =
+            transform.get_export_name_comment(&"default".into(), css_code.trim());
         }
 
         if self.emit_css_comments {
