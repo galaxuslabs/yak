@@ -1,5 +1,17 @@
 # @yak/solid
 
+## 0.6.1
+
+### Patch Changes
+
+- Fixes a bug where `attrs` on a component that accepts the props of several HTML elements failed with "Expression produces a union type that is too complex to represent", like `` styled(Title).attrs({ id: "title" })`color: red;` `` with `const Title = (props: JSX.IntrinsicElements["h1" | "p" | "label"]) => …` ([#810](https://github.com/galaxuslabs/yak/pull/810))
+
+- Fixes a bug where a component that extends a default exported styled component from the same file kept the base styles, like `Blue` rendering red in ``const Base = styled.div`color: red;`; export const Blue = styled(Base)`color: blue;`; export default Base;`` ([#808](https://github.com/galaxuslabs/yak/pull/808)) Thanks @drewbitt!
+
+- Fixes a bug where installs failed under a minimum release age because the required version of `@babel/parser` or `@oxlint/plugins` was too new ([#811](https://github.com/galaxuslabs/yak/pull/811))
+- Updated dependencies:
+  - @yak/swc@10.2.1
+
 ## 0.6.0
 
 ### Minor Changes

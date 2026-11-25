@@ -1,5 +1,11 @@
 # @yak/eslint-plugin
 
+## 2.1.1
+
+### Patch Changes
+
+- Fixes a bug where installs failed under a minimum release age because the required version of `@babel/parser` or `@oxlint/plugins` was too new ([#811](https://github.com/galaxuslabs/yak/pull/811))
+
 ## 2.1.0
 
 ### Minor Changes
