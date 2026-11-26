@@ -84,6 +84,9 @@ import { getYakThemeContext } from "@yak/react/context/baseContext"; // [!code +
 Search the whole project, not only your source files, because `package.json`, TypeScript paths and the Storybook or
 Jest config often reference the package name too.
 
+The rule [`@yak/no-next-yak-import`](/docs/eslint-plugin#no-next-yak-import) of `@yak/eslint-plugin` reports every
+import that still uses `next-yak` and fixes it with `--fix`.
+
 <Callout type="warn">
   `@yak/swc` only transforms imports from the new package names. A file that still imports from `next-yak` is left
   untouched by the compiler, so its styles silently go missing.
