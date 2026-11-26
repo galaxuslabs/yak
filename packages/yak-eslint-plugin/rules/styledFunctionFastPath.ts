@@ -38,7 +38,7 @@ export const styledFunctionFastPath = createRule("styled-function-fast-path", {
       functionExpression:
         "A `function` expression in a styled/css literal makes the component render slower. Use an arrow function like `({ $active }) => { if ($active) return css`...`; }`.",
       nullishReturn:
-        "This `return` can be `undefined` or `null`, so the component renders slower. In a CSS value like `width: ${...}px`, the {{statement}} around it can end without `return` while more code follows. Return a value that is never `undefined` or `null` here, like a number, a string or `$width ?? 0`.",
+        "This `return` can be `undefined` or `null`, so the component renders slower. In a CSS value like `width: ${...}px`, the {{statement}} around it can end without `return` while more code follows. Return a value that is never `undefined` or `null` here, like a number or a string.",
       propsObject:
         "`{{name}}` is passed on as a whole object, so the component renders slower. Read the props by name and pass those, like `({ $a, $b }) => helper({ $a, $b })`.",
       propsComputedKey:
