@@ -8,7 +8,11 @@ const helperModules: Record<string, unknown> = {
   "@swc/helpers/_/_interop_require_default": InteropDefault,
 };
 
-/** Evaluates the compiled CommonJS files and returns the main file's default export. */
+/**
+ * Evaluates the compiled CommonJS files and returns the component the preview renders:
+ * the main file's default export, or its export named `App` when it has no default export.
+ * It returns undefined when the main file has neither, and the runtime shows a warning.
+ */
 export function runModules(files: TransformedFile[], { modules, packages }: Runtime): unknown {
   const byName = new Map(files.map((file) => [file.name, file]));
   const cache = new Map<string, Record<string, unknown>>();
@@ -34,5 +38,6 @@ export function runModules(files: TransformedFile[], { modules, packages }: Runt
     );
   }
 
-  return load(files[0]).default;
+  const main = load(files[0]);
+  return main.default ?? main.App;
 }

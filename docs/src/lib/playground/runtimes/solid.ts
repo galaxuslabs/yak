@@ -2,7 +2,7 @@ import * as Solid from "solid-js";
 import * as SolidWeb from "@solidjs/web";
 import * as YakSolid from "@yak/solid";
 import * as YakSolidInternal from "@yak/solid/internal";
-import { ERROR_CLASS } from "./error";
+import { ERROR_CLASS, MISSING_EXPORT_MESSAGE, WARNING_CLASS } from "./error";
 import type { Runtime } from "./types";
 
 const errorElement = (error: unknown) => {
@@ -10,6 +10,15 @@ const errorElement = (error: unknown) => {
   pre.className = ERROR_CLASS;
   pre.textContent = error instanceof Error ? error.message : String(error);
   return pre;
+};
+
+const warningElement = () => {
+  const message = document.createElement("p");
+  message.textContent = MISSING_EXPORT_MESSAGE;
+  const warning = document.createElement("div");
+  warning.className = WARNING_CLASS;
+  warning.append(message);
+  return warning;
 };
 
 export const runtime: Runtime = {
@@ -31,6 +40,10 @@ export const runtime: Runtime = {
     return {
       render(exported) {
         clear();
+        if (exported === undefined) {
+          container.append(warningElement());
+          return;
+        }
         if (typeof exported !== "function") return;
         const App = exported as Solid.Component;
         try {

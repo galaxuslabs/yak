@@ -5,7 +5,7 @@ import { createRoot } from "react-dom/client";
 import * as Yak from "@yak/react";
 import * as YakInternal from "@yak/react/internal";
 import * as YakJsxRuntime from "@yak/react/jsx-runtime";
-import { ERROR_CLASS } from "./error";
+import { ERROR_CLASS, MISSING_EXPORT_MESSAGE, WARNING_CLASS } from "./error";
 import type { Runtime } from "./types";
 
 export const runtime: Runtime = {
@@ -36,6 +36,13 @@ export const runtime: Runtime = {
 };
 
 function toElement(exported: unknown): ReactNode {
+  if (exported === undefined) {
+    return (
+      <div className={WARNING_CLASS}>
+        <p>{MISSING_EXPORT_MESSAGE}</p>
+      </div>
+    );
+  }
   if (typeof exported === "function") {
     const App = exported as React.ComponentType;
     return <App />;
