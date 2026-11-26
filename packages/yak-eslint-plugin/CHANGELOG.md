@@ -1,5 +1,11 @@
 # @yak/eslint-plugin
 
+## 2.2.0
+
+### Minor Changes
+
+- Adds the rule `@yak/no-next-yak-import`, an error in the recommended config: it reports an import from the old package name like `import { styled } from "next-yak";` and `--fix` changes it to `import { styled } from "@yak/react";` ([#816](https://github.com/galaxuslabs/yak/pull/816))
+
 ## 2.1.1
 
 ### Patch Changes

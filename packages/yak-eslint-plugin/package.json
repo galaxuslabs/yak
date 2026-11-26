@@ -1,6 +1,6 @@
 {
   "name": "@yak/eslint-plugin",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "ESLint and Oxlint rules for yak, the zero-runtime CSS-in-JS library for React and Solid.",
   "keywords": [
     "css-in-js",
