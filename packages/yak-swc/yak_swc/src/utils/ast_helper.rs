@@ -40,6 +40,15 @@ pub fn binary(op: BinaryOp, left: Box<Expr>, right: Box<Expr>) -> Box<Expr> {
   }))
 }
 
+/// `void 0`
+pub fn void_zero() -> Box<Expr> {
+  Box::new(Expr::Unary(UnaryExpr {
+    span: DUMMY_SP,
+    op: UnaryOp::Void,
+    arg: Box::new(Expr::Lit(Lit::Num(Number::from(0.0)))),
+  }))
+}
+
 /// `(expr)`
 pub fn paren(expr: Box<Expr>) -> Box<Expr> {
   Box::new(Expr::Paren(ParenExpr {

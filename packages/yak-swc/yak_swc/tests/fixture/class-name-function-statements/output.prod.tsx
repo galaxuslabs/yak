@@ -130,8 +130,8 @@ export const BreakBeforeLastCase = /*YAK EXPORTED STYLED:BreakBeforeLastCase:ym7
             return /*#__PURE__*/ css("ym7uBBuc");
     }
 });
-// stays unfolded: at a CSS value position the expression would hold the
-// statements after the `switch` twice, so the whole component stays unfolded
+// at a CSS value position the last case can end without `return`, because
+// every `return` in the `switch` returns a number
 export const LastCaseThenStatements = /*YAK EXPORTED STYLED:LastCaseThenStatements:ym7uBBud*//*YAK Extracted CSS:
 .ym7uBBue {
   padding: 2px;
@@ -139,33 +139,14 @@ export const LastCaseThenStatements = /*YAK EXPORTED STYLED:LastCaseThenStatemen
 .ym7uBBud {
   width: var(--ym7uBBuf);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBud", ({ $size })=>$size === "s" && /*#__PURE__*/ css("ym7uBBue"), {
-    "--ym7uBBuf": /*#__PURE__*/ __yak_cssValue(({ $size })=>{
-        switch($size){
-            case "s":
-                return 2;
-            default:
-                log($size);
-        }
-        log($size);
-        return 8;
-    }, "px")
-});
-// stays unfolded: at a CSS value position the expression would hold the
-// statements after the `if` twice
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $size }, style)=>"ym7uBBud" + ($size === "s" ? " ym7uBBue" : "") + (style["--ym7uBBuf"] = /*#__PURE__*/ __yak_cssValue(($size === "s" ? 2 : (log($size), void 0)) ?? (log($size), 8), "px"), ""));
+// at a CSS value position the `if` can end without `return`, because it has
+// no `return` that could return `null` or `undefined`
 export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutReturnThenStatements:ym7uBBug*//*YAK Extracted CSS:
 .ym7uBBug {
   width: var(--ym7uBBuh);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBug", {
-    "--ym7uBBuh": /*#__PURE__*/ __yak_cssValue(({ $on })=>{
-        if ($on) {
-            log($on);
-        }
-        log($on);
-        return 8;
-    }, "px")
-});
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $on }, style)=>"ym7uBBug" + (style["--ym7uBBuh"] = /*#__PURE__*/ __yak_cssValue(($on ? (log($on), void 0) : void 0) ?? (log($on), 8), "px"), ""));
 // stays unfolded: a statement after a `return`
 export const StatementAfterReturn = /*YAK EXPORTED STYLED:StatementAfterReturn:ym7uBBui*//*YAK Extracted CSS:
 .ym7uBBuj {

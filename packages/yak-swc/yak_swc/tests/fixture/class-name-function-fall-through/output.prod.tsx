@@ -172,21 +172,13 @@ export const GuardBlockAtTheEnd = /*YAK EXPORTED STYLED:GuardBlockAtTheEnd:ym7uB
   color: red;
 }
 */ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $big })=>"ym7uBBut" + ($on ? $big ? " ym7uBBuu" : "" : ""));
-// stays unfolded: at a CSS value position, `null` is a value that a `??`
-// would skip
+// at a CSS value position, every `return` in the guard block has to return a
+// value that is never `null` or `undefined`, see css-value-function-fall-through
 export const CssValuePosition = /*YAK EXPORTED STYLED:CssValuePosition:ym7uBBuv*//*YAK Extracted CSS:
 .ym7uBBuv {
   width: var(--ym7uBBuw);
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuv", {
-    "--ym7uBBuw": /*#__PURE__*/ __yak_cssValue(({ $a, $b })=>{
-        if ($a) {
-            if ($b) return 2;
-        }
-        if ($b) return 4;
-        return 8;
-    }, "px")
-});
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $a, $b }, style)=>"ym7uBBuv" + (style["--ym7uBBuw"] = /*#__PURE__*/ __yak_cssValue(($a ? $b ? 2 : void 0 : void 0) ?? ($b ? 4 : 8), "px"), ""));
 // stays unfolded: `return void 0;` is no value the fold knows
 export const ReturnVoidZeroInGuard = /*YAK EXPORTED STYLED:ReturnVoidZeroInGuard:ym7uBBux*//*YAK Extracted CSS:
 .ym7uBBuy {

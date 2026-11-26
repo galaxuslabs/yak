@@ -168,8 +168,8 @@ export const GuardBlockAtTheEnd = styled.div<{ $on: boolean; $big: boolean }>`
   }}
 `;
 
-// stays unfolded: at a CSS value position, `null` is a value that a `??`
-// would skip
+// at a CSS value position, every `return` in the guard block has to return a
+// value that is never `null` or `undefined`, see css-value-function-fall-through
 export const CssValuePosition = styled.div<{ $a: boolean; $b: boolean }>`
   width: ${({ $a, $b }) => {
     if ($a) {

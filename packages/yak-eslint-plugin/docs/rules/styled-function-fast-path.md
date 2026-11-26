@@ -72,12 +72,13 @@ styled.button`
   }}
 `;
 
-// a function that sets a CSS value can not leave a branch without `return`
-// when more than a single `return` follows
+// in a function that sets a CSS value, a branch that can end without `return`
+// while more code follows can not return a value that can be `undefined` or
+// `null`, like `$width`
 styled.button`
-  width: ${({ $active, $big }) => {
+  width: ${({ $active, $big, $width }) => {
     if ($active) {
-      if ($big) return 8;
+      if ($big) return $width;
     }
     if ($big) return 4;
     return 2;
@@ -135,4 +136,25 @@ styled.button`
     return css`color: blue;`;
   }}
 `;
+
+// a function that sets a CSS value can do the same when every `return` in the
+// block returns a value that is never `undefined` or `null`
+styled.button`
+  width: ${({ $active, $big, $width }) => {
+    if ($active) {
+      if ($big) return $width ?? 8;
+    }
+    if ($big) return 4;
+    return 2;
+  }}px;
+`;
 ```
+
+The compiled function goes on after such a block with `??`, which skips `undefined` and `null`. A function that sets a CSS value can return them on purpose, so the rule accepts a `return` in such a block only for a value that is never `undefined` or `null`:
+
+- a literal other than `null`, like `2`, `"auto"` or a template literal
+- a calculation or comparison like `$n * 2`, `-$n` or `$n > 2`
+- `a ? 1 : 2` when both branches count, and `a || 1` or `a ?? 1` when the right side counts
+- `a && 1` when both sides count, because a falsy `a` can be `null`
+
+A read like `$width` and a call like `getWidth()` can return anything.

@@ -54,7 +54,7 @@ impl ClassNameFolder<'_> {
   pub(super) fn fold_style_value(&mut self, value: &Expr) -> Option<Box<Expr>> {
     match unwrap_type_casts(value) {
       Expr::Arrow(_) => {
-        // `null` is a value here, so no branch falls through, see `BodyEnd`
+        // `null` is a value here, see `BodyEnd::CssValueFallThrough`
         let body = self.bind_arrow(value, BodyEnd::CssValue)?;
         self.params.substitute(&body)
       }

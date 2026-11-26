@@ -196,21 +196,13 @@ export const GuardBlockAtTheEnd = /*YAK EXPORTED STYLED:GuardBlockAtTheEnd:input
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on, $big })=>"input_GuardBlockAtTheEnd_m7uBBu" + ($on ? $big ? " input_GuardBlockAtTheEnd___m7uBBu" : "" : "")), {
     "displayName": "GuardBlockAtTheEnd"
 });
-// stays unfolded: at a CSS value position, `null` is a value that a `??`
-// would skip
+// at a CSS value position, every `return` in the guard block has to return a
+// value that is never `null` or `undefined`, see css-value-function-fall-through
 export const CssValuePosition = /*YAK EXPORTED STYLED:CssValuePosition:input_CssValuePosition_m7uBBu*//*YAK Extracted CSS:
 .input_CssValuePosition_m7uBBu {
   width: var(--input_CssValuePosition__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_CssValuePosition_m7uBBu", {
-    "--input_CssValuePosition__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b })=>{
-        if ($a) {
-            if ($b) return 2;
-        }
-        if ($b) return 4;
-        return 8;
-    }, "px")
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $a, $b }, style)=>"input_CssValuePosition_m7uBBu" + (style["--input_CssValuePosition__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue(($a ? $b ? 2 : void 0 : void 0) ?? ($b ? 4 : 8), "px"), "")), {
     "displayName": "CssValuePosition"
 });
 // stays unfolded: `return void 0;` is no value the fold knows

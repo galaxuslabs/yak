@@ -3,12 +3,13 @@ use swc_core::{
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
     BinaryOp, BreakStmt, CallExpr, Callee, Decl, Expr, Id, Ident, Invalid, Lit, MemberProp,
-    OptChainBase, ParenExpr, Pat, SeqExpr, Stmt, SwitchCase, SwitchStmt, VarDecl, VarDeclKind,
+    OptChainBase, ParenExpr, Pat, SeqExpr, Stmt, SwitchCase, SwitchStmt, UnaryOp, VarDecl,
+    VarDeclKind,
   },
   ecma::visit::{Visit, VisitWith},
 };
 
-use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts};
+use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts, void_zero};
 
 /// Turns the block body of a runtime expression into the one expression it
 /// returns, so the folded function can take it like an arrow without a block:
@@ -33,10 +34,9 @@ use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts};
 ///
 /// Each condition stays in the order the user wrote it and runs as often as
 /// in the block. A path that reaches the end of the function without a
-/// `return` yields `undefined`. In a function of class names, a path that
-/// leaves an `if`, a block or a `switch` without a `return` and has more
-/// statements after it yields the fall through marker, see
-/// `fall_through_to_expr`
+/// `return` yields `undefined`. A path that leaves an `if`, a block or a
+/// `switch` without a `return` and has more statements after it yields the
+/// fall through marker, see `fall_through_to_expr`
 pub(super) fn block_body_to_expr(
   stmts: &[Stmt],
   consts: &mut ConstReads,
@@ -45,6 +45,7 @@ pub(super) fn block_body_to_expr(
   let Some((first, rest)) = stmts.split_first() else {
     return Some(match end {
       BodyEnd::FallThrough => fall_through_marker(),
+      BodyEnd::CssValueFallThrough => void_zero(),
       BodyEnd::ClassNames | BodyEnd::CssValue => undefined(),
     });
   };
@@ -54,25 +55,29 @@ pub(super) fn block_body_to_expr(
     return None;
   }
   // a single `return` after the branch is copied, see `branch_to_expr`
-  if end != BodyEnd::CssValue
-    && has_open_branch(first)
-    && !rest.is_empty()
-    && !matches!(rest, [Stmt::Return(_)])
-  {
+  if has_open_branch(first) && !rest.is_empty() && !matches!(rest, [Stmt::Return(_)]) {
     return fall_through_to_expr(first, rest, consts, end);
   }
   match first {
-    Stmt::Return(return_stmt) if can_drop(rest) => Some(match &return_stmt.arg {
-      Some(arg) => wrap_in_parens(arg),
-      None => undefined(),
-    }),
+    Stmt::Return(return_stmt) if can_drop(rest) => {
+      // `??` would skip a returned `null`, see `BodyEnd::CssValueFallThrough`
+      if end == BodyEnd::CssValueFallThrough
+        && !return_stmt.arg.as_deref().is_some_and(is_never_nullish)
+      {
+        return None;
+      }
+      Some(match &return_stmt.arg {
+        Some(arg) => wrap_in_parens(arg),
+        None => undefined(),
+      })
+    }
     Stmt::Empty(_) => block_body_to_expr(rest, consts, end),
     Stmt::Block(block) if can_drop(rest) => branch_to_expr(&block.stmts, rest, consts, end),
     // `if (a) { return x; } return y;` -> `a ? x : y`
     Stmt::If(if_stmt) => {
       // with an `else` the statements after the `if` never run, or they are
-      // the one `return` that `branch_to_expr` copies. In a function of class
-      // names, `fall_through_to_expr` takes every other `if` that reaches them
+      // the one `return` that `branch_to_expr` copies. `fall_through_to_expr`
+      // takes every other `if` that reaches them
       if if_stmt.alt.is_some() && !can_drop(rest) {
         return None;
       }
@@ -127,11 +132,21 @@ pub(super) enum BodyEnd {
   /// nothing
   ClassNames,
   /// The end of a function at a CSS value position like `width: ${fn}px;`:
-  /// `undefined`. No branch falls through, see `fall_through_to_expr`
+  /// `undefined`
   CssValue,
-  /// The end of a branch with more statements after it: the fall through
-  /// marker
+  /// The end of a branch with more statements after it in a function of
+  /// class names: the fall through marker
   FallThrough,
+  /// The end of a branch with more statements after it in a function at a
+  /// CSS value position: `void 0`
+  ///
+  /// That function returns its value as it is, and `null` or `undefined` is a
+  /// real value there. `??` would go on with the statements after the branch
+  /// for it. So every `return` in the branch has to return a value that is
+  /// never nullish, see `is_never_nullish`, or the function keeps its
+  /// unfolded output. `void 0` is then the only nullish value the branch
+  /// yields, and it stands for the path that leaves the branch
+  CssValueFallThrough,
 }
 
 /// Folds an `if`, a block or a `switch` that can end without a `return` and
@@ -160,16 +175,32 @@ pub(super) enum BodyEnd {
 /// and in source order, and no statement is copied
 ///
 /// A function at a CSS value position like `width: ${fn}px;` returns its value
-/// as it is, and `null` or `undefined` is a real value there. `??` would go on
-/// with the statements after the block for it, so that function keeps its
-/// unfolded output, see `BodyEnd::CssValue`
+/// as it is, and `null` or `undefined` is a real value there. It folds the
+/// same way only when every `return` in the block returns a value that is
+/// never nullish, see `BodyEnd::CssValueFallThrough`:
+///
+/// ```text
+/// if ($on) {
+///   if ($big) return 1;
+/// }
+/// if ($wide) return 3;
+/// return 2;
+/// ->
+/// ($on ? ($big ? 1 : void 0) : void 0) ?? ($wide ? 3 : 2)
+/// ```
+///
+/// A `return $width;` in the block keeps the unfolded output
 fn fall_through_to_expr(
   first: &Stmt,
   rest: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
 ) -> Option<Box<Expr>> {
-  let branch = block_body_to_expr(std::slice::from_ref(first), consts, BodyEnd::FallThrough)?;
+  let branch_end = match end {
+    BodyEnd::ClassNames | BodyEnd::FallThrough => BodyEnd::FallThrough,
+    BodyEnd::CssValue | BodyEnd::CssValueFallThrough => BodyEnd::CssValueFallThrough,
+  };
+  let branch = block_body_to_expr(std::slice::from_ref(first), consts, branch_end)?;
   let rest = block_body_to_expr(rest, consts, end)?;
   Some(binary(BinaryOp::NullishCoalescing, branch, rest))
 }
@@ -376,9 +407,8 @@ pub(super) fn is_discarded_expression(expr: &Expr) -> bool {
 /// $on ? ($big ? css("yB1") : css("yB2")) : css("yB2")
 /// ```
 ///
-/// Other statements after the branch need `fall_through_to_expr`, which a
-/// function of class names takes before it gets here. A function at a CSS
-/// value position keeps its unfolded output for them
+/// Other statements after the branch need `fall_through_to_expr`, which
+/// `block_body_to_expr` takes before it gets here
 fn branch_to_expr(
   branch: &[Stmt],
   rest: &[Stmt],
@@ -566,6 +596,41 @@ fn wrap_in_parens(expr: &Expr) -> Box<Expr> {
       }))
     }
     _ => Box::new(expr.clone()),
+  }
+}
+
+/// Returns true if the value can never be `null` or `undefined`, see
+/// `BodyEnd::CssValueFallThrough`:
+///
+/// - a literal other than `null`, e.g. `2`, `"auto"` or `true`, and a template
+///   literal like `` `${$n}px` ``
+/// - `-$n`, `!$on` or `typeof $n`: every unary operator but `void` returns a
+///   number, a string or a boolean
+/// - `$n * 2`, `$n + "px"` or `$n > 2`: every binary operator but `&&`, `||`
+///   and `??` returns a number, a string or a boolean
+/// - `a ? 1 : 2` when both branches count
+/// - `a || 1` and `a ?? 1` when the right side counts: they return the left
+///   side only when it is truthy or not nullish
+/// - `a && 1` when both sides count: it returns the left side when it is
+///   falsy, and a falsy `$a` can be `null`
+/// - `(log($a), 1)` when the last expression counts
+///
+/// A read like `$width` or `props.x` and a call like `getWidth()` can return
+/// anything. The lint rule `@yak/styled-function-fast-path` uses the same
+/// definition in `isNeverNullish`
+fn is_never_nullish(expr: &Expr) -> bool {
+  match unwrap_type_casts(expr) {
+    Expr::Lit(lit) => !matches!(lit, Lit::Null(_)),
+    Expr::Tpl(_) => true,
+    Expr::Unary(unary) => unary.op != UnaryOp::Void,
+    Expr::Bin(bin) => match bin.op {
+      BinaryOp::LogicalAnd => is_never_nullish(&bin.left) && is_never_nullish(&bin.right),
+      BinaryOp::LogicalOr | BinaryOp::NullishCoalescing => is_never_nullish(&bin.right),
+      _ => true,
+    },
+    Expr::Cond(cond) => is_never_nullish(&cond.cons) && is_never_nullish(&cond.alt),
+    Expr::Seq(seq) => seq.exprs.last().is_some_and(|last| is_never_nullish(last)),
+    _ => false,
   }
 }
 
