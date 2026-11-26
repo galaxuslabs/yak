@@ -227,7 +227,7 @@ function readShareLink(): {
   notice: string | null;
 } {
   const params = new URLSearchParams(window.location.search);
-  const output = OUTPUT_KINDS.find((kind) => kind === params.get("output")) ?? "css";
+  const output = OUTPUT_KINDS.find((kind) => kind === params.get("output")) ?? "jsx";
   const requested = params.get("framework");
   const framework = isFrameworkId(requested) ? requested : DEFAULT_FRAMEWORK;
   const options = optionsFromParams(params);
