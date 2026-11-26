@@ -18,7 +18,7 @@ export const NeverNullishShapes = /*YAK EXPORTED STYLED:NeverNullishShapes:input
 .input_NeverNullishShapes_m7uBBu {
   width: var(--input_NeverNullishShapes__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $a, $b, $n }, style)=>"input_NeverNullishShapes_m7uBBu" + (style["--input_NeverNullishShapes__width_m7uBBu"] = ($a ? $b ? $n > 2 ? $n > 4 ? 4 : 2 : 1 : $n > 8 ? `${$n}px` : $n > 6 ? $n * 2 : $n > 4 ? $n || 4 : $n > 3 ? $n ?? 3 : void 0 : void 0) ?? ($b ? $n : 0), "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $a, $b, $n }, style)=>"input_NeverNullishShapes_m7uBBu" + (style["--input_NeverNullishShapes__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue(($a ? $b ? $n > 2 ? $n > 4 ? 4 : 2 : 1 : $n > 8 ? `${$n}px` : $n > 6 ? $n * 2 : $n > 4 ? $n || 4 : $n > 3 ? $n ?? 3 : void 0 : void 0) ?? ($b ? $n : 0), ""), "")), {
     "displayName": "NeverNullishShapes"
 });
 // the last case of a `switch` ends without `return`

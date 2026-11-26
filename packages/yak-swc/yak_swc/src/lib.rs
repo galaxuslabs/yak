@@ -77,6 +77,9 @@ pub struct Config {
   pub prefix: Option<String>,
   /// Improves react DevTools experience by setting displayName
   /// on the component to match the original component name.
+  /// The loaders turn it on for development builds, so it also wraps a
+  /// dynamic value without a unit in `__yak_cssValue(value, "")`, which throws
+  /// for `undefined` in development.
   /// Disabled by default.
   #[serde(default)]
   pub display_names: bool,
@@ -312,7 +315,9 @@ where
   /// Flag to check if we are inside a css attribute
   inside_element_with_css_attribute: bool,
   /// If true, additional code will be injected to provide readable `displayName` values
-  /// in React DevTools and stack traces for every yak component
+  /// in React DevTools and stack traces for every yak component.
+  /// The loaders turn it on for development builds, so it also turns on the
+  /// development check for a dynamic value without a unit, see `Config::display_names`
   display_names: bool,
   /// Import mode to determine how to import the generated css
   import_mode: CssImportConfig,
@@ -960,7 +965,16 @@ ${{() => {var}}};\n",
               unit.map_or(0, |unit_str| unit_str.len())
             };
 
-            let css_variable_runtime_expr = if unit.is_some() || negate {
+            // A value without a unit needs no helper, but development builds
+            // wrap it anyway. `cssValue` throws there for `undefined`, `null`
+            // or `false`. React leaves such a value out of the style, and the
+            // element then inherits the variable from an ancestor that
+            // renders the same component.
+            // Development builds are the ones with display names.
+            // e.g. styled.div`width: ${({$w}) => $w};`
+            //   development -> { "--x": __yak_cssValue(({$w}) => $w, "") }
+            //   production  -> { "--x": ({$w}) => $w }
+            let css_variable_runtime_expr = if unit.is_some() || negate || self.display_names {
               css_value_call(
                 *expr.clone(),
                 self

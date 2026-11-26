@@ -7,6 +7,10 @@ use swc_core::{
 /// unit and the sign that the compiler removed from the css around it
 /// e.g. `left: ${({$x}) => $x}px;`  -> __yak_cssValue(({$x}) => $x, "px")
 /// e.g. `left: -${({$x}) => $x}px;` -> __yak_cssValue(({$x}) => $x, "px", true)
+///
+/// Development builds also wrap a value without a unit, so the helper throws
+/// for `undefined`, `null` or `false` there
+/// e.g. `left: ${({$x}) => $x};` -> __yak_cssValue(({$x}) => $x, "")
 pub fn css_value_call(expr: Expr, helper: Ident, unit: &str, negate: bool) -> Expr {
   let mut args = vec![
     expr.into(),

@@ -85,7 +85,7 @@ export const NestedCssWithIf = /*YAK EXPORTED STYLED:NestedCssWithIf:input_Neste
 .input_NestedCssWithIf___m7uBBu {
   color: var(--input_NestedCssWithIf__color_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $on, $color }, style)=>"input_NestedCssWithIf_m7uBBu" + ($on ? " input_NestedCssWithIf___m7uBBu" + (style["--input_NestedCssWithIf__color_m7uBBu"] = $color ? $color : "red", "") : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $on, $color }, style)=>"input_NestedCssWithIf_m7uBBu" + ($on ? " input_NestedCssWithIf___m7uBBu" + (style["--input_NestedCssWithIf__color_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($color ? $color : "red", ""), "") : "")), {
     "displayName": "NestedCssWithIf"
 });
 // the path with `$on` and without `$big` continues with the last `return`

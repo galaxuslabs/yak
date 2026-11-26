@@ -1,4 +1,4 @@
-import { css, __yak_mergeCssProp } from "@yak/react/internal";
+import { css, __yak_mergeCssProp, __yak_cssValue } from "@yak/react/internal";
 import "data:text/css;base64,LmlucHV0X0VsZW1fX3Nob3dfbTd1QkJ1IHsKICBjb2xvcjogcmVkOwp9LmlucHV0X0VsZW0yX19zaG93X203dUJCdSB7CiAgY29sb3I6IHJlZDsKfS5pbnB1dF9FbGVtM19fc2hvd19tN3VCQnUgewogIHBhZGRpbmc6IDEwcHg7Cn0uaW5wdXRfRWxlbTRfX3Nob3dfbTd1QkJ1IHsKICBjb2xvcjogZ3JlZW47Cn0uaW5wdXRfRWxlbTVfX3Byb3BzX3Nob3dfbTd1QkJ1IHsKICBjb2xvcjogcHVycGxlOwp9LmlucHV0X0VsZW02X19wcm9wc19zaG93X203dUJCdSB7CiAgZm9udC1zaXplOiAxNnB4Owp9LmlucHV0X0VsZW04X203dUJCdSB7CiAgY29sb3I6IHZhcigtLWlucHV0X0VsZW04X19jb2xvcl9tN3VCQnUpOwp9LmlucHV0X0VsZW05X203dUJCdSB7CiAgY29sb3I6IHZhcigtLWlucHV0X0VsZW05X19jb2xvcl9tN3VCQnUpOwp9LmlucHV0X0VsZW0xMF9tN3VCQnUgewogIHBhZGRpbmc6IHZhcigtLWlucHV0X0VsZW0xMF9fcGFkZGluZ19tN3VCQnUpOwp9LmlucHV0X0VsZW0xMV9tN3VCQnUgewogIGNvbG9yOiB2YXIoLS1pbnB1dF9FbGVtMTFfX2NvbG9yX203dUJCdSk7Cn0uaW5wdXRfRWxlbTEyX203dUJCdSB7CiAgY29sb3I6IHZhcigtLWlucHV0X0VsZW0xMl9fY29sb3JfbTd1QkJ1KTsKfS5pbnB1dF9FbGVtMTNfbTd1QkJ1IHsKICBmb250LXNpemU6IHZhcigtLWlucHV0X0VsZW0xM19fZm9udC1zaXplX203dUJCdSk7Cn0uaW5wdXRfRWxlbTE0X203dUJCdSB7CiAgZGlzcGxheTogdmFyKC0taW5wdXRfRWxlbTE0X19kaXNwbGF5X203dUJCdSk7Cn0uaW5wdXRfRWxlbTE1X19wcm9wc19hLWFuZC1wcm9wc19iX203dUJCdSB7CiAgY29sb3I6IHZhcigtLWlucHV0X0VsZW0xNV9fY29sb3JfbTd1QkJ1KTsKfQ==";
 const Elem = ()=>{
     const show = Math.random() > 0.5;
@@ -69,7 +69,7 @@ const Elem8 = ()=>{
   color: var(--input_Elem8__color_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "--input_Elem8__color_m7uBBu": ()=>show && "red"
+        "--input_Elem8__color_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>show && "red", "")
     }, "input_Elem8_m7uBBu"))}/>;
 };
 const Elem9 = ()=>{
@@ -79,7 +79,7 @@ const Elem9 = ()=>{
   color: var(--input_Elem9__color_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "--input_Elem9__color_m7uBBu": ()=>show && "red"
+        "--input_Elem9__color_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>show && "red", "")
     }, "input_Elem9_m7uBBu"), {
         className: "test-class"
     })}/>;
@@ -91,7 +91,7 @@ const Elem10 = ()=>{
   padding: var(--input_Elem10__padding_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "--input_Elem10__padding_m7uBBu": ()=>show && "10px"
+        "--input_Elem10__padding_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>show && "10px", "")
     }, "input_Elem10_m7uBBu"), {
         style: {
             padding: "5px"
@@ -105,7 +105,7 @@ const Elem11 = (props: any)=>{
   color: var(--input_Elem11__color_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "--input_Elem11__color_m7uBBu": ()=>show && "green"
+        "--input_Elem11__color_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>show && "green", "")
     }, "input_Elem11_m7uBBu"), props)}/>;
 };
 const Elem12 = (props: any)=>{
@@ -114,7 +114,7 @@ const Elem12 = (props: any)=>{
   color: var(--input_Elem12__color_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "--input_Elem12__color_m7uBBu": ()=>props.show && "purple"
+        "--input_Elem12__color_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>props.show && "purple", "")
     }, "input_Elem12_m7uBBu"), props.a, props.b)}/>;
 };
 const Elem13 = (props: any)=>{
@@ -123,7 +123,7 @@ const Elem13 = (props: any)=>{
   font-size: var(--input_Elem13__font-size_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "--input_Elem13__font-size_m7uBBu": ()=>props.show && "16px"
+        "--input_Elem13__font-size_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>props.show && "16px", "")
     }, "input_Elem13_m7uBBu"), {
         className: "main",
         style: {
@@ -137,7 +137,7 @@ const Elem14 = (props: any)=>{
   display: var(--input_Elem14__display_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "--input_Elem14__display_m7uBBu": ()=>props.show && "block"
+        "--input_Elem14__display_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>props.show && "block", "")
     }, "input_Elem14_m7uBBu"), {
         className: "empty-css"
     })}/>;
@@ -148,6 +148,6 @@ const Elem15 = (props: any)=>{
   color: var(--input_Elem15__color_m7uBBu);
 }
 */ /*#__PURE__*/ css(()=>props.a && /*#__PURE__*/ css("input_Elem15__props_a_m7uBBu", ()=>props.b && /*#__PURE__*/ css("input_Elem15__props_a-and-props_b_m7uBBu", {
-                "--input_Elem15__color_m7uBBu": ()=>props.c && "orange"
+                "--input_Elem15__color_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>props.c && "orange", "")
             })), "input_Elem15_m7uBBu"))}/>;
 };

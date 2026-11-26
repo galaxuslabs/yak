@@ -79,7 +79,7 @@ const Dot = /*YAK Extracted CSS:
   animation-range: max(0%, calc((var(--input_Dot__animation-range_m7uBBu) - 1) * 100% / (var(--input_Dot__animation-range_m7uBBu-01) - 1)))
 min(100%, calc((var(--input_Dot__animation-range_m7uBBu) + 1) * 100% / (var(--input_Dot__animation-range_m7uBBu-01) - 1)));
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $index, $slideCount }, style)=>"input_Dot_m7uBBu" + (style["--input_Dot__animation-range_m7uBBu"] = $index, style["--input_Dot__animation-range_m7uBBu-01"] = $slideCount, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $index, $slideCount }, style)=>"input_Dot_m7uBBu" + (style["--input_Dot__animation-range_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($index, ""), style["--input_Dot__animation-range_m7uBBu-01"] = /*#__PURE__*/ __yak_cssValue($slideCount, ""), "")), {
     "displayName": "Dot"
 });
 const Nested = /*YAK Extracted CSS:

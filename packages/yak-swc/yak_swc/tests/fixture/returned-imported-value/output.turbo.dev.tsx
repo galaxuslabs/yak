@@ -50,6 +50,6 @@ const PropertyValue = /*YAK Extracted CSS:
   color: var(--input_PropertyValue__color_m7uBBu);
   padding: var(--input_PropertyValue__padding_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $on }, style)=>"input_PropertyValue_m7uBBu" + (style["--input_PropertyValue__color_m7uBBu"] = $on ? colors.primary : colors.secondary, style["--input_PropertyValue__padding_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($on && spacing, "px"), "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $on }, style)=>"input_PropertyValue_m7uBBu" + (style["--input_PropertyValue__color_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($on ? colors.primary : colors.secondary, ""), style["--input_PropertyValue__padding_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($on && spacing, "px"), "")), {
     "displayName": "PropertyValue"
 });

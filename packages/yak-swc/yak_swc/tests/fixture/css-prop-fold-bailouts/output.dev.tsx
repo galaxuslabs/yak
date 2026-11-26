@@ -1,7 +1,7 @@
 // Adversarial shapes for the css prop fold - fold_css_expr folds css() calls,
 // ternaries and a top level `&&`, so every shape below pins either the fold or
 // the bail-out that keeps it on the runtime path
-import { css, __yak_mergeCssProp } from "@yak/react/internal";
+import { css, __yak_mergeCssProp, __yak_cssValue } from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 // folds: a top level `&&` becomes `on ? "class" : ""`
 // the fold has to keep the /*YAK Extracted CSS:*/ comment the loader parses,
@@ -47,6 +47,6 @@ const LogicalAndDynamic = ({ on, color }: {
   color: var(--input_LogicalAndDynamic__color_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "--input_LogicalAndDynamic__color_m7uBBu": ()=>color
+        "--input_LogicalAndDynamic__color_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>color, "")
     }, "input_LogicalAndDynamic_m7uBBu"))}/>; // mixin references (`css={mixin}`, `css={on && mixin}`) are rejected with a
  // compile error - see the css-prop-style-reference fixture

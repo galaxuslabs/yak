@@ -14,9 +14,11 @@ impl ClassNameFolder<'_> {
   /// `"--yX": __yak_cssValue(({ $x }) => $x, "px")` ->
   /// `style["--yX"] = __yak_cssValue($x, "px")`
   ///
-  /// `__yak_cssValue` returns a string for every value. A value without a
-  /// unit is written as it is, e.g. `style["--yX"] = $color`, so a missing
-  /// `$color` leaves the variable out of the style attribute
+  /// `__yak_cssValue` returns a string for every value. In production a value
+  /// without a unit is written as it is, e.g. `style["--yX"] = $color`, so a
+  /// missing `$color` leaves the variable out of the style attribute.
+  /// Development builds wrap it, e.g. `style["--yX"] = __yak_cssValue($color, "")`,
+  /// so a missing `$color` throws instead
   ///
   /// The runtime
   /// also calls a value again while it is a function; the folded function does

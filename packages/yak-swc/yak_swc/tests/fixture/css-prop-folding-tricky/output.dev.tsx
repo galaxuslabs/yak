@@ -1,4 +1,4 @@
-import { css, __yak_mergeCssProp } from "@yak/react/internal";
+import { css, __yak_mergeCssProp, __yak_cssValue } from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 const on = Math.random() > 0.5;
 const big = Math.random() > 0.5;
@@ -74,5 +74,5 @@ const MixedDynamic = ({ color }: {
   color: var(--input_MixedDynamic__color_m7uBBu);
 }
 */ /*#__PURE__*/ css({
-        "--input_MixedDynamic__color_m7uBBu": ()=>color
+        "--input_MixedDynamic__color_m7uBBu": /*#__PURE__*/ __yak_cssValue(()=>color, "")
     }, "input_MixedDynamic_m7uBBu"))}/>;

@@ -1,4 +1,4 @@
-import { styled } from "@yak/react/internal";
+import { styled, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 // Dynamic value wrapped in quotes should produce `var(--xxx)` (unquoted),
@@ -13,7 +13,7 @@ const Input = /*YAK Extracted CSS:
     content: var(--input_Input__content_m7uBBu-01);
   }
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_input(2, ({ $placeholder, $marker }, style)=>"input_Input_m7uBBu" + (style["--input_Input__content_m7uBBu"] = $placeholder, style["--input_Input__content_m7uBBu-01"] = $marker, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_input(2, ({ $placeholder, $marker }, style)=>"input_Input_m7uBBu" + (style["--input_Input__content_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($placeholder, ""), style["--input_Input__content_m7uBBu-01"] = /*#__PURE__*/ __yak_cssValue($marker, ""), "")), {
     "displayName": "Input"
 });
 // var() inside url() works because url() evaluates the var, so
@@ -22,7 +22,7 @@ const Bg = /*YAK Extracted CSS:
 .input_Bg_m7uBBu {
   background: url(var(--input_Bg__background_m7uBBu));
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $url }, style)=>"input_Bg_m7uBBu" + (style["--input_Bg__background_m7uBBu"] = $url, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $url }, style)=>"input_Bg_m7uBBu" + (style["--input_Bg__background_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($url, ""), "")), {
     "displayName": "Bg"
 });
 // Partial interpolation is intentionally NOT rewritten — the surrounding
@@ -34,6 +34,6 @@ const Partial = /*YAK Extracted CSS:
     content: "Hello var(--input_Partial__content_m7uBBu)";
   }
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_span(2, ({ $name }, style)=>"input_Partial_m7uBBu" + (style["--input_Partial__content_m7uBBu"] = $name, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_span(2, ({ $name }, style)=>"input_Partial_m7uBBu" + (style["--input_Partial__content_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($name, ""), "")), {
     "displayName": "Partial"
 });

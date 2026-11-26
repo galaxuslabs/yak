@@ -22,6 +22,17 @@
  * "--top": cssValue(({ $x }) => $x, "px", true),
  * ```
  *
+ * Development builds also wrap a value without a unit, so it gets the same
+ * check for a missing value. Production builds assign it as it is:
+ * ```tsx
+ * // width: ${({ $w }) => $w};
+ * "--width": cssValue(({ $w }) => $w, ""), // development
+ * "--width": ({ $w }) => $w,               // production
+ * ```
+ * With an empty unit a string stays the same and a number becomes its
+ * string, e.g. 2 becomes "2". React writes both the same way into a custom
+ * property, so the wrapper changes no valid value.
+ *
  * `negate` flips the sign: a number is negated, so -32 becomes "32px",
  * and a string loses or gains a leading minus, so "-2rem" becomes "2rem".
  * A string like "var(--gap)" turns into the invalid "-var(--gap)".
