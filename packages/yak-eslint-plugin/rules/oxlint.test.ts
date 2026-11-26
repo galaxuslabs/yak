@@ -106,3 +106,29 @@ ruleTester.run("@yak/styled-function-returns", yakPlugin.rules["styled-function-
     },
   ],
 });
+
+ruleTester.run("@yak/no-next-yak-import", yakPlugin.rules["no-next-yak-import"], {
+  valid: ["import { styled } from '@yak/react';"],
+  invalid: [
+    {
+      code: "import { styled } from 'next-yak';",
+      output: "import { styled } from '@yak/react';",
+      errors: [{ messageId: "renamed" }],
+    },
+    {
+      code: "const load = () => import('next-yak/withYak'); require('next-yak/vite');",
+      output: "const load = () => import('@yak/react/withYak'); require('@yak/react/vite');",
+      errors: [{ messageId: "renamed" }, { messageId: "renamed" }],
+    },
+    {
+      code: "declare module 'next-yak' { export interface YakTheme { color: string } }",
+      output: "declare module '@yak/react' { export interface YakTheme { color: string } }",
+      errors: [{ messageId: "renamedModule" }],
+    },
+    {
+      code: "import { cssLoader } from 'next-yak/loaders/css-loader';",
+      output: null,
+      errors: [{ messageId: "unknownSubpath" }],
+    },
+  ],
+});
