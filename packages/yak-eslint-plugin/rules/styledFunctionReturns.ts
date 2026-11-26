@@ -7,7 +7,7 @@ const expected =
   "A function outside a CSS property in a styled/css literal has to return a css`...` literal or nothing.";
 
 const callFix =
-  "Write the css`...` literal in this function, or remove the `return` in front of the call if it only checks something, like";
+  "If the call builds styles, write its css`...` literal in this function. If it only checks something, remove the `return` in front of the call";
 
 /**
  * Reports a value without styles that a function standing on its own
@@ -42,8 +42,8 @@ export const styledFunctionReturns = createRule("styled-function-returns", {
     messages: {
       stringReturn: `${expected} A string adds no styles here. Wrap the CSS in css\`...\`, or write the function after a property like \`color: \${...};\`.`,
       invalidReturn: `${expected} {{kind}} adds no styles here. Write the function after a property like \`color: \${...};\`.`,
-      callReturn: `${expected} A css\`...\` literal that \`{{name}}()\` returns adds no styles. ${callFix} \`{{example}}\`.`,
-      callReturnWithoutName: `${expected} A css\`...\` literal that this call returns adds no styles. ${callFix} \`assertNever($size);\`.`,
+      callReturn: `${expected} A css\`...\` literal that \`{{name}}()\` returns adds no styles. ${callFix}, like \`{{example}}\`.`,
+      callReturnWithoutName: `${expected} A css\`...\` literal that this call returns adds no styles. ${callFix}.`,
       taggedTemplateReturn: `${expected} Only a css\`...\` literal adds styles here, and this tagged template is none.`,
       importReturn: `${expected} A mixin from the same file works as is, but a mixin from another file needs a css\`...\` literal around it, or the build fails. Wrap \`{{name}}\` like \`{{fixed}}\`.`,
       wrapInCss: "Wrap `{{name}}` in a css`...` literal",
@@ -55,16 +55,23 @@ export const styledFunctionReturns = createRule("styled-function-returns", {
     const { before: beforeYak, importedNames, ImportDeclaration: trackYak } = importsYak();
     const imports = new Set<string>();
 
+    /** The source text of a node if it fits on one short line, like `getHelpers().focus` */
+    const shortText = (node: ESTree.Node) => {
+      const text = context.sourceCode.getText(node);
+      return text.length <= 40 && !text.includes("\n") ? text : undefined;
+    };
+
     /** The call as written, like `assertNever($size);`, or `name(...);` for a long or multi-line call */
     const example = (node: ESTree.CallExpression, name: string) => {
-      const text = context.sourceCode.getText(node);
-      return text.length <= 40 && !text.includes("\n") ? `${text};` : `${name}(...);`;
+      const text = shortText(node);
+      return text === undefined ? `${name}(...);` : `${text};`;
     };
 
     const check = (node: ESTree.Expression) => {
       switch (node.type) {
         case "CallExpression": {
-          const name = calleeName(node.callee);
+          // a callee without a plain name, like `getHelpers().focus`, is named by its source text
+          const name = calleeName(node.callee) ?? shortText(node.callee);
           if (name === undefined) {
             context.report({ node, messageId: "callReturnWithoutName" });
           } else if (name !== "atoms") {

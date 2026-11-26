@@ -83,6 +83,19 @@ ruleTester.run("@yak/styled-function-returns", yakPlugin.rules["styled-function-
       errors: [{ messageId: "callReturn" }],
     },
     {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && getHelpers().focus()}`;",
+      errors: [
+        {
+          messageId: "callReturn",
+          data: { name: "getHelpers().focus", example: "getHelpers().focus();" },
+        },
+      ],
+    },
+    {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && getHelpers({\n}).focus()}`;",
+      errors: [{ messageId: "callReturnWithoutName" }],
+    },
+    {
       code: [
         'import { styled, css } from "@yak/react";',
         'import { outlined } from "./mixins";',

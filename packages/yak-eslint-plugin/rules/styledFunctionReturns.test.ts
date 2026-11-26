@@ -287,7 +287,26 @@ ruleTester.run("yak-styled-function-returns", rule, {
     {
       name: "a call on the result of a call",
       code: code("styled.div`", "  ${({ $on }) => $on && getHelpers().focus()}", "`;"),
-      errors: [{ messageId: "callReturnWithoutName", line: 3 }],
+      errors: [
+        {
+          messageId: "callReturn",
+          data: { name: "getHelpers().focus", example: "getHelpers().focus();" },
+          line: 3,
+        },
+      ],
+    },
+    {
+      name: "a call whose callee spans several lines",
+      code: code(
+        "styled.div`",
+        "  ${({ $on, theme }) =>",
+        "    $on &&",
+        "    getHelpers({",
+        "      theme,",
+        "    }).focus()}",
+        "`;",
+      ),
+      errors: [{ messageId: "callReturnWithoutName", line: 5 }],
     },
     {
       name: "a tagged template other than css",
