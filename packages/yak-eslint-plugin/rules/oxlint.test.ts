@@ -72,7 +72,9 @@ ruleTester.run("@yak/styled-function-fast-path", yakPlugin.rules["styled-functio
 });
 
 ruleTester.run("@yak/styled-function-returns", yakPlugin.rules["styled-function-returns"], {
-  valid: [],
+  valid: [
+    "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => { if ($on) console.log('test'); }}`;",
+  ],
   invalid: [
     {
       code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && 'color: red;'}`;",
@@ -81,6 +83,58 @@ ruleTester.run("@yak/styled-function-returns", yakPlugin.rules["styled-function-
     {
       code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && helper()}`;",
       errors: [{ messageId: "callReturn" }],
+    },
+    {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && getHelpers().focus()}`;",
+      errors: [
+        {
+          messageId: "callReturn",
+          data: {
+            name: "getHelpers().focus",
+            constant: "$on && styles",
+            example: "({ $on }) => { if ($on) getHelpers().focus(); }",
+          },
+        },
+      ],
+    },
+    {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && getFocusRing()}`;",
+      errors: [
+        {
+          messageId: "callReturn",
+          data: {
+            name: "getFocusRing",
+            constant: "$on && focusRing",
+            example: "({ $on }) => { if ($on) getFocusRing(); }",
+          },
+        },
+      ],
+    },
+    {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && console.log('test')}`;",
+      errors: [
+        {
+          messageId: "callReturn",
+          data: {
+            name: "console.log",
+            constant: "$on && styles",
+            example: "({ $on }) => { if ($on) console.log('test'); }",
+          },
+        },
+      ],
+    },
+    {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $size }) => { switch ($size) { case 's': return css`padding: 1px;`; default: return assertNever($size); } }}`;",
+      errors: [
+        {
+          messageId: "callReturnStatement",
+          data: { name: "assertNever", example: "assertNever($size);" },
+        },
+      ],
+    },
+    {
+      code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => $on && getHelpers({\n}).focus()}`;",
+      errors: [{ messageId: "callReturnWithoutName" }],
     },
     {
       code: [

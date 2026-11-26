@@ -6,8 +6,10 @@ import { importsYak, isStyledOrCssTag } from "./utils.js";
 const expected =
   "A function outside a CSS property in a styled/css literal has to return a css`...` literal or nothing.";
 
-const callFix =
-  "Write the css`...` literal in this function, or remove the `return` in front of the call if it only checks something, like";
+const callWhy =
+  "That's why a function here can't return a call. If the call builds styles, make them a css constant and";
+
+const callDocs = "See https://yak.style/docs/troubleshooting#a-call-returned-from-a-function";
 
 /**
  * Reports a value without styles that a function standing on its own
@@ -42,8 +44,9 @@ export const styledFunctionReturns = createRule("styled-function-returns", {
     messages: {
       stringReturn: `${expected} A string adds no styles here. Wrap the CSS in css\`...\`, or write the function after a property like \`color: \${...};\`.`,
       invalidReturn: `${expected} {{kind}} adds no styles here. Write the function after a property like \`color: \${...};\`.`,
-      callReturn: `${expected} A css\`...\` literal that \`{{name}}()\` returns adds no styles. ${callFix} \`{{example}}\`.`,
-      callReturnWithoutName: `${expected} A css\`...\` literal that this call returns adds no styles. ${callFix} \`assertNever($size);\`.`,
+      callReturn: `yak can't see the styles that a call like \`{{name}}()\` returns. ${callWhy} use that, like \`{{constant}}\`. If it only does something, like logging, call it without returning its result: \`{{example}}\`. ${callDocs}`,
+      callReturnStatement: `yak can't see the styles that a call like \`{{name}}()\` returns. ${callWhy} return that. If it only does something, like a check, call it without returning its result: \`{{example}}\`. ${callDocs}`,
+      callReturnWithoutName: `yak can't see the styles that this call returns. ${callWhy} use that. If it only does something, like a check or logging, call it without returning its result. ${callDocs}`,
       taggedTemplateReturn: `${expected} Only a css\`...\` literal adds styles here, and this tagged template is none.`,
       importReturn: `${expected} A mixin from the same file works as is, but a mixin from another file needs a css\`...\` literal around it, or the build fails. Wrap \`{{name}}\` like \`{{fixed}}\`.`,
       wrapInCss: "Wrap `{{name}}` in a css`...` literal",
@@ -55,24 +58,74 @@ export const styledFunctionReturns = createRule("styled-function-returns", {
     const { before: beforeYak, importedNames, ImportDeclaration: trackYak } = importsYak();
     const imports = new Set<string>();
 
+    /** The source text of a node if it fits on one short line, like `getHelpers().focus` */
+    const shortText = (node: ESTree.Node) => {
+      const text = context.sourceCode.getText(node);
+      return text.length <= 40 && !text.includes("\n") ? text : undefined;
+    };
+
     /** The call as written, like `assertNever($size);`, or `name(...);` for a long or multi-line call */
     const example = (node: ESTree.CallExpression, name: string) => {
-      const text = context.sourceCode.getText(node);
-      return text.length <= 40 && !text.includes("\n") ? `${text};` : `${name}(...);`;
+      const text = shortText(node);
+      return text === undefined ? `${name}(...);` : `${text};`;
+    };
+
+    /**
+     * The data for a call that an arrow function returns without a `return`,
+     * built from the user's code where it has the shape `cond && call()`:
+     *
+     * ({ $on }) => $on && getFocusRing()
+     * -> constant `$on && focusRing`
+     * -> example `({ $on }) => { if ($on) getFocusRing(); }`
+     *
+     * Any other shape, or a part that is too long, gets a generic example
+     */
+    const expressionData = (
+      node: ESTree.CallExpression,
+      arrow: ESTree.ArrowFunctionExpression,
+      name: string,
+    ) => {
+      // `getFocusRing` -> `focusRing`, any other name -> `styles`
+      const getter = /^get([A-Z])(\w*)$/.exec(name);
+      const constant = getter ? `${getter[1].toLowerCase()}${getter[2]}` : "styles";
+      const body = arrow.body;
+      if (body.type === "LogicalExpression" && body.operator === "&&" && body.right === node) {
+        const params = arrow.params.map(shortText);
+        const condition = shortText(body.left);
+        const call = shortText(node);
+        if (condition !== undefined && call !== undefined && !params.includes(undefined)) {
+          return {
+            name,
+            constant: `${condition} && ${constant}`,
+            example: `(${params.join(", ")}) => { if (${condition}) ${call}; }`,
+          };
+        }
+      }
+      return { name, constant, example: `{ if (condition) ${name}(); }` };
     };
 
     const check = (node: ESTree.Expression) => {
       switch (node.type) {
         case "CallExpression": {
-          const name = calleeName(node.callee);
+          // a callee without a plain name, like `getHelpers().focus`, is named by its source text
+          const name = calleeName(node.callee) ?? shortText(node.callee);
           if (name === undefined) {
             context.report({ node, messageId: "callReturnWithoutName" });
           } else if (name !== "atoms") {
-            context.report({
-              node,
-              messageId: "callReturn",
-              data: { name, example: example(node, name) },
-            });
+            const arrow = enclosingArrow(node);
+            if (arrow === undefined || arrow.body.type === "BlockStatement") {
+              context.report({
+                node,
+                messageId: "callReturnStatement",
+                data: { name, example: example(node, name) },
+              });
+            } else {
+              context.report({
+                node,
+                messageId: "callReturn",
+                data: expressionData(node, arrow, name),
+              });
+            }
           }
           return;
         }
@@ -163,4 +216,17 @@ function rootName(node: ESTree.Node): string | undefined {
     current = current.object;
   }
   return current.type === "Identifier" ? current.name : undefined;
+}
+
+/**
+ * The arrow function in the styled/css literal that returns `node`. The
+ * returned values never come from a nested function, so the closest arrow
+ * function is the one in the literal
+ */
+function enclosingArrow(node: ESTree.Node): ESTree.ArrowFunctionExpression | undefined {
+  let current: ESTree.Node | null | undefined = node.parent;
+  while (current && current.type !== "ArrowFunctionExpression") {
+    current = current.parent;
+  }
+  return current ?? undefined;
 }
