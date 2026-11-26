@@ -64,6 +64,7 @@ const myDiv = styled.div`
   "rules": {
     "@yak/css-nesting-operator": "error",
     "@yak/enforce-semicolon": "error",
+    "@yak/no-next-yak-import": "error",
     "@yak/style-conditions": "warn",
     "@yak/styled-function-fast-path": "error",
     "@yak/styled-function-returns": "error"
@@ -138,6 +139,22 @@ styled.div`
   }
 `
 ```
+
+### no-next-yak-import
+
+Reports imports from `next-yak`, the old name of `@yak/react`.
+
+`@yak/swc` only compiles imports from the new package names. A file that still imports from `next-yak` builds without errors, but its styles are missing. The fix replaces `next-yak` with `@yak/react` and keeps the subpath:
+
+```tsx title="example.tsx"
+import { styled } from "next-yak"; // [!code --]
+import { styled } from "@yak/react"; // [!code ++]
+
+import { withYak } from "next-yak/withYak"; // [!code --]
+import { withYak } from "@yak/react/withYak"; // [!code ++]
+```
+
+The rule also reports `export ... from`, `import()`, `require()` and `declare module "next-yak"`. A subpath that `@yak/react` does not export gets reported without a fix.
 
 ### style-conditions
 

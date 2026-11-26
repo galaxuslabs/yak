@@ -13,6 +13,7 @@
     "typescript/no-empty-object-type": "off",
     "@yak/css-nesting-operator": "error",
     "@yak/enforce-semicolon": "error",
+    "@yak/no-next-yak-import": "error",
     "@yak/style-conditions": "warn",
     "@yak/styled-function-fast-path": "error",
     "@yak/styled-function-returns": "error"
