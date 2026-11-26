@@ -2,4 +2,4 @@
 "@yak/eslint-plugin": patch
 ---
 
-Fixes a bug where `styled-function-returns` showed `assertNever($size);` as the example for a returned call like `getHelpers().focus()`, it now names the call you wrote and tells you to move the css literal into the function when the call builds styles
+Fixes a bug where `styled-function-returns` showed `assertNever($size);` as the fix for any returned call, its message now names your call and shows both fixes: a css constant for styles, or calling it without returning its result

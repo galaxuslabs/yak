@@ -107,6 +107,10 @@ ruleTester.run("yak-styled-function-returns", rule, {
       ),
     },
     {
+      name: "a call in an if without a return",
+      code: code("styled.div`", '  ${({ $on }) => { if ($on) console.log("test"); }}', "`;"),
+    },
+    {
       name: "a function inside a returned function is not checked",
       code: code("styled.div`", '  ${({ $on }) => $on && css`color: ${() => "red"};`}', "`;"),
     },
@@ -259,7 +263,7 @@ ruleTester.run("yak-styled-function-returns", rule, {
       ),
       errors: [
         {
-          messageId: "callReturn",
+          messageId: "callReturnStatement",
           data: { name: "assertNever", example: "assertNever($size);" },
           line: 8,
         },
@@ -279,7 +283,11 @@ ruleTester.run("yak-styled-function-returns", rule, {
       errors: [
         {
           messageId: "callReturn",
-          data: { name: "theme.helpers.focus", example: "theme.helpers.focus(1);" },
+          data: {
+            name: "theme.helpers.focus",
+            constant: "styles",
+            example: "{ if (condition) theme.helpers.focus(); }",
+          },
           line: 6,
         },
       ],
@@ -290,7 +298,41 @@ ruleTester.run("yak-styled-function-returns", rule, {
       errors: [
         {
           messageId: "callReturn",
-          data: { name: "getHelpers().focus", example: "getHelpers().focus();" },
+          data: {
+            name: "getHelpers().focus",
+            constant: "$on && styles",
+            example: "({ $on }) => { if ($on) getHelpers().focus(); }",
+          },
+          line: 3,
+        },
+      ],
+    },
+    {
+      name: "a styling helper after a condition",
+      code: code("styled.div`", "  ${({ $on }) => $on && getFocusRing()}", "`;"),
+      errors: [
+        {
+          messageId: "callReturn",
+          data: {
+            name: "getFocusRing",
+            constant: "$on && focusRing",
+            example: "({ $on }) => { if ($on) getFocusRing(); }",
+          },
+          line: 3,
+        },
+      ],
+    },
+    {
+      name: "a log after a condition",
+      code: code("styled.div`", '  ${({ $on }) => $on && console.log("test")}', "`;"),
+      errors: [
+        {
+          messageId: "callReturn",
+          data: {
+            name: "console.log",
+            constant: "$on && styles",
+            example: '({ $on }) => { if ($on) console.log("test"); }',
+          },
           line: 3,
         },
       ],
