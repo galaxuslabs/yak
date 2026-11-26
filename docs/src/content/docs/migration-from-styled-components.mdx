@@ -204,6 +204,8 @@ const Title = styled(HtmlTag)`
 `;
 ```
 
+Props that start with `$` never reach `HtmlTag`, so its `...props` spread passes no `$` props to `<Tag>`. See [Dynamic styles](/docs/features#dynamic-styles).
+
 This approach is preferred over the `as` prop because it lists the allowed HTML tags explicitly. That gives you stronger type safety and prevents invalid usage like `<Image as="button">`, which would be valid in styled-components.
 
 ## Change some more things

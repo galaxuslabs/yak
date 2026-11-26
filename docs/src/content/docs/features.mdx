@@ -127,6 +127,10 @@ Each `css` block inside a function gets its own class, which the component adds 
 A function that returns a plain value, like the `background` above, becomes a CSS variable instead. The component
 sets that variable in the element's `style` attribute from the function's return value.
 
+Props that start with `$`, like `$primary`, only style the component and never show up in the DOM.
+yak removes them before it renders a plain element or a component that isn't a yak component, so you don't need to filter them yourself.
+A component made with `styled(OtherYakComponent)` passes them on, so both components can use them.
+
 <details>
 <summary>See transformed output</summary>
 
