@@ -1,10 +1,10 @@
 import type { TransformOptions } from "./types";
 
 export const defaultOptions: TransformOptions = {
-  minify: false,
-  showComments: true,
+  minify: true,
+  showComments: false,
   foldStatic: true,
-  deadCodeElimination: false,
+  deadCodeElimination: true,
 };
 
 /** The query parameter of each option in a share link */
@@ -19,7 +19,7 @@ const optionKeys = Object.keys(PARAMS) as (keyof TransformOptions)[];
 
 /**
  * The share link holds only the options that differ from the defaults, so a link without
- * them opens with the defaults: `{ minify: true, foldStatic: false }` gives `minify=1&fold=0`.
+ * them opens with the defaults: `{ minify: false, foldStatic: false }` gives `minify=0&fold=0`.
  */
 export function optionsToParams(options: TransformOptions): Record<string, string> {
   return Object.fromEntries(

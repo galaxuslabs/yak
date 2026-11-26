@@ -1,4 +1,7 @@
-/** Shows the main file's default export in the preview. */
+/**
+ * Shows the main file's default export or `App` export in the preview, and the
+ * missing export warning when `exported` is undefined.
+ */
 export type Renderer = {
   render(exported: unknown): void;
   dispose(): void;

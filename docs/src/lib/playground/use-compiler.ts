@@ -17,7 +17,7 @@ type CompilerState = {
   status: "loading" | "ready";
   /** the last output that compiled and ran, kept while the code has an error */
   files: TransformedFile[];
-  /** the runtime and the main file's default export, which the preview renders with it */
+  /** the runtime and the main file's default or `App` export, which the preview renders with it */
   result: { runtime: Runtime; exported: unknown } | null;
   error: string | null;
 };
