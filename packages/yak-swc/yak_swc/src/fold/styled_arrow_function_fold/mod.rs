@@ -1,4 +1,4 @@
-use self::block_body_to_expr::{block_body_to_expr, BodyEnd};
+use self::block_body_to_expr::{block_body_to_expr, BodyEnd, NullishWrap};
 use self::fold_class_name_condition::join_folded_class_names;
 use self::fold_css_variable_function::create_folded_css_variable_definition;
 use self::merge_arrow_parameters::FoldParams;
@@ -105,14 +105,19 @@ impl FoldedClassNames {
 /// Each runtime expression must be an arrow that toggles class names or an
 /// `atoms(...)` call such as `${atoms("flex")}`. Returns `None` for any other
 /// expression, or when a CSS variable has a value the expression cannot write
+///
+/// `dev` is `true` for a development build, which checks a returned CSS value
+/// with `__yak_cssValue`, see `NullishWrap`
 pub(crate) fn build_class_names(
   class_name: &str,
   runtime_expressions: &[Expr],
   css_variables: &FxHashMap<String, Expr>,
   yak_imports: &YakImports,
+  dev: bool,
 ) -> Option<FoldedClassNames> {
   let mut folder = ClassNameFolder {
     yak_imports,
+    dev,
     params: FoldParams::default(),
     writes_style: false,
     fall_through: None,
@@ -219,6 +224,8 @@ pub(crate) fn fold_class_names(
 
 struct ClassNameFolder<'a> {
   yak_imports: &'a YakImports,
+  /// `true` for a development build, see `build_class_names`
+  dev: bool,
   params: FoldParams,
   writes_style: bool,
   /// `Some` while `fold_value` folds the left side of a fall through `??`,
@@ -235,14 +242,26 @@ impl ClassNameFolder<'_> {
   /// identifier which is only read through members (`p => p.$on`). The body is
   /// an expression or a block of `if`, `switch` and `return` statements
   fn fold_arrow(&mut self, expression: &Expr) -> Option<Box<Expr>> {
-    let body = self.bind_arrow(expression, BodyEnd::ClassNames)?;
+    let body = self.bind_arrow(expression, BodyEnd::ClassNames, None)?;
     self.fold_value(&body)
   }
 
   /// Registers the props parameter of a runtime expression and returns the
   /// expression the arrow returns. `end` tells a function of class names from
   /// one at a CSS value position, see `BodyEnd`
-  fn bind_arrow<'e>(&mut self, expression: &'e Expr, end: BodyEnd) -> Option<Cow<'e, Expr>> {
+  ///
+  /// `css_value_helper` is the callee of the `__yak_cssValue(fn, "px")` call
+  /// around a function at a CSS value position, if there is one. It picks the
+  /// wrapper for a `return` that can be nullish, see `NullishWrap`. A
+  /// development build with that call uses `NullishWrap::Dev`. A production
+  /// build, or a value without that call like one in a nested `css(...)`,
+  /// uses `NullishWrap::Prod`
+  fn bind_arrow<'e>(
+    &mut self,
+    expression: &'e Expr,
+    end: BodyEnd,
+    css_value_helper: Option<&Ident>,
+  ) -> Option<Cow<'e, Expr>> {
     let Expr::Arrow(arrow) = unwrap_type_casts(expression) else {
       return None;
     };
@@ -252,11 +271,18 @@ impl ClassNameFolder<'_> {
     let body = match &*arrow.body {
       ArrowFunctionBody::Expr(expr) => Cow::Borrowed(&**expr),
       // `{ if ($on) { return css("yB1"); } }` -> `$on ? css("yB1") : undefined`
-      ArrowFunctionBody::FunctionBody(block) => Cow::Owned(*block_body_to_expr(
-        &block.stmts,
-        &mut self.params.consts,
-        end,
-      )?),
+      ArrowFunctionBody::FunctionBody(block) => {
+        let wrap = match css_value_helper {
+          Some(helper) if self.dev => NullishWrap::Dev(helper.clone()),
+          _ => NullishWrap::Prod,
+        };
+        Cow::Owned(*block_body_to_expr(
+          &block.stmts,
+          &mut self.params.consts,
+          end,
+          &wrap,
+        )?)
+      }
       #[cfg(swc_ast_unknown)]
       _ => return None,
     };

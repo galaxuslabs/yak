@@ -9,7 +9,10 @@ use swc_core::{
   ecma::visit::{Visit, VisitWith},
 };
 
-use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts, void_zero};
+use crate::utils::ast_helper::{
+  binary, condition, expr_to_template_string, paren, unwrap_type_casts, void_zero,
+};
+use crate::utils::css_value_call::css_value_call;
 
 /// Turns the block body of a runtime expression into the one expression it
 /// returns, so the folded function can take it like an arrow without a block:
@@ -41,6 +44,7 @@ pub(super) fn block_body_to_expr(
   stmts: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  wrap: &NullishWrap,
 ) -> Option<Box<Expr>> {
   let Some((first, rest)) = stmts.split_first() else {
     return Some(match end {
@@ -56,23 +60,24 @@ pub(super) fn block_body_to_expr(
   }
   // a single `return` after the branch is copied, see `branch_to_expr`
   if has_open_branch(first) && !rest.is_empty() && !matches!(rest, [Stmt::Return(_)]) {
-    return fall_through_to_expr(first, rest, consts, end);
+    return fall_through_to_expr(first, rest, consts, end, wrap);
   }
   match first {
     Stmt::Return(return_stmt) if can_drop(rest) => {
+      let value = match &return_stmt.arg {
+        Some(arg) => wrap_in_parens(arg),
+        None => undefined(),
+      };
       // `??` would skip a returned `null`, see `BodyEnd::CssValueFallThrough`
       if end == BodyEnd::CssValueFallThrough
         && !return_stmt.arg.as_deref().is_some_and(is_never_nullish)
       {
-        return None;
+        return Some(wrap.wrap(value));
       }
-      Some(match &return_stmt.arg {
-        Some(arg) => wrap_in_parens(arg),
-        None => undefined(),
-      })
+      Some(value)
     }
-    Stmt::Empty(_) => block_body_to_expr(rest, consts, end),
-    Stmt::Block(block) if can_drop(rest) => branch_to_expr(&block.stmts, rest, consts, end),
+    Stmt::Empty(_) => block_body_to_expr(rest, consts, end, wrap),
+    Stmt::Block(block) if can_drop(rest) => branch_to_expr(&block.stmts, rest, consts, end, wrap),
     // `if (a) { return x; } return y;` -> `a ? x : y`
     Stmt::If(if_stmt) => {
       // with an `else` the statements after the `if` never run, or they are
@@ -81,19 +86,25 @@ pub(super) fn block_body_to_expr(
       if if_stmt.alt.is_some() && !can_drop(rest) {
         return None;
       }
-      let cons = branch_to_expr(std::slice::from_ref(&*if_stmt.cons), rest, consts, end)?;
+      let cons = branch_to_expr(
+        std::slice::from_ref(&*if_stmt.cons),
+        rest,
+        consts,
+        end,
+        wrap,
+      )?;
       let alt = match &if_stmt.alt {
-        Some(alt) => branch_to_expr(std::slice::from_ref(&**alt), rest, consts, end)?,
-        None => block_body_to_expr(rest, consts, end)?,
+        Some(alt) => branch_to_expr(std::slice::from_ref(&**alt), rest, consts, end, wrap)?,
+        None => block_body_to_expr(rest, consts, end, wrap)?,
       };
       Some(condition(if_stmt.test.clone(), cons, alt))
     }
-    Stmt::Switch(switch) => switch_to_expr(switch, rest, consts, end),
+    Stmt::Switch(switch) => switch_to_expr(switch, rest, consts, end, wrap),
     // `const size = $layout.medium?.size;` leaves no trace in the expression:
     // every read of `size` becomes `$layout.medium?.size`, see `bind_consts`
     Stmt::Decl(Decl::Var(var)) if var.kind == VarDeclKind::Const => {
       bind_consts(var, consts)?;
-      block_body_to_expr(rest, consts, end)
+      block_body_to_expr(rest, consts, end, wrap)
     }
     // Devs write an exhaustive check like `assertNever($size);` or add a
     // `console.log($size);` while they debug. The source throws the value of
@@ -116,7 +127,7 @@ pub(super) fn block_body_to_expr(
         span: DUMMY_SP,
         exprs: vec![
           Box::new(unwrap_type_casts(&statement.expr).clone()),
-          block_body_to_expr(rest, consts, end)?,
+          block_body_to_expr(rest, consts, end, wrap)?,
         ],
       }))))
     }
@@ -142,11 +153,61 @@ pub(super) enum BodyEnd {
   ///
   /// That function returns its value as it is, and `null` or `undefined` is a
   /// real value there. `??` would go on with the statements after the branch
-  /// for it. So every `return` in the branch has to return a value that is
-  /// never nullish, see `is_never_nullish`, or the function keeps its
-  /// unfolded output. `void 0` is then the only nullish value the branch
-  /// yields, and it stands for the path that leaves the branch
+  /// for it. So a `return` in the branch whose value can be nullish gets the
+  /// wrapper of `NullishWrap`, which turns every value into a string or
+  /// throws. A value that `is_never_nullish` accepts stays as it is. `void 0`
+  /// is then the only nullish value the branch yields, and it stands for the
+  /// path that leaves the branch:
+  ///
+  /// ```text
+  /// if ($on) {
+  ///   if ($big) return $width;
+  /// }
+  /// return 2;
+  /// ->
+  /// ($on ? ($big ? `${$width}` : void 0) : void 0) ?? 2
+  /// ```
   CssValueFallThrough,
+}
+
+/// The wrapper around a `return` in a branch with more statements after it in
+/// a function at a CSS value position, see `BodyEnd::CssValueFallThrough`
+///
+/// The wrapper turns every returned value into a string or throws before
+/// `??` sees it, so a returned `undefined` or `null` never goes on with the
+/// statements after the branch
+pub(super) enum NullishWrap {
+  /// `__yak_cssValue($width, "")`, with the helper ident of the outer
+  /// `__yak_cssValue(fn, "px")` call. Development builds wrap every dynamic
+  /// value in that outer call. The wrapper throws for `undefined`, `null` or
+  /// `false`, like the outer call does for the value of the source
+  Dev(Ident),
+  /// `` `${$width}` `` in production builds, see `expr_to_template_string`.
+  /// It gives the same text as `String($width)` for every value but a
+  /// Symbol, which throws here and not in `String`. The prop types allow no
+  /// Symbol. The result differs from the source for a value that is no
+  /// string or number:
+  ///
+  /// - With a unit, the source passes the value to `__yak_cssValue` and gets
+  ///   `"undefined"`, while the fold gives `"undefinedpx"`. Both are invalid
+  ///   CSS, so the property falls back to its default.
+  /// - Without a unit, the source writes the value as it is. React leaves an
+  ///   `undefined` variable out of the style, so the element inherits it from
+  ///   an outer element that renders the same component. The fold writes
+  ///   `"undefined"`, which is invalid CSS, so the property falls back to its
+  ///   default.
+  /// - With a minus before the value, `$x = 0` gives `"-0px"` where the
+  ///   source gives `"0px"`. Both are the same length.
+  Prod,
+}
+
+impl NullishWrap {
+  fn wrap(&self, value: Box<Expr>) -> Box<Expr> {
+    match self {
+      NullishWrap::Dev(helper) => Box::new(css_value_call(*value, helper.clone(), "", false)),
+      NullishWrap::Prod => expr_to_template_string(value),
+    }
+  }
 }
 
 /// Folds an `if`, a block or a `switch` that can end without a `return` and
@@ -175,33 +236,39 @@ pub(super) enum BodyEnd {
 /// and in source order, and no statement is copied
 ///
 /// A function at a CSS value position like `width: ${fn}px;` returns its value
-/// as it is, and `null` or `undefined` is a real value there. It folds the
-/// same way only when every `return` in the block returns a value that is
-/// never nullish, see `BodyEnd::CssValueFallThrough`:
+/// as it is, and `null` or `undefined` is a real value there. Each `return`
+/// in the block whose value can be nullish gets a wrapper, so `??` never
+/// skips it. A value that is never nullish stays as it is, see
+/// `BodyEnd::CssValueFallThrough`:
 ///
 /// ```text
 /// if ($on) {
-///   if ($big) return 1;
+///   if ($big) return $width;
+///   if ($wide) return 1;
 /// }
 /// if ($wide) return 3;
 /// return 2;
 /// ->
-/// ($on ? ($big ? 1 : void 0) : void 0) ?? ($wide ? 3 : 2)
+/// production:
+/// ($on ? ($big ? `${$width}` : $wide ? 1 : void 0) : void 0) ?? ($wide ? 3 : 2)
+/// development:
+/// ($on ? ($big ? __yak_cssValue($width, "") : $wide ? 1 : void 0) : void 0) ?? ($wide ? 3 : 2)
 /// ```
 ///
-/// A `return $width;` in the block keeps the unfolded output
+/// A `return` after the block, on the right side of `??`, stays as it is
 fn fall_through_to_expr(
   first: &Stmt,
   rest: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  wrap: &NullishWrap,
 ) -> Option<Box<Expr>> {
   let branch_end = match end {
     BodyEnd::ClassNames | BodyEnd::FallThrough => BodyEnd::FallThrough,
     BodyEnd::CssValue | BodyEnd::CssValueFallThrough => BodyEnd::CssValueFallThrough,
   };
-  let branch = block_body_to_expr(std::slice::from_ref(first), consts, branch_end)?;
-  let rest = block_body_to_expr(rest, consts, end)?;
+  let branch = block_body_to_expr(std::slice::from_ref(first), consts, branch_end, wrap)?;
+  let rest = block_body_to_expr(rest, consts, end, wrap)?;
   Some(binary(BinaryOp::NullishCoalescing, branch, rest))
 }
 
@@ -414,11 +481,12 @@ fn branch_to_expr(
   rest: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  wrap: &NullishWrap,
 ) -> Option<Box<Expr>> {
   if rest.is_empty() || always_returns(branch) {
-    block_body_to_expr(branch, consts, end)
+    block_body_to_expr(branch, consts, end, wrap)
   } else if matches!(rest, [Stmt::Return(_)]) {
-    block_body_to_expr(&[branch, rest].concat(), consts, end)
+    block_body_to_expr(&[branch, rest].concat(), consts, end, wrap)
   } else {
     None
   }
@@ -444,6 +512,7 @@ fn switch_to_expr(
   rest: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  wrap: &NullishWrap,
 ) -> Option<Box<Expr>> {
   let discriminant = unwrap_type_casts(&switch.discriminant);
   if !is_plain_read(discriminant) || reads_const_of_other_case(switch) {
@@ -488,8 +557,8 @@ fn switch_to_expr(
   let mut result = match default_case {
     // the statements after a `switch` whose `default` returns never run
     Some(case) if always_returns(&case.cons) && !can_drop(rest) => return None,
-    Some(case) => case_to_expr(case, rest, consts, end)?,
-    None => block_body_to_expr(rest, consts, end)?,
+    Some(case) => case_to_expr(case, rest, consts, end, wrap)?,
+    None => block_body_to_expr(rest, consts, end, wrap)?,
   };
   for (tests, case) in groups.into_iter().rev() {
     let test = tests
@@ -502,7 +571,7 @@ fn switch_to_expr(
         )
       })
       .reduce(|left, right| binary(BinaryOp::LogicalOr, left, right))?;
-    result = condition(test, case_to_expr(case, rest, consts, end)?, result);
+    result = condition(test, case_to_expr(case, rest, consts, end, wrap)?, result);
   }
   Some(result)
 }
@@ -516,12 +585,13 @@ fn case_to_expr(
   rest: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  wrap: &NullishWrap,
 ) -> Option<Box<Expr>> {
   let cons = match case.cons.split_last() {
     Some((Stmt::Break(BreakStmt { label: None, .. }), init)) => init,
     _ => &case.cons[..],
   };
-  branch_to_expr(cons, rest, consts, end)
+  branch_to_expr(cons, rest, consts, end, wrap)
 }
 
 /// Statements that never run are left out of the expression, e.g. the `break`
@@ -599,8 +669,11 @@ fn wrap_in_parens(expr: &Expr) -> Box<Expr> {
   }
 }
 
-/// Returns true if the value can never be `null` or `undefined`, see
-/// `BodyEnd::CssValueFallThrough`:
+/// Returns true if the value can never be `null` or `undefined`. A `return`
+/// of such a value in a branch with more statements after it needs no
+/// wrapper, see `BodyEnd::CssValueFallThrough`:
+/// `if ($on) return $n * 2;` -> `$on ? $n * 2 : void 0`, but
+/// `if ($on) return $n;` -> ``$on ? `${$n}` : void 0``
 ///
 /// - a literal other than `null`, e.g. `2`, `"auto"` or `true`, and a template
 ///   literal like `` `${$n}px` ``
@@ -616,8 +689,7 @@ fn wrap_in_parens(expr: &Expr) -> Box<Expr> {
 /// - `(log($a), 1)` when the last expression counts
 ///
 /// A read like `$width` or `props.x` and a call like `getWidth()` can return
-/// anything. The lint rule `@yak/styled-function-fast-path` uses the same
-/// definition in `isNeverNullish`
+/// anything
 fn is_never_nullish(expr: &Expr) -> bool {
   match unwrap_type_casts(expr) {
     Expr::Lit(lit) => !matches!(lit, Lit::Null(_)),

@@ -4,8 +4,9 @@ use crate::utils::ast_helper::{paren, str_expr, unwrap_type_casts};
 use swc_core::{
   common::DUMMY_SP,
   ecma::ast::{
-    AssignExpr, AssignOp, AssignTarget, CallExpr, Callee, ComputedPropName, Expr, KeyValueProp,
-    MemberExpr, MemberProp, ObjectLit, Prop, PropName, PropOrSpread, SeqExpr, SimpleAssignTarget,
+    AssignExpr, AssignOp, AssignTarget, CallExpr, Callee, ComputedPropName, Expr, Ident,
+    KeyValueProp, MemberExpr, MemberProp, ObjectLit, Prop, PropName, PropOrSpread, SeqExpr,
+    SimpleAssignTarget,
   },
 };
 
@@ -28,7 +29,7 @@ impl ClassNameFolder<'_> {
     key: &str,
     value: &Expr,
   ) -> Option<Box<Expr>> {
-    let value = self.fold_style_value(value)?;
+    let value = self.fold_style_value(value, None)?;
     self.writes_style = true;
     Some(Box::new(Expr::Assign(AssignExpr {
       span: DUMMY_SP,
@@ -49,24 +50,35 @@ impl ClassNameFolder<'_> {
   /// becomes its return value and `__yak_cssValue(arrow, unit)` keeps the
   /// call around the return value.
   ///
+  /// `css_value_helper` is the callee of that call while the arrow inside it
+  /// folds. A development build wraps a `return` in a branch that can end
+  /// without `return` with it, see `NullishWrap`:
+  /// `__yak_cssValue(({ $on, $w }) => { if ($on) return $w; return 2; }, "px")`
+  /// -> `__yak_cssValue(($on ? __yak_cssValue($w, "") : void 0) ?? 2, "px")`
+  ///
   /// Every other value sits in a nested `css(...)` call and is an expression
   /// of the enclosing arrow, e.g. `$x` in `({ $x }) => css`left: ${$x}px;``.
   /// It is only rewritten. Outside a nested `css` the compiler accepts only
   /// arrows as property values
-  pub(super) fn fold_style_value(&mut self, value: &Expr) -> Option<Box<Expr>> {
+  pub(super) fn fold_style_value(
+    &mut self,
+    value: &Expr,
+    css_value_helper: Option<&Ident>,
+  ) -> Option<Box<Expr>> {
     match unwrap_type_casts(value) {
       Expr::Arrow(_) => {
         // `null` is a value here, see `BodyEnd::CssValueFallThrough`
-        let body = self.bind_arrow(value, BodyEnd::CssValue)?;
+        let body = self.bind_arrow(value, BodyEnd::CssValue, css_value_helper)?;
         self.params.substitute(&body)
       }
-      Expr::Call(call) if is_css_value_call(call) => {
+      Expr::Call(call) if css_value_callee(call).is_some() => {
+        let helper = css_value_callee(call).cloned();
         let mut call = call.clone();
         let first = call.args.first_mut()?;
         if first.spread.is_some() {
           return None;
         }
-        first.expr = self.fold_style_value(&first.expr)?;
+        first.expr = self.fold_style_value(&first.expr, helper.as_ref())?;
         for arg in call.args.iter().skip(1) {
           if !matches!(&*arg.expr, Expr::Lit(_)) {
             return None;
@@ -78,7 +90,7 @@ impl ClassNameFolder<'_> {
       // `css("yB1", { "--yX": w })`
       Expr::Ident(ident) if self.params.consts.contains_key(&ident.to_id()) => {
         let init = self.params.consts[&ident.to_id()].clone();
-        self.fold_style_value(&init)
+        self.fold_style_value(&init, css_value_helper)
       }
       // an identifier or member could hold a helper function, which the
       // runtime would call with the props: only a destructured prop is safe
@@ -108,9 +120,16 @@ impl ClassNameFolder<'_> {
   }
 }
 
-/// `__yak_cssValue(...)`, the helper that adds the unit to a CSS variable
-pub(super) fn is_css_value_call(call: &CallExpr) -> bool {
-  matches!(&call.callee, Callee::Expr(callee) if matches!(&**callee, Expr::Ident(ident) if ident.sym == "__yak_cssValue"))
+/// The callee of a `__yak_cssValue(...)` call, the helper that adds the unit
+/// to a CSS variable, or `None` for any other call
+pub(super) fn css_value_callee(call: &CallExpr) -> Option<&Ident> {
+  match &call.callee {
+    Callee::Expr(callee) => match &**callee {
+      Expr::Ident(ident) if ident.sym == "__yak_cssValue" => Some(ident),
+      _ => None,
+    },
+    _ => None,
+  }
 }
 
 /// The text of a plain or quoted object key

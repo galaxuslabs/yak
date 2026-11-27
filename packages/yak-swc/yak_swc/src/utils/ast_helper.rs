@@ -49,6 +49,24 @@ pub fn void_zero() -> Box<Expr> {
   }))
 }
 
+/// `` `${value}` ``, e.g. `$width` -> `` `${$width}` ``
+///
+/// It turns any value into its text like `String(value)` does, but shorter.
+/// A Symbol throws here, while `String` would not
+pub fn expr_to_template_string(value: Box<Expr>) -> Box<Expr> {
+  let quasi = |tail| TplElement {
+    span: DUMMY_SP,
+    tail,
+    cooked: Some("".into()),
+    raw: "".into(),
+  };
+  Box::new(Expr::Tpl(Tpl {
+    span: DUMMY_SP,
+    exprs: vec![value],
+    quasis: vec![quasi(false), quasi(true)],
+  }))
+}
+
 /// `(expr)`
 pub fn paren(expr: Box<Expr>) -> Box<Expr> {
   Box::new(Expr::Paren(ParenExpr {

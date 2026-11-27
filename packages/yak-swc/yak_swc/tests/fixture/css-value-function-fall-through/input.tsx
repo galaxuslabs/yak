@@ -45,7 +45,8 @@ export const SwitchLastCaseThenStatements = styled.div<{ $size: Size; $on: boole
   }}px;
 `;
 
-// stays unfolded: `$width` can be `undefined`
+// `$width` can be `undefined`, so its `return` gets a wrapper and `??` never
+// goes on after the block for it
 export const ReadReturn = styled.div<{ $on: boolean; $big: boolean; $width?: number }>`
   width: ${({ $on, $big, $width }) => {
     if ($on) {
@@ -56,7 +57,7 @@ export const ReadReturn = styled.div<{ $on: boolean; $big: boolean; $width?: num
   }}px;
 `;
 
-// stays unfolded: `$a && 1` returns `$a` when it is falsy, e.g. `null`
+// `$a && 1` returns `$a` when it is falsy, e.g. `null`, so it gets a wrapper
 export const AndReturn = styled.div<{ $on: boolean; $a: number | null }>`
   width: ${({ $on, $a }) => {
     if ($on) {
@@ -67,7 +68,7 @@ export const AndReturn = styled.div<{ $on: boolean; $a: number | null }>`
   }}px;
 `;
 
-// stays unfolded: a call can return anything, also in a nested `switch`
+// a call can return anything, so it gets a wrapper, also in a nested `switch`
 export const CallReturnInSwitch = styled.div<{ $on: boolean; $size: Size }>`
   width: ${({ $on, $size }) => {
     if ($on) {
@@ -83,7 +84,7 @@ export const CallReturnInSwitch = styled.div<{ $on: boolean; $size: Size }>`
   }}px;
 `;
 
-// stays unfolded: `return;` is `undefined`
+// `return;` is `undefined` and gets a wrapper
 export const EmptyReturn = styled.div<{ $on: boolean; $big: boolean }>`
   width: ${({ $on, $big }) => {
     if ($on) {
@@ -94,7 +95,7 @@ export const EmptyReturn = styled.div<{ $on: boolean; $big: boolean }>`
   }}px;
 `;
 
-// stays unfolded: a `null` in the `else` of the branch
+// a `null` in the `else` of the branch gets a wrapper
 export const NullInElse = styled.div<{ $on: boolean; $big: boolean }>`
   width: ${({ $on, $big }) => {
     if ($on) {
@@ -117,4 +118,28 @@ export const NextToClassNames = styled.div<{ $on: boolean; $big: boolean }>`
     log($big);
     return 20;
   }}px;
+`;
+
+// a value without a unit gets the same wrapper
+export const ReadReturnWithoutUnit = styled.div<{ $on: boolean; $big: boolean; $width?: number }>`
+  width: ${({ $on, $big, $width }) => {
+    if ($on) {
+      if ($big) return $width;
+      if ($width) return 1;
+    }
+    if ($big) return 2;
+    return 3;
+  }};
+`;
+
+// a call without a unit, and a call after the block that runs only when the
+// block ends without `return`
+export const CallReturnWithoutUnit = styled.div<{ $on: boolean; $size: Size }>`
+  width: ${({ $on, $size }) => {
+    if ($on) {
+      if ($size === "s") return getWidth($size);
+    }
+    log($size);
+    return 8;
+  }};
 `;

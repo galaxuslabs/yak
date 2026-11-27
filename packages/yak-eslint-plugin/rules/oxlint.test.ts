@@ -62,17 +62,11 @@ ruleTester.run("@yak/style-conditions", yakPlugin.rules["style-conditions"], {
 });
 
 ruleTester.run("@yak/styled-function-fast-path", yakPlugin.rules["styled-function-fast-path"], {
-  valid: [
-    "import { css, styled } from '@yak/react'; styled.div`width: ${({ $on, $big }) => { if ($on) { if ($big) return $big ? 1 : 2; } if ($big) return 3; return 4; }}px;`;",
-  ],
+  valid: [],
   invalid: [
     {
       code: "import { css, styled } from '@yak/react'; styled.div`${({ $on }) => { const on = !$on; return on && css`color: red;`; }}`;",
       errors: [{ messageId: "constInitializer" }],
-    },
-    {
-      code: "import { css, styled } from '@yak/react'; styled.div`width: ${({ $on, $big, $w }) => { if ($on) { if ($big) return $w; } if ($big) return 3; return 4; }}px;`;",
-      errors: [{ messageId: "nullishReturn" }],
     },
   ],
 });

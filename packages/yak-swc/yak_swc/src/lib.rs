@@ -1650,6 +1650,9 @@ where
           &runtime_expressions,
           &runtime_css_variables,
           self.yak_library_imports.as_ref().unwrap(),
+          // development builds are the ones with display names, see the
+          // `__yak_cssValue` call of a value without a unit
+          self.display_names,
         )
       }
       _ => None,
