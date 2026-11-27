@@ -236,6 +236,31 @@ a semicolon, which the [`@yak/enforce-semicolon`](/docs/eslint-plugin#enforce-se
 Two files that import values from each other can't be resolved at build time. Move the shared values into a third file
 that both import.
 
+## Errors in development
+
+### Dynamic CSS values must be a string or number
+
+> Dynamic CSS values must be a string or number but got undefined
+
+> Dynamic CSS functions must return a string or number but returned undefined
+
+A dynamic value returned something other than a string or a number, most often the `undefined` of a prop that the
+parent didn't pass, or the `false` of a condition. yak throws in development only. A production build writes the
+value as text like `undefined`, which is no valid CSS, so the property falls back to its inherited or default value.
+With the [`minify`](/docs/api#plugin-options) option turned on in development, a folded value without a unit skips
+this check.
+
+Give the prop a default, or set the whole property with a `css` literal when it only applies under a condition:
+
+```tsx title="box.tsx"
+const Box = styled.div<{ $color?: string; $on?: boolean }>`
+  color: ${({ $color }) => $color}; // [!code --]
+  color: ${({ $color = "black" }) => $color}; // [!code ++]
+  z-index: ${({ $on }) => $on && 2}; // [!code --]
+  ${({ $on }) => $on && css`z-index: 2;`}; // [!code ++]
+`;
+```
+
 ## Bundler problems
 
 ### Source file is outside the project root (Vite)

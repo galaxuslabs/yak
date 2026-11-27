@@ -1,4 +1,4 @@
-import { styled } from "@yak/react/internal";
+import { styled, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
 const buttons = {
@@ -6,14 +6,14 @@ const buttons = {
 .input_buttons_primary_m7uBBu {
   color: var(--input_buttons_primary__color_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button(2, ({ $c }, style)=>"input_buttons_primary_m7uBBu" + (style["--input_buttons_primary__color_m7uBBu"] = $c, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button(2, ({ $c }, style)=>"input_buttons_primary_m7uBBu" + (style["--input_buttons_primary__color_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($c, ""), "")), {
         "displayName": "primary"
     }),
     danger: /*YAK Extracted CSS:
 .input_buttons_danger_m7uBBu {
   color: var(--input_buttons_danger__color_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button(2, ({ $c }, style)=>"input_buttons_danger_m7uBBu" + (style["--input_buttons_danger__color_m7uBBu"] = $c, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button(2, ({ $c }, style)=>"input_buttons_danger_m7uBBu" + (style["--input_buttons_danger__color_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($c, ""), "")), {
         "displayName": "danger"
     })
 };

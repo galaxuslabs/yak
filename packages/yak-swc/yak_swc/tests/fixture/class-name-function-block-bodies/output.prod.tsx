@@ -69,7 +69,7 @@ export const NestedCssWithIf = /*YAK EXPORTED STYLED:NestedCssWithIf:ym7uBBuO*//
 .ym7uBBuP {
   color: var(--ym7uBBuQ);
 }
-*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $on, $color }, style)=>"ym7uBBuO" + ($on ? " ym7uBBuP" + (style["--ym7uBBuQ"] = $color ? $color : "red", "") : ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $on, $color }, style)=>"ym7uBBuO" + ($on ? " ym7uBBuP" + (style["--ym7uBBuQ"] = `${$color ? $color : "red"}`, "") : ""));
 // the path with `$on` and without `$big` continues with the last `return`
 export const IfWithoutReturnThenReturn = /*YAK EXPORTED STYLED:IfWithoutReturnThenReturn:ym7uBBuR*//*YAK Extracted CSS:
 .ym7uBBuS {

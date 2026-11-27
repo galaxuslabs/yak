@@ -22,6 +22,14 @@
  * "--top": cssValue(({ $x }) => $x, "px", true),
  * ```
  *
+ * The folded function of a component built without the plugin option
+ * `minify` also calls it for a value without a unit, with an empty unit, so
+ * a missing value throws like it does in the unfolded runtime:
+ * ```tsx
+ * // color: ${({ $color }) => $color};
+ * style["--color"] = cssValue($color, "");
+ * ```
+ *
  * `negate` flips the sign: a number is negated, so -32 becomes "32px",
  * and a string loses or gains a leading minus, so "-2rem" becomes "2rem".
  * A string like "var(--gap)" turns into the invalid "-var(--gap)".

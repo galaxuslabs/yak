@@ -1,32 +1,52 @@
 use super::block_body_to_expr::BodyEnd;
 use super::ClassNameFolder;
-use crate::utils::ast_helper::{paren, str_expr, unwrap_type_casts};
+use crate::utils::ast_helper::{expr_to_template_string, paren, str_expr, unwrap_type_casts};
+use crate::utils::css_value_call::css_value_call;
+use crate::yak_imports::YakImports;
 use swc_core::{
   common::DUMMY_SP,
   ecma::ast::{
-    AssignExpr, AssignOp, AssignTarget, CallExpr, Callee, ComputedPropName, Expr, KeyValueProp,
-    MemberExpr, MemberProp, ObjectLit, Prop, PropName, PropOrSpread, SeqExpr, SimpleAssignTarget,
+    AssignExpr, AssignOp, AssignTarget, CallExpr, Callee, ComputedPropName, Expr, Ident,
+    KeyValueProp, MemberExpr, MemberProp, ObjectLit, Prop, PropName, PropOrSpread, SeqExpr,
+    SimpleAssignTarget,
   },
 };
 
 impl ClassNameFolder<'_> {
-  /// Folds one CSS variable into a definition on the style object, e.g.
+  /// Folds one CSS variable into a definition on the style object
+  ///
+  /// A value with a unit or a minus keeps its `__yak_cssValue` call, which
+  /// turns every value into text:
   /// `"--yX": __yak_cssValue(({ $x }) => $x, "px")` ->
   /// `style["--yX"] = __yak_cssValue($x, "px")`
   ///
-  /// `__yak_cssValue` returns a string for every value. A value without a
-  /// unit is written as it is, e.g. `style["--yX"] = $color`, so a missing
-  /// `$color` leaves the variable out of the style attribute
+  /// A value without a unit has no such call. The unfolded runtime writes
+  /// `String(value)` and throws in development for a value that is no string
+  /// or number. Written as it is, a missing `$bg` would throw nothing, and
+  /// React would leave the variable out of the style attribute. The element
+  /// would then take the variable from an outer element of the same component.
+  /// So the fold wraps the value, see `CssValueText`:
   ///
-  /// The runtime
-  /// also calls a value again while it is a function; the folded function does
-  /// not, so a value that evaluates to a function is a known difference
+  /// ```text
+  /// "--yX": ({ $bg }) => $bg
+  /// -> minify:    style["--yX"] = `${$bg}`
+  /// -> no minify: style["--yX"] = __yak_cssValue($bg, "")
+  /// ```
+  ///
+  /// The runtime also calls a value again while it is a function. The folded
+  /// function does not, so a value that evaluates to a function is a known
+  /// difference
   pub(super) fn fold_css_variable_definition(
     &mut self,
     key: &str,
     value: &Expr,
   ) -> Option<Box<Expr>> {
-    let value = self.fold_style_value(value)?;
+    let has_css_value_call =
+      matches!(unwrap_type_casts(value), Expr::Call(call) if is_css_value_call(call));
+    let mut value = self.fold_style_value(value)?;
+    if !has_css_value_call {
+      value = self.css_value_text.wrap(value);
+    }
     self.writes_style = true;
     Some(Box::new(Expr::Assign(AssignExpr {
       span: DUMMY_SP,
@@ -103,6 +123,50 @@ impl ClassNameFolder<'_> {
       definitions.push(self.fold_css_variable_definition(&prop_name(key)?, value)?);
     }
     Some(create_folded_css_variable_definition(definitions))
+  }
+}
+
+/// Turns a folded CSS value into text, like the unfolded runtime does with
+/// `String(value)` and its development check, see
+/// `fold_css_variable_definition`
+///
+/// Both forms give the same text for a string or a number. The plugin option
+/// `minify` picks the form, and only the second one has the development
+/// check:
+///
+/// - `` `${$bg}` `` with `minify`. It gives the text of `String($bg)` and
+///   throws nothing. Only a Symbol throws here, which `String` turns into
+///   text. A development build with `minify` turned on has no check for
+///   these values.
+/// - `__yak_cssValue($bg, "")` without `minify`. The helper throws in
+///   development for a value that is no string or number, like the unfolded
+///   runtime, and returns `String($bg)` in production. So this form is
+///   right in every build.
+pub(super) struct CssValueText {
+  /// `__yak_cssValue`, or `None` with `minify`
+  helper: Option<Ident>,
+  /// `true` once `wrap` wrote the helper, so the caller adds its import.
+  /// The fold can still fail after a wrap, so the import waits for its result
+  pub(super) uses_helper: bool,
+}
+
+impl CssValueText {
+  pub(super) fn new(minify: bool, yak_imports: &YakImports) -> Self {
+    Self {
+      helper: (!minify).then(|| yak_imports.yak_utility_ident("cssValue")),
+      uses_helper: false,
+    }
+  }
+
+  /// `$bg` -> `` `${$bg}` `` or `__yak_cssValue($bg, "")`
+  pub(super) fn wrap(&mut self, value: Box<Expr>) -> Box<Expr> {
+    match &self.helper {
+      Some(helper) => {
+        self.uses_helper = true;
+        Box::new(css_value_call(*value, helper.clone(), "", false))
+      }
+      None => expr_to_template_string(value),
+    }
   }
 }
 

@@ -63,7 +63,7 @@ const Dot = /*YAK Extracted CSS:
   animation-range: max(0%, calc((var(--ym7uBBuK) - 1) * 100% / (var(--ym7uBBuL) - 1)))
 min(100%, calc((var(--ym7uBBuK) + 1) * 100% / (var(--ym7uBBuL) - 1)));
 }
-*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $index, $slideCount }, style)=>"ym7uBBuJ" + (style["--ym7uBBuK"] = $index, style["--ym7uBBuL"] = $slideCount, ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $index, $slideCount }, style)=>"ym7uBBuJ" + (style["--ym7uBBuK"] = `${$index}`, style["--ym7uBBuL"] = `${$slideCount}`, ""));
 const Nested = /*YAK Extracted CSS:
 .ym7uBBuM {
   left: var(--ym7uBBuN);

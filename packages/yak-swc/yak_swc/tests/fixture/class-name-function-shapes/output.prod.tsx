@@ -71,7 +71,7 @@ export const ThemeVariable = /*YAK EXPORTED STYLED:ThemeVariable:ym7uBBuM*//*YAK
 .ym7uBBuM {
   color: var(--ym7uBBuN);
 }
-*/ /*#__PURE__*/ __yak.__yak_div(3, ({}, style, theme)=>"ym7uBBuM" + (style["--ym7uBBuN"] = theme.color, ""));
+*/ /*#__PURE__*/ __yak.__yak_div(3, ({}, style, theme)=>"ym7uBBuM" + (style["--ym7uBBuN"] = `${theme.color}`, ""));
 // a variable in a nested css is written only when its branch runs
 export const NestedVariable = /*YAK EXPORTED STYLED:NestedVariable:ym7uBBuO*//*YAK Extracted CSS:
 .ym7uBBuP {

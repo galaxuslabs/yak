@@ -307,6 +307,10 @@ where
   variable_name_selector_mapping: FxHashMap<ScopedVariableReference, String>,
   /// Naming convention to generate unique css identifiers
   naming_convention: NamingConvention,
+  /// The plugin option `minify`. Besides the css names it picks how the fold
+  /// writes a CSS value without a unit: with `minify` as plain text, without
+  /// it through `__yak_cssValue`, which throws in development, see `CssValueText`
+  minify: bool,
   /// Expression replacement to replace a yak library call with the transformed one
   expression_replacement: Option<Box<Expr>>,
   /// Flag to check if we are inside a css attribute
@@ -381,6 +385,7 @@ where
       variables: VariableVisitor::new(),
       yak_library_imports: None,
       naming_convention: NamingConvention::new(filename.as_ref(), minify, prefix),
+      minify,
       variable_name_selector_mapping: FxHashMap::default(),
       expression_replacement: None,
       inside_element_with_css_attribute: false,
@@ -1636,6 +1641,7 @@ where
           &runtime_expressions,
           &runtime_css_variables,
           self.yak_library_imports.as_ref().unwrap(),
+          self.minify,
         )
       }
       _ => None,
@@ -1659,7 +1665,7 @@ where
     }
 
     let folded = class_names
-      .and_then(|folded| fold_class_names(folded, self.yak_library_imports.as_ref().unwrap()));
+      .and_then(|folded| fold_class_names(folded, self.yak_library_imports.as_mut().unwrap()));
     let (runtime_expressions, runtime_css_variables) = match folded {
       Some(folded) => {
         transform.omit_class_name_argument();

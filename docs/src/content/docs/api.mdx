@@ -216,7 +216,7 @@ from `@yak/react/withYak` and `@yak/react/rsbuild`.
 
 | Option          | Type                 | Default                          | Description                                                                                                              |
 | --------------- | -------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `minify`        | `boolean`            | `true` in production             | Short class names and CSS variable names.                                                                                |
+| `minify`        | `boolean`            | `true` in production             | Short class names and CSS variable names. A folded value without a unit then skips the development check.                |
 | `prefix`        | `string`             | none                             | A prefix for the generated class names, for example to keep two apps on one page apart.                                  |
 | `contextPath`   | `string`             | `yak.context` in the project root | The path of your theme context file. The build fails if you set it and the file does not exist.                          |
 | `displayNames`  | `boolean`            | `true` when not minified         | Adds a `displayName` to each styled component for React DevTools.                                                         |

@@ -87,7 +87,7 @@ export const ThemeVariable = /*YAK EXPORTED STYLED:ThemeVariable:input_ThemeVari
 .input_ThemeVariable_m7uBBu {
   color: var(--input_ThemeVariable__color_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(3, ({}, style, theme)=>"input_ThemeVariable_m7uBBu" + (style["--input_ThemeVariable__color_m7uBBu"] = theme.color, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(3, ({}, style, theme)=>"input_ThemeVariable_m7uBBu" + (style["--input_ThemeVariable__color_m7uBBu"] = /*#__PURE__*/ __yak_cssValue(theme.color, ""), "")), {
     "displayName": "ThemeVariable"
 });
 // a variable in a nested css is written only when its branch runs
