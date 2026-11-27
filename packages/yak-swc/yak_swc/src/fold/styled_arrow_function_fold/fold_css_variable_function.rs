@@ -74,7 +74,7 @@ impl ClassNameFolder<'_> {
   pub(super) fn fold_style_value(&mut self, value: &Expr) -> Option<Box<Expr>> {
     match unwrap_type_casts(value) {
       Expr::Arrow(_) => {
-        // `null` is a value here, so no branch falls through, see `BodyEnd`
+        // `null` is a value here, see `BodyEnd::CssValueFallThrough`
         let body = self.bind_arrow(value, BodyEnd::CssValue)?;
         self.params.substitute(&body)
       }
@@ -128,7 +128,8 @@ impl ClassNameFolder<'_> {
 
 /// Turns a folded CSS value into text, like the unfolded runtime does with
 /// `String(value)` and its development check, see
-/// `fold_css_variable_definition`
+/// `fold_css_variable_definition`. It also wraps a `return` in a CSS value
+/// function that `??` could skip, see `BodyEnd::CssValueFallThrough`
 ///
 /// Both forms give the same text for a string or a number. The plugin option
 /// `minify` picks the form, and only the second one has the development

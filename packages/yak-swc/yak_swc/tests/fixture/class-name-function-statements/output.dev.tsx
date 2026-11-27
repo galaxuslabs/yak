@@ -162,8 +162,7 @@ export const BreakBeforeLastCase = /*YAK EXPORTED STYLED:BreakBeforeLastCase:inp
 }), {
     "displayName": "BreakBeforeLastCase"
 });
-// stays unfolded: at a CSS value position the expression would hold the
-// statements after the `switch` twice, so the whole component stays unfolded
+// at a CSS value position the last case can end without `return`
 export const LastCaseThenStatements = /*YAK EXPORTED STYLED:LastCaseThenStatements:input_LastCaseThenStatements_m7uBBu*//*YAK Extracted CSS:
 .input_LastCaseThenStatements___m7uBBu {
   padding: 2px;
@@ -171,35 +170,15 @@ export const LastCaseThenStatements = /*YAK EXPORTED STYLED:LastCaseThenStatemen
 .input_LastCaseThenStatements_m7uBBu {
   width: var(--input_LastCaseThenStatements__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_LastCaseThenStatements_m7uBBu", ({ $size })=>$size === "s" && /*#__PURE__*/ css("input_LastCaseThenStatements___m7uBBu"), {
-    "--input_LastCaseThenStatements__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $size })=>{
-        switch($size){
-            case "s":
-                return 2;
-            default:
-                log($size);
-        }
-        log($size);
-        return 8;
-    }, "px")
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $size }, style)=>"input_LastCaseThenStatements_m7uBBu" + ($size === "s" ? " input_LastCaseThenStatements___m7uBBu" : "") + (style["--input_LastCaseThenStatements__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue(($size === "s" ? 2 : (log($size), void 0)) ?? (log($size), 8), "px"), "")), {
     "displayName": "LastCaseThenStatements"
 });
-// stays unfolded: at a CSS value position the expression would hold the
-// statements after the `if` twice
+// at a CSS value position the `if` can end without `return`
 export const IfWithoutReturnThenStatements = /*YAK EXPORTED STYLED:IfWithoutReturnThenStatements:input_IfWithoutReturnThenStatements_m7uBBu*//*YAK Extracted CSS:
 .input_IfWithoutReturnThenStatements_m7uBBu {
   width: var(--input_IfWithoutReturnThenStatements__width_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_IfWithoutReturnThenStatements_m7uBBu", {
-    "--input_IfWithoutReturnThenStatements__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $on })=>{
-        if ($on) {
-            log($on);
-        }
-        log($on);
-        return 8;
-    }, "px")
-}), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $on }, style)=>"input_IfWithoutReturnThenStatements_m7uBBu" + (style["--input_IfWithoutReturnThenStatements__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue(($on ? (log($on), void 0) : void 0) ?? (log($on), 8), "px"), "")), {
     "displayName": "IfWithoutReturnThenStatements"
 });
 // stays unfolded: a statement after a `return`

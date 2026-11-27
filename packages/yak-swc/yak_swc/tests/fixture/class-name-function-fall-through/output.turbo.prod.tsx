@@ -1,7 +1,7 @@
-import { styled, css, __yak_cssValue } from "@yak/react/internal";
+import { styled, css } from "@yak/react/internal";
 import { log } from "./helpers";
 import * as __yak from "@yak/react/internal";
-import "data:text/css;base64,LnltN3VCQnUxIHsKICBwYWRkaW5nOiAxcHg7Cn0KLnltN3VCQnUyIHsKICBwYWRkaW5nOiAxMnB4Owp9Ci55bTd1QkJ1MyB7CiAgcGFkZGluZzogNnB4Owp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogOXB4Owp9Ci55bTd1QkJ1NSB7CiAgcGFkZGluZzogMDsKfS55bTd1QkJ1NyB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdTggewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVBIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QiB7CiAgY29sb3I6IGdyZWVuOwp9Ci55bTd1QkJ1QyB7CiAgY29sb3I6IGJsdWU7Cn0KLnltN3VCQnVEIHsKICBjb2xvcjogYmxhY2s7Cn0ueW03dUJCdUYgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVHIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdUggewogIGNvbG9yOiBibGFjazsKfS55bTd1QkJ1SiB7CiAgcGFkZGluZzogMnB4Owp9Ci55bTd1QkJ1SyB7CiAgcGFkZGluZzogNHB4Owp9Ci55bTd1QkJ1TCB7CiAgcGFkZGluZzogOHB4Owp9LnltN3VCQnVOIHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnVPIHsKICBwYWRkaW5nOiA0cHg7Cn0KLnltN3VCQnVQIHsKICBwYWRkaW5nOiA2cHg7Cn0KLnltN3VCQnVRIHsKICBwYWRkaW5nOiA4cHg7Cn0ueW03dUJCdVMgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVUIHsKICBjb2xvcjogZ3JlZW47Cn0KLnltN3VCQnVVIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdVYgewogIGNvbG9yOiBibGFjazsKfS55bTd1QkJ1WCB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdVkgewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVhIHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnViIHsKICBwYWRkaW5nOiA0cHg7Cn0KLnltN3VCQnVjIHsKICBwYWRkaW5nOiA4cHg7Cn0ueW03dUJCdWUgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVmIHsKICBjb2xvcjogZ3JlZW47Cn0KLnltN3VCQnVnIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdWggewogIGNvbG9yOiBibGFjazsKfQoueW03dUJCdWkgewogIGZvbnQtd2VpZ2h0OiBib2xkOwp9Ci55bTd1QkJ1aiB7CiAgbWFyZ2luOiAwOwp9Ci55bTd1QkJ1ayB7CiAgbWFyZ2luOiAycHg7Cn0KLnltN3VCQnVsIHsKICBtYXJnaW46IDRweDsKfS55bTd1QkJ1biB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdW8gewogIHBhZGRpbmc6IDRweDsKfQoueW03dUJCdXAgewogIHBhZGRpbmc6IDFweDsKfQoueW03dUJCdXEgewogIHBhZGRpbmc6IDA7Cn0KLnltN3VCQnVyIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdXMgewogIGNvbG9yOiBibGFjazsKfS55bTd1QkJ1dSB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1diB7CiAgd2lkdGg6IHZhcigtLXltN3VCQnV3KTsKfS55bTd1QkJ1eSB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdXogewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVfIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1MTAgewogIGNvbG9yOiBibHVlOwp9Ci55bTd1QkJ1MTEgewogIGNvbG9yOiBibGFjazsKfS55bTd1QkJ1MTMgewogIHBhZGRpbmc6IDJweDsKfQoueW03dUJCdTE0IHsKICBwYWRkaW5nOiA0cHg7Cn0KLnltN3VCQnUxNSB7CiAgcGFkZGluZzogNnB4Owp9Ci55bTd1QkJ1MTYgewogIHBhZGRpbmc6IDhweDsKfQ==";
+import "data:text/css;base64,LnltN3VCQnUxIHsKICBwYWRkaW5nOiAxcHg7Cn0KLnltN3VCQnUyIHsKICBwYWRkaW5nOiAxMnB4Owp9Ci55bTd1QkJ1MyB7CiAgcGFkZGluZzogNnB4Owp9Ci55bTd1QkJ1NCB7CiAgcGFkZGluZzogOXB4Owp9Ci55bTd1QkJ1NSB7CiAgcGFkZGluZzogMDsKfS55bTd1QkJ1NyB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdTggewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVBIHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1QiB7CiAgY29sb3I6IGdyZWVuOwp9Ci55bTd1QkJ1QyB7CiAgY29sb3I6IGJsdWU7Cn0KLnltN3VCQnVEIHsKICBjb2xvcjogYmxhY2s7Cn0ueW03dUJCdUYgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVHIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdUggewogIGNvbG9yOiBibGFjazsKfS55bTd1QkJ1SiB7CiAgcGFkZGluZzogMnB4Owp9Ci55bTd1QkJ1SyB7CiAgcGFkZGluZzogNHB4Owp9Ci55bTd1QkJ1TCB7CiAgcGFkZGluZzogOHB4Owp9LnltN3VCQnVOIHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnVPIHsKICBwYWRkaW5nOiA0cHg7Cn0KLnltN3VCQnVQIHsKICBwYWRkaW5nOiA2cHg7Cn0KLnltN3VCQnVRIHsKICBwYWRkaW5nOiA4cHg7Cn0ueW03dUJCdVMgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVUIHsKICBjb2xvcjogZ3JlZW47Cn0KLnltN3VCQnVVIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdVYgewogIGNvbG9yOiBibGFjazsKfS55bTd1QkJ1WCB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdVkgewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnVhIHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnViIHsKICBwYWRkaW5nOiA0cHg7Cn0KLnltN3VCQnVjIHsKICBwYWRkaW5nOiA4cHg7Cn0ueW03dUJCdWUgewogIGNvbG9yOiByZWQ7Cn0KLnltN3VCQnVmIHsKICBjb2xvcjogZ3JlZW47Cn0KLnltN3VCQnVnIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdWggewogIGNvbG9yOiBibGFjazsKfQoueW03dUJCdWkgewogIGZvbnQtd2VpZ2h0OiBib2xkOwp9Ci55bTd1QkJ1aiB7CiAgbWFyZ2luOiAwOwp9Ci55bTd1QkJ1ayB7CiAgbWFyZ2luOiAycHg7Cn0KLnltN3VCQnVsIHsKICBtYXJnaW46IDRweDsKfS55bTd1QkJ1biB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdW8gewogIHBhZGRpbmc6IDRweDsKfQoueW03dUJCdXAgewogIHBhZGRpbmc6IDFweDsKfQoueW03dUJCdXEgewogIHBhZGRpbmc6IDA7Cn0KLnltN3VCQnVyIHsKICBjb2xvcjogYmx1ZTsKfQoueW03dUJCdXMgewogIGNvbG9yOiBibGFjazsKfS55bTd1QkJ1dSB7CiAgY29sb3I6IHJlZDsKfS55bTd1QkJ1dyB7CiAgY29sb3I6IHJlZDsKfQoueW03dUJCdXggewogIGNvbG9yOiBibHVlOwp9LnltN3VCQnV6IHsKICBjb2xvcjogcmVkOwp9Ci55bTd1QkJ1LSB7CiAgY29sb3I6IGJsdWU7Cn0KLnltN3VCQnVfIHsKICBjb2xvcjogYmxhY2s7Cn0ueW03dUJCdTExIHsKICBwYWRkaW5nOiAycHg7Cn0KLnltN3VCQnUxMiB7CiAgcGFkZGluZzogNHB4Owp9Ci55bTd1QkJ1MTMgewogIHBhZGRpbmc6IDZweDsKfQoueW03dUJCdTE0IHsKICBwYWRkaW5nOiA4cHg7Cn0=";
 type Size = "s" | "m" | "l";
 type Layout = {
     large?: {
@@ -172,73 +172,58 @@ export const GuardBlockAtTheEnd = /*YAK EXPORTED STYLED:GuardBlockAtTheEnd:ym7uB
   color: red;
 }
 */ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $big })=>"ym7uBBut" + ($on ? $big ? " ym7uBBuu" : "" : ""));
-// stays unfolded: at a CSS value position, `null` is a value that a `??`
-// would skip
-export const CssValuePosition = /*YAK EXPORTED STYLED:CssValuePosition:ym7uBBuv*//*YAK Extracted CSS:
-.ym7uBBuv {
-  width: var(--ym7uBBuw);
-}
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuv", {
-    "--ym7uBBuw": /*#__PURE__*/ __yak_cssValue(({ $a, $b })=>{
-        if ($a) {
-            if ($b) return 2;
-        }
-        if ($b) return 4;
-        return 8;
-    }, "px")
-});
 // stays unfolded: `return void 0;` is no value the fold knows
-export const ReturnVoidZeroInGuard = /*YAK EXPORTED STYLED:ReturnVoidZeroInGuard:ym7uBBux*//*YAK Extracted CSS:
-.ym7uBBuy {
+export const ReturnVoidZeroInGuard = /*YAK EXPORTED STYLED:ReturnVoidZeroInGuard:ym7uBBuv*//*YAK Extracted CSS:
+.ym7uBBuw {
   color: red;
 }
-.ym7uBBuz {
+.ym7uBBux {
   color: blue;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBux", ({ $on, $big })=>{
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuv", ({ $on, $big })=>{
     if ($on) {
         if ($big) return void 0;
     }
-    if ($big) return /*#__PURE__*/ css("ym7uBBuy");
-    return /*#__PURE__*/ css("ym7uBBuz");
+    if ($big) return /*#__PURE__*/ css("ym7uBBuw");
+    return /*#__PURE__*/ css("ym7uBBux");
 });
 // stays unfolded: a `??` that the user writes
-export const UserNullish = /*YAK EXPORTED STYLED:UserNullish:ym7uBBu-*//*YAK Extracted CSS:
-.ym7uBBu_ {
+export const UserNullish = /*YAK EXPORTED STYLED:UserNullish:ym7uBBuy*//*YAK Extracted CSS:
+.ym7uBBuz {
   color: red;
 }
-.ym7uBBu10 {
+.ym7uBBu- {
   color: blue;
 }
-.ym7uBBu11 {
+.ym7uBBu_ {
   color: black;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu-", ({ $on })=>{
-    if ($on) return /*#__PURE__*/ css("ym7uBBu_") ?? /*#__PURE__*/ css("ym7uBBu10");
-    return /*#__PURE__*/ css("ym7uBBu11");
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuy", ({ $on })=>{
+    if ($on) return /*#__PURE__*/ css("ym7uBBuz") ?? /*#__PURE__*/ css("ym7uBBu-");
+    return /*#__PURE__*/ css("ym7uBBu_");
 });
 // stays unfolded: a `break` inside an `if` of the last case
-export const BreakInsideIf = /*YAK EXPORTED STYLED:BreakInsideIf:ym7uBBu12*//*YAK Extracted CSS:
-.ym7uBBu13 {
+export const BreakInsideIf = /*YAK EXPORTED STYLED:BreakInsideIf:ym7uBBu10*//*YAK Extracted CSS:
+.ym7uBBu11 {
   padding: 2px;
 }
-.ym7uBBu14 {
+.ym7uBBu12 {
   padding: 4px;
 }
-.ym7uBBu15 {
+.ym7uBBu13 {
   padding: 6px;
 }
-.ym7uBBu16 {
+.ym7uBBu14 {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu12", ({ $size, $on })=>{
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu10", ({ $size, $on })=>{
     switch($size){
         case "s":
-            return /*#__PURE__*/ css("ym7uBBu13");
+            return /*#__PURE__*/ css("ym7uBBu11");
         default:
             if ($on) break;
-            return /*#__PURE__*/ css("ym7uBBu14");
+            return /*#__PURE__*/ css("ym7uBBu12");
     }
-    if ($on) return /*#__PURE__*/ css("ym7uBBu15");
-    return /*#__PURE__*/ css("ym7uBBu16");
+    if ($on) return /*#__PURE__*/ css("ym7uBBu13");
+    return /*#__PURE__*/ css("ym7uBBu14");
 });
