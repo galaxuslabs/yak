@@ -172,6 +172,19 @@ const Guarded = styled.p<{ $size: "s" | "l"; $n: number }>`
   }}
 `;
 
+// The React twin folds this function. Solid keeps it as written, and the case
+// checks that Solid renders the same width as React: a `return` of a prop in
+// a guard block, and the code after the block when that `return` doesn't run
+const GuardedWidth = styled.div<{ $wide?: boolean; $width?: number }>`
+  width: ${({ $wide, $width }) => {
+    if ($wide) {
+      if ($width !== undefined) return $width;
+    }
+    if ($wide) return 40;
+    return 20;
+  }}px;
+`;
+
 // a switch picks one of three classes, and usages fold with literal, state
 // and call values
 const Picked = styled.p<{ $variant?: "s" | "m" | "l" }>`
@@ -285,6 +298,12 @@ export default function App() {
       <Guarded data-testid="guarded-nothing" $size="l" $n={0}>
         guarded nothing
       </Guarded>
+      <GuardedWidth data-testid="guarded-width-set" $wide $width={64}>
+        guarded width set
+      </GuardedWidth>
+      <GuardedWidth data-testid="guarded-width-missing" $wide>
+        guarded width missing
+      </GuardedWidth>
       <Picked data-testid="picked-default">picked default</Picked>
       <Picked data-testid="picked-literal" $variant="m">
         picked literal

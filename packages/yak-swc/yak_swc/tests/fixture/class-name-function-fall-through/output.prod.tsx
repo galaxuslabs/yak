@@ -1,4 +1,4 @@
-import { styled, css, __yak_cssValue } from "@yak/react/internal";
+import { styled, css } from "@yak/react/internal";
 import { log } from "./helpers";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
@@ -172,73 +172,58 @@ export const GuardBlockAtTheEnd = /*YAK EXPORTED STYLED:GuardBlockAtTheEnd:ym7uB
   color: red;
 }
 */ /*#__PURE__*/ __yak.__yak_div(0, ({ $on, $big })=>"ym7uBBut" + ($on ? $big ? " ym7uBBuu" : "" : ""));
-// stays unfolded: at a CSS value position, `null` is a value that a `??`
-// would skip
-export const CssValuePosition = /*YAK EXPORTED STYLED:CssValuePosition:ym7uBBuv*//*YAK Extracted CSS:
-.ym7uBBuv {
-  width: var(--ym7uBBuw);
-}
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuv", {
-    "--ym7uBBuw": /*#__PURE__*/ __yak_cssValue(({ $a, $b })=>{
-        if ($a) {
-            if ($b) return 2;
-        }
-        if ($b) return 4;
-        return 8;
-    }, "px")
-});
 // stays unfolded: `return void 0;` is no value the fold knows
-export const ReturnVoidZeroInGuard = /*YAK EXPORTED STYLED:ReturnVoidZeroInGuard:ym7uBBux*//*YAK Extracted CSS:
-.ym7uBBuy {
+export const ReturnVoidZeroInGuard = /*YAK EXPORTED STYLED:ReturnVoidZeroInGuard:ym7uBBuv*//*YAK Extracted CSS:
+.ym7uBBuw {
   color: red;
 }
-.ym7uBBuz {
+.ym7uBBux {
   color: blue;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBux", ({ $on, $big })=>{
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuv", ({ $on, $big })=>{
     if ($on) {
         if ($big) return void 0;
     }
-    if ($big) return /*#__PURE__*/ css("ym7uBBuy");
-    return /*#__PURE__*/ css("ym7uBBuz");
+    if ($big) return /*#__PURE__*/ css("ym7uBBuw");
+    return /*#__PURE__*/ css("ym7uBBux");
 });
 // stays unfolded: a `??` that the user writes
-export const UserNullish = /*YAK EXPORTED STYLED:UserNullish:ym7uBBu-*//*YAK Extracted CSS:
-.ym7uBBu_ {
+export const UserNullish = /*YAK EXPORTED STYLED:UserNullish:ym7uBBuy*//*YAK Extracted CSS:
+.ym7uBBuz {
   color: red;
 }
-.ym7uBBu10 {
+.ym7uBBu- {
   color: blue;
 }
-.ym7uBBu11 {
+.ym7uBBu_ {
   color: black;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu-", ({ $on })=>{
-    if ($on) return /*#__PURE__*/ css("ym7uBBu_") ?? /*#__PURE__*/ css("ym7uBBu10");
-    return /*#__PURE__*/ css("ym7uBBu11");
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBuy", ({ $on })=>{
+    if ($on) return /*#__PURE__*/ css("ym7uBBuz") ?? /*#__PURE__*/ css("ym7uBBu-");
+    return /*#__PURE__*/ css("ym7uBBu_");
 });
 // stays unfolded: a `break` inside an `if` of the last case
-export const BreakInsideIf = /*YAK EXPORTED STYLED:BreakInsideIf:ym7uBBu12*//*YAK Extracted CSS:
-.ym7uBBu13 {
+export const BreakInsideIf = /*YAK EXPORTED STYLED:BreakInsideIf:ym7uBBu10*//*YAK Extracted CSS:
+.ym7uBBu11 {
   padding: 2px;
 }
-.ym7uBBu14 {
+.ym7uBBu12 {
   padding: 4px;
 }
-.ym7uBBu15 {
+.ym7uBBu13 {
   padding: 6px;
 }
-.ym7uBBu16 {
+.ym7uBBu14 {
   padding: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu12", ({ $size, $on })=>{
+*/ /*#__PURE__*/ __yak.__yak_div("ym7uBBu10", ({ $size, $on })=>{
     switch($size){
         case "s":
-            return /*#__PURE__*/ css("ym7uBBu13");
+            return /*#__PURE__*/ css("ym7uBBu11");
         default:
             if ($on) break;
-            return /*#__PURE__*/ css("ym7uBBu14");
+            return /*#__PURE__*/ css("ym7uBBu12");
     }
-    if ($on) return /*#__PURE__*/ css("ym7uBBu15");
-    return /*#__PURE__*/ css("ym7uBBu16");
+    if ($on) return /*#__PURE__*/ css("ym7uBBu13");
+    return /*#__PURE__*/ css("ym7uBBu14");
 });

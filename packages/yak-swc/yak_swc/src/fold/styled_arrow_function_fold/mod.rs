@@ -258,7 +258,9 @@ impl ClassNameFolder<'_> {
 
   /// Registers the props parameter of a runtime expression and returns the
   /// expression the arrow returns. `end` tells a function of class names from
-  /// one at a CSS value position, see `BodyEnd`
+  /// one at a CSS value position, see `BodyEnd`. At a CSS value position, a
+  /// `return` that `??` could skip gets the wrapper of `css_value_text`,
+  /// whose form the plugin option `minify` picks, see `CssValueText`
   fn bind_arrow<'e>(&mut self, expression: &'e Expr, end: BodyEnd) -> Option<Cow<'e, Expr>> {
     let Expr::Arrow(arrow) = unwrap_type_casts(expression) else {
       return None;
@@ -273,6 +275,7 @@ impl ClassNameFolder<'_> {
         &block.stmts,
         &mut self.params.consts,
         end,
+        &mut self.css_value_text,
       )?),
       #[cfg(swc_ast_unknown)]
       _ => return None,

@@ -168,18 +168,6 @@ export const GuardBlockAtTheEnd = styled.div<{ $on: boolean; $big: boolean }>`
   }}
 `;
 
-// stays unfolded: at a CSS value position, `null` is a value that a `??`
-// would skip
-export const CssValuePosition = styled.div<{ $a: boolean; $b: boolean }>`
-  width: ${({ $a, $b }) => {
-    if ($a) {
-      if ($b) return 2;
-    }
-    if ($b) return 4;
-    return 8;
-  }}px;
-`;
-
 // stays unfolded: `return void 0;` is no value the fold knows
 export const ReturnVoidZeroInGuard = styled.div<{ $on: boolean; $big: boolean }>`
   ${({ $on, $big }) => {

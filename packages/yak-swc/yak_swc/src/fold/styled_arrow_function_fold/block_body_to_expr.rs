@@ -3,12 +3,14 @@ use swc_core::{
   common::{SyntaxContext, DUMMY_SP},
   ecma::ast::{
     BinaryOp, BreakStmt, CallExpr, Callee, Decl, Expr, Id, Ident, Invalid, Lit, MemberProp,
-    OptChainBase, ParenExpr, Pat, SeqExpr, Stmt, SwitchCase, SwitchStmt, VarDecl, VarDeclKind,
+    OptChainBase, ParenExpr, Pat, SeqExpr, Stmt, SwitchCase, SwitchStmt, UnaryOp, VarDecl,
+    VarDeclKind,
   },
   ecma::visit::{Visit, VisitWith},
 };
 
-use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts};
+use super::fold_css_variable_function::CssValueText;
+use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts, void_zero};
 
 /// Turns the block body of a runtime expression into the one expression it
 /// returns, so the folded function can take it like an arrow without a block:
@@ -33,18 +35,20 @@ use crate::utils::ast_helper::{binary, condition, paren, unwrap_type_casts};
 ///
 /// Each condition stays in the order the user wrote it and runs as often as
 /// in the block. A path that reaches the end of the function without a
-/// `return` yields `undefined`. In a function of class names, a path that
-/// leaves an `if`, a block or a `switch` without a `return` and has more
-/// statements after it yields the fall through marker, see
+/// `return` yields `undefined`. A path that leaves an `if`, a block or a
+/// `switch` without a `return` and has more statements after it yields the
+/// fall through marker, or `void 0` at a CSS value position, see
 /// `fall_through_to_expr`
 pub(super) fn block_body_to_expr(
   stmts: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  css_text: &mut CssValueText,
 ) -> Option<Box<Expr>> {
   let Some((first, rest)) = stmts.split_first() else {
     return Some(match end {
       BodyEnd::FallThrough => fall_through_marker(),
+      BodyEnd::CssValueFallThrough => void_zero(),
       BodyEnd::ClassNames | BodyEnd::CssValue => undefined(),
     });
   };
@@ -54,41 +58,54 @@ pub(super) fn block_body_to_expr(
     return None;
   }
   // a single `return` after the branch is copied, see `branch_to_expr`
-  if end != BodyEnd::CssValue
-    && has_open_branch(first)
-    && !rest.is_empty()
-    && !matches!(rest, [Stmt::Return(_)])
-  {
-    return fall_through_to_expr(first, rest, consts, end);
+  if has_open_branch(first) && !rest.is_empty() && !matches!(rest, [Stmt::Return(_)]) {
+    return fall_through_to_expr(first, rest, consts, end, css_text);
   }
   match first {
-    Stmt::Return(return_stmt) if can_drop(rest) => Some(match &return_stmt.arg {
-      Some(arg) => wrap_in_parens(arg),
-      None => undefined(),
-    }),
-    Stmt::Empty(_) => block_body_to_expr(rest, consts, end),
-    Stmt::Block(block) if can_drop(rest) => branch_to_expr(&block.stmts, rest, consts, end),
+    Stmt::Return(return_stmt) if can_drop(rest) => {
+      let value = match &return_stmt.arg {
+        Some(arg) => wrap_in_parens(arg),
+        None => undefined(),
+      };
+      // `??` would skip a returned `null`, see `BodyEnd::CssValueFallThrough`
+      if end == BodyEnd::CssValueFallThrough
+        && !return_stmt.arg.as_deref().is_some_and(is_never_nullish)
+      {
+        return Some(css_text.wrap(value));
+      }
+      Some(value)
+    }
+    Stmt::Empty(_) => block_body_to_expr(rest, consts, end, css_text),
+    Stmt::Block(block) if can_drop(rest) => {
+      branch_to_expr(&block.stmts, rest, consts, end, css_text)
+    }
     // `if (a) { return x; } return y;` -> `a ? x : y`
     Stmt::If(if_stmt) => {
       // with an `else` the statements after the `if` never run, or they are
-      // the one `return` that `branch_to_expr` copies. In a function of class
-      // names, `fall_through_to_expr` takes every other `if` that reaches them
+      // the one `return` that `branch_to_expr` copies. `fall_through_to_expr`
+      // takes every other `if` that reaches them
       if if_stmt.alt.is_some() && !can_drop(rest) {
         return None;
       }
-      let cons = branch_to_expr(std::slice::from_ref(&*if_stmt.cons), rest, consts, end)?;
+      let cons = branch_to_expr(
+        std::slice::from_ref(&*if_stmt.cons),
+        rest,
+        consts,
+        end,
+        css_text,
+      )?;
       let alt = match &if_stmt.alt {
-        Some(alt) => branch_to_expr(std::slice::from_ref(&**alt), rest, consts, end)?,
-        None => block_body_to_expr(rest, consts, end)?,
+        Some(alt) => branch_to_expr(std::slice::from_ref(&**alt), rest, consts, end, css_text)?,
+        None => block_body_to_expr(rest, consts, end, css_text)?,
       };
       Some(condition(if_stmt.test.clone(), cons, alt))
     }
-    Stmt::Switch(switch) => switch_to_expr(switch, rest, consts, end),
+    Stmt::Switch(switch) => switch_to_expr(switch, rest, consts, end, css_text),
     // `const size = $layout.medium?.size;` leaves no trace in the expression:
     // every read of `size` becomes `$layout.medium?.size`, see `bind_consts`
     Stmt::Decl(Decl::Var(var)) if var.kind == VarDeclKind::Const => {
       bind_consts(var, consts)?;
-      block_body_to_expr(rest, consts, end)
+      block_body_to_expr(rest, consts, end, css_text)
     }
     // Devs write an exhaustive check like `assertNever($size);` or add a
     // `console.log($size);` while they debug. The source throws the value of
@@ -111,7 +128,7 @@ pub(super) fn block_body_to_expr(
         span: DUMMY_SP,
         exprs: vec![
           Box::new(unwrap_type_casts(&statement.expr).clone()),
-          block_body_to_expr(rest, consts, end)?,
+          block_body_to_expr(rest, consts, end, css_text)?,
         ],
       }))))
     }
@@ -127,11 +144,43 @@ pub(super) enum BodyEnd {
   /// nothing
   ClassNames,
   /// The end of a function at a CSS value position like `width: ${fn}px;`:
-  /// `undefined`. No branch falls through, see `fall_through_to_expr`
+  /// `undefined`
   CssValue,
-  /// The end of a branch with more statements after it: the fall through
-  /// marker
+  /// The end of a branch with more statements after it in a function of
+  /// class names: the fall through marker
   FallThrough,
+  /// The end of a branch with more statements after it in a function at a
+  /// CSS value position: `void 0`
+  ///
+  /// That function returns its value as it is, and `null` or `undefined` is a
+  /// real value there. `??` would go on with the statements after the branch
+  /// for it. So a `return` in the branch whose value can be nullish gets the
+  /// wrapper of `CssValueText`, which turns the value into text or throws in
+  /// development. A value that `is_never_nullish` accepts stays as it is.
+  /// `void 0` is then the only nullish value the branch yields, and it stands
+  /// for the path that leaves the branch:
+  ///
+  /// ```text
+  /// if ($on) {
+  ///   if ($big) return $width;
+  /// }
+  /// if ($big) return 4;
+  /// return 2;
+  /// ->
+  /// minify:    ($on ? $big ? `${$width}` : void 0 : void 0) ?? ($big ? 4 : 2)
+  /// no minify: ($on ? $big ? __yak_cssValue($width, "") : void 0 : void 0) ?? ($big ? 4 : 2)
+  /// ```
+  ///
+  /// The wrapped value gives the same CSS as the source for every string and
+  /// number. A missing value gives other text in a production build, which is
+  /// invalid CSS either way:
+  ///
+  /// - With a unit, the source gives `"undefined"` and the fold gives
+  ///   `"undefinedpx"`.
+  /// - With a minus before the value, the fold gives `"-undefinedpx"`.
+  /// - With a minus, `$x={0}` gives `"-0px"` where the source gives `"0px"`.
+  ///   The browser reads both as zero.
+  CssValueFallThrough,
 }
 
 /// Folds an `if`, a block or a `switch` that can end without a `return` and
@@ -160,17 +209,39 @@ pub(super) enum BodyEnd {
 /// and in source order, and no statement is copied
 ///
 /// A function at a CSS value position like `width: ${fn}px;` returns its value
-/// as it is, and `null` or `undefined` is a real value there. `??` would go on
-/// with the statements after the block for it, so that function keeps its
-/// unfolded output, see `BodyEnd::CssValue`
+/// as it is, and `null` or `undefined` is a real value there. Each `return`
+/// in the block whose value can be nullish gets a wrapper, so `??` never
+/// skips it. A value that is never nullish stays as it is, see
+/// `BodyEnd::CssValueFallThrough`:
+///
+/// ```text
+/// if ($on) {
+///   if ($big) return $width;
+///   if ($wide) return 1;
+/// }
+/// if ($wide) return 3;
+/// return 2;
+/// ->
+/// minify:
+/// ($on ? $big ? `${$width}` : $wide ? 1 : void 0 : void 0) ?? ($wide ? 3 : 2)
+/// no minify:
+/// ($on ? $big ? __yak_cssValue($width, "") : $wide ? 1 : void 0 : void 0) ?? ($wide ? 3 : 2)
+/// ```
+///
+/// A `return` after the block, on the right side of `??`, stays as it is
 fn fall_through_to_expr(
   first: &Stmt,
   rest: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  css_text: &mut CssValueText,
 ) -> Option<Box<Expr>> {
-  let branch = block_body_to_expr(std::slice::from_ref(first), consts, BodyEnd::FallThrough)?;
-  let rest = block_body_to_expr(rest, consts, end)?;
+  let branch_end = match end {
+    BodyEnd::ClassNames | BodyEnd::FallThrough => BodyEnd::FallThrough,
+    BodyEnd::CssValue | BodyEnd::CssValueFallThrough => BodyEnd::CssValueFallThrough,
+  };
+  let branch = block_body_to_expr(std::slice::from_ref(first), consts, branch_end, css_text)?;
+  let rest = block_body_to_expr(rest, consts, end, css_text)?;
   Some(binary(BinaryOp::NullishCoalescing, branch, rest))
 }
 
@@ -376,19 +447,19 @@ pub(super) fn is_discarded_expression(expr: &Expr) -> bool {
 /// $on ? ($big ? css("yB1") : css("yB2")) : css("yB2")
 /// ```
 ///
-/// Other statements after the branch need `fall_through_to_expr`, which a
-/// function of class names takes before it gets here. A function at a CSS
-/// value position keeps its unfolded output for them
+/// Other statements after the branch need `fall_through_to_expr`, which
+/// `block_body_to_expr` takes before it gets here
 fn branch_to_expr(
   branch: &[Stmt],
   rest: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  css_text: &mut CssValueText,
 ) -> Option<Box<Expr>> {
   if rest.is_empty() || always_returns(branch) {
-    block_body_to_expr(branch, consts, end)
+    block_body_to_expr(branch, consts, end, css_text)
   } else if matches!(rest, [Stmt::Return(_)]) {
-    block_body_to_expr(&[branch, rest].concat(), consts, end)
+    block_body_to_expr(&[branch, rest].concat(), consts, end, css_text)
   } else {
     None
   }
@@ -414,6 +485,7 @@ fn switch_to_expr(
   rest: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  css_text: &mut CssValueText,
 ) -> Option<Box<Expr>> {
   let discriminant = unwrap_type_casts(&switch.discriminant);
   if !is_plain_read(discriminant) || reads_const_of_other_case(switch) {
@@ -458,8 +530,8 @@ fn switch_to_expr(
   let mut result = match default_case {
     // the statements after a `switch` whose `default` returns never run
     Some(case) if always_returns(&case.cons) && !can_drop(rest) => return None,
-    Some(case) => case_to_expr(case, rest, consts, end)?,
-    None => block_body_to_expr(rest, consts, end)?,
+    Some(case) => case_to_expr(case, rest, consts, end, css_text)?,
+    None => block_body_to_expr(rest, consts, end, css_text)?,
   };
   for (tests, case) in groups.into_iter().rev() {
     let test = tests
@@ -472,7 +544,11 @@ fn switch_to_expr(
         )
       })
       .reduce(|left, right| binary(BinaryOp::LogicalOr, left, right))?;
-    result = condition(test, case_to_expr(case, rest, consts, end)?, result);
+    result = condition(
+      test,
+      case_to_expr(case, rest, consts, end, css_text)?,
+      result,
+    );
   }
   Some(result)
 }
@@ -486,12 +562,13 @@ fn case_to_expr(
   rest: &[Stmt],
   consts: &mut ConstReads,
   end: BodyEnd,
+  css_text: &mut CssValueText,
 ) -> Option<Box<Expr>> {
   let cons = match case.cons.split_last() {
     Some((Stmt::Break(BreakStmt { label: None, .. }), init)) => init,
     _ => &case.cons[..],
   };
-  branch_to_expr(cons, rest, consts, end)
+  branch_to_expr(cons, rest, consts, end, css_text)
 }
 
 /// Statements that never run are left out of the expression, e.g. the `break`
@@ -566,6 +643,43 @@ fn wrap_in_parens(expr: &Expr) -> Box<Expr> {
       }))
     }
     _ => Box::new(expr.clone()),
+  }
+}
+
+/// Returns true if the value can never be `null` or `undefined`. A `return`
+/// of such a value in a branch with more statements after it needs no
+/// wrapper, see `BodyEnd::CssValueFallThrough`:
+/// `if ($on) return $n * 2;` -> `$on ? $n * 2 : void 0`, but
+/// `if ($on) return $n;` -> ``$on ? `${$n}` : void 0`` with `minify`
+///
+/// - a literal other than `null`, e.g. `2`, `"auto"` or `true`, and a template
+///   literal like `` `${$n}px` ``
+/// - `-$n`, `!$on` or `typeof $n`: every unary operator but `void` returns a
+///   number, a string or a boolean
+/// - `$n * 2`, `$n + "px"` or `$n > 2`: every binary operator but `&&`, `||`
+///   and `??` returns a number, a string or a boolean
+/// - `a ? 1 : 2` when both branches count
+/// - `a || 1` and `a ?? 1` when the right side counts: they return the left
+///   side only when it is truthy or not nullish
+/// - `a && 1` when both sides count: it returns the left side when it is
+///   falsy, and a falsy `$a` can be `null`
+/// - `(log($a), 1)` when the last expression counts
+///
+/// A read like `$width` or `props.x` and a call like `getWidth()` can return
+/// anything
+fn is_never_nullish(expr: &Expr) -> bool {
+  match unwrap_type_casts(expr) {
+    Expr::Lit(lit) => !matches!(lit, Lit::Null(_)),
+    Expr::Tpl(_) => true,
+    Expr::Unary(unary) => unary.op != UnaryOp::Void,
+    Expr::Bin(bin) => match bin.op {
+      BinaryOp::LogicalAnd => is_never_nullish(&bin.left) && is_never_nullish(&bin.right),
+      BinaryOp::LogicalOr | BinaryOp::NullishCoalescing => is_never_nullish(&bin.right),
+      _ => true,
+    },
+    Expr::Cond(cond) => is_never_nullish(&cond.cons) && is_never_nullish(&cond.alt),
+    Expr::Seq(seq) => seq.exprs.last().is_some_and(|last| is_never_nullish(last)),
+    _ => false,
   }
 }
 

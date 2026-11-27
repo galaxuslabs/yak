@@ -104,6 +104,11 @@ test(
     await expect(page.getByTestId("guarded-fall-through")).toHaveCSS("padding-left", "6px");
     await expect(page.getByTestId("guarded-nothing")).toHaveCSS("padding-left", "0px");
 
+    // a CSS value that returns `$width` inside the guard block, and one that
+    // goes on after the block
+    await expect(page.getByTestId("guarded-width-set")).toHaveCSS("width", "64px");
+    await expect(page.getByTestId("guarded-width-missing")).toHaveCSS("width", "40px");
+
     // entity-spelled attribute strings compare by decoded value, like the runtime path
     await expect(page.getByTestId("entity")).toHaveCSS("color", "rgb(220, 20, 60)");
     await expect(page.getByTestId("entity-runtime")).toHaveCSS("color", "rgb(220, 20, 60)");

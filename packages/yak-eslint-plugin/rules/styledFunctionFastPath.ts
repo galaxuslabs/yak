@@ -1,6 +1,5 @@
 import type { ESTree } from "@oxlint/plugins";
 import { createRule } from "../utils.js";
-import { isInsideCssDeclarationValue } from "./styleConditions.js";
 import { importsYak, isStyledOrCssTag, unwrapTypeCasts } from "./utils.js";
 
 const slower = "in a function of a styled/css literal makes the component render slower.";
@@ -18,6 +17,21 @@ const slower = "in a function of a styled/css literal makes the component render
  * each use of the name.
  * Every other statement has no place in an expression, so the component
  * renders slower. This rule reports those statements
+ *
+ * A branch can end without a `return`: the compiler goes on with the code
+ * after it through `??`
+ *
+ * { if ($on) { if ($big) return css`a`; } if ($big) return css`b`; return css`c`; }
+ * -> (($on ? ($big ? " a" : void 0) : void 0) ?? ($big ? " b" : " c"))
+ *
+ * `??` treats a returned `null` or `undefined` as "go on". A function that
+ * sets a CSS value, like the one in `width: ${fn}px;`, can return those. So
+ * the compiler wraps each `return` in such a branch whose value can be
+ * nullish, and `??` never skips it. The wrapper is `${$width}` in backticks
+ * with the plugin option `minify` and `__yak_cssValue($width, "")` without it:
+ *
+ * { if ($on) { if ($big) return $width; } if ($big) return 2; return 3; }
+ * -> ($on ? $big ? `${$width}` : void 0 : void 0) ?? ($big ? 2 : 3)
  *
  * Only `@yak/react` compiles this way
  */
@@ -37,8 +51,6 @@ export const styledFunctionFastPath = createRule("styled-function-fast-path", {
         "`const {{name}}` holds more than a prop read, so the component renders slower. A `const` can name a prop read like `const size = $layout.size;`. Write the expression where you use `{{name}}`.",
       functionExpression:
         "A `function` expression in a styled/css literal makes the component render slower. Use an arrow function like `({ $active }) => { if ($active) return css`...`; }`.",
-      branchWithoutReturn:
-        "In a CSS value like `width: ${...}px`, this {{statement}} can end without `return` while more code follows, so the component renders slower. Return in every branch.",
       propsObject:
         "`{{name}}` is passed on as a whole object, so the component renders slower. Read the props by name and pass those, like `({ $a, $b }) => helper({ $a, $b })`.",
       propsComputedKey:
@@ -60,74 +72,23 @@ export const styledFunctionFastPath = createRule("styled-function-fast-path", {
   createOnce: (context) => {
     const { before, importedNames, ImportDeclaration } = importsYak(["@yak/react"]);
 
-    /**
-     * True while the checked function sets a CSS value, like the one in
-     * `width: ${fn}px;`. A function that adds class names can leave a branch
-     * without a `return`: the compiler goes on with the code after it
-     *
-     * { if ($on) { if ($big) return css`a`; } if ($big) return css`b`; return css`c`; }
-     * -> (($on ? ($big ? " a" : void 0) : void 0) ?? ($big ? " b" : " c"))
-     *
-     * The compiled code goes on after a branch with `??`, which treats a
-     * returned `null` or `undefined` as "go on". A function that sets a CSS
-     * value can return those on purpose, so each of its branches has to return
-     */
-    let setsCssValue = false;
-
     /** Reports every statement of a function body the compiler can not turn into an expression */
     const checkStatements = (statements: readonly ESTree.Statement[]) => {
-      statements.forEach((statement, index) => {
-        // the compiler copies a single `return` into a branch that ends without one
-        const rest = statements.slice(index + 1);
-        const hasCodeAfter =
-          setsCssValue &&
-          rest.some((next) => next.type !== "EmptyStatement") &&
-          !(rest.length === 1 && rest[0].type === "ReturnStatement");
+      statements.forEach((statement) => {
         switch (statement.type) {
           case "ReturnStatement":
           case "EmptyStatement":
             return;
           case "BlockStatement":
-            if (hasCodeAfter && !alwaysReturns([statement])) {
-              context.report({
-                node: statement,
-                messageId: "branchWithoutReturn",
-                data: { statement: "block" },
-              });
-            }
             checkStatements(statement.body);
             return;
           case "IfStatement":
-            if (hasCodeAfter && !alwaysReturns([statement.consequent])) {
-              context.report({
-                node: statement.consequent,
-                messageId: "branchWithoutReturn",
-                data: { statement: "`if` branch" },
-              });
-            } else if (
-              hasCodeAfter &&
-              statement.alternate &&
-              !alwaysReturns([statement.alternate])
-            ) {
-              context.report({
-                node: statement.alternate,
-                messageId: "branchWithoutReturn",
-                data: { statement: "`else` branch" },
-              });
-            }
             checkStatements([statement.consequent]);
             if (statement.alternate) {
               checkStatements([statement.alternate]);
             }
             return;
           case "SwitchStatement":
-            if (hasCodeAfter && lastCaseCanEnd(statement)) {
-              context.report({
-                node: statement.cases[statement.cases.length - 1],
-                messageId: "branchWithoutReturn",
-                data: { statement: "last `case`" },
-              });
-            }
             checkSwitch(statement);
             return;
           case "VariableDeclaration":
@@ -251,7 +212,6 @@ export const styledFunctionFastPath = createRule("styled-function-fast-path", {
           } else if (expression.type === "ArrowFunctionExpression") {
             checkParameter(expression);
             if (expression.body.type === "BlockStatement") {
-              setsCssValue = isInsideCssDeclarationValue(node, expression);
               checkStatements(expression.body.body);
             }
           }
@@ -364,12 +324,6 @@ function alwaysReturns(statements: readonly ESTree.Statement[]): boolean {
         return false;
     }
   });
-}
-
-/** True if the last `case` of the `switch` has statements and a path through them ends without a `return` */
-function lastCaseCanEnd(statement: ESTree.SwitchStatement): boolean {
-  const last = statement.cases[statement.cases.length - 1];
-  return last !== undefined && last.consequent.length > 0 && !alwaysReturns(last.consequent);
 }
 
 /**

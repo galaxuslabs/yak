@@ -1,4 +1,4 @@
-import { styled, css, __yak_cssValue } from "@yak/react/internal";
+import { styled, css } from "@yak/react/internal";
 import { log } from "./helpers";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
@@ -195,23 +195,6 @@ export const GuardBlockAtTheEnd = /*YAK EXPORTED STYLED:GuardBlockAtTheEnd:input
 }
 */ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(0, ({ $on, $big })=>"input_GuardBlockAtTheEnd_m7uBBu" + ($on ? $big ? " input_GuardBlockAtTheEnd___m7uBBu" : "" : "")), {
     "displayName": "GuardBlockAtTheEnd"
-});
-// stays unfolded: at a CSS value position, `null` is a value that a `??`
-// would skip
-export const CssValuePosition = /*YAK EXPORTED STYLED:CssValuePosition:input_CssValuePosition_m7uBBu*//*YAK Extracted CSS:
-.input_CssValuePosition_m7uBBu {
-  width: var(--input_CssValuePosition__width_m7uBBu);
-}
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div("input_CssValuePosition_m7uBBu", {
-    "--input_CssValuePosition__width_m7uBBu": /*#__PURE__*/ __yak_cssValue(({ $a, $b })=>{
-        if ($a) {
-            if ($b) return 2;
-        }
-        if ($b) return 4;
-        return 8;
-    }, "px")
-}), {
-    "displayName": "CssValuePosition"
 });
 // stays unfolded: `return void 0;` is no value the fold knows
 export const ReturnVoidZeroInGuard = /*YAK EXPORTED STYLED:ReturnVoidZeroInGuard:input_ReturnVoidZeroInGuard_m7uBBu*//*YAK Extracted CSS:

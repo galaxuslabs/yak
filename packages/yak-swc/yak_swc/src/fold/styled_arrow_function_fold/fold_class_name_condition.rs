@@ -3,11 +3,11 @@ use super::ClassNameFolder;
 use crate::fold::css_call_to_class_name::{
   is_yak_atoms_callee, is_yak_css_callee, merge_class_names, with_leading_space,
 };
-use crate::utils::ast_helper::{binary, condition, paren, str_expr, unwrap_type_casts};
+use crate::utils::ast_helper::{binary, condition, paren, str_expr, unwrap_type_casts, void_zero};
 use swc_core::{
   atoms::Wtf8Atom,
   common::DUMMY_SP,
-  ecma::ast::{BinaryOp, CallExpr, Expr, Lit, Number, SeqExpr, UnaryExpr, UnaryOp},
+  ecma::ast::{BinaryOp, CallExpr, Expr, Lit, SeqExpr},
 };
 
 impl ClassNameFolder<'_> {
@@ -237,14 +237,6 @@ pub(super) fn is_falsy_literal(expr: &Expr) -> bool {
     Expr::Ident(ident) => ident.sym == "undefined",
     _ => false,
   }
-}
-
-fn void_zero() -> Box<Expr> {
-  Box::new(Expr::Unary(UnaryExpr {
-    span: DUMMY_SP,
-    op: UnaryOp::Void,
-    arg: Box::new(Expr::Lit(Lit::Num(Number::from(0.0)))),
-  }))
 }
 
 pub(super) fn create_folded_empty_class_name() -> Box<Expr> {

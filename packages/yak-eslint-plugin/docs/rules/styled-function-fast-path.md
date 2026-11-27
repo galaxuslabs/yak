@@ -72,18 +72,6 @@ styled.button`
   }}
 `;
 
-// a function that sets a CSS value can not leave a branch without `return`
-// when more than a single `return` follows
-styled.button`
-  width: ${({ $active, $big }) => {
-    if ($active) {
-      if ($big) return 8;
-    }
-    if ($big) return 4;
-    return 2;
-  }}px;
-`;
-
 // a `switch` has to switch on a prop, with a `return` in every `case` before the last one
 styled.button`
   ${({ $size }) => {
@@ -134,5 +122,16 @@ styled.button`
     if ($big) return css`color: green;`;
     return css`color: blue;`;
   }}
+`;
+
+// a function that sets a CSS value can do the same
+styled.button`
+  width: ${({ $active, $big, $width }) => {
+    if ($active) {
+      if ($big) return $width;
+    }
+    if ($big) return 4;
+    return 2;
+  }}px;
 `;
 ```
