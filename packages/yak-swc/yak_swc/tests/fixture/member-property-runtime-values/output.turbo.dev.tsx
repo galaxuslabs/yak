@@ -1,4 +1,4 @@
-import { styled, css } from "@yak/react/internal";
+import { styled, css, __yak_cssValue } from "@yak/react/internal";
 import * as __yak from "@yak/react/internal";
 import "data:text/css;base64,LmlucHV0X1N0eWxlZERpdl9tN3VCQnUgewogIHdpZHRoOiB2YXIoLS1pbnB1dF9TdHlsZWREaXZfX3dpZHRoX203dUJCdSk7CiAgaGVpZ2h0OiAyNHB4Owp9LmlucHV0X1N0eWxlZEJ1dHRvbl9fXCRhY3RpdmVfbTd1QkJ1IHsKICB3aWR0aDogdmFyKC0taW5wdXRfU3R5bGVkQnV0dG9uX193aWR0aF9tN3VCQnUpOwogIGhlaWdodDogMzJweDsKfQ==";
 const SIZES: Record<"sm" | "md", {
@@ -19,7 +19,7 @@ const StyledDiv = /*YAK Extracted CSS:
   width: var(--input_StyledDiv__width_m7uBBu);
   height: 24px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $size }, style)=>"input_StyledDiv_m7uBBu" + (style["--input_StyledDiv__width_m7uBBu"] = SIZES[$size].width, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $size }, style)=>"input_StyledDiv_m7uBBu" + (style["--input_StyledDiv__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue(SIZES[$size].width, ""), "")), {
     "displayName": "StyledDiv"
 });
 const StyledButton = /*YAK Extracted CSS:
@@ -27,6 +27,6 @@ const StyledButton = /*YAK Extracted CSS:
   width: var(--input_StyledButton__width_m7uBBu);
   height: 32px;
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button(2, ({ $active, $size }, style)=>"input_StyledButton_m7uBBu" + ($active ? " input_StyledButton__$active_m7uBBu" + (style["--input_StyledButton__width_m7uBBu"] = SIZES[$size].width, "") : "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_button(2, ({ $active, $size }, style)=>"input_StyledButton_m7uBBu" + ($active ? " input_StyledButton__$active_m7uBBu" + (style["--input_StyledButton__width_m7uBBu"] = /*#__PURE__*/ __yak_cssValue(SIZES[$size].width, ""), "") : "")), {
     "displayName": "StyledButton"
 });

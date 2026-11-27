@@ -1,6 +1,6 @@
 use self::block_body_to_expr::{block_body_to_expr, BodyEnd};
 use self::fold_class_name_condition::join_folded_class_names;
-use self::fold_css_variable_function::create_folded_css_variable_definition;
+use self::fold_css_variable_function::{create_folded_css_variable_definition, CssValueText};
 use self::merge_arrow_parameters::FoldParams;
 use crate::utils::ast_helper::{str_expr, unwrap_type_casts};
 use crate::yak_imports::{YakImports, YakRuntime};
@@ -55,6 +55,9 @@ pub(crate) struct FoldedClassNames {
   /// `false` for a component with nothing but `atoms("flex")` calls, whose
   /// class names never change
   has_condition: bool,
+  /// `true` when the expression calls `__yak_cssValue` for a value without a
+  /// unit, so the output needs its import, see `CssValueText`
+  uses_css_value_helper: bool,
 }
 
 impl FoldedClassNames {
@@ -105,14 +108,19 @@ impl FoldedClassNames {
 /// Each runtime expression must be an arrow that toggles class names or an
 /// `atoms(...)` call such as `${atoms("flex")}`. Returns `None` for any other
 /// expression, or when a CSS variable has a value the expression cannot write
+///
+/// `minify` is the plugin option. It picks how a CSS value without a unit
+/// becomes text, see `CssValueText`
 pub(crate) fn build_class_names(
   class_name: &str,
   runtime_expressions: &[Expr],
   css_variables: &FxHashMap<String, Expr>,
   yak_imports: &YakImports,
+  minify: bool,
 ) -> Option<FoldedClassNames> {
   let mut folder = ClassNameFolder {
     yak_imports,
+    css_value_text: CssValueText::new(minify, yak_imports),
     params: FoldParams::default(),
     writes_style: false,
     fall_through: None,
@@ -149,6 +157,7 @@ pub(crate) fn build_class_names(
     params: folder.params,
     writes_style: folder.writes_style,
     has_condition: has_arrow || !css_variables.is_empty(),
+    uses_css_value_helper: folder.css_value_text.uses_helper,
   })
 }
 
@@ -177,9 +186,12 @@ pub(crate) fn build_class_names(
 /// runtime, which takes no folded function, and for a component without a
 /// condition. The component then keeps its compiled shape with one function
 /// per condition, so nothing changes for it
+///
+/// It adds the import of `__yak_cssValue` when the folded function needs it,
+/// see `FoldedClassNames::uses_css_value_helper`
 pub(crate) fn fold_class_names(
   folded: FoldedClassNames,
-  yak_imports: &YakImports,
+  yak_imports: &mut YakImports,
 ) -> Option<Vec<Expr>> {
   if yak_imports.runtime() != YakRuntime::React {
     return None;
@@ -196,6 +208,9 @@ pub(crate) fn fold_class_names(
   }
   if folded.writes_style {
     flags |= FLAG_STYLE;
+  }
+  if folded.uses_css_value_helper {
+    yak_imports.get_yak_utility_ident("cssValue");
   }
   let fold_function = Expr::Arrow(ArrowExpr {
     span: DUMMY_SP,
@@ -219,6 +234,8 @@ pub(crate) fn fold_class_names(
 
 struct ClassNameFolder<'a> {
   yak_imports: &'a YakImports,
+  /// Wraps a CSS value without a unit, see `CssValueText`
+  css_value_text: CssValueText,
   params: FoldParams,
   writes_style: bool,
   /// `Some` while `fold_value` folds the left side of a fall through `??`,

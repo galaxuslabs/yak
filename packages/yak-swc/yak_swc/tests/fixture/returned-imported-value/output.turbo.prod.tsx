@@ -34,4 +34,4 @@ const PropertyValue = /*YAK Extracted CSS:
   color: var(--ym7uBBuC);
   padding: var(--ym7uBBuD);
 }
-*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $on }, style)=>"ym7uBBuB" + (style["--ym7uBBuC"] = $on ? colors.primary : colors.secondary, style["--ym7uBBuD"] = /*#__PURE__*/ __yak_cssValue($on && spacing, "px"), ""));
+*/ /*#__PURE__*/ __yak.__yak_div(2, ({ $on }, style)=>"ym7uBBuB" + (style["--ym7uBBuC"] = `${$on ? colors.primary : colors.secondary}`, style["--ym7uBBuD"] = /*#__PURE__*/ __yak_cssValue($on && spacing, "px"), ""));

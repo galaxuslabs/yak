@@ -222,18 +222,28 @@ impl YakImports {
     self.yak_library_imports.get(id).map(|id| id.0.clone())
   }
 
-  /// Returns the utility function identifier
+  /// Returns the utility function identifier and adds its import
   pub fn get_yak_utility_ident(&mut self, name: impl AsRef<str>) -> Ident {
+    let ident = self.yak_utility_ident(name);
+    self
+      .yak_utilities
+      .entry(ident.sym.to_string())
+      .or_insert(ident)
+      .clone()
+  }
+
+  /// Returns the utility function identifier without adding its import, e.g.
+  /// `__yak_cssValue` for `cssValue`. Code that may throw its result away,
+  /// like a fold that can still fail, adds the import later with
+  /// `get_yak_utility_ident`, so the output never imports an unused helper
+  pub fn yak_utility_ident(&self, name: impl AsRef<str>) -> Ident {
     if !UTILITIES.contains(&name.as_ref()) {
       panic!("Utility function not found: {}", name.as_ref());
     }
-    if let Some(ident) = self.yak_utilities.get(name.as_ref()) {
-      ident.clone()
-    } else {
-      let prefixed_name = format!("__yak_{}", name.as_ref());
-      let ident = Ident::from(prefixed_name.clone());
-      self.yak_utilities.insert(prefixed_name, ident.clone());
-      ident
+    let prefixed_name = format!("__yak_{}", name.as_ref());
+    match self.yak_utilities.get(&prefixed_name) {
+      Some(ident) => ident.clone(),
+      None => Ident::from(prefixed_name),
     }
   }
 

@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { css, styled, __yak_mergeClassNames } from "@yak/react/internal";
+import { css, styled, __yak_mergeClassNames, __yak_cssValue } from "@yak/react/internal";
 import { ImportedCard } from "./imported-card";
 import * as __yak from "@yak/react/internal";
 import "./input.yak.css!=!./input?./input.yak.css";
@@ -37,7 +37,7 @@ const Dynamic = /*YAK Extracted CSS:
 .input_Dynamic_m7uBBu {
   color: var(--input_Dynamic__color_m7uBBu);
 }
-*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $color }, style)=>"input_Dynamic_m7uBBu" + (style["--input_Dynamic__color_m7uBBu"] = $color, "")), {
+*/ /*#__PURE__*/ Object.assign(/*#__PURE__*/ __yak.__yak_div(2, ({ $color }, style)=>"input_Dynamic_m7uBBu" + (style["--input_Dynamic__color_m7uBBu"] = /*#__PURE__*/ __yak_cssValue($color, ""), "")), {
     "displayName": "Dynamic"
 });
 // bails: attrs

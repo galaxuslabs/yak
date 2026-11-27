@@ -9,4 +9,4 @@ const ThemedComponent = /*YAK Extracted CSS:
   padding: 20px;
   border-radius: 8px;
 }
-*/ /*#__PURE__*/ __yak.__yak_div(3, ({}, style, theme)=>"ym7uBBu" + (style["--ym7uBBu1"] = theme.background, style["--ym7uBBu2"] = theme.text, ""));
+*/ /*#__PURE__*/ __yak.__yak_div(3, ({}, style, theme)=>"ym7uBBu" + (style["--ym7uBBu1"] = `${theme.background}`, style["--ym7uBBu2"] = `${theme.text}`, ""));
